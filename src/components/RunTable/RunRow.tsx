@@ -32,13 +32,12 @@ const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex }: IR
       onClick={handleClick}
       style={{color: colorFromType(type)}}
     >
-      <td>{run.name}</td>
       <td>{type}</td>
       <td>{distance}</td>
       <td>{paceParts}</td>
       <td>{heartRate && heartRate.toFixed(0)}</td>
       <td>{runTime}</td>
-      <td className={styles.runDate}>{run.start_date_local}</td>
+      <td className={styles.runDate}>{run.start_date_local.slice(0, 11)} </td>
     </tr>
   );
 };
