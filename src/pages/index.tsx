@@ -209,6 +209,14 @@ const Index = () => {
         )}
       </div>
       <div className="fl w-100 w-70-l">
+        <RunMap
+          title={title}
+          viewState={viewState}
+          geoData={geoData}
+          setViewState={setViewState}
+          changeYear={changeYear}
+          thisYear={year}
+        />
         {year === 'Total' ? (
           <SVGStat />
         ) : (
@@ -220,15 +228,6 @@ const Index = () => {
             setRunIndex={setRunIndex}
           />
         )}
-        <RunMap
-          title={title}
-          viewState={viewState}
-          geoData={geoData}
-          setViewState={setViewState}
-          changeYear={changeYear}
-          thisYear={year}
-        />
-
       </div>
       {/* Enable Audiences in Vercel Analytics: https://vercel.com/docs/concepts/analytics/audiences/quickstart */}
       <Analytics />
