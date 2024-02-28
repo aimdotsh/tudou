@@ -33,7 +33,8 @@
     text-align: right;
 
     &:first-child {
-      text-align: right;
+      text-align: left;
+      min-width: 100px;
     }
   }
 
