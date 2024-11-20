@@ -20,12 +20,13 @@ SQL_FILE = os.path.join(parent, "run_page", "data.db")
 JSON_FILE = os.path.join(parent, "src", "static", "activities.json")
 SYNCED_FILE = os.path.join(parent, "imported.json")
 SYNCED_ACTIVITY_FILE = os.path.join(parent, "synced_activity.json")
+NAME_MAPPING_FILE = os.path.join(FIT_FOLDER, "name_mapping.json")
 
 # TODO: Move into nike_sync NRC THINGS
 
 
 BASE_TIMEZONE = "Asia/Shanghai"
-
+UTC_TIMEZONE = "UTC"
 
 start_point = namedtuple("start_point", "lat lon")
 run_map = namedtuple("polyline", "summary_polyline")
@@ -59,6 +60,7 @@ TYPE_DICT = {
     "cycling": "Ride",
     "CYCLING": "Ride",
     "Ride": "Ride",
+    "EBikeRide": "Ride",
     "road_biking": "Ride",
     "VirtualRide": "VirtualRide",
     "indoor_cycling": "Indoor Ride",

@@ -65,8 +65,13 @@ class Generator:
             if self.only_run and activity.type != "Run":
                 continue
             if IGNORE_BEFORE_SAVING:
-                activity.summary_polyline = filter_out(activity.summary_polyline)
+                if activity.map and activity.map.summary_polyline:
+                    activity.map.summary_polyline = filter_out(
+                        activity.map.summary_polyline
+                    )
             activity.source = "strava"
+            #  strava use total_elevation_gain as elevation_gain
+            activity.elevation_gain = activity.total_elevation_gain
             created = update_or_create_activity(self.session, activity)
             if created:
                 sys.stdout.write("+")
@@ -195,6 +200,19 @@ class Generator:
         try:
             activities = self.session.query(Activity).all()
             return [str(a.run_id) for a in activities]
+        except Exception as e:
+            # pass the error
+            print(f"something wrong with {str(e)}")
+            return []
+
+    def get_old_tracks_dates(self):
+        try:
+            activities = (
+                self.session.query(Activity)
+                .order_by(Activity.start_date_local.desc())
+                .all()
+            )
+            return [str(a.start_date_local) for a in activities]
         except Exception as e:
             # pass the error
             print(f"something wrong with {str(e)}")

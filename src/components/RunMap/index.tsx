@@ -1,5 +1,5 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
-import React, {useRef, useCallback, useState} from 'react';
+import React, {useRef, useCallback, useState, useEffect} from 'react';
 import Map, {Layer, Source, FullscreenControl, NavigationControl, MapRef} from 'react-map-gl';
 import {MapInstance} from "react-map-gl/src/types/lib";
 import useActivities from '@/hooks/useActivities';
@@ -7,7 +7,6 @@ import {
   MAP_LAYER_LIST,
   IS_CHINESE,
   ROAD_LABEL_DISPLAY,
-  MAIN_COLOR,
   MAPBOX_TOKEN,
   PROVINCE_FILL_COLOR,
   COUNTRY_FILL_COLOR,
@@ -20,7 +19,7 @@ import {
 import { Coordinate, IViewState, geoJsonForMap } from '@/utils/utils';
 import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
-import styles from './style.module.scss';
+import styles from './style.module.css';
 import { FeatureCollection } from 'geojson';
 import { RPGeometry } from '@/static/run_countries';
 import './mapbox.css';
@@ -49,7 +48,7 @@ const RunMap = ({
   const keepWhenLightsOff = ['runs2']
   function switchLayerVisibility(map: MapInstance, lights: boolean) {
     const styleJson = map.getStyle();
-    styleJson.layers.forEach(it => {
+    styleJson.layers.forEach((it: { id: string; }) => {
       if (!keepWhenLightsOff.includes(it.id)) {
         if (lights)
           map.setLayoutProperty(it.id, 'visibility', 'visible');
@@ -129,6 +128,18 @@ const RunMap = ({
     opacity: 0.3,
   };
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (mapRef.current) {
+        mapRef.current.getMap().resize();
+      }
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   return (
     <Map
       {...viewState}
@@ -154,7 +165,8 @@ const RunMap = ({
           type="fill"
           paint={{
             'fill-color': COUNTRY_FILL_COLOR,
-            'fill-opacity': 0.5,
+            // in China, fill a bit lighter while already filled provinces
+            'fill-opacity': ["case", ["==", ["get", "name"], '中国'], 0.1, 0.5],
           }}
           filter={filterCountries}
         />
