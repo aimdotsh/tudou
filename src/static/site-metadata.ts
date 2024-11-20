@@ -11,7 +11,7 @@ interface ISiteMetadataResult {
 }
 
 const data: ISiteMetadataResult = {
-  siteTitle: 'The runing page of tudou',
+  siteTitle: '蓝皮书的跑路之旅',
   siteUrl: 'https://tudou.run',
   logo: 'https://avatars.githubusercontent.com/u/27554033?v=4',
   description: 'Personal site and blog',
