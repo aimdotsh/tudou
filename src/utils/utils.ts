@@ -394,7 +394,7 @@ const getBoundsForGeoData = (
   ];
   const viewState = new WebMercatorViewport({
     width: 800,
-    height: 400,
+    height: 600,
   }).fitBounds(cornersLongLat, { padding: 200 });
   let { longitude, latitude, zoom } = viewState;
   if (features.length > 1) {
