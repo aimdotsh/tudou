@@ -467,7 +467,7 @@ class Codoon:
         gpx = gpxpy.gpx.GPX()
         gpx.nsmap["gpxtpx"] = "http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
         gpx_track = gpxpy.gpx.GPXTrack()
-        gpx_track.name = "gpx"
+        gpx_track.name = "gpx from codoon"
         gpx_track.type = "Run"
         gpx.tracks.append(gpx_track)
 
@@ -556,8 +556,9 @@ class Codoon:
             return
         d = {
             "id": log_id,
-            "name": str(cast_type),
+            "name": str(cast_type) + " from codoon",
             "type": cast_type,
+            "subtype": cast_type,
             "start_date": datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S"),
             "end": datetime.strftime(end_date, "%Y-%m-%d %H:%M:%S"),
             "start_date_local": datetime.strftime(start_date, "%Y-%m-%d %H:%M:%S"),

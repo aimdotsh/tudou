@@ -11,19 +11,19 @@ interface ISiteMetadataResult {
 }
 
 const data: ISiteMetadataResult = {
-  siteTitle: '蓝皮书的跑路之旅',
-  siteUrl: 'https://tudou.run',
-  logo: 'https://avatars.githubusercontent.com/u/27554033?v=4',
+  siteTitle: 'Workouts Map',
+  siteUrl: 'https://ben29.xyz',
+  logo: 'https://avatars3.githubusercontent.com/u/6956444?s=460&u=97e1062227c4088db3c987146455245c6fa78441',
   description: 'Personal site and blog',
   keywords: 'workouts, running, cycling, riding, roadtrip, hiking, swimming',
   navLinks: [
     {
       name: 'Blog',
-      url: 'https://tudou.run',
+      url: 'https://ben29.xyz',
     },
     {
       name: 'About',
-      url: 'https://tudou.run',
+      url: 'https://github.com/ben-29/workouts_page/blob/master/README-CN.md',
     },
   ],
 };
