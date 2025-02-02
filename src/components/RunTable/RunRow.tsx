@@ -39,7 +39,7 @@ const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex }: IR
       <td>{elevation_gain}</td>
       <td>{paceParts}</td>
       <td>{runTime}</td>
-      <td className={styles.runDate}>{run.start_date_local}</td>
+      <td className={styles.runDate}>{run.start_date_local.slice(0, 11)} </td>
     </tr>
   );
 };
