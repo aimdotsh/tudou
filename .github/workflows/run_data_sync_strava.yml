@@ -36,7 +36,7 @@ env:
 
 
   IGNORE_BEFORE_SAVING: True # if you want to ignore some data before saving, set this to True
-  IGNORE_START_END_RANGE: 2900 # Unit meter
+  IGNORE_START_END_RANGE: 2880 # Unit meter
   # Dont making this huge, just picking points you needing. https://developers.google.com/maps/documentation/utilities/polylineutility using this tool to making your polyline
   IGNORE_POLYLINE: ""
   IGNORE_RANGE: 220 # Unit meter
