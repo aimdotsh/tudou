@@ -1,25 +1,24 @@
-FROM python:3.10-slim-buster AS develop-py
+
+FROM python:3.10.5-slim AS develop-py
 WORKDIR /root/running_page
 COPY ./requirements.txt /root/running_page/requirements.txt
-# Add proxy for apt.
-# ENV http_proxy http://ip_address:port
-# ENV https_proxy http://ip_address:port
-RUN apt-get update \
+RUN sed -i 's@http://archive.ubuntu.com/ubuntu/@https://mirrors.tuna.tsinghua.edu.cn/ubuntu/@g' /etc/apt/sources.list \
+  && sed -i 's@http://security.ubuntu.com/ubuntu/@https://mirrors.tuna.tsinghua.edu.cn/ubuntu/@g' /etc/apt/sources.list \
+  && apt-get update \
   && apt-get install -y --no-install-recommends git \
   && apt-get purge -y --auto-remove \
   && rm -rf /var/lib/apt/lists/* \
-  && pip3 install -i https://pypi.org/simple/ pip -U \
-  && pip3 config set global.index-url https://pypi.org/simple/ \
+  && pip3 install -i https://mirrors.aliyun.com/pypi/simple/ pip -U \
+  && pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
   && pip3 install -r requirements.txt
 
-FROM node:18-buster AS develop-node
+FROM node:18  AS develop-node
 WORKDIR /root/running_page
 COPY ./package.json /root/running_page/package.json
 COPY ./pnpm-lock.yaml /root/running_page/pnpm-lock.yaml
-RUN npm config rm proxy \
-  && npm config set registry https://registry.npmjs.org/ \
-  && npm install -g pnpm \
-  && pnpm install
+RUN npm config set registry https://registry.npmmirror.com \
+  && corepack enable \
+  && COREPACK_NPM_REGISTRY=https://registry.npmmirror.com pnpm install
 
 FROM develop-py AS data
 ARG app
@@ -55,6 +54,7 @@ RUN DUMMY=${DUMMY}; \
 RUN python3 run_page/gen_svg.py --from-db --title "my running page" --type grid --athlete "$YOUR_NAME" --output assets/grid.svg --min-distance 10.0 --special-color yellow --special-color2 red --special-distance 20 --special-distance2 40 --use-localtime \
   && python3 run_page/gen_svg.py --from-db --title "my running page" --type github --athlete "$YOUR_NAME" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github.svg --use-localtime --min-distance 0.5 \
   && python3 run_page/gen_svg.py --from-db --type circular --use-localtime
+
 
 FROM develop-node AS frontend-build
 WORKDIR /root/running_page

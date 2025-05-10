@@ -1,7 +1,6 @@
 import datetime
 import random
 import string
-import time
 
 import geopy
 from config import TYPE_DICT
@@ -106,7 +105,7 @@ def update_or_create_activity(session, run_activity):
                         )
                     )
                 # limit (only for the first time)
-                except Exception as e:
+                except Exception:
                     try:
                         location_country = str(
                             g.reverse(
@@ -114,7 +113,7 @@ def update_or_create_activity(session, run_activity):
                                 language="zh-CN",
                             )
                         )
-                    except Exception as e:
+                    except Exception:
                         pass
 
             activity = Activity(
@@ -129,7 +128,11 @@ def update_or_create_activity(session, run_activity):
                 location_country=location_country,
                 average_heartrate=run_activity.average_heartrate,
                 average_speed=float(run_activity.average_speed),
-                elevation_gain=float(run_activity.elevation_gain),
+                elevation_gain=(
+                    float(run_activity.elevation_gain)
+                    if run_activity.elevation_gain is not None
+                    else None
+                ),
                 summary_polyline=(
                     run_activity.map and run_activity.map.summary_polyline or ""
                 ),
@@ -145,7 +148,11 @@ def update_or_create_activity(session, run_activity):
             activity.type = type
             activity.average_heartrate = run_activity.average_heartrate
             activity.average_speed = float(run_activity.average_speed)
-            activity.elevation_gain = float(run_activity.elevation_gain)
+            activity.elevation_gain = (
+                float(run_activity.elevation_gain)
+                if run_activity.elevation_gain is not None
+                else None
+            )
             activity.summary_polyline = (
                 run_activity.map and run_activity.map.summary_polyline or ""
             )
