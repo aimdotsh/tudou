@@ -5,11 +5,6 @@ interface ILightsProps {
   lights: boolean;
 }
 
-const LightsControl = ({ setLights, lights }: ILightsProps) => {
 
-  return (
-
-  );
-};
 
 export default LightsControl;
