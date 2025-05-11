@@ -6,7 +6,7 @@ import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { LegendOrdinal, LegendItem, LegendLabel } from '@visx/legend';
 import { MAIN_COLOR, yellow, blue } from '@/utils/const';
 import styles from './style.module.css';
-
+import LifeChart from './ActivityListLifeChart';
 const defaultMargin = { top: 30, right: 0, bottom: 40, left: 50 };
 const legendGlyphSize = 12;
 
@@ -165,6 +165,12 @@ const ActivityList: React.FC = () => {
 
     const activitiesByInterval = groupActivities(interval);
 
+const lifeData = Object.entries(activitiesByInterval).map(([year, summary]) => ({
+    year,
+    totalDistance: summary.totalDistance,
+    totalTime: summary.totalTime,
+}));
+
     return (
         <div className={styles.activityList}>
             <div className={styles.filterContainer}>
@@ -191,13 +197,11 @@ const ActivityList: React.FC = () => {
                 </select>
             </div>
 
-            {interval === 'life' ? (
-                <LifeBarChart activities={activities} width={800} height={400} />
-            ) : (
-                <div className={styles.summaryContainer}>
-                    {/* 渲染其他时间区间的 ActivityCard */}
-                </div>
-            )}
+ {interval === 'life' && (
+    <div className={styles.lifeContainer}>
+        <LifeChart data={lifeData} />
+    </div>
+)}
         </div>
     );
 };
