@@ -5,7 +5,7 @@ interface ILightsProps {
   lights: boolean;
 }
 
-const LightsControl = ({ setLights, lights1 }: ILightsProps) => {
+const LightsControl = ({ setLights, lights }: ILightsProps) => {
 
   return (
 
