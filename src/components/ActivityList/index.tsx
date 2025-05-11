@@ -1,223 +1,167 @@
-import React, { lazy, useState, Suspense } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { useNavigate } from 'react-router-dom';
-import activities from '@/static/activities.json';
+import React, { useState } from 'react';
+import { Group } from '@visx/group';
+import { BarGroup } from '@visx/shape';
+import { AxisBottom, AxisLeft } from '@visx/axis';
+import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
+import { LegendOrdinal, LegendItem, LegendLabel } from '@visx/legend';
+import { MAIN_COLOR, yellow, blue } from '@/utils/const';
 import styles from './style.module.css';
-import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
-import { formatPace } from '@/utils/utils';
-import { totalStat } from '@assets/index';
 
-interface Activity {
-  start_date_local: string;
-  distance: number;
-  moving_time: string;
-  type: string;
-  location_country?: string;
-}
+const defaultMargin = { top: 30, right: 0, bottom: 40, left: 50 };
+const legendGlyphSize = 12;
 
-interface ActivitySummary {
-  totalDistance: number;
-  totalTime: number;
-  count: number;
-  dailyDistances: number[];
-  maxDistance: number;
-  maxSpeed: number;
-}
+// 用于生成 life 柱状图的组件
+const LifeBarChart = ({ activities, width, height }) => {
+    if (width < 10 || !activities) return null;
 
-interface DisplaySummary {
-  totalDistance: number;
-  averageSpeed: number;
-  totalTime: number;
-  count: number;
-  maxDistance: number;
-  maxSpeed: number;
-}
+    let data = {};
+    const keys = ['Run', 'Hike', 'Ride'];
+    let maxDistance = 0;
 
-interface ChartData {
-  day: number;
-  distance: string;
-}
-
-interface ActivityCardProps {
-  period: string;
-  summary: DisplaySummary;
-  dailyDistances: number[];
-  interval: string;
-  activityType: string;
-}
-
-interface ActivityGroups {
-  [key: string]: ActivitySummary;
-}
-
-type IntervalType = 'year' | 'month' | 'week' | 'day';
-
-const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDistances, interval, activityType }) => {
-    const generateLabels = (): number[] => {
-        if (interval === 'month') {
-            const [year, month] = period.split('-').map(Number);
-            const daysInMonth = new Date(year, month, 0).getDate();
-            return Array.from({ length: daysInMonth }, (_, i) => i + 1);
-        } else if (interval === 'week') {
-            return Array.from({ length: 7 }, (_, i) => i + 1);
-        } else if (interval === 'year') {
-            return Array.from({ length: 12 }, (_, i) => i + 1);
+    activities.forEach((activity) => {
+        const year = activity.start_date_local.slice(0, 4); // 提取年份
+        if (!data[year]) {
+            data[year] = {
+                date: year,
+                Run: 0,
+                Hike: 0,
+                Ride: 0,
+            };
         }
-        return [];
-    };
+        data[year][activity.type] += activity.distance;
+        if (maxDistance < data[year][activity.type]) maxDistance = data[year][activity.type];
+    });
 
-    const data: ChartData[] = generateLabels().map((day) => ({
-        day,
-        distance: (dailyDistances[day - 1] || 0).toFixed(2),
-    }));
+    data = Object.values(data).sort((a, b) => a.date.localeCompare(b.date));
 
-    const formatTime = (seconds: number): string => {
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = Math.floor(seconds % 60);
-        return `${h}h ${m}m ${s}s`;
-    };
+    // 定义比例尺
+    const dateScale = scaleBand({
+        domain: data.map((d) => d.date),
+        padding: 0.2,
+    });
+    const typeScale = scaleBand({
+        domain: keys,
+        padding: 0.1,
+    });
+    const distanceScale = scaleLinear({
+        domain: [0, maxDistance],
+    });
+    const colorScale = scaleOrdinal({
+        domain: keys,
+        range: [yellow, MAIN_COLOR, blue],
+    });
 
-    const formatPace = (speed: number): string => {
-        if (speed === 0) return '0:00 min/km';
-        const pace = 60 / speed;
-        const totalSeconds = Math.round(pace * 60);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds} min/km`;
-    };
-
-    const isFastType = (activityType: string): boolean => {
-        switch (activityType) {
-          case 'virtualride':
-          case 'ride':
-          case 'roadtrip':
-            return true;
-          default:
-            return false;
-        }
-    };
-
-    const yAxisMax = Math.ceil(Math.max(...data.map(d => parseFloat(d.distance))) + 10);
-    const yAxisTicks = Array.from({ length: Math.ceil(yAxisMax / 5) + 1 }, (_, i) => i * 5);
+    // 更新比例尺范围
+    const xMax = width - defaultMargin.left - defaultMargin.right;
+    const yMax = height - defaultMargin.top - defaultMargin.bottom;
+    dateScale.rangeRound([0, xMax]);
+    typeScale.rangeRound([0, dateScale.bandwidth()]);
+    distanceScale.range([yMax, 0]);
 
     return (
-        <div className={styles.activityCard}>
-            <h2 className={styles.activityName}>{period}</h2>
-            <div className={styles.activityDetails}>
-                <p><strong>{ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}:</strong> {summary.totalDistance.toFixed(2)} km</p>
-                <p><strong>{ACTIVITY_TOTAL.AVERAGE_SPEED_TITLE}:</strong> {isFastType(activityType) ? `${summary.averageSpeed.toFixed(2)} km/h` : formatPace(summary.averageSpeed)}</p>
-                <p><strong>{ACTIVITY_TOTAL.TOTAL_TIME_TITLE}:</strong> {formatTime(summary.totalTime)}</p>
-                {interval !== 'day' && (
-                    <>
-                        <p><strong>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}:</strong> {summary.count}</p>
-                        <p><strong>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}:</strong> {summary.maxDistance.toFixed(2)} km</p>
-                        <p><strong>{ACTIVITY_TOTAL.MAX_SPEED_TITLE}:</strong> {isFastType(activityType) ? `${summary.maxSpeed.toFixed(2)} km/h` : formatPace(summary.maxSpeed)}</p>
-                    </>
-                )}
-                {['month', 'week', 'year'].includes(interval) && (
-                    <div className={styles.chart} style={{ height: '250px', width: '100%' }}>
-                        <ResponsiveContainer>
-                            <BarChart data={data} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                                <XAxis dataKey="day" tick={{ fill: 'rgb(204, 204, 204)' }} />
-                                <YAxis
-                                    label={{ value: 'km', angle: -90, position: 'insideLeft', fill: 'rgb(204, 204, 204)' }}
-                                    domain={[0, yAxisMax]}
-                                    ticks={yAxisTicks}
-                                    tick={{ fill: 'rgb(204, 204, 204)' }}
-                                />
-                                <Tooltip
-                                    formatter={(value) => `${value} km`}
-                                    contentStyle={{ backgroundColor: 'rgb(36, 36, 36)', border: '1px solid #444', color: 'rgb(204, 204, 204)' }}
-                                    labelStyle={{ color: 'rgb(0, 237, 94)' }}
-                                />
-                                <Bar dataKey="distance" fill="rgb(0, 237, 94)" />
-                            </BarChart>
-                        </ResponsiveContainer>
+        <div>
+            <LegendOrdinal scale={colorScale}>
+                {(labels) => (
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        {labels.map((label, i) => (
+                            <LegendItem key={`legend-quantile-${i}`} margin="0 5px">
+                                <svg width={legendGlyphSize} height={legendGlyphSize}>
+                                    <rect
+                                        fill={label.value}
+                                        width={legendGlyphSize}
+                                        height={legendGlyphSize}
+                                    />
+                                </svg>
+                                <LegendLabel align="left" margin="0 0 0 4px">
+                                    {label.text}
+                                </LegendLabel>
+                            </LegendItem>
+                        ))}
                     </div>
                 )}
-            </div>
+            </LegendOrdinal>
+
+            <svg width={width} height={height}>
+                <rect
+                    x={0}
+                    y={0}
+                    width={width}
+                    height={height}
+                    fill="transparent"
+                    rx={14}
+                />
+                <Group top={defaultMargin.top} left={defaultMargin.left}>
+                    <BarGroup
+                        data={data}
+                        keys={keys}
+                        height={yMax}
+                        x0={(d) => d.date}
+                        x0Scale={dateScale}
+                        x1Scale={typeScale}
+                        yScale={distanceScale}
+                        color={colorScale}
+                    >
+                        {(barGroups) =>
+                            barGroups.map((barGroup) => (
+                                <Group
+                                    key={`bar-group-${barGroup.index}-${barGroup.x0}`}
+                                    left={barGroup.x0}
+                                >
+                                    {barGroup.bars.map((bar) => (
+                                        <rect
+                                            key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
+                                            x={bar.x}
+                                            y={bar.y}
+                                            width={bar.width}
+                                            height={bar.height}
+                                            fill={bar.color}
+                                            rx={1}
+                                        />
+                                    ))}
+                                </Group>
+                            ))
+                        }
+                    </BarGroup>
+                </Group>
+                <AxisLeft
+                    left={defaultMargin.left}
+                    top={defaultMargin.top}
+                    stroke={MAIN_COLOR}
+                    tickStroke="transparent"
+                    scale={distanceScale}
+                    tickFormat={(v) => `${v / 1000} km`}
+                    tickLabelProps={(v) => ({
+                        fill: MAIN_COLOR,
+                        fontSize: 11,
+                        verticalAnchor: 'middle',
+                        textAnchor: 'end',
+                    })}
+                />
+                <AxisBottom
+                    top={yMax + defaultMargin.top}
+                    left={defaultMargin.left}
+                    scale={dateScale}
+                    stroke={MAIN_COLOR}
+                    tickStroke={MAIN_COLOR}
+                    hideAxisLine
+                    tickLabelProps={() => ({
+                        fill: MAIN_COLOR,
+                        fontSize: 10,
+                        textAnchor: 'middle',
+                    })}
+                />
+            </svg>
         </div>
     );
 };
 
+// 集成到 ActivityList 中
 const ActivityList: React.FC = () => {
     const [interval, setInterval] = useState<IntervalType>('month');
     const [activityType, setActivityType] = useState<string>('run');
     const navigate = useNavigate();
     const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
-    const showTypes =[...playTypes].filter(type => type in TYPES_MAPPING);
-
-    const toggleInterval = (newInterval: IntervalType): void => {
-        setInterval(newInterval);
-    };
-
-    const filterActivities = (activity: Activity): boolean => {
-        return activity.type.toLowerCase() === activityType;
-    };
-
-    const convertTimeToSeconds = (time: string): number => {
-        const [hours, minutes, seconds] = time.split(':').map(Number);
-        return hours * 3600 + minutes * 60 + seconds;
-    };
-
-    const groupActivities = (interval: IntervalType): ActivityGroups => {
-        return (activities as Activity[]).filter(filterActivities).reduce((acc: ActivityGroups, activity) => {
-            const date = new Date(activity.start_date_local);
-            let key: string;
-            let index: number;
-            switch (interval) {
-                case 'year':
-                    key = date.getFullYear().toString();
-                    index = date.getMonth();
-                    break;
-                case 'month':
-                    key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-                    index = date.getDate() - 1;
-                    break;
-                case 'week':
-                    const currentDate = new Date(date.valueOf());
-                    currentDate.setDate(currentDate.getDate() + 4 - (currentDate.getDay() || 7));
-                    const yearStart = new Date(currentDate.getFullYear(), 0, 1);
-                    const weekNum = Math.ceil((((currentDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-                    key = `${currentDate.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
-                    index = (date.getDay() + 6) % 7;
-                    break;
-                case 'day':
-                    key = date.toLocaleDateString("zh").replaceAll('/', '-');
-                    index = 0;
-                    break;
-                default:
-                    key = date.getFullYear().toString();
-                    index = 0;
-            }
-
-            if (!acc[key]) acc[key] = {
-                totalDistance: 0,
-                totalTime: 0,
-                count: 0,
-                dailyDistances: [],
-                maxDistance: 0,
-                maxSpeed: 0
-            };
-
-            const distanceKm = activity.distance / 1000;
-            const timeInSeconds = convertTimeToSeconds(activity.moving_time);
-            const speedKmh = timeInSeconds > 0 ? distanceKm / (timeInSeconds / 3600) : 0;
-
-            acc[key].totalDistance += distanceKm;
-            acc[key].totalTime += timeInSeconds;
-            acc[key].count += 1;
-
-            acc[key].dailyDistances[index] = (acc[key].dailyDistances[index] || 0) + distanceKm;
-
-            if (distanceKm > acc[key].maxDistance) acc[key].maxDistance = distanceKm;
-            if (speedKmh > acc[key].maxSpeed) acc[key].maxSpeed = speedKmh;
-
-            return acc;
-        }, {});
-    };
+    const showTypes = [...playTypes].filter(type => type in TYPES_MAPPING);
 
     const activitiesByInterval = groupActivities(interval);
 
@@ -231,54 +175,29 @@ const ActivityList: React.FC = () => {
                     Home
                 </button>
                 <select onChange={(e) => setActivityType(e.target.value)} value={activityType}>
-                    { showTypes.map((type) => (
-                      <option value={type}>{TYPES_MAPPING[type]}</option>
+                    {showTypes.map((type) => (
+                        <option value={type}>{TYPES_MAPPING[type]}</option>
                     ))}
                 </select>
                 <select
-                    onChange={(e) => toggleInterval(e.target.value as IntervalType)}
+                    onChange={(e) => setInterval(e.target.value as IntervalType)}
                     value={interval}
                 >
                     <option value="year">{ACTIVITY_TOTAL.YEARLY_TITLE}</option>
                     <option value="month">{ACTIVITY_TOTAL.MONTHLY_TITLE}</option>
                     <option value="week">{ACTIVITY_TOTAL.WEEKLY_TITLE}</option>
                     <option value="day">{ACTIVITY_TOTAL.DAILY_TITLE}</option>
+                    <option value="life">Life</option>
                 </select>
             </div>
 
-            <div className={styles.summaryContainer}>
-                {Object.entries(activitiesByInterval)
-                    .sort(([a], [b]) => {
-                        if (interval === 'day') {
-                            return new Date(b).getTime() - new Date(a).getTime();
-                        } else if (interval === 'week') {
-                            const [yearA, weekA] = a.split('-W').map(Number);
-                            const [yearB, weekB] = b.split('-W').map(Number);
-                            return yearB - yearA || weekB - weekA;
-                        } else {
-                            const [yearA, monthA = 0] = a.split('-').map(Number);
-                            const [yearB, monthB = 0] = b.split('-').map(Number);
-                            return yearB - yearA || monthB - monthA;
-                        }
-                    })
-                    .map(([period, summary]) => (
-                        <ActivityCard
-                            key={period}
-                            period={period}
-                            summary={{
-                                totalDistance: summary.totalDistance,
-                                averageSpeed: summary.totalTime ? (summary.totalDistance / (summary.totalTime / 3600)) : 0,
-                                totalTime: summary.totalTime,
-                                count: summary.count,
-                                maxDistance: summary.maxDistance,
-                                maxSpeed: summary.maxSpeed
-                            }}
-                            dailyDistances={summary.dailyDistances}
-                            interval={interval}
-                            activityType={activityType}
-                        />
-                    ))}
-            </div>
+            {interval === 'life' ? (
+                <LifeBarChart activities={activities} width={800} height={400} />
+            ) : (
+                <div className={styles.summaryContainer}>
+                    {/* 渲染其他时间区间的 ActivityCard */}
+                </div>
+            )}
         </div>
     );
 };
