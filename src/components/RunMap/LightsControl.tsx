@@ -8,8 +8,7 @@ interface ILightsProps {
 const LightsControl = ({ setLights, lights }: ILightsProps) => {
 
   return (
-        <div className={"mapboxgl-ctrl mapboxgl-ctrl-group  " + styles.lights}>
-        </div>
+
   );
 };
 
