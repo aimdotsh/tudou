@@ -8,7 +8,8 @@ interface ILightsProps {
 const LightsControl = ({ setLights, lights }: ILightsProps) => {
 
   return (
-
+        <div className={"  " + styles.lights}>
+        </div>
   );
 };
 

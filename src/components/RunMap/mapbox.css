@@ -20,7 +20,7 @@
   background-color: salmon;
 }
 .mapboxgl-canvas-container.mapboxgl-interactive,
-.mapboxgl-ctrl-group2b button.mapboxgl-ctrl-compass {
+.mapboxgl-ctrl-group button.mapboxgl-ctrl-compass {
   cursor: grab;
   -webkit-user-select: none;
   user-select: none;
@@ -29,7 +29,7 @@
   cursor: pointer;
 }
 .mapboxgl-canvas-container.mapboxgl-interactive:active,
-.mapboxgl-ctrl-group2b button.mapboxgl-ctrl-compass:active {
+.mapboxgl-ctrl-group button.mapboxgl-ctrl-compass:active {
   cursor: grabbing;
 }
 .mapboxgl-canvas-container.mapboxgl-touch-zoom-rotate,
@@ -90,19 +90,19 @@
   margin: 0 10px 10px 0;
   float: right;
 }
-.mapboxgl-ctrl-group2b {
+.mapboxgl-ctrl-group {
   border-radius: 4px;
   background: #fff;
 }
-.mapboxgl-ctrl-group2b:not(:empty) {
+.mapboxgl-ctrl-group:not(:empty) {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 @media (-ms-high-contrast: active) {
-  .mapboxgl-ctrl-group2b:not(:empty) {
+  .mapboxgl-ctrl-group:not(:empty) {
     box-shadow: 0 0 0 2px ButtonText;
   }
 }
-.mapboxgl-ctrl-group2b button {
+.mapboxgl-ctrl-group button {
   width: 29px;
   height: 29px;
   display: block;
@@ -114,7 +114,7 @@
   cursor: pointer;
   overflow: hidden;
 }
-.mapboxgl-ctrl-group2b button + button {
+.mapboxgl-ctrl-group button + button {
   border-top: 1px solid #ddd;
 }
 .mapboxgl-ctrl button .mapboxgl-ctrl-icon {
@@ -128,12 +128,12 @@
   .mapboxgl-ctrl-icon {
     background-color: transparent;
   }
-  .mapboxgl-ctrl-group2b button + button {
+  .mapboxgl-ctrl-group button + button {
     border-top: 1px solid ButtonText;
   }
 }
 .mapboxgl-ctrl-attrib-button:focus,
-.mapboxgl-ctrl-group2b button:focus {
+.mapboxgl-ctrl-group button:focus {
   box-shadow: 0 0 2px 2px #0096ff;
 }
 .mapboxgl-ctrl button:disabled {
@@ -145,19 +145,19 @@
 .mapboxgl-ctrl button:not(:disabled):hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
-.mapboxgl-ctrl-group2b button:focus:focus-visible {
+.mapboxgl-ctrl-group button:focus:focus-visible {
   box-shadow: 0 0 2px 2px #0096ff;
 }
-.mapboxgl-ctrl-group2b button:focus:not(:focus-visible) {
+.mapboxgl-ctrl-group button:focus:not(:focus-visible) {
   box-shadow: none;
 }
-.mapboxgl-ctrl-group2b button:focus:first-child {
+.mapboxgl-ctrl-group button:focus:first-child {
   border-radius: 4px 4px 0 0;
 }
-.mapboxgl-ctrl-group2b button:focus:last-child {
+.mapboxgl-ctrl-group button:focus:last-child {
   border-radius: 0 0 4px 4px;
 }
-.mapboxgl-ctrl-group2b button:focus:only-child {
+.mapboxgl-ctrl-group button:focus:only-child {
   border-radius: inherit;
 }
 .mapboxgl-ctrl button.mapboxgl-ctrl-zoom-out .mapboxgl-ctrl-icon {
