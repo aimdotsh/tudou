@@ -13,9 +13,9 @@ import {
   USE_DASH_LINE,
   LINE_OPACITY,
   MAP_HEIGHT,
-  PRIVACY_MODE,
   LIGHTS_ON,
 } from '@/utils/const';
+import { usePrivacyModeContext } from '@/context/PrivacyModeContext';
 import { Coordinate, IViewState, geoJsonForMap } from '@/utils/utils';
 import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
@@ -44,7 +44,8 @@ const RunMap = ({
 }: IRunMapProps) => {
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
-  const [lights, setLights] = useState(PRIVACY_MODE ? false : LIGHTS_ON);
+  const { isPrivacyMode } = usePrivacyModeContext();
+  const [lights, setLights] = useState(isPrivacyMode ? false : LIGHTS_ON);
   const keepWhenLightsOff = ['runs2']
   function switchLayerVisibility(map: MapInstance, lights: boolean) {
     const styleJson = map.getStyle();
@@ -67,9 +68,11 @@ const RunMap = ({
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
         map.on('style.load', () => {
-          if (!ROAD_LABEL_DISPLAY) {
+          if (!ROAD_LABEL_DISPLAY || isPrivacyMode) {
             MAP_LAYER_LIST.forEach((layerId) => {
-              map.removeLayer(layerId);
+              if (map.getLayer(layerId)) {
+                map.removeLayer(layerId);
+              }
             });
           }
           mapRef.current = ref;
@@ -196,7 +199,7 @@ const RunMap = ({
       )}
       <span className={styles.runTitle}>{title}</span>
       <FullscreenControl style={fullscreenButton}/>
-      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights}/>}
+              {!isPrivacyMode && <LightsControl setLights={setLights} lights={lights}/>}
       <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>
     </Map>
   );
