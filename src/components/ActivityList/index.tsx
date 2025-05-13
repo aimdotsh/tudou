@@ -263,9 +263,36 @@ const ActivityList: React.FC = () => {
 
             {interval === 'life' && (
                 <div className={styles.lifeContainer}>
-                    <Suspense fallback={<div>Loading SVG...</div>}>
-                        <MonthofLifeSvg />
-                    </Suspense>
+                    <div className={styles.chart} style={{ height: '400px', width: '100%' }}>
+                        <ResponsiveContainer>
+                            <BarChart
+                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({
+                                    period,
+                                    totalDistance: summary.totalDistance.toFixed(2),
+                                }))}
+                                margin={{ top: 20, right: 20, left: -20, bottom: 5 }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <XAxis
+                                    dataKey="period"
+                                    tick={{ fill: 'rgb(204, 204, 204)' }}
+                                    interval={0}
+                                    angle={-45}
+                                    textAnchor="end"
+                                />
+                                <YAxis
+                                    label={{ value: 'km', angle: -90, position: 'insideLeft', fill: 'rgb(204, 204, 204)' }}
+                                    tick={{ fill: 'rgb(204, 204, 204)' }}
+                                />
+                                <Tooltip
+                                    formatter={(value) => `${value} km`}
+                                    contentStyle={{ backgroundColor: 'rgb(36, 36, 36)', border: '1px solid #444', color: 'rgb(204, 204, 204)' }}
+                                    labelStyle={{ color: 'rgb(0, 237, 94)' }}
+                                />
+                                <Bar dataKey="totalDistance" fill="rgb(0, 237, 94)" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             )}
 
