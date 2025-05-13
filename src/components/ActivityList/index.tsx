@@ -263,7 +263,7 @@ const ActivityList: React.FC = () => {
 
             {interval === 'life' && (
                 <div className={styles.lifeContainer}>
-                    <div className={styles.chart} style={{ height: '400px', width: '100%' }}>
+                    <div className={styles.chart} style={{ height: '1400px', width: '50%' }}>
                         <ResponsiveContainer>
                             <BarChart
                                 data={Object.entries(activitiesByInterval).map(([period, summary]) => ({
