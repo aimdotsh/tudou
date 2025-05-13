@@ -105,7 +105,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
     };
 
     // Calculate Y-axis maximum value and ticks
-    const yAxisMax = Math.ceil(Math.max(...data.map(d => parseFloat(d.distance))) + 10); // Round up and add buffer
+    const yAxisMax = Math.ceil(Math.max(...data.map(d => parseFloat(d.distance))) + 200); // Add 200 as buffer
     const yAxisTicks = Array.from({ length: Math.ceil(yAxisMax / 5) + 1 }, (_, i) => i * 5); // Generate arithmetic sequence
 
     return (
