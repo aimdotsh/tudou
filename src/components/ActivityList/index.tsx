@@ -133,8 +133,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
                                 <XAxis dataKey="day" tick={{ fill: 'rgb(204, 204, 204)' }} />
                                 <YAxis
                                     label={{ value: 'km', angle: -90, position: 'insideLeft', fill: 'rgb(204, 204, 204)' }}
-                                    domain={[0, yAxisMax]}
-                                    ticks={yAxisTicks}
+                                    domain={[0, yAxisMax]} // 动态设置最大值
+                                    ticks={yAxisTicks} // 动态生成刻度
                                     tick={{ fill: 'rgb(204, 204, 204)' }}
                                 />
                                 <Tooltip
@@ -263,7 +263,7 @@ const ActivityList: React.FC = () => {
 
             {interval === 'life' && (
                 <div className={styles.lifeContainer}>
-                    <div className={styles.chart} style={{ height: '1400px', width: '50%' }}>
+                    <div className={styles.chart} style={{ height: '800px', width: '50%' }}>
                         <ResponsiveContainer>
                             <BarChart
                                 data={Object.entries(activitiesByInterval).map(([period, summary]) => ({
