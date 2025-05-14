@@ -44,47 +44,20 @@ const RunMap = ({
 }: IRunMapProps) => {
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
-  const { isPrivacyMode } = usePrivacyModeContext();
-  const [lights, setLights] = useState(isPrivacyMode ? false : LIGHTS_ON);
-
-  // 监听隐私模式变化
-  useEffect(() => {
-    if (mapRef.current) {
-      const map = mapRef.current.getMap();
-      // 确保在隐私模式切换时正确更新图层可见性
-      setTimeout(() => {
-        switchLayerVisibility(map, lights);
-      }, 100);
-    }
-  }, [isPrivacyMode, lights]);
+  const [lights, setLights] = useState(false);
   const keepWhenLightsOff = ['runs2']
-  function switchLayerVisibility(map: MapInstance, lights: boolean) {
+  function switchLayerVisibility(map: MapInstance) {
     const styleJson = map.getStyle();
+    const essentialLayers = ['runs2', 'province', 'countries', 'background', 'water'];
     
-    // 如果在隐私模式下，确保只显示必要的图层
-    if (isPrivacyMode) {
-      styleJson.layers.forEach((it: { id: string; }) => {
-        // 显示我们自己的图层和基础图层
-        const essentialLayers = ['runs2', 'province', 'countries', 'background', 'water'];
-        const visibility = essentialLayers.includes(it.id) ? 'visible' : 'none';
-        try {
-          map.setLayoutProperty(it.id, 'visibility', visibility);
-        } catch (e) {
-          // 忽略错误，有些图层可能没有visibility属性
-        }
-      });
-    } else {
-      // 非隐私模式下的原有逻辑
-      styleJson.layers.forEach((it: { id: string; }) => {
-        if (!keepWhenLightsOff.includes(it.id)) {
-          try {
-            map.setLayoutProperty(it.id, 'visibility', lights ? 'visible' : 'none');
-          } catch (e) {
-            // 忽略错误，有些图层可能没有visibility属性
-          }
-        }
-      });
-    }
+    styleJson.layers.forEach((it: { id: string; }) => {
+      const visibility = essentialLayers.includes(it.id) ? 'visible' : 'none';
+      try {
+        map.setLayoutProperty(it.id, 'visibility', visibility);
+      } catch (e) {
+        // 忽略错误，有些图层可能没有visibility属性
+      }
+    });
   }
   const mapRefCallback = useCallback(
     (ref: MapRef) => {
@@ -121,7 +94,7 @@ const RunMap = ({
           }
 
           // 应用图层可见性
-          switchLayerVisibility(map, lights);
+          switchLayerVisibility(map);
         });
       }
       if (mapRef.current) {
@@ -193,37 +166,34 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       style={style}
-      mapStyle={isPrivacyMode ? 
-        {
-          version: 8,
-          glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}",
-          sources: {
-            'composite': {
-              type: 'vector',
-              url: 'mapbox://mapbox.mapbox-streets-v8'
+      mapStyle={{
+        version: 8,
+        glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}",
+        sources: {
+          'composite': {
+            type: 'vector',
+            url: 'mapbox://mapbox.mapbox-streets-v8'
+          }
+        },
+        layers: [
+          {
+            id: 'background',
+            type: 'background',
+            paint: {
+              'background-color': '#111111'
             }
           },
-          layers: [
-            {
-              id: 'background',
-              type: 'background',
-              paint: {
-                'background-color': '#111111'
-              }
-            },
-            {
-              id: 'water',
-              type: 'fill',
-              source: 'composite',
-              'source-layer': 'water',
-              paint: {
-                'fill-color': '#000000'
-              }
+          {
+            id: 'water',
+            type: 'fill',
+            source: 'composite',
+            'source-layer': 'water',
+            paint: {
+              'fill-color': '#000000'
             }
-          ]
-        } : 
-        "mapbox://styles/mapbox/dark-v10"
-      }
+          }
+        ]
+      }}
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
     >
