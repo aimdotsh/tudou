@@ -154,8 +154,8 @@ const Total: React.FC = () => {
       </div>
 
       <div className={styles.charts}>
-        {/* 年度活动次数统计图 - 现在放在第一位，并使用宽布局 */}
-        <div className={`${styles.chartContainer} ${styles.wideChart}`}>
+        {/* 年度活动次数统计图 */}
+        <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
