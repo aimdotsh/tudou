@@ -38,9 +38,10 @@ const LINE_OPACITY = 0.6;
 const MAP_HEIGHT = 600;
 //set to `false` if you want to hide the road label characters
 const ROAD_LABEL_DISPLAY = true;
-// update for now 2024/11/17 the privacy mode is true
-//set to `true` if you want to display only the routes without showing the map.
-const PRIVACY_MODE = false;
+import { getPrivacyMode } from './storage';
+
+// 使用存储中的隐私模式设置，默认true
+const PRIVACY_MODE = getPrivacyMode();
 // update for now 2024/11/17 the lights on default is false
 //set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
 const LIGHTS_ON =false;

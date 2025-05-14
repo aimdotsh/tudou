@@ -13,9 +13,11 @@ import {
   USE_DASH_LINE,
   LINE_OPACITY,
   MAP_HEIGHT,
-  PRIVACY_MODE,
   LIGHTS_ON,
 } from '@/utils/const';
+import { getPrivacyMode } from '@/utils/storage';
+
+const PRIVACY_MODE = getPrivacyMode();
 import { Coordinate, IViewState, geoJsonForMap } from '@/utils/utils';
 import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
@@ -23,7 +25,6 @@ import styles from './style.module.css';
 import { FeatureCollection } from 'geojson';
 import { RPGeometry } from '@/static/run_countries';
 import './mapbox.css';
-import LightsControl from "@/components/RunMap/LightsControl";
 
 interface IRunMapProps {
   title: string;
@@ -44,18 +45,18 @@ const RunMap = ({
 }: IRunMapProps) => {
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
-  const [lights, setLights] = useState(PRIVACY_MODE ? false : LIGHTS_ON);
-  const keepWhenLightsOff = ['runs2']
-  function switchLayerVisibility(map: MapInstance, lights: boolean) {
+  const keepVisibleLayers = ['runs2', 'province', 'countries'];
+  
+  function switchLayerVisibility(map: MapInstance) {
     const styleJson = map.getStyle();
     styleJson.layers.forEach((it: { id: string; }) => {
-      if (!keepWhenLightsOff.includes(it.id)) {
-        if (lights)
-          map.setLayoutProperty(it.id, 'visibility', 'visible');
-        else
-          map.setLayoutProperty(it.id, 'visibility', 'none');
+      const visibility = keepVisibleLayers.includes(it.id) ? 'visible' : 'none';
+      try {
+        map.setLayoutProperty(it.id, 'visibility', visibility);
+      } catch (e) {
+        console.warn(`Failed to set visibility for layer ${it.id}:`, e);
       }
-    })
+    });
   }
   const mapRefCallback = useCallback(
     (ref: MapRef) => {
@@ -67,21 +68,35 @@ const RunMap = ({
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
         map.on('style.load', () => {
+          // Safari 兼容性处理
+          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          
           if (!ROAD_LABEL_DISPLAY) {
             MAP_LAYER_LIST.forEach((layerId) => {
-              map.removeLayer(layerId);
+              try {
+                map.removeLayer(layerId);
+              } catch (e) {
+                console.warn(`Failed to remove layer ${layerId}:`, e);
+              }
             });
           }
+          
           mapRef.current = ref;
-          switchLayerVisibility(map, lights);
+          
+          if (isSafari) {
+            // Safari 需要额外延迟
+            setTimeout(() => switchLayerVisibility(map), 300);
+          } else {
+            switchLayerVisibility(map);
+          }
         });
       }
       if (mapRef.current) {
         const map = mapRef.current.getMap();
-        switchLayerVisibility(map, lights);
+        switchLayerVisibility(map);
       }
     },
-    [mapRef, lights]
+    [mapRef]
   );
   const filterProvinces = provinces.slice();
   const filterCountries = countries.slice();
