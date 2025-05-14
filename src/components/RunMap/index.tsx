@@ -69,30 +69,9 @@ const RunMap = ({
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
         map.on('style.load', () => {
-          // 在非隐私模式下且不显示道路标签时，移除道路图层
-          if (!isPrivacyMode && !ROAD_LABEL_DISPLAY) {
-            MAP_LAYER_LIST.forEach((layerId) => {
-              if (map.getLayer(layerId)) {
-                map.removeLayer(layerId);
-              }
-            });
-          }
-
           // 确保地图引用被设置
           mapRef.current = ref;
-
-          // 在隐私模式下，确保我们的自定义图层可见
-          if (isPrivacyMode) {
-            // 等待下一个事件循环，确保所有图层都已加载
-            setTimeout(() => {
-              ['runs2', 'province', 'countries'].forEach(layerId => {
-                if (map.getLayer(layerId)) {
-                  map.setLayoutProperty(layerId, 'visibility', 'visible');
-                }
-              });
-            }, 100);
-          }
-
+          
           // 应用图层可见性
           switchLayerVisibility(map);
         });
