@@ -150,11 +150,18 @@
 /* 响应式布局 */
 @media (min-width: 1024px) {
   .charts {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
   }
 
   .chartContainer {
+    width: 100%;
+  }
+
+  /* 月度统计图占据整行 */
+  .monthlyChart {
+    grid-column: 1 / -1;
     width: 100%;
   }
 }

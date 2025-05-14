@@ -103,8 +103,10 @@ const Total: React.FC = () => {
     yearlyData.forEach(({ year, months }) => {
       months.forEach((distance, month) => {
         if (distance > 0) {
+          // 使用更简洁的月份标签格式
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
           allMonths.push({
-            month: `${year}-${(month + 1).toString().padStart(2, '0')}`,
+            month: `${year}-${monthNames[month]}`,
             distance,
             count: 1
           });
@@ -227,19 +229,20 @@ const Total: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* 月度统计图 */}
-        <div className={styles.chartContainer}>
+        {/* 月度统计图 - 使用宽布局 */}
+        <div className={`${styles.chartContainer} ${styles.monthlyChart}`}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
                 dataKey="month" 
                 tick={{ fill: '#ccc' }}
-                interval={0}
+                interval={1}  // 显示间隔，减少标签数量
                 angle={-45}
                 textAnchor="end"
-                height={60}
+                height={80}
+                padding={{ left: 10, right: 10 }}
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
