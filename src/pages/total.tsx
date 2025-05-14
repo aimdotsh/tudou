@@ -157,7 +157,7 @@ const Total: React.FC = () => {
 
       <div className={styles.charts}>
         {/* 年度活动次数统计图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.yearlyChart}`}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -193,7 +193,7 @@ const Total: React.FC = () => {
         </div>
 
         {/* 年度统计图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.yearlyChart}`}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -275,7 +275,7 @@ const Total: React.FC = () => {
         </div>
 
         {/* 热力图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.heatmapChart}`}>
           <h3>Activity Heatmap</h3>
           <div className={styles.heatmapContainer}>
             {yearlyData.length > 0 && (

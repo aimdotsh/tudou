@@ -159,8 +159,19 @@
     width: 100%;
   }
 
+  /* 年度图表保持相同宽度 */
+  .yearlyChart {
+    grid-column: auto;
+  }
+
   /* 月度统计图占据整行 */
   .monthlyChart {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  /* 热力图占据整行 */
+  .heatmapChart {
     grid-column: 1 / -1;
     width: 100%;
   }
