@@ -9,21 +9,7 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-let activities: Activity[] = [];
-
-// 动态加载并解密数据
-if (process.env.NODE_ENV === 'production') {
-  // 生产环境使用加密数据
-  import('@/data/activities.json').then(rawActivities => {
-    activities = rawActivities.map((activity: any) => ({
-      ...activity,
-      location_country: activity.location_country ? decrypt(activity.location_country) : undefined
-    }));
-  });
-} else {
-  // 开发环境使用原始数据
-  activities = require('@/static/activities.json');
-}
+import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 
