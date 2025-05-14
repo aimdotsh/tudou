@@ -13,7 +13,6 @@ import {
   USE_DASH_LINE,
   LINE_OPACITY,
   MAP_HEIGHT,
-  LIGHTS_ON,
 } from '@/utils/const';
 import { getPrivacyMode } from '@/utils/storage';
 
@@ -190,9 +189,9 @@ const RunMap = ({
           type="line"
           paint={{
             'line-color': ['get', 'color'],
-            'line-width': isBigMap && lights ? 1 : 2,
+            'line-width': isBigMap ? 1 : 2,
             'line-dasharray': dash,
-            'line-opacity': isSingleRun || isBigMap || !lights ? 1 : LINE_OPACITY,
+            'line-opacity': isSingleRun || isBigMap ? 1 : LINE_OPACITY,
             'line-blur': 1,
           }}
           layout={{
