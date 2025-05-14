@@ -12,6 +12,29 @@ import {
 import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
+
+// 辅助函数：将时间字符串转换为秒数
+const convertMovingTime2Sec = (movingTime: string | number): number => {
+  if (typeof movingTime === 'number') {
+    return movingTime;
+  }
+  
+  if (movingTime.includes(':')) {
+    const parts = movingTime.split(':').map(Number);
+    if (parts.length === 3) {
+      // HH:MM:SS 格式
+      const [hours, minutes, seconds] = parts;
+      return hours * 3600 + minutes * 60 + seconds;
+    } else if (parts.length === 2) {
+      // MM:SS 格式
+      const [minutes, seconds] = parts;
+      return minutes * 60 + seconds;
+    }
+  }
+  
+  // 尝试直接解析为数字
+  return parseInt(movingTime, 10) || 0;
+};
 import styles from './total.module.css';
 
 interface Activity {
@@ -58,18 +81,18 @@ const Total: React.FC = () => {
 
     const totalDistance = filteredActivities.reduce((sum, activity) => sum + activity.distance / 1000, 0);
     const totalTime = filteredActivities.reduce((sum, activity) => {
-      const [hours, minutes, seconds] = activity.moving_time.split(':').map(Number);
-      return sum + hours * 3600 + minutes * 60 + seconds;
+      return sum + convertMovingTime2Sec(activity.moving_time);
     }, 0);
 
-    const avgPace = totalTime / (totalDistance * 60); // minutes per km
+    // 计算平均配速（秒/公里）
+    const avgPace = totalDistance > 0 ? totalTime / totalDistance : 0;
     const maxDistance = Math.max(...filteredActivities.map(activity => activity.distance / 1000));
 
     return {
       totalActivities: filteredActivities.length,
       totalDistance: totalDistance.toFixed(2),
       totalTime: formatPace(totalTime),
-      avgPace: formatPace(avgPace * 60),
+      avgPace: avgPace > 0 ? formatPace(avgPace) : '--:--',
       maxDistance: maxDistance.toFixed(2)
     };
   }, [activityType]);

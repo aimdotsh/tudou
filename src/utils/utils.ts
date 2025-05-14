@@ -55,12 +55,15 @@ const titleForShow = (run: Activity): string => {
     }`;
 };
 
-const formatPace = (d: number): string => {
-  if (Number.isNaN(d) || d == 0) return '0';
-  const pace = (1000.0 / 60.0) * (1.0 / d);
-  const minutes = Math.floor(pace);
-  const seconds = Math.floor((pace - minutes) * 60.0);
-  return `${minutes}'${seconds.toFixed(0).toString().padStart(2, '0')}"`;
+const formatPace = (seconds: number): string => {
+  if (Number.isNaN(seconds) || seconds <= 0) return '--:--';
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  return `${minutes}'${secs.toString().padStart(2, '0')}"`;
 };
 
 const convertMovingTime2Sec = (moving_time: string): number => {
