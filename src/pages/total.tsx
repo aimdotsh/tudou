@@ -154,6 +154,42 @@ const Total: React.FC = () => {
       </div>
 
       <div className={styles.charts}>
+        {/* 年度活动次数统计图 - 现在放在第一位，并使用宽布局 */}
+        <div className={`${styles.chartContainer} ${styles.wideChart}`}>
+          <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+              <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
+              <YAxis tick={{ fill: '#ccc' }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
+                labelStyle={{ color: '#0ed45e' }}
+              />
+              <Legend />
+              <Bar 
+                dataKey="count" 
+                name="Activities" 
+                fill="#ff6b6b" 
+                onMouseOver={(data, index) => {
+                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
+                    if (rect.getAttribute('index') === String(index)) {
+                      rect.setAttribute('fill', '#ffcc00');
+                    }
+                  });
+                }}
+                onMouseOut={(data, index) => {
+                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
+                    if (rect.getAttribute('index') === String(index)) {
+                      rect.setAttribute('fill', '#ff6b6b');
+                    }
+                  });
+                }}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
         {/* 年度统计图 */}
         <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
@@ -168,25 +204,25 @@ const Total: React.FC = () => {
                 formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
               />
               <Legend />
-              <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* 年度活动次数统计图 */}
-        <div className={styles.chartContainer}>
-          <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
-              <YAxis tick={{ fill: '#ccc' }} />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
-                labelStyle={{ color: '#0ed45e' }}
+              <Bar 
+                dataKey="distance" 
+                name="Distance (km)" 
+                fill="#0ed45e" 
+                onMouseOver={(data, index) => {
+                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
+                    if (rect.getAttribute('index') === String(index)) {
+                      rect.setAttribute('fill', '#ffcc00');
+                    }
+                  });
+                }}
+                onMouseOut={(data, index) => {
+                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
+                    if (rect.getAttribute('index') === String(index)) {
+                      rect.setAttribute('fill', '#0ed45e');
+                    }
+                  });
+                }}
               />
-              <Legend />
-              <Bar dataKey="count" name="Activities" fill="#ff6b6b" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -212,7 +248,25 @@ const Total: React.FC = () => {
                 formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
               />
               <Legend />
-              <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
+              <Bar 
+                dataKey="distance" 
+                name="Distance (km)" 
+                fill="#0ed45e" 
+                onMouseOver={(data, index) => {
+                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
+                    if (rect.getAttribute('index') === String(index)) {
+                      rect.setAttribute('fill', '#ffcc00');
+                    }
+                  });
+                }}
+                onMouseOut={(data, index) => {
+                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
+                    if (rect.getAttribute('index') === String(index)) {
+                      rect.setAttribute('fill', '#0ed45e');
+                    }
+                  });
+                }}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

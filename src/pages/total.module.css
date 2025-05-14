@@ -150,7 +150,18 @@
 /* 响应式布局 */
 @media (min-width: 1024px) {
   .charts {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
+  }
+
+  /* 确保宽图表占据更多空间 */
+  .wideChart {
+    grid-column: 1 / -1;
+    margin-bottom: 2rem;
+  }
+
+  /* 调整其他图表的布局 */
+  .chartContainer:not(.wideChart) {
+    grid-column: auto;
   }
 }
 
