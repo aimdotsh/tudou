@@ -150,11 +150,23 @@
 /* 响应式布局 */
 @media (min-width: 1024px) {
   .charts {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
   }
 
   .chartContainer {
+    width: 100%;
+  }
+
+  /* 确保年度图表等宽 */
+  .yearlyChart {
+    width: 100%;
+  }
+
+  /* 确保月度图表和热力图等宽 */
+  .monthlyChart, .heatmapChart {
+    grid-column: span 1;
     width: 100%;
   }
 }

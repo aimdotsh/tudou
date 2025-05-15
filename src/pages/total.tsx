@@ -100,11 +100,13 @@ const Total: React.FC = () => {
   // 计算月度数据
   const monthlyData = React.useMemo(() => {
     const allMonths: { month: string; distance: number; count: number }[] = [];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
     yearlyData.forEach(({ year, months }) => {
       months.forEach((distance, month) => {
         if (distance > 0) {
           allMonths.push({
-            month: `${year}-${(month + 1).toString().padStart(2, '0')}`,
+            month: `${year}-${monthNames[month]}`,
             distance,
             count: 1
           });
@@ -155,7 +157,7 @@ const Total: React.FC = () => {
 
       <div className={styles.charts}>
         {/* 年度活动次数统计图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.yearlyChart}`}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -191,7 +193,7 @@ const Total: React.FC = () => {
         </div>
 
         {/* 年度统计图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.yearlyChart}`}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -228,18 +230,19 @@ const Total: React.FC = () => {
         </div>
 
         {/* 月度统计图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.monthlyChart}`}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
                 dataKey="month" 
                 tick={{ fill: '#ccc' }}
-                interval={0}
+                interval={2}  // 每隔2个显示一个标签
                 angle={-45}
                 textAnchor="end"
-                height={60}
+                height={80}
+                padding={{ left: 20, right: 20 }}
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
@@ -272,7 +275,7 @@ const Total: React.FC = () => {
         </div>
 
         {/* 热力图 */}
-        <div className={styles.chartContainer}>
+        <div className={`${styles.chartContainer} ${styles.heatmapChart}`}>
           <h3>Activity Heatmap</h3>
           <div className={styles.heatmapContainer}>
             {yearlyData.length > 0 && (
