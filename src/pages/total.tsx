@@ -164,35 +164,50 @@ const Total: React.FC = () => {
         <div className={styles.chartContainer} style={{gridColumn: '1'}}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
-              <YAxis tick={{ fill: '#ccc' }} />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
-                labelStyle={{ color: '#0ed45e' }}
-              />
-              <Legend />
-              <Bar 
-                dataKey="count" 
-                name="Activities" 
-                fill="#ff6b6b" 
-                onMouseOver={(data, index) => {
-                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
-                    if (rect.getAttribute('index') === String(index)) {
-                      rect.setAttribute('fill', '#ffcc00');
-                    }
-                  });
-                }}
-                onMouseOut={(data, index) => {
-                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
-                    if (rect.getAttribute('index') === String(index)) {
-                      rect.setAttribute('fill', '#ff6b6b');
-                    }
-                  });
-                }}
-              />
-            </BarChart>
+            <BarChart
+  data={monthlyData}
+  margin={{ top: 15, right: 20, left: 40, bottom: 30 }}
+  layout="vertical"
+>
+  <CartesianGrid
+    strokeDasharray="3 3"
+    stroke="#333"
+    horizontal={true}
+    vertical={false}
+  />
+  <XAxis
+    dataKey="distance"
+    type="number"
+    tick={{ fill: '#aaa', fontSize: 12 }}
+    tickMargin={10}
+    axisLine={{ stroke: '#555' }}
+    tickCount={5}
+  />
+  <YAxis
+    dataKey="fullDate"
+    tick={{ fill: '#eee', fontSize: 12 }}
+    width={100}
+    tickFormatter={(value) => value.split('-')[0]}
+    axisLine={{ stroke: '#555' }}
+  />
+  <Bar
+    dataKey="distance"
+    name="Distance (km)"
+    fill="#0ed45e"
+    barSize={25}
+    radius={[3, 3, 0, 0]}
+    animationDuration={1500}
+  />
+  <Tooltip
+    contentStyle={{
+      background: '#1a1a1a',
+      border: '1px solid #444',
+      borderRadius: '4px'
+    }}
+    formatter={(value) => [`${value} km`, 'Distance']}
+    labelFormatter={(label) => `Year: ${label.split('-')[0]}`}
+  />
+</BarChart>
           </ResponsiveContainer>
         </div>
 
@@ -237,20 +252,31 @@ const Total: React.FC = () => {
         <div className={styles.chartContainer} style={{gridColumn: '1 / span 2'}}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+            <BarChart 
+              data={monthlyData} 
+              margin={{ top: 10, right: 15, left: 15, bottom: 30 }}
+              layout="vertical"  // 改为垂直布局
+            >
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                stroke="#444" 
+                horizontal={false}  // 只显示垂直网格线
+              />
               <XAxis 
+                dataKey="distance"  // 改为显示距离值
+                type="number"
+                tick={{ fill: '#ccc' }}
+                tickMargin={5}
+                axisLine={false}
+              />
+              <YAxis 
                 dataKey="fullDate"
                 tick={{ fill: '#ccc' }}
-                ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
-                tickFormatter={(value) => value.split('-')[0]} // 只显示年份
-                interval={0}    // 强制显示所有指定的ticks
-                angle={0}       // 水平显示
-                textAnchor="middle"
-                height={40}
-                padding={{ left: 20, right: 20 }}
+                ticks={uniqueYears.map(year => `${year}-01`)}
+                tickFormatter={(value) => value.split('-')[0]}
+                width={80}
+                tickMargin={5}
               />
-              <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
                 labelStyle={{ color: '#0ed45e' }}
