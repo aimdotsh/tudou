@@ -45,7 +45,7 @@ const RunMap = ({
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
   const { isPrivacyMode } = usePrivacyModeContext();
-  const [lights, setLights] = useState(isPrivacyMode ? false : LIGHTS_ON);
+  const lights = false; // 隐私模式下始终关闭灯光效果
 
   // 监听隐私模式变化
   useEffect(() => {
