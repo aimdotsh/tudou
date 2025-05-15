@@ -151,7 +151,7 @@
 @media (min-width: 1024px) {
   .charts {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 35% 65%; /* 35%和65%的列宽 */
     gap: 2rem;
   }
 
@@ -159,14 +159,9 @@
     width: 100%;
   }
 
-  /* 确保年度图表等宽 */
-  .yearlyChart {
-    width: 100%;
-  }
-
-  /* 确保月度图表和热力图等宽 */
+  /* 月度图表和热力图占满整行 */
   .monthlyChart, .heatmapChart {
-    grid-column: span 1;
+    grid-column: span 2;
     width: 100%;
   }
 }

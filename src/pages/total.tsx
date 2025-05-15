@@ -156,8 +156,8 @@ const Total: React.FC = () => {
       </div>
 
       <div className={styles.charts}>
-        {/* 年度活动次数统计图 */}
-        <div className={`${styles.chartContainer} ${styles.yearlyChart}`}>
+        {/* 年度活动次数统计图 - 35%宽度 */}
+        <div className={styles.chartContainer} style={{gridColumn: '1'}}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -192,8 +192,8 @@ const Total: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* 年度统计图 */}
-        <div className={`${styles.chartContainer} ${styles.yearlyChart}`}>
+        {/* 年度总距离统计图 - 65%宽度 */}
+        <div className={styles.chartContainer} style={{gridColumn: '2'}}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -229,8 +229,8 @@ const Total: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* 月度统计图 */}
-        <div className={`${styles.chartContainer} ${styles.monthlyChart}`}>
+        {/* 月度总距离统计图 - 整行宽度 */}
+        <div className={styles.chartContainer} style={{gridColumn: '1 / span 2'}}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
@@ -274,8 +274,8 @@ const Total: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* 热力图 */}
-        <div className={`${styles.chartContainer} ${styles.heatmapChart}`}>
+        {/* 活动热力图 - 整行宽度 */}
+        <div className={styles.chartContainer} style={{gridColumn: '1 / span 2'}}>
           <h3>Activity Heatmap</h3>
           <div className={styles.heatmapContainer}>
             {yearlyData.length > 0 && (
