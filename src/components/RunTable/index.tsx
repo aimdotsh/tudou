@@ -61,7 +61,6 @@ const RunTable = ({
     ['KM', sortKMFunc],
     ['Elevation Gain', sortElevationGainFunc],
     ['Pace', sortPaceFunc],
-    ['BPM', sortBPMFunc],
     ['Time', sortRunTimeFunc],
     ['Date', sortDateFuncClick],
   ]);
