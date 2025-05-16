@@ -136,21 +136,7 @@ const Total: React.FC = () => {
       </div>
       
 
-      <div className={styles.header}>
-        <Link href="./" passHref>
-          <a className={styles.backButton}>← 返回首页</a>
-        </Link>
-        <h1 className={styles.title}>Activity Statistics</h1>
-        <select 
-          onChange={(e) => setActivityType(e.target.value)} 
-          value={activityType}
-          className={styles.select}
-        >
-          {showTypes.map((type) => (
-            <option key={type} value={type}>{TYPES_MAPPING[type]}</option>
-          ))}
-        </select>
-      </div>
+
 
       {/* 统计卡片 */}
       <div className={styles.statsCards}>
