@@ -211,21 +211,15 @@ const Total: React.FC = () => {
             <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
-                dataKey="month"
+                dataKey="fullDate"
                 tick={{ fill: '#ccc', fontSize: 12 }}
-                interval={11}  // 每12个月显示一次标签
-                tickFormatter={(value, index) => {
-                  // 只在每年1月显示年份
-                  if (value === 'Jan') {
-                    return monthlyData[index].year;
-                  }
-                  return '';
-                }}
+                ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
+                tickFormatter={(value) => value.split('-')[0]} // 只显示年份
+                interval={0}    // 显示所有指定的ticks
                 angle={0}
                 textAnchor="middle"
                 height={40}
                 padding={{ left: 30, right: 30 }}
-                minTickGap={50}  // 确保标签之间有足够空间
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
