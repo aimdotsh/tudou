@@ -203,3 +203,37 @@
 :global(.recharts-yAxis .recharts-cartesian-axis-tick-value) {
   fill: #ccc;
 }
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #e0e0e0;
+}
+
+.title {
+  margin: 0 auto;
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+.select {
+  position: absolute;
+  right: 0;
+}

@@ -13,7 +13,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-
+import Link from 'next/link';
 // 辅助函数：将时间字符串转换为秒数
 const convertMovingTime2Sec = (movingTime: string | number): number => {
   if (typeof movingTime === 'number') {
@@ -124,6 +124,23 @@ const Total: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        <h1 className={styles.title}>Activity Statistics</h1>
+        <select 
+          onChange={(e) => setActivityType(e.target.value)} 
+          value={activityType}
+          className={styles.select}
+        >
+          {showTypes.map((type) => (
+            <option key={type} value={type}>{TYPES_MAPPING[type]}</option>
+          ))}
+        </select>
+      </div>
+      
+
+      <div className={styles.header}>
+        <Link href="./" passHref>
+          <a className={styles.backButton}>← 返回首页</a>
+        </Link>
         <h1 className={styles.title}>Activity Statistics</h1>
         <select 
           onChange={(e) => setActivityType(e.target.value)} 
