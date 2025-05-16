@@ -107,8 +107,8 @@ const Total: React.FC = () => {
       months.forEach((distance, month) => {
         if (distance > 0) {
           allMonths.push({
-            month: monthNames[month],  // 月份缩写
-            year: year.toString(),     // 年份
+            month: monthNames[month],
+            year: year.toString(),
             distance
           });
         }
@@ -204,9 +204,17 @@ const Total: React.FC = () => {
             <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
-                dataKey="year"
+                dataKey="month"
                 tick={{ fill: '#ccc' }}
-                interval={0} // 每1个显示一个标签（每年）
+                ticks={monthlyData
+                  .filter((_, index) => index % 12 === 0) // 每年第一个月(1月)
+                  .map(item => item.month)
+                }
+                tickFormatter={(month, index) => {
+                  // 只在1月位置显示年份
+                  return month === 'Jan' ? monthlyData[index*12].year : '';
+                }}
+                interval={0}
                 angle={0}
                 textAnchor="middle"
                 height={40}
