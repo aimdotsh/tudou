@@ -206,7 +206,7 @@ const Total: React.FC = () => {
               <XAxis 
                 dataKey="year"
                 tick={{ fill: '#ccc' }}
-                interval={0} // 每1个显示一个标签（每年）
+                interval={12} // 每1个显示一个标签（每年）
                 angle={0}
                 textAnchor="middle"
                 height={40}
