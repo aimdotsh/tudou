@@ -213,13 +213,12 @@ const Total: React.FC = () => {
               <XAxis 
                 dataKey="month"
                 tick={{ fill: '#ccc', fontSize: 12 }}
-                ticks={monthlyData.filter(item => item.month === 'Jan').map(item => item.month)}
+                ticks={monthlyData.filter(item => 
+                  item.month === 'Jan' || item.month === 'Jul'
+                ).map(item => item.month)}
                 tickFormatter={(value, index) => {
-                  // 只在1月位置显示年份
-                  if (value === 'Jan') {
-                    return monthlyData[index].year;
-                  }
-                  return '';
+                  const item = monthlyData[index * 6]; // 每6个月一个标签
+                  return item ? item.year : '';
                 }}
                 interval={0}
                 angle={0}
