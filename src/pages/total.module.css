@@ -41,7 +41,7 @@
 }
 
 .statCard {
-  background-color: #1a1a1a;
+  background-color: #e5caca;
   border-radius: 8px;
   padding: 1.5rem;
   text-align: center;
@@ -51,7 +51,7 @@
 
 .statCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(219, 205, 205, 0.2);
 }
 
 .statCard h4 {
