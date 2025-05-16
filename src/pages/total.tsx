@@ -164,50 +164,49 @@ const Total: React.FC = () => {
         <div className={styles.chartContainer} style={{gridColumn: '1'}}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-  data={monthlyData}
-  margin={{ top: 15, right: 20, left: 40, bottom: 30 }}
-  layout="vertical"
->
-  <CartesianGrid
-    strokeDasharray="3 3"
-    stroke="#333"
-    horizontal={true}
-    vertical={false}
-  />
-  <XAxis
-    dataKey="distance"
-    type="number"
-    tick={{ fill: '#aaa', fontSize: 12 }}
-    tickMargin={10}
-    axisLine={{ stroke: '#555' }}
-    tickCount={5}
-  />
-  <YAxis
-    dataKey="fullDate"
-    tick={{ fill: '#eee', fontSize: 12 }}
-    width={100}
-    tickFormatter={(value) => value.split('-')[0]}
-    axisLine={{ stroke: '#555' }}
-  />
-  <Bar
-    dataKey="distance"
-    name="Distance (km)"
-    fill="#0ed45e"
-    barSize={25}
-    radius={[3, 3, 0, 0]}
-    animationDuration={1500}
-  />
-  <Tooltip
-    contentStyle={{
-      background: '#1a1a1a',
-      border: '1px solid #444',
-      borderRadius: '4px'
-    }}
-    formatter={(value) => [`${value} km`, 'Distance']}
-    labelFormatter={(label) => `Year: ${label.split('-')[0]}`}
-  />
-</BarChart>
+            {/* 年度活动次数统计图 */}
+            <div className={styles.chartContainer}>
+              <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                  <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
+                  <YAxis tick={{ fill: '#ccc' }} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
+                    labelStyle={{ color: '#0ed45e' }}
+                  />
+                  <Legend />
+                  <Bar dataKey="count" name="Activities" fill="#ff6b6b" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* 月度统计图 */}
+            <div className={styles.chartContainer}>
+              <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                  <XAxis 
+                    dataKey="month" 
+                    tick={{ fill: '#ccc' }}
+                    interval={0}
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
+                  />
+                  <YAxis tick={{ fill: '#ccc' }} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
+                    labelStyle={{ color: '#0ed45e' }}
+                    formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
+                  />
+                  <Legend />
+                  <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </ResponsiveContainer>
         </div>
 
