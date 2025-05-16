@@ -213,23 +213,19 @@ const Total: React.FC = () => {
               <XAxis 
                 dataKey="month"
                 tick={{ fill: '#ccc', fontSize: 12 }}
-                ticks={monthlyData
-                  .filter(item => item.month === 'Jan')
-                  .map(item => item.month)
-                }
+                interval={11}  // 每12个月显示一次标签
                 tickFormatter={(value, index) => {
-                  // 找到对应的数据项
-                  const januaryItems = monthlyData.filter(item => item.month === 'Jan');
-                  if (index < januaryItems.length) {
-                    return januaryItems[index].year;
+                  // 只在每年1月显示年份
+                  if (value === 'Jan') {
+                    return monthlyData[index].year;
                   }
                   return '';
                 }}
-                interval={0}
                 angle={0}
                 textAnchor="middle"
                 height={40}
                 padding={{ left: 30, right: 30 }}
+                minTickGap={50}  // 确保标签之间有足够空间
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
