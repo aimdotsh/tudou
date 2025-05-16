@@ -104,12 +104,14 @@ const Total: React.FC = () => {
     
     yearlyData.forEach(({ year, months }) => {
       months.forEach((distance, month) => {
-        allMonths.push({
-          month: monthNames[month],
-          year: year.toString(),
-          fullDate: `${year}-${(month+1).toString().padStart(2, '0')}`,
-          distance: distance || 0  // 确保所有月份都有值
-        });
+        if (distance > 0) {  // 只添加有数据的月份
+          allMonths.push({
+            month: monthNames[month],
+            year: year.toString(), 
+            fullDate: `${year}-${(month+1).toString().padStart(2, '0')}`,
+            distance
+          });
+        }
       });
     });
     return allMonths;
