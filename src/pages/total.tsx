@@ -204,12 +204,13 @@ const Total: React.FC = () => {
             <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
-                dataKey="month"
+                dataKey="year"
                 tick={{ fill: '#ccc' }}
-                interval={11} // 每12个月显示一个标签（每年1月）
+                interval={0} // 每1个显示一个标签（每年）
                 angle={0}
                 textAnchor="middle"
                 height={40}
+                tickFormatter={(value) => value} // 直接显示年份
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
