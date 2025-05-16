@@ -202,7 +202,7 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
                 dataKey="fullDate"
@@ -220,14 +220,17 @@ const Total: React.FC = () => {
                 contentStyle={{ 
                   backgroundColor: '#242424',
                   border: '1px solid #444',
-                  borderRadius: '4px'
+                  borderRadius: '4px',
+                  padding: '8px 12px'
                 }}
+                labelFormatter={(value) => '详细数据'}
                 formatter={(value: number, name: string, props: any) => {
-                  const month = props.payload.month; // 获取月份
-                  const year = props.payload.year;  // 获取年份
+                  const month = props.payload.month;
+                  const year = props.payload.year;
+                  const monthNum = props.payload.fullDate.split('-')[1];
                   return [
-                    `${value.toFixed(2)} km`,       // 距离值
-                    `${year}-${month}`             // 年月格式
+                    `距离: ${value.toFixed(2)} km`,
+                    `日期: ${year}-${monthNum} (${month})`
                   ];
                 }}
               />
