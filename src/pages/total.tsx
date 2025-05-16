@@ -108,7 +108,7 @@ const Total: React.FC = () => {
           allMonths.push({
             month: monthNames[month],  // 月份缩写用于显示
             year: year.toString(),    // 年份用于分组
-            fullDate: `${year}-${(month+1).().padStart(2, '0')}`,
+                          fullDate: `${year}-${(month+1).toString().padStart(2, '0')}`,
             distance
           });
         }
