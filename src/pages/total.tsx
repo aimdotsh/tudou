@@ -213,10 +213,19 @@ const Total: React.FC = () => {
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
-                labelStyle={{ color: '#0ed45e' }}
-                formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
-              />
+                contentStyle={{ 
+                  backgroundColor: '#242424', border: '1px solid #444',borderRadius: '4px'
+                }}
+                labelFormatter={(value) => {
+                  // 获取当前数据点对应的月份
+                  const activeData = monthlyData.find(item => item.year === value);
+                  return activeData ? `${value}-${activeData.month}` : value;
+                }}
+                formatter={(value: number) => [
+                  `${value.toFixed(2)} km`, 
+                  'Distance'
+                ]}
+/>
               <Legend />
               <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
             </BarChart>
