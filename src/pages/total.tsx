@@ -211,9 +211,20 @@ const Total: React.FC = () => {
             <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
-                dataKey="year"
+                dataKey="month"
                 tick={{ fill: '#ccc', fontSize: 12 }}
-                ticks={uniqueYears}  // 使用唯一年份列表
+                ticks={monthlyData
+                  .filter(item => item.month === 'Jan')
+                  .map(item => item.month)
+                }
+                tickFormatter={(value, index) => {
+                  // 找到对应的数据项
+                  const januaryItems = monthlyData.filter(item => item.month === 'Jan');
+                  if (index < januaryItems.length) {
+                    return januaryItems[index].year;
+                  }
+                  return '';
+                }}
                 interval={0}
                 angle={0}
                 textAnchor="middle"
