@@ -16,10 +16,10 @@ const getBasePath = () => {
 };
 
 const data: ISiteMetadataResult = {
-  siteTitle: '苹果梨🍐的跑路之旅',
+  siteTitle: '蓝皮书的自留地',
   siteUrl: 'https://run.liups.com',
   logo: 'https://aim.sh/images/run.png',
-  description: '苹果梨🍐的跑路之旅',
+  description: '蓝皮书的自留地',
   keywords: 'workouts, running, cycling, riding, roadtrip, hiking, swimming',
   navLinks: [
     {
