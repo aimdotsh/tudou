@@ -99,16 +99,16 @@ const Total: React.FC = () => {
 
   // 计算月度数据 - 保持完整月份数据但优化显示
   const monthlyData = React.useMemo(() => {
-    const allMonths: { month: string; year: string; fullDate: string; distance: number }[] = [];
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const allMonths: { month: string; year: string; distance: number }[] = [];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
     yearlyData.forEach(({ year, months }) => {
       months.forEach((distance, month) => {
         if (distance > 0) {
           allMonths.push({
-            month: monthNames[month],  // 月份缩写用于显示
-            year: year.toString(),    // 年份用于分组
-                          fullDate: `${year}-${(month+1).toString().padStart(2, '0')}`,
+            month: monthNames[month],  // 月份缩写
+            year: year.toString(),     // 年份
             distance
           });
         }
