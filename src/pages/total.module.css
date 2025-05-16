@@ -66,6 +66,7 @@
   font-weight: bold;
 }
 
+/* 图表布局 */
 .charts {
   display: grid;
   grid-template-columns: 1fr;
@@ -84,6 +85,27 @@
   margin-bottom: 1.5rem;
   color: #0ed45e;
   font-size: 1.25rem;
+}
+
+/* 响应式布局 */
+@media (min-width: 768px) {
+  .charts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .fullWidth {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .charts {
+    grid-template-columns: 35% 65%;
+  }
+  
+  .fullWidth {
+    grid-column: 1 / -1;
+  }
 }
 
 /* 热力图样式 */
@@ -145,25 +167,6 @@
 
 .heatmapCell:hover {
   transform: scale(1.1);
-}
-
-/* 响应式布局 */
-@media (min-width: 1024px) {
-  .charts {
-    display: grid;
-    grid-template-columns: 35% 65%; /* 35%和65%的列宽 */
-    gap: 2rem;
-  }
-
-  .chartContainer {
-    width: 100%;
-  }
-
-  /* 月度图表和热力图占满整行 */
-  .monthlyChart, .heatmapChart {
-    grid-column: span 2;
-    width: 100%;
-  }
 }
 
 /* 图表组件样式 */

@@ -1,4 +1,4 @@
-   import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -12,6 +12,7 @@ import {
 import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
+import styles from './total.module.css';
 
 // 辅助函数：将时间字符串转换为秒数
 const convertMovingTime2Sec = (movingTime: string | number): number => {
@@ -35,7 +36,6 @@ const convertMovingTime2Sec = (movingTime: string | number): number => {
   // 尝试直接解析为数字
   return parseInt(movingTime, 10) || 0;
 };
-import styles from './total.module.css';
 
 interface Activity {
   start_date_local: string;
@@ -107,8 +107,8 @@ const Total: React.FC = () => {
         if (distance > 0) {
           allMonths.push({
             month: monthNames[month],  // 月份缩写用于显示
-            year: year,               // 年份用于分组
-            fullDate: `${year}-${(month+1).toString().padStart(2, '0')}`, // 完整日期格式
+            year: year.toString(),    // 年份用于分组
+            fullDate: `${year}-${(month+1).().padStart(2, '0')}`, // 完整日期格式
             distance
           });
         }
@@ -160,58 +160,26 @@ const Total: React.FC = () => {
       </div>
 
       <div className={styles.charts}>
-        {/* 年度活动次数统计图 - 35%宽度 */}
-        <div className={styles.chartContainer} style={{gridColumn: '1'}}>
+        {/* 年度活动次数统计图 - 40%宽度 */}
+        <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            {/* 年度活动次数统计图 */}
-            <div className={styles.chartContainer}>
-              <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                  <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
-                  <YAxis tick={{ fill: '#ccc' }} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
-                    labelStyle={{ color: '#0ed45e' }}
-                  />
-                  <Legend />
-                  <Bar dataKey="count" name="Activities" fill="#ff6b6b" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* 月度统计图 */}
-            <div className={styles.chartContainer}>
-              <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                  <XAxis 
-                    dataKey="month" 
-                    tick={{ fill: '#ccc' }}
-                    interval={0}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis tick={{ fill: '#ccc' }} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
-                    labelStyle={{ color: '#0ed45e' }}
-                    formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
-                  />
-                  <Legend />
-                  <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+              <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
+              <YAxis tick={{ fill: '#ccc' }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
+                labelStyle={{ color: '#0ed45e' }}
+              />
+              <Legend />
+              <Bar dataKey="count" name="Activities" fill="#ff6b6b" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* 年度总距离统计图 - 65%宽度 */}
-        <div className={styles.chartContainer} style={{gridColumn: '2'}}>
+        {/* 年度总距离统计图 - 60%宽度 */}
+        <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -224,89 +192,39 @@ const Total: React.FC = () => {
                 formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
               />
               <Legend />
-              <Bar 
-                dataKey="distance" 
-                name="Distance (km)" 
-                fill="#0ed45e" 
-                onMouseOver={(data, index) => {
-                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
-                    if (rect.getAttribute('index') === String(index)) {
-                      rect.setAttribute('fill', '#ffcc00');
-                    }
-                  });
-                }}
-                onMouseOut={(data, index) => {
-                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
-                    if (rect.getAttribute('index') === String(index)) {
-                      rect.setAttribute('fill', '#0ed45e');
-                    }
-                  });
-                }}
-              />
+              <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* 月度总距离统计图 - 整行宽度 */}
-        <div className={styles.chartContainer} style={{gridColumn: '1 / span 2'}}>
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart 
-              data={monthlyData} 
-              margin={{ top: 10, right: 15, left: 15, bottom: 30 }}
-              layout="vertical"  // 改为垂直布局
-            >
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="#444" 
-                horizontal={false}  // 只显示垂直网格线
-              />
+            <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
-                dataKey="distance"  // 改为显示距离值
-                type="number"
+                dataKey="month" 
                 tick={{ fill: '#ccc' }}
-                tickMargin={5}
-                axisLine={false}
+                interval={0}
+                angle={-45}
+                textAnchor="end"
+                height={60}
               />
-              <YAxis 
-                dataKey="fullDate"
-                tick={{ fill: '#ccc' }}
-                ticks={uniqueYears.map(year => `${year}-01`)}
-                tickFormatter={(value) => value.split('-')[0]}
-                width={80}
-                tickMargin={5}
-              />
+              <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
                 labelStyle={{ color: '#0ed45e' }}
                 formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
               />
               <Legend />
-              <Bar 
-                dataKey="distance" 
-                name="Distance (km)" 
-                fill="#0ed45e" 
-                onMouseOver={(data, index) => {
-                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
-                    if (rect.getAttribute('index') === String(index)) {
-                      rect.setAttribute('fill', '#ffcc00');
-                    }
-                  });
-                }}
-                onMouseOut={(data, index) => {
-                  document.querySelectorAll('.recharts-bar-rectangle').forEach(rect => {
-                    if (rect.getAttribute('index') === String(index)) {
-                      rect.setAttribute('fill', '#0ed45e');
-                    }
-                  });
-                }}
-              />
+              <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* 活动热力图 - 整行宽度 */}
-        <div className={styles.chartContainer} style={{gridColumn: '1 / span 2'}}>
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Activity Heatmap</h3>
           <div className={styles.heatmapContainer}>
             {yearlyData.length > 0 && (
