@@ -51,8 +51,8 @@ interface Offset {
 const getRandomOffset = (): Offset => {
   const randomAngle = Math.random() * Math.PI * 2;
   return {
-    lat: (100 / 111.32) * Math.sin(randomAngle),
-    lng: (100 / 111.32) * Math.cos(randomAngle)
+    lat: (300 / 111.32) * Math.sin(randomAngle),
+    lng: (300 / 111.32) * Math.cos(randomAngle)
   };
 };
 const titleForShow = (run: Activity): string => {
