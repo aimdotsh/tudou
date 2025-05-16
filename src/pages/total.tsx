@@ -210,7 +210,6 @@ const Total: React.FC = () => {
                 angle={0}
                 textAnchor="middle"
                 height={40}
-                tickFormatter={(value) => value} // 直接显示年份
               />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
