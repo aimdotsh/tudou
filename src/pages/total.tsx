@@ -255,7 +255,7 @@ const Total: React.FC = () => {
                   </div>
                 </div>
                 <div className={styles.heatmapBody}>
-                  {yearlyData.map(({ year, months }) => (
+                  {[...yearlyData].reverse().map(({ year, months }) => (
                     <div key={year} className={styles.heatmapRow}>
                       <div className={styles.heatmapYear}>{year}</div>
                       <div className={styles.heatmapCells}>
