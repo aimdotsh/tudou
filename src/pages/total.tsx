@@ -206,8 +206,7 @@ const Total: React.FC = () => {
               <XAxis 
                 dataKey="month"
                 tick={{ fill: '#ccc' }}
-                interval={5}  // 每6个月显示一个标签 (0-5, 6-11)
-                ticks={['Jan', 'Jul']} // 显示1月和7月作为标签
+                interval={11} // 每12个月显示一个标签（每年1月）
                 angle={0}
                 textAnchor="middle"
                 height={40}
