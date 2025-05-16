@@ -99,34 +99,26 @@ const Total: React.FC = () => {
 
   // 计算月度数据 - 保持完整月份数据但优化显示
   const monthlyData = React.useMemo(() => {
-    const allMonths: { 
-      month: string;  // 月份缩写如"Jan"
-      monthNum: string; // 月份数字如"01" 
-      year: string;   // 年份如"2023"
-      distance: number 
-    }[] = [];
+    const allMonths: { month: string; year: string; fullDate: string; distance: number }[] = [];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
-    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun',
-                      'Jul','Aug','Sep','Oct','Nov','Dec'];
-
     yearlyData.forEach(({ year, months }) => {
-      months.forEach((distance, monthIdx) => {
-        if (distance > 0) {
-          allMonths.push({
-            month: monthNames[monthIdx],
-            monthNum: String(monthIdx+1).padStart(2, '0'),
-            year: String(year),
-            distance
-          });
-        }
+      months.forEach((distance, month) => {
+        allMonths.push({
+          month: monthNames[month],
+          year: year.toString(),
+          fullDate: `${year}-${(month+1).().padStart(2, '0')}`,
+          distance: distance || 0  // 确保所有月份都有值
+        });
       });
     });
     return allMonths;
   }, [yearlyData]);
 
   // 获取唯一的年份列表用于X轴标签
-  const uniqueYears = Array.from(new Set(yearlyData.map(item => item.year)));
-
+  const uniqueYears = Array.from(new Set(
+    yearlyData.map(item => item.year.toString())
+  )).sort();
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -215,7 +207,7 @@ const Total: React.FC = () => {
                 tick={{ fill: '#ccc', fontSize: 12 }}
                 ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
                 tickFormatter={(value) => value.split('-')[0]} // 只显示年份
-                interval={0}    // 显示所有指定的ticks
+                interval={0}
                 angle={0}
                 textAnchor="middle"
                 height={40}
