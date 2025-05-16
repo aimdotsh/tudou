@@ -223,14 +223,14 @@ const Total: React.FC = () => {
                   borderRadius: '4px',
                   padding: '8px 12px'
                 }}
-                labelFormatter={(value) => '详细数据'}
+                labelFormatter={(value) => '月度跑量'}
                 formatter={(value: number, name: string, props: any) => {
                   const month = props.payload.month;
                   const year = props.payload.year;
                   const monthNum = props.payload.fullDate.split('-')[1];
                   return [
                     `距离: ${value.toFixed(2)} km`,
-                    `日期: ${year}-${monthNum} (${month})`
+                    `日期: ${year}-${monthNum}`
                   ];
                 }}
               />
