@@ -99,16 +99,23 @@ const Total: React.FC = () => {
 
   // 计算月度数据 - 保持完整月份数据但优化显示
   const monthlyData = React.useMemo(() => {
-    const allMonths: { month: string; year: string; distance: number }[] = [];
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const allMonths: { 
+      month: string;  // 月份缩写如"Jan"
+      monthNum: string; // 月份数字如"01" 
+      year: string;   // 年份如"2023"
+      distance: number 
+    }[] = [];
     
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun',
+                      'Jul','Aug','Sep','Oct','Nov','Dec'];
+
     yearlyData.forEach(({ year, months }) => {
-      months.forEach((distance, month) => {
+      months.forEach((distance, monthIdx) => {
         if (distance > 0) {
           allMonths.push({
-            month: monthNames[month],
-            year: year.toString(),
+            month: monthNames[monthIdx],
+            monthNum: String(monthIdx+1).padStart(2, '0'),
+            year: String(year),
             distance
           });
         }
@@ -204,12 +211,13 @@ const Total: React.FC = () => {
             <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
-                dataKey="month"
-                tick={{ fill: '#ccc' }}
-                ticks={monthlyData
-                  .filter((_, index) => index % 12 === 0) // 每年第一个月(1月)
-                  .map(item => item.month)
-                }
+                dataKey="year"  // 使用年份字段
+                tick={{ fill: '#ccc', fontSize: 12 }}
+                interval={0}
+                angle={0}
+                textAnchor="middle" 
+                height={40}
+              />
                 tickFormatter={(month, index) => {
                   // 只在1月位置显示年份
                   return month === 'Jan' ? monthlyData[index*12].year : '';
@@ -222,18 +230,19 @@ const Total: React.FC = () => {
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ 
-                  backgroundColor: '#242424', border: '1px solid #444',borderRadius: '4px'
+                  backgroundColor: '#242424',
+                  border: '1px solid #444',
+                  borderRadius: '4px'
                 }}
-                labelFormatter={(value) => {
-                  // 获取当前数据点对应的月份
-                  const activeData = monthlyData.find(item => item.year === value);
-                  return activeData ? `${value}-${activeData.month}` : value;
+                formatter={(value: number, name: string, props: any) => {
+                  const month = props.payload.month; // 获取月份
+                  const year = props.payload.year;  // 获取年份
+                  return [
+                    `${value.toFixed(2)} km`,       // 距离值
+                    `${year}-${month}`             // 年月格式
+                  ];
                 }}
-                formatter={(value: number) => [
-                  `${value.toFixed(2)} km`, 
-                  'Distance'
-                ]}
-/>
+              />
               <Legend />
               <Bar dataKey="distance" name="Distance (km)" fill="#0ed45e" />
             </BarChart>
