@@ -13,7 +13,6 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-import Link from 'next/link';
 // 辅助函数：将时间字符串转换为秒数
 const convertMovingTime2Sec = (movingTime: string | number): number => {
   if (typeof movingTime === 'number') {
