@@ -206,7 +206,7 @@ const Total: React.FC = () => {
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
                 dataKey="fullDate"
-                tick={{ fill: '#ccc', fontSize: 12 }}
+                tick={{ fill: '#ccc', fontSize: 14 }}
                 ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
                 tickFormatter={(value) => value.split('-')[0]} // 只显示年份
                 interval={0}
@@ -229,8 +229,8 @@ const Total: React.FC = () => {
                   const year = props.payload.year;
                   const monthNum = props.payload.fullDate.split('-')[1];
                   return [
-                    `距离: ${value.toFixed(2)} km`,
-                    `日期: ${year}-${monthNum}`
+                    `${value.toFixed(2)} km`,
+                    `${year}-${monthNum}`
                   ];
                 }}
               />
