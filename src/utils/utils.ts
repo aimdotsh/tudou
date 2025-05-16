@@ -43,7 +43,18 @@ export interface Activity {
   average_speed: number;
   streak: number;
 }
+interface Offset {
+  lat: number;
+  lng: number;
+}
 
+const getRandomOffset = (): Offset => {
+  const randomAngle = Math.random() * Math.PI * 2;
+  return {
+    lat: (100 / 111.32) * Math.sin(randomAngle),
+    lng: (100 / 111.32) * Math.cos(randomAngle)
+  };
+};
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
   const distance = (run.distance / 1000.0).toFixed(2);
@@ -227,25 +238,35 @@ const pathForRun = (run: Activity): Coordinate[] => {
   }
 };
 
-const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => ({
-  type: 'FeatureCollection',
-  features: runs.map((run) => {
-    const points = pathForRun(run);
+const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => {
+  const offset = getRandomOffset();
+  
+  return {
+    type: 'FeatureCollection',
+    features: runs.map((run) => {
+      let points = pathForRun(run);
+      
+      // 应用随机偏移
+      points = points.map(coord => [
+        coord[0] + offset.lng,
+        coord[1] + offset.lat
+      ]);
 
-    return {
-      type: 'Feature',
-      properties: {
-        'color': colorFromType(run.type),
-      },
-      geometry: {
-        type: 'LineString',
-        coordinates: points,
-        workoutType: run.type,
-      },
-      name: run.name,
-    };
-  }),
-});
+      return {
+        type: 'Feature',
+        properties: {
+          'color': colorFromType(run.type),
+        },
+        geometry: {
+          type: 'LineString',
+          coordinates: points,
+          workoutType: run.type,
+        },
+        name: run.name,
+      };
+    }),
+  };
+};
 
 const geoJsonForMap = (): FeatureCollection<RPGeometry> => ({
   type: 'FeatureCollection',
@@ -490,4 +511,5 @@ export {
   colorFromType,
   formatRunTime,
   convertMovingTime2Sec,
+  getRandomOffset, // 添加这行
 };
