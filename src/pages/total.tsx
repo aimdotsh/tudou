@@ -9,7 +9,14 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-import activities from '@/static/activities.json';
+import rawActivities from '@/static/activities.json';
+import { decrypt } from '@/utils/crypto';
+
+// 解密location_country字段
+const activities = rawActivities.map(activity => ({
+  ...activity,
+  location_country: activity.location_country ? decrypt(activity.location_country) : undefined
+}));
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
