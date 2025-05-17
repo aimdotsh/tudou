@@ -2,7 +2,7 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  color: #0ed45e;
+  color: #ccc;
 }
 
 .header {
@@ -41,7 +41,7 @@
 }
 
 .statCard {
-  background-color: #eee;
+  background-color: #1a1a1a;
   border-radius: 8px;
   padding: 1.5rem;
   text-align: center;
@@ -56,8 +56,7 @@
 
 .statCard h4 {
   margin: 0 0 0.5rem;
-  font-weight: bold;
-  color: #012f13;
+  color: #0ed45e;
   font-size: 1rem;
 }
 
@@ -65,7 +64,6 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: bold;
-  color: #0ed45e;
 }
 
 /* 图表布局 */
@@ -76,7 +74,7 @@
 }
 
 .chartContainer {
-  background-color: #eee;
+  background-color: #1a1a1a;
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -203,5 +201,5 @@
 
 :global(.recharts-xAxis .recharts-cartesian-axis-tick-value),
 :global(.recharts-yAxis .recharts-cartesian-axis-tick-value) {
-  fill: #0ed45e;
+  fill: #ccc;
 }
