@@ -38,10 +38,20 @@ const RunTable = ({
     sortFuncInfo === 'Elevation Gain'
       ? (a.elevation_gain ?? 0) - (b.elevation_gain ?? 0)
       : (b.elevation_gain ?? 0) - (a.elevation_gain ?? 0);
-  const sortPaceFunc: SortFunc = (a, b) =>
-    sortFuncInfo === 'Pace'
-      ? a.average_speed - b.average_speed
-      : b.average_speed - a.average_speed;
+  const sortPaceFunc: SortFunc = (a, b) => {
+    // 计算配速（秒/公里）- 配速越小越快
+    const aPace = a.moving_time && a.distance ? 
+      convertMovingTime2Sec(a.moving_time) / (a.distance / 1000) : 
+      Number.MAX_VALUE;
+    const bPace = b.moving_time && b.distance ? 
+      convertMovingTime2Sec(b.moving_time) / (b.distance / 1000) : 
+      Number.MAX_VALUE;
+    
+    // 配速小的（更快的）排在前面
+    return sortFuncInfo === 'Pace'
+      ? aPace - bPace  // 升序（从快到慢）
+      : bPace - aPace; // 降序（从慢到快）
+  };
   const sortBPMFunc: SortFunc = (a, b) => {
     return sortFuncInfo === 'BPM'
       ? (a.average_heartrate ?? 0) - (b.average_heartrate ?? 0)

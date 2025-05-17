@@ -66,8 +66,21 @@ const titleForShow = (run: Activity): string => {
     }`;
 };
 
-const formatPace = (seconds: number): string => {
+const formatPace = (seconds: number, distance?: number): string => {
   if (Number.isNaN(seconds) || seconds <= 0) return '--:--';
+  
+  // 如果提供了距离，计算配速（分钟/公里）
+  if (distance) {
+    const distanceKm = distance / 1000; // 转换为公里
+    const paceSeconds = seconds / distanceKm; // 每公里秒数
+    
+    const paceMinutes = Math.floor(paceSeconds / 60);
+    const paceRemainingSeconds = Math.floor(paceSeconds % 60);
+    
+    return `${paceMinutes}'${paceRemainingSeconds.toString().padStart(2, '0')}"`;
+  }
+  
+  // 如果没有提供距离，直接格式化时间
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
