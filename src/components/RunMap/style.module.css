@@ -21,13 +21,14 @@
   cursor: pointer;
   padding: 1.3rem 0.4rem;
   margin-top: 0.1rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
   text-align: center;
   color: rgb(255, 123, 0);
 }
 
 .selected {
-  color: rgb(0,237,94);
+  color: rgb(71,171,100);
+  font-weight: bold;
 }
 
 .runTitle {
@@ -36,6 +37,7 @@
   position: absolute;
   bottom: 0px;
   left: 120px;
+  font-size: 1rem;
   cursor: pointer;
   color: rgb(255, 0, 0);
 }

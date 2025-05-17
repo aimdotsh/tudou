@@ -47,7 +47,7 @@ class Poster:
         self.length_range_by_date = None
         self.units = "metric"
         self.colors = {
-            "background": "#eeeeee",
+            "background": "#c3c3c3",
             "text": "#FFFFFF",
             "special": "#FFFF00",
             "track": "#0047ab",
@@ -111,7 +111,7 @@ class Poster:
         width = self.width
         if self.drawer_type == "plain":
             height = height - 100
-            self.colors["background"] = "#1a1a1a"
+            self.colors["background"] = "#EEE8D5"
             self.colors["track"] = "red"
             self.colors["special"] = "yellow"
             self.colors["text"] = "#e1ed5e"
