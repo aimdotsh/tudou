@@ -2,7 +2,7 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  color: #ccc;
+  color: #0ed45e;
 }
 
 .header {
@@ -41,7 +41,7 @@
 }
 
 .statCard {
-  background-color: #e5caca;
+  background-color: #eee;
   border-radius: 8px;
   padding: 1.5rem;
   text-align: center;
@@ -51,12 +51,13 @@
 
 .statCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(219, 205, 205, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .statCard h4 {
   margin: 0 0 0.5rem;
-  color: #0ed45e;
+  font-weight: bold;
+  color: #012f13;
   font-size: 1rem;
 }
 
@@ -64,6 +65,7 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: bold;
+  color: #0ed45e;
 }
 
 /* 图表布局 */
@@ -74,7 +76,7 @@
 }
 
 .chartContainer {
-  background-color: #1a1a1a;
+  background-color: #eee;
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -201,39 +203,5 @@
 
 :global(.recharts-xAxis .recharts-cartesian-axis-tick-value),
 :global(.recharts-yAxis .recharts-cartesian-axis-tick-value) {
-  fill: #ccc;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.backButton {
-  position: absolute;
-  left: 0;
-  padding: 0.5rem 1rem;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-  color: #333;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.backButton:hover {
-  background-color: #e0e0e0;
-}
-
-.title {
-  margin: 0 auto;
-  font-size: 2rem;
-  color: #2c3e50;
-}
-
-.select {
-  position: absolute;
-  right: 0;
+  fill: #0ed45e;
 }
