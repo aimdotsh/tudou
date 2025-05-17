@@ -111,7 +111,7 @@ class Poster:
         width = self.width
         if self.drawer_type == "plain":
             height = height - 100
-            self.colors["background"] = "#EEE8D5"
+            self.colors["background"] = "#eeeeee"
             self.colors["track"] = "red"
             self.colors["special"] = "yellow"
             self.colors["text"] = "#e1ed5e"
