@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-import rawActivities from '@/static/activities.json';
+import rawActivities from '@/static/activities.encrypted.json';
 import { decrypt } from '@/utils/crypto';
 
 // 解密location_country字段

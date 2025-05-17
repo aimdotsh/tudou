@@ -1,7 +1,7 @@
 import React, { lazy, useState, Suspense } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import activities from '@/static/activities.json';
+import activities from '@/static/activities.encrypted.json';
 import styles from './style.module.css';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
