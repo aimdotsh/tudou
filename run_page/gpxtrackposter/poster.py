@@ -47,10 +47,10 @@ class Poster:
         self.length_range_by_date = None
         self.units = "metric"
         self.colors = {
-            "background": "#222222",
+            "background": "#eeeeee",
             "text": "#FFFFFF",
             "special": "#FFFF00",
-            "track": "#4DD2FF",
+            "track": "#0047ab",
         }
         self.special_distance = {"special_distance": 10, "special_distance2": 20}
         self.width = 200

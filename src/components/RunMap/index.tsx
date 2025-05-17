@@ -208,7 +208,7 @@ const RunMap = ({
               id: 'background',
               type: 'background',
               paint: {
-                'background-color': '#111111'
+                'background-color': '#eeeeee'
               }
             },
             {
