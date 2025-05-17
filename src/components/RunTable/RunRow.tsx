@@ -1,4 +1,4 @@
-import { formatPace, colorFromType, formatRunTime, Activity, RunIds, titleForRun } from '@/utils/utils';
+import { formatPace, colorFromType, formatRunTime, convertMovingTime2Sec, Activity, RunIds, titleForRun } from '@/utils/utils';
 import { SHOW_ELEVATION_GAIN } from '@/utils/const';
 import styles from './style.module.css';
 
