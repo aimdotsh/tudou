@@ -4,7 +4,7 @@
   margin: 1rem 0 0;
   border: 0;
   padding: 0;
-  background-color: rgb(26, 26, 26);
+  background-color: rgb(255, 255, 255);
 }
 
 .buttons {
@@ -23,7 +23,7 @@
   margin-top: 0.1rem;
   font-size: 1rem;
   text-align: center;
-  color: rgb(204, 204, 204);
+  color: rgb(255, 123, 0);
 }
 
 .selected {
@@ -37,7 +37,7 @@
   bottom: 0px;
   left: 120px;
   cursor: pointer;
-  color: rgb(224, 237, 94);
+  color: rgb(255, 0, 0);
 }
 
 .lights {
