@@ -13,7 +13,10 @@ interface IRunRowProperties {
 const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex }: IRunRowProperties) => {
   const distance = (run.distance / 1000.0).toFixed(2);
   const elevation_gain = run.elevation_gain?.toFixed(0);
-  const paceParts = run.average_speed ? formatPace(run.average_speed) : null;
+  // 计算配速：每公里所需时间（分:秒）
+  const paceParts = run.moving_time && run.distance ? 
+    formatPace(convertMovingTime2Sec(run.moving_time), run.distance) : 
+    null;
   const heartRate = run.average_heartrate;
   const type = run.type;
   const runTime = formatRunTime(run.moving_time);
