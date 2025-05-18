@@ -10,6 +10,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #e0e0e0;
 }
 
 .title {
