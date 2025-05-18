@@ -1,5 +1,5 @@
 import {locationForRun, typeForRun} from '@/utils/utils';
-import activities from '@/static/activities.encrypted.json';
+import activities from '@/static/activities.json';
 
 const useActivities = () => {
   const cities: Record<string, number> = {};
