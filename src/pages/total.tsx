@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   BarChart,
   Bar,
@@ -123,6 +124,9 @@ const Total: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        <Link href="/" passHref>
+          <a className={styles.backButton}>← 返回首页</a>
+        </Link>
         <h1 className={styles.title}>Activity Statistics</h1>
         <select 
           onChange={(e) => setActivityType(e.target.value)} 
