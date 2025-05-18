@@ -16,7 +16,7 @@ const getBasePath = () => {
 };
 
 const data: ISiteMetadataResult = {
-  siteTitle: '蓝皮书的自留地',
+  siteTitle: '蓝皮书的 Workouts Page',
   siteUrl: 'https://run.liups.com',
   logo: 'https://aim.sh/images/run.png',
   description: '蓝皮书的自留地',
