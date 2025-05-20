@@ -14,6 +14,26 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
+
+
+
+
+import { lazy, Suspense } from 'react';
+import { totalStat } from '@assets/index';
+import { loadSvgComponent } from '@/utils/svgUtils';
+
+// Lazy load both github.svg and grid.svg
+const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
+
+const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
+
+const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
+
+
+
+
+
+
 // 辅助函数：将时间字符串转换为秒数
 const convertMovingTime2Sec = (movingTime: string | number): number => {
   if (typeof movingTime === 'number') {
@@ -124,7 +144,7 @@ const Total: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <a href="/" className={styles.tohome}>首页</a>
+        <a href="https://liups.com/" className={styles.tohome}>自留地</a>
         <h1 className={styles.title}>运动统计</h1>
         <select 
           onChange={(e) => setActivityType(e.target.value)} 
@@ -283,6 +303,12 @@ const Total: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+        {/* 活动热力图下方添加SVG图表 */}
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+          <Suspense fallback={<div className="text-center">Loading...</div>}>
+            <GridSvg className="mt-4 h-auto w-full" />
+          </Suspense>
         </div>
       </div>
     </div>
