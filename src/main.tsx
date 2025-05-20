@@ -21,11 +21,11 @@ const routes = createBrowserRouter(
   [
     {
       path: '/',
-      element: withOptionalGAPageTracking(<Index />),
+      element: withOptionalGAPageTracking(<TotalPage />),
     },
     {
-      path: 'summary',
-      element: withOptionalGAPageTracking(<TotalPage />),
+      path: 'i',
+      element: withOptionalGAPageTracking(<Index />),
     },
     {
       path: 'total',
@@ -33,7 +33,7 @@ const routes = createBrowserRouter(
     },
     {
       path: '*',
-      element: withOptionalGAPageTracking(<NotFound />),
+      element: withOptionalGAPageTracking(<TotalPage />),
     },
   ],
   { basename: import.meta.env.BASE_URL }
