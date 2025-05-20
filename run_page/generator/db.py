@@ -81,7 +81,11 @@ class Activity(Base):
             out["streak"] = self.streak
 
         return out
-
+    def to_dict_safe(self):
+        data = self.to_dict()
+        if 'location_country' in data:
+            del data['location_country']
+        return data
 
 def update_or_create_activity(session, run_activity):
     created = False

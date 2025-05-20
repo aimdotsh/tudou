@@ -8,7 +8,7 @@ import { formatPace } from '@/utils/utils';
 import { totalStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
-const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
+// const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
 // Define interfaces for our data structures
 interface Activity {
