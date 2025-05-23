@@ -75,8 +75,8 @@ def main():
         "--athlete",
         metavar="NAME",
         type=str,
-        default="John Doe",
-        help='Athlete name to display (default: "John Doe").',
+        default="苹果梨",
+        help='Athlete name to display (default: "苹果梨").',
     )
     args_parser.add_argument(
         "--special",
