@@ -66,7 +66,7 @@ def main():
         metavar="DAY",
         type=str,
         default=datetime.date.today().strftime("%Y-%m-%d"),
-        help='Filter tracks by specific day (format: YYYY-MM-DD, default: today)',
+        help="Filter tracks by specific day (format: YYYY-MM-DD, default: today)",
     )
     args_parser.add_argument(
         "--title", metavar="TITLE", type=str, help="Title to display."
