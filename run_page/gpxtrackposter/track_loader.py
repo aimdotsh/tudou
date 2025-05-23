@@ -9,6 +9,7 @@
 import logging
 import os
 import sys
+import datetime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import concurrent.futures
@@ -60,15 +61,14 @@ class TrackLoader:
         min_length: All tracks shorter than this value are filtered out.
         special_file_names: Tracks marked as special in command line args
         year_range: All tracks outside of this range will be filtered out.
-
-    Methods:
-        load_tracks: Load all data from GPX files
+        day_filter: Date object to filter tracks by specific day
     """
 
     def __init__(self):
         self.min_length = 100
         self.special_file_names = []
         self.year_range = YearRange()
+        self.day_filter = None
         self.load_func_dict = {
             "gpx": load_gpx_file,
             "tcx": load_tcx_file,
@@ -100,25 +100,23 @@ class TrackLoader:
 
     def load_tracks_from_db(self, sql_file, is_grid=False, is_circular=False):
         session = init_db(sql_file)
+        query = session.query(Activity)
+        
         if is_grid:
-            activities = (
-                session.query(Activity)
-                .filter(Activity.summary_polyline != "")
-                .filter(Activity.type.not_in(["Flight"]))
-                .order_by(Activity.start_date_local)
-            )
+            query = query.filter(Activity.summary_polyline != "").filter(Activity.type.not_in(["Flight"]))
         elif is_circular:
-            activities = (
-                session.query(Activity)
-                .filter(Activity.type.not_in(["RoadTrip", "Flight"]))
-                .order_by(Activity.start_date_local)
-            )
+            query = query.filter(Activity.type.not_in(["RoadTrip", "Flight"]))
         else:
-            activities = (
-                session.query(Activity)
-                .filter(Activity.type.not_in(["Flight"]))
-                .order_by(Activity.start_date_local)
-            )
+            query = query.filter(Activity.type.not_in(["Flight"]))
+            
+        # 添加日期过滤
+        if self.day_filter:
+            start = datetime.datetime.combine(self.day_filter, datetime.time.min)
+            end = datetime.datetime.combine(self.day_filter, datetime.time.max)
+            query = query.filter(Activity.start_date_local >= start).filter(Activity.start_date_local <= end)
+            
+        activities = query.order_by(Activity.start_date_local)
+        
         tracks = []
         for activity in activities:
             t = Track()
@@ -142,6 +140,10 @@ class TrackLoader:
             elif not self.year_range.contains(t.start_time_local):
                 log.info(
                     f"{file_name}: skipping track with wrong year {t.start_time_local.year}"
+                )
+            elif self.day_filter and t.start_time_local.date() != self.day_filter:
+                log.info(
+                    f"{file_name}: skipping track with wrong day {t.start_time_local.date()}"
                 )
             else:
                 t.special = file_name in self.special_file_names
