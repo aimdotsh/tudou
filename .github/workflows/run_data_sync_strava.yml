@@ -207,9 +207,7 @@ jobs:
           python run_page/gen_svg.py --from-db --title "${{ env.TITLE_GRID }}" --type grid --athlete "${{ env.ATHLETE }}" --output assets/grid.svg --special-color yellow --special-color2 red --special-distance 10 --special-distance2 15 --use-localtime --min-distance "${{ env.MIN_GRID_DISTANCE }}"
           python run_page/gen_svg.py --from-db --type circular --use-localtime
           python run_page/gen_svg.py --from-db --year $(date +"%Y")  --language zh_CN --title "$(date +"%Y") Workouts" --type github --athlete "${{ env.ATHLETE }}" --special-distance 10 --special-distance2 15 --special-color yellow --special-color2 red --output assets/github_$(date +"%Y").svg --use-localtime --min-distance 0.5
-          python run_page/gen_svg.py --from-db --day 2025-05-23  --output assets/2025-05-23.svg --title "2025-05-23 Workouts" --athlete "${{ env.ATHLETE }}" --use-localtime 
-          python run_page/gen_svg.py --from-db --day 2025-05-24  --output assets/2025-05-24.svg --title "2025-05-24 Workouts" --athlete "${{ env.ATHLETE }}" --use-localtime 
-
+          python run_page/gen_svg.py --from-db --day $(date +%Y-%m-%d) --width 100 --height 150  --output assets/$(date +%Y-%m-%d).svg --title "$(date +%Y-%m-%d) Workouts" --athlete "${{ env.ATHLETE }}" --special-distance 10 --special-distance2 15 --special-color yellow --special-color2 red  --use-localtime 
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'
         run: |
