@@ -65,8 +65,7 @@ def main():
         "--day",
         metavar="DAY",
         type=str,
-        default=datetime.date.today().strftime("%Y-%m-%d"),
-        help="Filter tracks by specific day (format: YYYY-MM-DD, default: today)",
+        help="Filter tracks by specific day (format: YYYY-MM-DD, optional)",
     )
     args_parser.add_argument(
         "--title", metavar="TITLE", type=str, help="Title to display."
@@ -230,12 +229,16 @@ def main():
     if not loader.year_range.parse(args.year):
         raise ParameterError(f"Bad year range: {args.year}.")
 
-    # Add day filter to loader
-    try:
-        day_date = datetime.datetime.strptime(args.day, "%Y-%m-%d").date()
-        loader.day_filter = day_date
-    except ValueError:
-        raise ParameterError(f"Invalid day format: {args.day}. Use YYYY-MM-DD")
+    # Add day filter to loader only if --day parameter is provided
+    if args.day:
+        try:
+            day_date = datetime.datetime.strptime(args.day, "%Y-%m-%d").date()
+            loader.day_filter = day_date
+        except ValueError:
+            raise ParameterError(f"Invalid day format: {args.day}. Use YYYY-MM-DD")
+    else:
+        # No day filter if --day is not provided
+        loader.day_filter = None
 
     loader.special_file_names = args.special
     loader.min_length = args.min_distance * 1000
