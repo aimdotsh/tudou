@@ -72,6 +72,10 @@ interface Activity {
 }
 
 const Total: React.FC = () => {
+  // 获取当前日期并格式化为yyyy-m-d
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  
   const [activityType, setActivityType] = useState<string>('run');
   const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
   const showTypes = [...playTypes].filter(type => type in TYPES_MAPPING);
@@ -192,7 +196,6 @@ const Total: React.FC = () => {
           <h4>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}</h4>
           <p>{stats.maxDistance} km</p>
         </div>
-
       </div>
 
       <div className={styles.charts}>
@@ -325,6 +328,37 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
             <GridSvg className="mt-4 h-auto w-full" />
+          </Suspense>
+        </div>
+        
+        {/* 添加当前日期SVG图表 */}
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+          <h3>Today's Activity ({formattedDate})</h3>
+          <Suspense fallback={<div className="text-center py-8">Loading today's activity...</div>}>
+            {(() => {
+              const TodaySvg = lazy(async () => {
+                try {
+                  // 确保日期格式为YYYY-MM-DD
+                  const dateParts = formattedDate.split('-');
+                  const paddedDate = `${dateParts[0]}-${dateParts[1].padStart(2, '0')}-${dateParts[2].padStart(2, '0')}`;
+                  const svg = await loadSvgComponent(totalStat, `./${paddedDate}.svg`);
+                  return svg;
+                } catch (error) {
+                  console.error('Failed to load SVG:', error);
+                  return () => (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>No activity data available for today</p>
+                      <p>Check back later or upload your activity</p>
+                    </div>
+                  );
+                }
+              });
+              return (
+                <div className="flex justify-center items-center min-h-[200px]">
+                  <TodaySvg className="h-auto w-full max-w-[800px]" />
+                </div>
+              );
+            })()}
           </Suspense>
         </div>
       </div>
