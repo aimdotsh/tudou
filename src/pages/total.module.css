@@ -1,8 +1,14 @@
 .container {
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
   color: #ccc;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
 }
 
 .header {
@@ -210,4 +216,3 @@
 :global(.recharts-cartesian-grid-vertical line) {
   stroke: #333;
 }
-
