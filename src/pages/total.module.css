@@ -134,7 +134,7 @@
 
 .statCard {
   background-color: #1a1a1a;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1rem;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -149,7 +149,7 @@
 .statCard h4 {
   margin: 0 0 0.5rem;
   color: #0ed45e;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .statCard p {

@@ -23,6 +23,12 @@ import { totalStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
 // Lazy load both github.svg and grid.svg
+
+// 获取当前日期的字符串，格式为 YYYY-MM-DD
+const today = new Date().toISOString().split('T')[0];
+
+//const TodaySvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
+
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
 
 const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
@@ -163,6 +169,10 @@ const Total: React.FC = () => {
       {/* 统计卡片 */}
       <div className={styles.statsCards}>
         <div className={styles.statCard}>
+          <h4>八年走过</h4>
+          <p>1 国 9 省 16 城</p>
+        </div>
+        <div className={styles.statCard}>
           <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
           <p>{stats.totalActivities}</p>
         </div>
@@ -182,6 +192,7 @@ const Total: React.FC = () => {
           <h4>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}</h4>
           <p>{stats.maxDistance} km</p>
         </div>
+
       </div>
 
       <div className={styles.charts}>
@@ -305,6 +316,12 @@ const Total: React.FC = () => {
           </div>
         </div>
         {/* 活动热力图下方添加SVG图表 */}
+
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+          <Suspense fallback={<div className="text-center">Loading...</div>}>
+            <GithubSvg className="mt-4 h-auto w-full" />
+          </Suspense>
+        </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
             <GridSvg className="mt-4 h-auto w-full" />
