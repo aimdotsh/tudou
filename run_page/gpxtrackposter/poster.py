@@ -53,8 +53,8 @@ class Poster:
             "track": "#4DD2FF",
         }
         self.special_distance = {"special_distance": 10, "special_distance2": 20}
-        self.width = 200
-        self.height = 300
+        self.width = 150
+        self.height = 225
         self.years = None
         self.tracks_drawer = None
         self.trans = None
@@ -147,7 +147,7 @@ class Poster:
 
     def __draw_header(self, d):
         text_color = self.colors["text"]
-        title_style = "font-size:12px; font-family:Arial; font-weight:bold;"
+        title_style = "font-size:9px; font-family:Arial; font-weight:bold;"
         d.add(d.text(self.title, insert=(10, 20), fill=text_color, style=title_style))
 
     def __draw_footer(self, d):
