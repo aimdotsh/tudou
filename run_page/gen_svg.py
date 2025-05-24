@@ -75,8 +75,8 @@ def main():
         "--athlete",
         metavar="NAME",
         type=str,
-        default="苹果梨",
-        help='Athlete name to display (default: "苹果梨").',
+        default="John Doe",
+        help='Athlete name to display (default: "John Doe").',
     )
     args_parser.add_argument(
         "--special",
@@ -85,6 +85,20 @@ def main():
         default=[],
         help="Mark track file from the GPX directory as special; use multiple times to mark "
         "multiple tracks.",
+    )
+    args_parser.add_argument(
+        "--width",
+        metavar="WIDTH",
+        type=int,
+        default=200,
+        help="Width of poster in mm (default: 200).",
+    )
+    args_parser.add_argument(
+        "--height",
+        metavar="HEIGHT",
+        type=int,
+        default=300,
+        help="Height of poster in mm (default: 300).",
     )
     types = '", "'.join(drawers.keys())
     args_parser.add_argument(
@@ -248,6 +262,10 @@ def main():
         p.title = args.title
     else:
         p.title = p.trans("MY TRACKS")
+
+    # Set poster dimensions
+    p.width = args.width
+    p.height = args.height
 
     p.special_distance = {
         "special_distance": args.special_distance,
