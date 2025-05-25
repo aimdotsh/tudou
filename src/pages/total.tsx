@@ -1,4 +1,23 @@
-import React, { useState , Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense, Component, ReactNode } from 'react';
+
+// 自定义错误边界组件
+class ErrorBoundary extends Component<{ 
+  fallback: ReactNode,
+  children: ReactNode 
+}, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart,
@@ -14,26 +33,20 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-
-
-
-
-import { lazy, Suspense } from 'react';
-import { totalStat } from '@assets/index';
+import { totalStat ,todayStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
 // Lazy load both github.svg and grid.svg
 
 // 获取当前日期的字符串，格式为 YYYY-MM-DD
-const today = new Date().toISOString().split('T')[0];
-
-//const TodaySvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
+const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
+const TodaySvg = lazy(() => loadSvgComponent(todayStat, `./${today}.svg`));
 
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
 
 const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
-const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
+// const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
 
 
@@ -72,10 +85,7 @@ interface Activity {
 }
 
 const Total: React.FC = () => {
-  // 获取当前日期并格式化为yyyy-m-d
-  const today = new Date();
-  const formattedDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-  
+ 
   const [activityType, setActivityType] = useState<string>('run');
   const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
   const showTypes = [...playTypes].filter(type => type in TYPES_MAPPING);
@@ -330,39 +340,15 @@ const Total: React.FC = () => {
             <GridSvg className="mt-4 h-auto w-full" />
           </Suspense>
         </div>
-        
+
         {/* 添加当前日期SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Today's Activity ({formattedDate})</h3>
-          <Suspense fallback={<div className="text-center py-8">Loading today's activity...</div>}>
-            {(() => {
-              const TodaySvg = lazy(async () => {
-                try {
-                  // 确保日期格式为YYYY-MM-DD
-                  const dateParts = formattedDate.split('-');
-                  const paddedDate = `${dateParts[0]}-${dateParts[1].padStart(2, '0')}-${dateParts[2].padStart(2, '0')}`;
-                  const svg = await loadSvgComponent(totalStat, `./${paddedDate}.svg`);
-                  return svg;
-                } catch (error) {
-                  console.error('Failed to load SVG:', error);
-                  return () => (
-                    <div className="text-center py-8 text-gray-500">
-                      <p>No activity data available for today</p>
-                      <p>Check back later or upload your activity</p>
-                    </div>
-                  );
-                }
-              });
-              return (
-                <div className="flex justify-center items-center min-h-[200px]">
-                  <TodaySvg className="h-auto w-full max-w-[800px]" />
-                </div>
-              );
-            })()}
+          <Suspense fallback={<div className="text-center">Loading...</div>}>
+            <TodaySvg className="mt-4 h-auto w-full" />
           </Suspense>
         </div>
-      </div>
     </div>
+</div>
   );
 };
 
