@@ -332,9 +332,14 @@ const Total: React.FC = () => {
         
         {/* 添加当前日期SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <Suspense fallback={<div className="text-center">Loading...</div>}>
+          <h3>当天运动</h3>
+            <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <ErrorBoundary fallback={<div className="text-center" style={{ color: '#0ed45e', fontWeight: 600 }}>今天没有运动，要加油噢</div>}>
+            <Suspense fallback={<div className="text-center">Loading...</div>}>
             <TodaySvg className="mt-4 h-auto w-full" />
-          </Suspense>
+            </Suspense>
+            </ErrorBoundary>
+            </div>
         </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
