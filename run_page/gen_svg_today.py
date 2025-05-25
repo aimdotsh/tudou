@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import logging
 import os
 import sys
@@ -8,10 +9,10 @@ from gpxtrackposter import (
     circular_drawer,
     github_drawer,
     grid_drawer,
-    poster,
     track_loader,
     month_of_life_drawer,
 )
+from gpxtrackposter import poster_today as poster
 from gpxtrackposter.exceptions import ParameterError, PosterError
 
 # from flopp great repo
@@ -61,6 +62,12 @@ def main():
         help='Filter tracks by year; "NUM", "NUM-NUM", "all" (default: all years)',
     )
     args_parser.add_argument(
+        "--day",
+        metavar="DAY",
+        type=str,
+        help="Filter tracks by specific day (format: YYYY-MM-DD, optional)",
+    )
+    args_parser.add_argument(
         "--title", metavar="TITLE", type=str, help="Title to display."
     )
     args_parser.add_argument(
@@ -77,6 +84,20 @@ def main():
         default=[],
         help="Mark track file from the GPX directory as special; use multiple times to mark "
         "multiple tracks.",
+    )
+    args_parser.add_argument(
+        "--width",
+        metavar="WIDTH",
+        type=int,
+        default=200,
+        help="Width of poster in mm (default: 200).",
+    )
+    args_parser.add_argument(
+        "--height",
+        metavar="HEIGHT",
+        type=int,
+        default=300,
+        help="Height of poster in mm (default: 300).",
     )
     types = '", "'.join(drawers.keys())
     args_parser.add_argument(
@@ -173,14 +194,12 @@ def main():
         action="store_true",
         help="Use utc time or local time",
     )
-
     args_parser.add_argument(
         "--from-db",
         dest="from_db",
         action="store_true",
         help="activities db file",
     )
-
     args_parser.add_argument(
         "--github-style",
         dest="github_style",
@@ -210,12 +229,21 @@ def main():
     if not loader.year_range.parse(args.year):
         raise ParameterError(f"Bad year range: {args.year}.")
 
+    # Add day filter to loader only if --day parameter is provided
+    if args.day:
+        try:
+            day_date = datetime.datetime.strptime(args.day, "%Y-%m-%d").date()
+            loader.day_filter = day_date
+        except ValueError:
+            raise ParameterError(f"Invalid day format: {args.day}. Use YYYY-MM-DD")
+    else:
+        # No day filter if --day is not provided
+        loader.day_filter = None
+
     loader.special_file_names = args.special
     loader.min_length = args.min_distance * 1000
 
     if args.from_db:
-        # for svg from db here if you want gpx please do not use --from-db
-        # args.type == "grid" means have polyline data or not
         tracks = loader.load_tracks_from_db(
             SQL_FILE, args.type == "grid", args.type == "circular"
         )
@@ -238,6 +266,10 @@ def main():
     else:
         p.title = p.trans("MY TRACKS")
 
+    # Set poster dimensions
+    p.width = args.width
+    p.height = args.height
+
     p.special_distance = {
         "special_distance": args.special_distance,
         "special_distance2": args.special_distance2,
@@ -253,19 +285,16 @@ def main():
     }
     p.units = args.units
     p.set_tracks(tracks)
-    # circular not add footer and header
     p.drawer_type = "plain" if is_circular else "title"
     if is_mol:
         p.drawer_type = "monthoflife"
     if args.type == "github":
         p.height = 55 + p.years.real_year * 43
     p.github_style = args.github_style
-    # for special circular
     if is_circular:
         years = p.years.all()[:]
         for y in years:
             p.years.from_year, p.years.to_year = y, y
-            # may be refactor
             p.set_tracks(tracks)
             p.draw(drawers[args.type], os.path.join("assets", f"year_{str(y)}.svg"))
     else:
@@ -274,7 +303,6 @@ def main():
 
 if __name__ == "__main__":
     try:
-        # generate svg
         main()
     except PosterError as e:
         print(e)
