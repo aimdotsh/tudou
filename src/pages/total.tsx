@@ -336,19 +336,19 @@ const Total: React.FC = () => {
             <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
             <ErrorBoundary fallback={<div className="text-center" style={{ color: '#0ed45e', fontWeight: 600 }}>今天没有运动，要加油噢</div>}>
             <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <TodaySvg className="mt-4 h-auto w-full" />
+            <TodaySvg className="mt-2 h-auto w-full" />
             </Suspense>
             </ErrorBoundary>
             </div>
         </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <GithubSvg className="mt-4 h-auto w-full" />
+            <GithubSvg className="mt-2 h-auto w-full" />
           </Suspense>
         </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <GridSvg className="mt-4 h-auto w-full" />
+            <GridSvg className="mt-2 h-auto w-full" />
           </Suspense>
         </div>
 
