@@ -48,7 +48,7 @@ class Poster:
         self.units = "metric"
         self.colors = {
             "background": "#222222",
-            "text": "#FFFFFF",
+            "text": "#0ed45e",
             "special": "#FFFF00",
             "track": "#4DD2FF",
         }
@@ -148,7 +148,7 @@ class Poster:
     def __draw_header(self, d):
         text_color = self.colors["text"]
         title_style = "font-size:6px; font-family:Arial; font-weight:bold;"
-        d.add(d.text(self.title, insert=(5, 5), fill=text_color, style=title_style))
+        d.add(d.text(self.title, insert=(5, 10), fill=text_color, style=title_style))
 
     def __draw_footer(self, d):
         text_color = self.colors["text"]
@@ -187,7 +187,7 @@ class Poster:
             d.add(
             d.text(
                 self.trans("STATISTICS"),
-                insert=(20, self.height - 20),
+                insert=(30, self.height - 20),
                 fill=text_color,
                 style=header_style,
             )
@@ -195,7 +195,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Number") + f": {len(self.tracks)}",
-                insert=(5, self.height - 5),
+                insert=(30, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -203,7 +203,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Weekly") + ": " + format_float(len(self.tracks) / weeks),
-                insert=(25, self.height - 5),
+                insert=(30, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
