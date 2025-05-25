@@ -184,8 +184,7 @@ class Poster:
             )
         )
         if self.drawer_type != "monthoflife":
-
-        d.add(
+            d.add(
             d.text(
                 self.trans("STATISTICS"),
                 insert=(40, self.height - 20),
