@@ -212,7 +212,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Total") + ": " + self.format_distance(total_length),
-                insert=(61, self.height - 15),
+                insert=(60, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -220,7 +220,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Avg") + ": " + self.format_distance(average_length),
-                insert=(61, self.height - 10),
+                insert=(60, self.height - 10),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -228,7 +228,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Min") + ": " + self.format_distance(min_length),
-                insert=(86, self.height - 15),
+                insert=(80, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -236,7 +236,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Max") + ": " + self.format_distance(max_length),
-                insert=(86, self.height - 10),
+                insert=(80, self.height - 10),
                 fill=text_color,
                 style=small_value_style,
             )
