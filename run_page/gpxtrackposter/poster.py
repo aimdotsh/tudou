@@ -203,7 +203,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Weekly") + ": " + format_float(len(self.tracks) / weeks),
-                insert=(5, self.height - 1),
+                insert=(25, self.height - 1),
                 fill=text_color,
                 style=small_value_style,
             )
