@@ -121,9 +121,9 @@ class Poster:
         if not self.drawer_type == "plain":
             self.__draw_header(d)
             self.__draw_footer(d)
-            self.__draw_tracks(d, XY(width - 20, height - 30 - 30), XY(10, 30))
+            self.__draw_tracks(d, XY(width - 10, height - 10 - 10), XY(5, 15))
         else:
-            self.__draw_tracks(d, XY(width - 20, height), XY(10, 0))
+            self.__draw_tracks(d, XY(width - 10, height), XY(10, 0))
         d.save()
 
     def m2u(self, m):
@@ -148,7 +148,7 @@ class Poster:
     def __draw_header(self, d):
         text_color = self.colors["text"]
         title_style = "font-size:6px; font-family:Arial; font-weight:bold;"
-        d.add(d.text(self.title, insert=(10, 5), fill=text_color, style=title_style))
+        d.add(d.text(self.title, insert=(5, 5), fill=text_color, style=title_style))
 
     def __draw_footer(self, d):
         text_color = self.colors["text"]
@@ -170,7 +170,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Runner"),
-                insert=(10, self.height - 20),
+                insert=(5, self.height - 20),
                 fill=text_color,
                 style=header_style,
             )
@@ -178,7 +178,7 @@ class Poster:
         d.add(
             d.text(
                 self.athlete,
-                insert=(10, self.height - 10),
+                insert=(5, self.height - 10),
                 fill=text_color,
                 style=value_style,
             )
@@ -187,7 +187,7 @@ class Poster:
             d.add(
             d.text(
                 self.trans("STATISTICS"),
-                insert=(35, self.height - 20),
+                insert=(20, self.height - 20),
                 fill=text_color,
                 style=header_style,
             )
@@ -203,7 +203,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Weekly") + ": " + format_float(len(self.tracks) / weeks),
-                insert=(35, self.height - 5),
+                insert=(25, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -211,7 +211,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Total") + ": " + self.format_distance(total_length),
-                insert=(60, self.height - 15),
+                insert=(50, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -219,7 +219,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Avg") + ": " + self.format_distance(average_length),
-                insert=(60, self.height - 5),
+                insert=(50, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -227,7 +227,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Min") + ": " + self.format_distance(min_length),
-                insert=(85, self.height - 15),
+                insert=(75, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -235,7 +235,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Max") + ": " + self.format_distance(max_length),
-                insert=(85, self.height - 5),
+                insert=(75, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
