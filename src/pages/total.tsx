@@ -329,7 +329,13 @@ const Total: React.FC = () => {
           </div>
         </div>
         {/* 活动热力图下方添加SVG图表 */}
-
+        
+        {/* 添加当前日期SVG图表 */}
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+          <Suspense fallback={<div className="text-center">Loading...</div>}>
+            <TodaySvg className="mt-4 h-auto w-full" />
+          </Suspense>
+        </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
             <GithubSvg className="mt-4 h-auto w-full" />
@@ -341,12 +347,7 @@ const Total: React.FC = () => {
           </Suspense>
         </div>
 
-        {/* 添加当前日期SVG图表 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <TodaySvg className="mt-4 h-auto w-full" />
-          </Suspense>
-        </div>
+
     </div>
 </div>
   );
