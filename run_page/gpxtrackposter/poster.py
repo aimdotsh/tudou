@@ -170,7 +170,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Runner"),
-                insert=(5, self.height - 20),
+                insert=(5, self.height - 9),
                 fill=text_color,
                 style=header_style,
             )
@@ -178,7 +178,7 @@ class Poster:
         d.add(
             d.text(
                 self.athlete,
-                insert=(5, self.height - 10),
+                insert=(2, self.height - 2),
                 fill=text_color,
                 style=value_style,
             )
@@ -187,7 +187,7 @@ class Poster:
             d.add(
             d.text(
                 self.trans("STATISTICS"),
-                insert=(30, self.height - 20),
+                insert=(25, self.height - 9),
                 fill=text_color,
                 style=header_style,
             )
@@ -195,7 +195,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Number") + f": {len(self.tracks)}",
-                insert=(30, self.height - 15),
+                insert=(25, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -203,7 +203,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Weekly") + ": " + format_float(len(self.tracks) / weeks),
-                insert=(30, self.height - 10),
+                insert=(5, self.height - 1),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -211,7 +211,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Total") + ": " + self.format_distance(total_length),
-                insert=(50, self.height - 15),
+                insert=(48, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -219,7 +219,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Avg") + ": " + self.format_distance(average_length),
-                insert=(50, self.height - 10),
+                insert=(48, self.height - 1),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -227,7 +227,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Min") + ": " + self.format_distance(min_length),
-                insert=(75, self.height - 15),
+                insert=(75, self.height - 5),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -235,7 +235,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Max") + ": " + self.format_distance(max_length),
-                insert=(75, self.height - 10),
+                insert=(75, self.height - 1),
                 fill=text_color,
                 style=small_value_style,
             )
