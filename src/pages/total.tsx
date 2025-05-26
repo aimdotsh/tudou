@@ -332,7 +332,7 @@ const Total: React.FC = () => {
         
         {/* 添加当前日期SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>当天运动</h3>
+          <h3>Recent Workouts</h3>
             <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
             <ErrorBoundary fallback={<div className="text-center" style={{ color: '#0ed45e', fontWeight: 600 }}>今天没有运动，要加油噢</div>}>
             <Suspense fallback={<div className="text-center">Loading...</div>}>
