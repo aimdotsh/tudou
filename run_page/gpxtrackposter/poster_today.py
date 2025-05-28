@@ -3,7 +3,7 @@
 import gettext
 import locale
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 import svgwrite
@@ -229,7 +229,7 @@ class Poster:
                 )
             
                 # 运动时长
-                moving_time = track.moving_dict.get("moving_time", datetime.timedelta())
+                moving_time = track.moving_dict.get("moving_time", timedelta())
                 hours = moving_time.seconds // 3600
                 minutes = (moving_time.seconds % 3600) // 60
                 time_str = f"{hours:02d}:{minutes:02d}" if hours > 0 else f"{minutes:02d}min"
