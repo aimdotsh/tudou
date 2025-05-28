@@ -208,10 +208,10 @@ class Poster:
                     )
                 )
             
-                # 运动时间
+                # 运动日期
                 d.add(
                     d.text(
-                        self.trans("Time") + f": {track.start_time_local.strftime('%H:%M')}",
+                        self.trans("Date") + f": {track.start_time_local.strftime('%Y-%m-%d')}",
                         insert=(25, self.height - 1),
                         fill=text_color,
                         style=small_value_style,
