@@ -222,7 +222,7 @@ class Poster:
                 d.add(
                     d.text(
                         self.trans("Distance") + f": {self.format_distance(track.length)}",
-                        insert=(45, self.height - 5),
+                        insert=(47, self.height - 5),
                         fill=text_color,
                         style=small_value_style,
                     )
@@ -255,7 +255,7 @@ class Poster:
                 d.add(
                     d.text(
                         self.trans("Duration") + f": {time_str}",
-                        insert=(45, self.height - 1),
+                        insert=(47, self.height - 1),
                         fill=text_color,
                         style=small_value_style,
                     )
