@@ -58,6 +58,7 @@ class Poster:
         self.years = None
         self.tracks_drawer = None
         self.trans = None
+        self.day_filter = None  # 添加 day_filter 属性
         self.set_language(None)
         self.tc_offset = datetime.now(pytz.timezone("Asia/Shanghai")).utcoffset()
         self.github_style = "align-firstday"

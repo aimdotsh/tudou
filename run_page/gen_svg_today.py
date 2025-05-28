@@ -261,6 +261,9 @@ def main():
         )
     p.set_language(args.language)
     p.athlete = args.athlete
+    # 传递 day_filter 给 Poster 实例
+    p.day_filter = loader.day_filter
+    
     if args.from_db and args.day and not args.title:
         # Get activity names from database for the specified day
         activity_names = loader.get_activity_names_for_day(SQL_FILE)
