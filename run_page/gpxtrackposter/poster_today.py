@@ -228,12 +228,26 @@ class Poster:
                     )
                 )
             
-                # 运动时长
+                # 运动时长 - 直接从数据库获取
                 moving_time = track.moving_dict.get("moving_time", timedelta())
-                total_seconds = moving_time.total_seconds()
-                hours = int(total_seconds // 3600)
-                minutes = int((total_seconds % 3600) // 60)
-                seconds = int(total_seconds % 60)
+                if isinstance(moving_time, str):
+                    # 如果是字符串格式，需要解析
+                    time_parts = moving_time.split(":")
+                    if len(time_parts) == 3:
+                        hours = int(time_parts[0])
+                        minutes = int(time_parts[1])
+                        seconds = int(float(time_parts[2]))
+                    else:
+                        hours = 0
+                        minutes = int(time_parts[0]) if len(time_parts) > 0 else 0
+                        seconds = int(float(time_parts[1])) if len(time_parts) > 1 else 0
+                else:
+                    # 如果是timedelta对象
+                    total_seconds = moving_time.total_seconds()
+                    hours = int(total_seconds // 3600)
+                    minutes = int((total_seconds % 3600) // 60)
+                    seconds = int(total_seconds % 60)
+                
                 if hours > 0:
                     time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
                 else:
@@ -247,9 +261,18 @@ class Poster:
                     )
                 )
             
-                # 配速 (min/km 或 min/mi)
-                if track.length > 0:
-                    pace = moving_time.total_seconds() / self.m2u(track.length) / 60
+                # 配速 (min/km 或 min/mi) - 直接从数据库获取的average_speed计算
+                average_speed = track.moving_dict.get("average_speed", 0)
+                
+                if average_speed > 0:
+                    # average_speed 单位是 m/s，转换为 min/km 或 min/mi
+                    if self.units == "metric":
+                        # 转换为 min/km: (1000 / (speed in m/s)) / 60 = 16.6667 / speed
+                        pace = 16.6667 / average_speed
+                    else:
+                        # 转换为 min/mi: (1609.344 / (speed in m/s)) / 60 = 26.8224 / speed
+                        pace = 26.8224 / average_speed
+                    
                     pace_minutes = int(pace)
                     pace_seconds = int((pace - pace_minutes) * 60)
                     pace_str = f"{pace_minutes}:{pace_seconds:02d}/{self.u()}"
@@ -299,5 +322,3 @@ class Poster:
         if self.years is not None:
             return
         self.years = YearRange()
-        for t in tracks:
-            self.years.add(t.start_time_local)
