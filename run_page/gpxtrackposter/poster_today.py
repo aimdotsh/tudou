@@ -185,61 +185,85 @@ class Poster:
         )
         if self.drawer_type != "monthoflife":
             d.add(
-            d.text(
-                self.trans("STATISTICS"),
-                insert=(25, self.height - 9),
-                fill=text_color,
-                style=header_style,
+                d.text(
+                    self.trans("ACTIVITY INFO"),
+                    insert=(25, self.height - 9),
+                    fill=text_color,
+                    style=header_style,
+                )
             )
-        )
-        d.add(
-            d.text(
-                self.trans("Number") + f": {len(self.tracks)}",
-                insert=(25, self.height - 5),
-                fill=text_color,
-                style=small_value_style,
-            )
-        )
-        d.add(
-            d.text(
-                self.trans("Weekly") + ": " + format_float(len(self.tracks) / weeks),
-                insert=(25, self.height - 1),
-                fill=text_color,
-                style=small_value_style,
-            )
-        )
-        d.add(
-            d.text(
-                self.trans("Total") + ": " + self.format_distance(total_length),
-                insert=(48, self.height - 5),
-                fill=text_color,
-                style=small_value_style,
-            )
-        )
-        d.add(
-            d.text(
-                self.trans("Avg") + ": " + self.format_distance(average_length),
-                insert=(48, self.height - 1),
-                fill=text_color,
-                style=small_value_style,
-            )
-        )
-        d.add(
-            d.text(
-                self.trans("Min") + ": " + self.format_distance(min_length),
-                insert=(75, self.height - 5),
-                fill=text_color,
-                style=small_value_style,
-            )
-        )
-        d.add(
-            d.text(
-                self.trans("Max") + ": " + self.format_distance(max_length),
-                insert=(75, self.height - 1),
-                fill=text_color,
-                style=small_value_style,
-            )
-        )
+        
+            # 只显示当天的活动信息
+            if self.tracks and self.day_filter:
+                track = self.tracks[0]  # 获取第一个活动
+            
+                # 运动类型
+                d.add(
+                    d.text(
+                        self.trans("Type") + f": {track.type}",
+                        insert=(25, self.height - 5),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
+            
+                # 运动时间
+                d.add(
+                    d.text(
+                        self.trans("Time") + f": {track.start_time_local.strftime('%H:%M')}",
+                        insert=(25, self.height - 1),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
+            
+                # 运动距离
+                d.add(
+                    d.text(
+                        self.trans("Distance") + f": {self.format_distance(track.length)}",
+                        insert=(48, self.height - 5),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
+            
+                # 运动时长
+                moving_time = track.moving_dict.get("moving_time", datetime.timedelta())
+                hours = moving_time.seconds // 3600
+                minutes = (moving_time.seconds % 3600) // 60
+                time_str = f"{hours:02d}:{minutes:02d}" if hours > 0 else f"{minutes:02d}min"
+                d.add(
+                    d.text(
+                        self.trans("Duration") + f": {time_str}",
+                        insert=(48, self.height - 1),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
+            
+                # 配速 (min/km 或 min/mi)
+                pace = moving_time.total_seconds() / self.m2u(track.length) / 60
+                pace_minutes = int(pace)
+                pace_seconds = int((pace - pace_minutes) * 60)
+                d.add(
+                    d.text(
+                        self.trans("Pace") + f": {pace_minutes}:{pace_seconds:02d}/{self.u()}",
+                        insert=(75, self.height - 5),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
+            
+                # 海拔增益
+                elevation = track.elevation_gain if track.elevation_gain is not None else 0
+                d.add(
+                    d.text(
+                        self.trans("Elevation") + f": {int(elevation)}m",
+                        insert=(75, self.height - 1),
+                        fill=text_color,
+                        style=small_value_style,
+                    )
+                )
 
     def __compute_track_statistics(self):
         length_range = ValueRange()
