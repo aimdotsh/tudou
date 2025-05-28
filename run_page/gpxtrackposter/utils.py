@@ -126,7 +126,7 @@ def interpolate_color(color1: str, color2: str, ratio: float) -> str:
 
 
 def format_float(f):
-    return locale.format_string("%.1f", f)
+    return locale.format_string("%.2f", f)
 
 
 def parse_datetime_to_local(start_time, end_time, point):
