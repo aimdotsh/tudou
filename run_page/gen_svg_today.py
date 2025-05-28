@@ -261,7 +261,14 @@ def main():
         )
     p.set_language(args.language)
     p.athlete = args.athlete
-    if args.title:
+    if args.from_db and args.day and not args.title:
+        # Get activity names from database for the specified day
+        activity_names = loader.get_activity_names_for_day(SQL_FILE)
+        if activity_names:
+            p.title = activity_names
+        else:
+            p.title = p.trans("MY TRACKS")
+    elif args.title:
         p.title = args.title
     else:
         p.title = p.trans("MY TRACKS")
