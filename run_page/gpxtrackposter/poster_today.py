@@ -230,9 +230,14 @@ class Poster:
             
                 # 运动时长
                 moving_time = track.moving_dict.get("moving_time", timedelta())
-                hours = moving_time.seconds // 3600
-                minutes = (moving_time.seconds % 3600) // 60
-                time_str = f"{hours:02d}:{minutes:02d}" if hours > 0 else f"{minutes:02d}min"
+                total_seconds = moving_time.total_seconds()
+                hours = int(total_seconds // 3600)
+                minutes = int((total_seconds % 3600) // 60)
+                seconds = int(total_seconds % 60)
+                if hours > 0:
+                    time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+                else:
+                    time_str = f"{minutes:02d}:{seconds:02d}min"
                 d.add(
                     d.text(
                         self.trans("Duration") + f": {time_str}",
@@ -243,12 +248,16 @@ class Poster:
                 )
             
                 # 配速 (min/km 或 min/mi)
-                pace = moving_time.total_seconds() / self.m2u(track.length) / 60
-                pace_minutes = int(pace)
-                pace_seconds = int((pace - pace_minutes) * 60)
+                if track.length > 0:
+                    pace = moving_time.total_seconds() / self.m2u(track.length) / 60
+                    pace_minutes = int(pace)
+                    pace_seconds = int((pace - pace_minutes) * 60)
+                    pace_str = f"{pace_minutes}:{pace_seconds:02d}/{self.u()}"
+                else:
+                    pace_str = f"0:00/{self.u()}"
                 d.add(
                     d.text(
-                        self.trans("Pace") + f": {pace_minutes}:{pace_seconds:02d}/{self.u()}",
+                        self.trans("Pace") + f": {pace_str}",
                         insert=(75, self.height - 5),
                         fill=text_color,
                         style=small_value_style,
