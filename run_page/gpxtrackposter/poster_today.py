@@ -212,7 +212,7 @@ class Poster:
                 d.add(
                     d.text(
                         self.trans("Date") + f": {track.start_time_local.strftime('%Y-%m-%d')}",
-                        insert=(25, self.height - 1),
+                        insert=(22, self.height - 1),
                         fill=text_color,
                         style=small_value_style,
                     )
