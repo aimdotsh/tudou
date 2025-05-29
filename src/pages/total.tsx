@@ -222,7 +222,7 @@ const Total: React.FC = () => {
                 labelStyle={{ color: '#0ed45e' }}
               />
               <Legend />
-              <Bar dataKey="count" name="Activities" fill="#ff6b6b" />
+              <Bar dataKey="count" name="Workouts" fill="#ff6b6b" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -290,7 +290,7 @@ const Total: React.FC = () => {
 
         {/* 活动热力图 - 整行宽度 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Activity Heatmap</h3>
+          <h3>Workouts Heatmap</h3>
           <div className={styles.heatmapContainer}>
             {yearlyData.length > 0 && (
               <div className={styles.heatmap}>

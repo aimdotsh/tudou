@@ -187,7 +187,7 @@ class Poster:
         if self.drawer_type != "monthoflife":
             d.add(
                 d.text(
-                    self.trans("ACTIVITY INFO"),
+                    self.trans("WORKOUTS INFO"),
                     insert=(25, self.height - 9),
                     fill=text_color,
                     style=header_style,
