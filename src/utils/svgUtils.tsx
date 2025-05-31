@@ -6,7 +6,7 @@ type SvgComponent = {
 
 const FailedLoadSvg = () => {
   console.log('Failed to load SVG component');
-  return <div></div>;
+  throw new Error('Failed to load SVG component');
 }
 
 export const loadSvgComponent = async (

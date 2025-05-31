@@ -7,8 +7,13 @@ class ErrorBoundary extends Component<{
 }, { hasError: boolean }> {
   state = { hasError: false };
 
-  static getDerivedStateFromError() {
+  static getDerivedStateFromError(error) {
+    console.error('Error caught by ErrorBoundary:', error);
     return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error caught by ErrorBoundary:', error, errorInfo);
   }
 
   render() {
@@ -351,7 +356,7 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts</h3>
             <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <ErrorBoundary fallback={<div className="text-center" style={{ color: '#0ed45e', fontWeight: 600 }}>今天没有运动，要加油噢</div>}>
+            <ErrorBoundary fallback={<div className="text-center" style={{ color: '#0ed45e', fontWeight: 600 }}>今天还没有运动，要加油噢</div>}>
             <Suspense fallback={<div className="text-center">Loading...</div>}>
             <TodaySvg className="mt-2 h-auto w-full" />
             </Suspense>
