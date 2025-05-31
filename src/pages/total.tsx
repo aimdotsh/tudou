@@ -369,8 +369,7 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts</h3>
 
-
- <div className={styles.gridContainer}>
+<div className={styles.gridContainer}>
       {/* 今天 */}
       <ErrorBoundary 
         fallback={
@@ -386,7 +385,9 @@ const Total: React.FC = () => {
             <div>Loading...</div>
           </div>
         }>
-          <TodaySvg className="h-auto w-full" />
+          <div className={styles.svgCard}>
+            <TodaySvg className="h-auto w-full" />
+          </div>
         </Suspense>
       </ErrorBoundary>
 
@@ -405,7 +406,9 @@ const Total: React.FC = () => {
             <div>Loading...</div>
           </div>
         }>
-          <YesterdaySvg className="h-auto w-full" />
+          <div className={styles.svgCard}>
+            <YesterdaySvg className="h-auto w-full" />
+          </div>
         </Suspense>
       </ErrorBoundary>
 
@@ -424,7 +427,9 @@ const Total: React.FC = () => {
             <div>Loading...</div>
           </div>
         }>
-          <DayBeforeYesterdaySvg className="h-auto w-full" />
+          <div className={styles.svgCard}>
+            <DayBeforeYesterdaySvg className="h-auto w-full" />
+          </div>
         </Suspense>
       </ErrorBoundary>
 
@@ -443,10 +448,15 @@ const Total: React.FC = () => {
             <div>Loading...</div>
           </div>
         }>
-          <ThreeDaysAgoSvg className="h-auto w-full" />
+          <div className={styles.svgCard}>
+            <ThreeDaysAgoSvg className="h-auto w-full" />
+          </div>
         </Suspense>
       </ErrorBoundary>
     </div>
+
+
+    
 
         </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>

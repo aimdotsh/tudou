@@ -349,6 +349,8 @@
   stroke: #333;
 }
 
+
+
 /* 容器样式 */
 .gridContainer {
   display: grid;
@@ -363,28 +365,57 @@
   }
 }
 
-/* 日期卡片样式 */
+/* 卡片通用样式 */
+.cardBase {
+  border-radius: 0.5rem;
+  min-height: 130px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.cardBase:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 日期卡片样式 - 错误状态 */
 .dateCard {
+  composes: cardBase;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 1rem;
-  border-radius: 0.5rem;
   border: 2px solid #0ed45e;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background: rgba(14, 212, 94, 0.05);
-  min-height: 130px;
   color: #0ed45e;
   font-weight: 600;
-  transition: all 0.3s ease;
 }
 
-.dateCard:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* SVG卡片样式 - 正常状态 */
+.svgCard {
+  composes: cardBase;
+  border: 2px solid #0ed45e;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: rgba(14, 212, 94, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
 }
 
+/* 加载状态样式 */
+.loadingCard {
+  composes: cardBase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #d1d5db;
+  color: #9ca3af;
+}
+
+/* 文字样式 */
 .dateText {
   margin-bottom: 0.25rem;
   font-family: monospace;
@@ -402,17 +433,6 @@
   font-size: 0.6rem;
   margin-top: 0.25rem;
   opacity: 0.8;
-}
-
-/* 加载状态样式 */
-.loadingCard {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 130px;
-  border: 2px dashed #d1d5db;
-  border-radius: 0.5rem;
-  color: #9ca3af;
 }
 
 /* 响应式文字 */
