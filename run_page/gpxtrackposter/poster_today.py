@@ -148,7 +148,7 @@ class Poster:
 
     def __draw_header(self, d):
         text_color = self.colors["text"]
-        title_style = "font-size:6px; font-family:Arial; font-weight:bold;"
+        title_style = "font-size:6px; font-family:Arial; font-weight:bold;color:#0ed45e;"
         d.add(d.text(self.title, insert=(5, 10), fill=text_color, style=title_style))
 
     def __draw_footer(self, d):
