@@ -123,7 +123,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
                     </>
                 )}
                 {interval === 'day' && (
-                    <p><strong>{ACTIVITY_TOTAL.LOCATION_TITLE}:</strong> {summary.location || ''}</p>
+                    <p></p>
                 )}
                 {['month', 'week', 'year'].includes(interval) && (
                     <div className={styles.chart} style={{ height: '250px', width: '100%' }}>
