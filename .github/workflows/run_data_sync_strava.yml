@@ -3,7 +3,7 @@ name: strava Data Sync
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 23 * * *'
+    - cron: '30 23 * * *'
   push:
     branches:
       - master
