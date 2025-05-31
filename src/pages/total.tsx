@@ -38,7 +38,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-import { totalStat ,todayStat } from '@assets/index';
+import { totalStat ,recentStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
 // Lazy load both github.svg and grid.svg
@@ -48,21 +48,34 @@ import { loadSvgComponent } from '@/utils/svgUtils';
 // 原代码
 // const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
 
-// 修改后，获取北京时间
-const getBeijingDate = () => {
+
+// 获取北京时间的通用函数（支持日期偏移）
+const getBeijingDate = (offset = 0) => {
   const now = new Date();
   // 获取当前时间的 UTC 时间戳
-  const utcTimestamp = now.getTime() + (now.getTimezoneOffset() * 60000); 
-  // 计算北京时间，北京时间为 UTC+8
-  const beijingDate = new Date(utcTimestamp + (3600000 * 8)); 
+  const utcTimestamp = now.getTime() + (now.getTimezoneOffset() * 60000);
+  
+  // 计算北京时间，北京时间为 UTC+8（加上偏移天数）
+  const beijingDate = new Date(utcTimestamp + (3600000 * 8) + (offset * 86400000));
+  
   const year = beijingDate.getFullYear();
   const month = String(beijingDate.getMonth() + 1).padStart(2, '0');
   const day = String(beijingDate.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
 
-const today = getBeijingDate();
-const TodaySvg = lazy(() => loadSvgComponent(todayStat, `./${today}.svg`));
+// 获取不同日期的日期字符串
+const today = getBeijingDate(0);        // 今天
+const yesterday = getBeijingDate(-1);   // 昨天
+const dayBeforeYesterday = getBeijingDate(-2);  // 前天
+const threeDaysAgo = getBeijingDate(-3);        // 大前天
+
+// 创建对应的懒加载 SVG 组件
+const TodaySvg = lazy(() => loadSvgComponent(recentStat, `./${today}.svg`));
+const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./${yesterday}.svg`));
+const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./${dayBeforeYesterday}.svg`));
+const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./${threeDaysAgo}.svg`));
+
 
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
 
@@ -355,13 +368,86 @@ const Total: React.FC = () => {
         {/* 添加当前日期SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts</h3>
-            <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <ErrorBoundary fallback={<div className="text-center" style={{ color: '#0ed45e', fontWeight: 600 }}>今天还没有运动，要加油噢</div>}>
-            <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <TodaySvg className="mt-2 h-auto w-full" />
-            </Suspense>
-            </ErrorBoundary>
-            </div>
+
+
+ <div className={styles.gridContainer}>
+      {/* 今天 */}
+      <ErrorBoundary 
+        fallback={
+          <div className={styles.dateCard}>
+            <div className={styles.dateText}>{today}</div>
+            <div className={styles.poemText}>"今日事繁且搁置，明朝振衣再登山"</div>
+            <div className={styles.sourceText}>《明日歌》新解</div>
+          </div>
+        }
+      >
+        <Suspense fallback={
+          <div className={styles.loadingCard}>
+            <div>Loading...</div>
+          </div>
+        }>
+          <TodaySvg className="h-auto w-full" />
+        </Suspense>
+      </ErrorBoundary>
+
+      {/* 昨天 */}
+      <ErrorBoundary 
+        fallback={
+          <div className={styles.dateCard}>
+            <div className={styles.dateText}>{yesterday}</div>
+            <div className={styles.poemText}>"昨日不可追，来日犹可期"</div>
+            <div className={styles.sourceText}>化用陶渊明《归去来兮辞》</div>
+          </div>
+        }
+      >
+        <Suspense fallback={
+          <div className={styles.loadingCard}>
+            <div>Loading...</div>
+          </div>
+        }>
+          <YesterdaySvg className="h-auto w-full" />
+        </Suspense>
+      </ErrorBoundary>
+
+      {/* 前天 */}
+      <ErrorBoundary 
+        fallback={
+          <div className={styles.dateCard}>
+            <div className={styles.dateText}>{dayBeforeYesterday}</div>
+            <div className={styles.poemText}>"世事如舟暂搁浅，重整征帆再启程"</div>
+            <div className={styles.sourceText}>化用李白《行路难》</div>
+          </div>
+        }
+      >
+        <Suspense fallback={
+          <div className={styles.loadingCard}>
+            <div>Loading...</div>
+          </div>
+        }>
+          <DayBeforeYesterdaySvg className="h-auto w-full" />
+        </Suspense>
+      </ErrorBoundary>
+
+      {/* 大前天 */}
+      <ErrorBoundary 
+        fallback={
+          <div className={styles.dateCard}>
+            <div className={styles.dateText}>{threeDaysAgo}</div>
+            <div className={styles.poemText}>"三日未行何足虑，长风破浪会有时"</div>
+            <div className={styles.sourceText}>化用李白《行路难》</div>
+          </div>
+        }
+      >
+        <Suspense fallback={
+          <div className={styles.loadingCard}>
+            <div>Loading...</div>
+          </div>
+        }>
+          <ThreeDaysAgoSvg className="h-auto w-full" />
+        </Suspense>
+      </ErrorBoundary>
+    </div>
+
         </div>
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>

@@ -9,9 +9,7 @@ const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
 const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
-const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
-const TodaySvg = lazy(() => loadSvgComponent(totalStat, `./${today}.svg`));
-  
+
 const SVGStat = () => (
   <div id="svgStat">
     <Suspense fallback={<div className="text-center">Loading...</div>}>
