@@ -105,7 +105,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
     };
 
     // Calculate Y-axis maximum value and ticks
-    const yAxisMax = Math.ceil(Math.max(...data.map(d => parseFloat(d.distance))) + 200); // Add 200 as buffer
+    const yAxisMax = Math.ceil(Math.max(...data.map(d => parseFloat(d.distance))) + 20); // Add 200 as buffer
     const yAxisTicks = Array.from({ length: Math.ceil(yAxisMax / 5) + 1 }, (_, i) => i * 5); // Generate arithmetic sequence
 
     return (
@@ -135,7 +135,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
                                     label={{ value: 'km', angle: -90, position: 'insideLeft', fill: 'rgb(204, 204, 204)' }}
                                     domain={[0, yAxisMax]} // 动态设置最大值
                                     ticks={yAxisTicks} // 动态生成刻度
-                                    tick={{ fill: 'rgb(204, 204, 204)' }}
+                                    tick={{ fill: 'rgb(204, 204, 204)', fontSize: 14 }} // 调整 Y 轴数字大小
+                                    margin={{ left: 60 }} // 进一步增大左侧边距
                                 />
                                 <Tooltip
                                     formatter={(value) => `${value} km`}
@@ -263,26 +264,27 @@ const ActivityList: React.FC = () => {
 
             {interval === 'life' && (
                 <div className={styles.lifeContainer}>
-                    <div className={styles.chart} style={{ height: '600px', width: '50%' }}>
+                    <div className={styles.chart} style={{ height: '500px', width: '50%' }}>
                         <ResponsiveContainer>
                             <BarChart
-                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({
-                                    period,
-                                    totalDistance: summary.totalDistance.toFixed(2),
-                                }))}
+                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({ period, totalDistance: summary.totalDistance.toFixed(2) }))}
                                 margin={{ top: 20, right: 20, left: -20, bottom: 5 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                                 <XAxis
                                     dataKey="period"
-                                    tick={{ fill: 'rgb(204, 204, 204)' }}
+                                    tick={{ fill: 'rgb(204, 204, 204)', fontSize: 14 }}
                                     interval={0}
-                                    angle={-45}
+                                    angle={0}
                                     textAnchor="end"
                                 />
                                 <YAxis
-                                    label={{ value: 'km', angle: -90, position: 'insideLeft', fill: 'rgb(204, 204, 204)' }}
-                                    tick={{ fill: 'rgb(204, 204, 204)' }}
+                                    label={{ fill: 'rgb(204, 204, 204)' }}
+                                    tick={{ fill: 'rgb(204, 204, 204)', fontSize: 12 }} // 调整 Y 轴数字大小
+                                    domain={[0, 'dataMax']}
+                                    ticks={[0, 200, 400, 600, 800, 1000, 1200, 1400, 1600]}
+                                    // 进一步增大左右边距
+                                    margin={{ left: 20, right: 20 }}
                                 />
                                 <Tooltip
                                     formatter={(value) => `${value} km`}

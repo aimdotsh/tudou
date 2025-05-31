@@ -12,6 +12,7 @@ import {
 import '@/styles/index.css';
 import { withOptionalGAPageTracking } from './utils/trackRoute';
 import TotalPage from "@/pages/total";
+import SummaryPage from "@/pages/summary";
 
 if (USE_GOOGLE_ANALYTICS) {
   ReactGA.initialize(GOOGLE_ANALYTICS_TRACKING_ID);
@@ -30,6 +31,10 @@ const routes = createBrowserRouter(
     {
       path: 'total',
       element: withOptionalGAPageTracking(<TotalPage />),
+    },
+    {
+      path: 'summary',
+      element: withOptionalGAPageTracking(<SummaryPage />),
     },
     {
       path: '*',
