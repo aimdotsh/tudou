@@ -38,8 +38,25 @@ import { loadSvgComponent } from '@/utils/svgUtils';
 
 // Lazy load both github.svg and grid.svg
 
+
 // 获取当前日期的字符串，格式为 YYYY-MM-DD
-const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
+// 原代码
+// const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
+
+// 修改后，获取北京时间
+const getBeijingDate = () => {
+  const now = new Date();
+  // 获取当前时间的 UTC 时间戳
+  const utcTimestamp = now.getTime() + (now.getTimezoneOffset() * 60000); 
+  // 计算北京时间，北京时间为 UTC+8
+  const beijingDate = new Date(utcTimestamp + (3600000 * 8)); 
+  const year = beijingDate.getFullYear();
+  const month = String(beijingDate.getMonth() + 1).padStart(2, '0');
+  const day = String(beijingDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const today = getBeijingDate();
 const TodaySvg = lazy(() => loadSvgComponent(todayStat, `./${today}.svg`));
 
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
