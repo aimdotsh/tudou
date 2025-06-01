@@ -266,7 +266,7 @@ const Total: React.FC = () => {
         <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={yearlyData} margin={{ top: 0, right: 0, left: -15, bottom: 5 }}>
+            <BarChart data={yearlyData} margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
               <YAxis tick={{ fill: '#ccc' }} />
@@ -285,7 +285,7 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthlyData} margin={{ top: 0, right: 0, left: -15, bottom: 5 }}>
+            <BarChart data={monthlyData} margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis 
                 dataKey="fullDate"
