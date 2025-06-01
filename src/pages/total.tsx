@@ -38,7 +38,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-import { totalStat ,recentStat } from '@assets/index';
+import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
 // Lazy load both github.svg and grid.svg
@@ -71,11 +71,22 @@ const dayBeforeYesterday = getBeijingDate(-2);  // 前天
 const threeDaysAgo = getBeijingDate(-3);        // 大前天
 
 // 创建对应的懒加载 SVG 组件
-const TodaySvg = lazy(() => loadSvgComponent(recentStat, `./${today}.svg`));
-const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./${yesterday}.svg`));
-const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./${dayBeforeYesterday}.svg`));
-const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./${threeDaysAgo}.svg`));
+const TodaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${today}.svg`));
+const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${yesterday}.svg`));
+const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${dayBeforeYesterday}.svg`));
+const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${threeDaysAgo}.svg`));
+// halfmarathon SVG 
+  
+const Halfmarathon01Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-04-20.svg`));
+const Halfmarathon02Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-10-20.svg`));
+const Halfmarathon03Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-09-08.svg`));
+const Halfmarathon04Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-21.svg`));
+const Halfmarathon05Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-14.svg`));
 
+const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
+
+const Newyear01Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2025-01-01.svg`));
+const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-02-04.svg`));  
 
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
 
@@ -364,101 +375,188 @@ const Total: React.FC = () => {
           </div>
         </div>
         {/* 活动热力图下方添加SVG图表 */}
-        
-        {/* 添加当前日期SVG图表 */}
+
+        {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts</h3>
 
-<div className={styles.gridContainer}>
-      {/* 今天 */}
-      <ErrorBoundary 
-        fallback={
-          <div className={styles.dateCard}>
-            <div className={styles.dateText}>{today}</div>
-            <div className={styles.poemText}>"今日事繁且搁置，明朝振衣再登山"</div>
-            <div className={styles.sourceText}>《明日歌》新解</div>
-          </div>
-        }
-      >
-        <Suspense fallback={
-          <div className={styles.loadingCard}>
-            <div>Loading...</div>
-          </div>
-        }>
-          <div className={styles.svgCard}>
-            <TodaySvg className="h-auto w-full" />
-          </div>
-        </Suspense>
-      </ErrorBoundary>
+          <div className={styles.gridContainer}>
+            {/* 今天 */}
+            <ErrorBoundary
+              fallback={
+                <div className={styles.dateCard}>
+                  <div className={styles.dateText}>{today}</div>
+                  <div className={styles.poemText}>"今日事繁且搁置，明朝振衣再登山"</div>
+                  <div className={styles.sourceText}>《明日歌》新解</div>
+                </div>
+              }
+            >
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <TodaySvg className="h-auto w-full" />
+                </div>
+              </Suspense>
+            </ErrorBoundary>
 
-      {/* 昨天 */}
-      <ErrorBoundary 
-        fallback={
-          <div className={styles.dateCard}>
-            <div className={styles.dateText}>{yesterday}</div>
-            <div className={styles.poemText}>"昨日不可追，来日犹可期"</div>
-            <div className={styles.sourceText}>化用陶渊明《归去来兮辞》</div>
-          </div>
-        }
-      >
-        <Suspense fallback={
-          <div className={styles.loadingCard}>
-            <div>Loading...</div>
-          </div>
-        }>
-          <div className={styles.svgCard}>
-            <YesterdaySvg className="h-auto w-full" />
-          </div>
-        </Suspense>
-      </ErrorBoundary>
+            {/* 昨天 */}
+            <ErrorBoundary
+              fallback={
+                <div className={styles.dateCard}>
+                  <div className={styles.dateText}>{yesterday}</div>
+                  <div className={styles.poemText}>"昨日不可追，来日犹可期"</div>
+                  <div className={styles.sourceText}>化用陶渊明《归去来兮辞》</div>
+                </div>
+              }
+            >
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <YesterdaySvg className="h-auto w-full" />
+                </div>
+              </Suspense>
+            </ErrorBoundary>
 
-      {/* 前天 */}
-      <ErrorBoundary 
-        fallback={
-          <div className={styles.dateCard}>
-            <div className={styles.dateText}>{dayBeforeYesterday}</div>
-            <div className={styles.poemText}>"世事如舟暂搁浅，重整征帆再启程"</div>
-            <div className={styles.sourceText}>化用李白《行路难》</div>
-          </div>
-        }
-      >
-        <Suspense fallback={
-          <div className={styles.loadingCard}>
-            <div>Loading...</div>
-          </div>
-        }>
-          <div className={styles.svgCard}>
-            <DayBeforeYesterdaySvg className="h-auto w-full" />
-          </div>
-        </Suspense>
-      </ErrorBoundary>
+            {/* 前天 */}
+            <ErrorBoundary
+              fallback={
+                <div className={styles.dateCard}>
+                  <div className={styles.dateText}>{dayBeforeYesterday}</div>
+                  <div className={styles.poemText}>"世事如舟暂搁浅，重整征帆再启程"</div>
+                  <div className={styles.sourceText}>化用李白《行路难》</div>
+                </div>
+              }
+            >
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <DayBeforeYesterdaySvg className="h-auto w-full" />
+                </div>
+              </Suspense>
+            </ErrorBoundary>
 
-      {/* 大前天 */}
-      <ErrorBoundary 
-        fallback={
-          <div className={styles.dateCard}>
-            <div className={styles.dateText}>{threeDaysAgo}</div>
-            <div className={styles.poemText}>"三日未行何足虑，长风破浪会有时"</div>
-            <div className={styles.sourceText}>化用李白《行路难》</div>
+            {/* 大前天 */}
+            <ErrorBoundary
+              fallback={
+                <div className={styles.dateCard}>
+                  <div className={styles.dateText}>{threeDaysAgo}</div>
+                  <div className={styles.poemText}>"三日未行何足虑，长风破浪会有时"</div>
+                  <div className={styles.sourceText}>化用李白《行路难》</div>
+                </div>
+              }
+            >
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <ThreeDaysAgoSvg className="h-auto w-full" />
+                </div>
+              </Suspense>
+            </ErrorBoundary>
           </div>
-        }
-      >
-        <Suspense fallback={
-          <div className={styles.loadingCard}>
-            <div>Loading...</div>
-          </div>
-        }>
-          <div className={styles.svgCard}>
-            <ThreeDaysAgoSvg className="h-auto w-full" />
-          </div>
-        </Suspense>
-      </ErrorBoundary>
-    </div>
-
-
-    
-
         </div>
+
+   {/* 添加 Finished SVG图表 */}
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+          <h3>Recent Finished Competition</h3>
+
+          <div className={styles.gridContainer}>
+                {/* halfmarathon01Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Halfmarathon01Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+
+                {/* Halfmarathon02Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Halfmarathon02Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+
+                {/* Halfmarathon03Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Halfmarathon03Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+                {/* Halfmarathon04Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Halfmarathon04Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+                {/* Halfmarathon05Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Halfmarathon05Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+                {/* Yueye01Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Yueye01Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+                {/* Newyear01Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Newyear01Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+                {/* Newyear02Stat */}
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Newyear02Stat className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+          </div>
+        </div>
+
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <Suspense fallback={<div className="text-center">Loading...</div>}>
             <GithubSvg className="mt-2 h-auto w-full" />
@@ -471,8 +569,8 @@ const Total: React.FC = () => {
         </div>
 
 
+      </div>
     </div>
-</div>
   );
 };
 
