@@ -469,7 +469,7 @@ const Total: React.FC = () => {
 
    {/* 添加 Finished SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Recent Finished Competition</h3>
+          <h3>Wonderful  Workouts</h3>
 
           <div className={styles.gridContainer}>
                 {/* halfmarathon01Stat */}
