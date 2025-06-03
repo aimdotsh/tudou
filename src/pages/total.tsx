@@ -1,4 +1,21 @@
 import React, { useState, useEffect, lazy, Suspense, Component, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend
+} from 'recharts';
+import activities from '@/static/activities.json';
+import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
+import { formatPace } from '@/utils/utils';
+import styles from './total.module.css';
+import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
+import { loadSvgComponent } from '@/utils/svgUtils';
 
 // 自定义错误边界组件
 class ErrorBoundary extends Component<{ 
@@ -23,31 +40,12 @@ class ErrorBoundary extends Component<{
     return this.props.children;
   }
 }
-import { useNavigate } from 'react-router-dom';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  Legend
-} from 'recharts';
-import activities from '@/static/activities.json';
-import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
-import { formatPace } from '@/utils/utils';
-import styles from './total.module.css';
-import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
-import { loadSvgComponent } from '@/utils/svgUtils';
 
-// Lazy load both github.svg and grid.svg
 
 
 // 获取当前日期的字符串，格式为 YYYY-MM-DD
 // 原代码
 // const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
-
 
 // 获取北京时间的通用函数（支持日期偏移）
 const getBeijingDate = (offset = 0) => {
@@ -88,8 +86,8 @@ const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.s
 const Newyear01Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2025-01-01.svg`));
 const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-02-04.svg`));  
 
+// Lazy load both github.svg and grid.svg
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
-
 const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
 // const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
