@@ -129,8 +129,8 @@ interface Activity {
 }
 
 const Total: React.FC = () => {
- 
   const [activityType, setActivityType] = useState<string>('run');
+  const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
   const showTypes = [...playTypes].filter(type => type in TYPES_MAPPING);
 
@@ -205,8 +205,37 @@ const Total: React.FC = () => {
   const uniqueYears = Array.from(new Set(
     yearlyData.map(item => item.year.toString())
   )).sort();
+  // 关闭照片查看器
+  const closePhotoViewer = () => {
+    setCurrentPhoto(null);
+  };
+
   return (
     <div className={styles.container}>
+      {/* 照片查看模态框 */}
+      {currentPhoto && (
+        <div className={styles.photoModal} onClick={closePhotoViewer}>
+          <div className={styles.photoContainer}>
+            <img 
+              src={currentPhoto} 
+              alt="Activity Photo" 
+              className={styles.photoImage}
+              onClick={(e) => e.stopPropagation()}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = './placeholder.jpg';
+              }}
+            />
+            <button 
+              className={styles.closeButton}
+              onClick={closePhotoViewer}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
       <div className={styles.header}>
         <a href="https://liups.com/" className={styles.tohome}>自留地</a>
         <h1 className={styles.title}>运动统计</h1>
@@ -476,7 +505,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./halfmarathon/2025-04-20.jpg')}
+                    >
                       <Halfmarathon01Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -487,7 +519,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./halfmarathon/2024-10-20.jpg')}
+                    >
                       <Halfmarathon02Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -498,7 +533,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./halfmarathon/2024-09-08.jpg')}
+                    >
                       <Halfmarathon03Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -508,7 +546,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./halfmarathon/2024-04-21.jpg')}
+                    >
                       <Halfmarathon04Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -518,7 +559,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./halfmarathon/2024-04-14.jpg')}
+                    >
                       <Halfmarathon05Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -528,7 +572,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./yueye/2024-07-07.jpg')}
+                    >
                       <Yueye01Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -538,7 +585,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./newyear/2025-01-01.jpg')}
+                    >
                       <Newyear01Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
@@ -548,7 +598,10 @@ const Total: React.FC = () => {
                       <div>Loading...</div>
                     </div>
                   }>
-                    <div className={styles.svgCard}>
+                    <div 
+                      className={styles.svgCard}
+                      onClick={() => setCurrentPhoto('./newyear/2024-02-04.jpg')}
+                    >
                       <Newyear02Stat className="h-auto w-full" />
                     </div>
                   </Suspense>
