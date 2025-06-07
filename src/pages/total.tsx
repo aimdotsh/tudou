@@ -410,7 +410,6 @@ const Total: React.FC = () => {
             )}
           </div>
         </div>
-        {/* 活动热力图下方添加SVG图表 */}
 
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
