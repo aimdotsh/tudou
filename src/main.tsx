@@ -13,7 +13,7 @@ import '@/styles/index.css';
 import { withOptionalGAPageTracking } from './utils/trackRoute';
 import TotalPage from "@/pages/total";
 import SummaryPage from "@/pages/summary";
-import Fanzhuan from './pages/fanzhuan';
+import Daily from './pages/daily';
 
 if (USE_GOOGLE_ANALYTICS) {
   ReactGA.initialize(GOOGLE_ANALYTICS_TRACKING_ID);
@@ -34,15 +34,15 @@ const routes = createBrowserRouter(
       element: withOptionalGAPageTracking(<TotalPage />),
     },
     {
-      path: 'f',
-      element: withOptionalGAPageTracking(<Fanzhuan />),
+      path: 'd',
+      element: withOptionalGAPageTracking(<Daily />),
     },
     {
       path: 'summary',
       element: withOptionalGAPageTracking(<SummaryPage />),
     },
     {
-      path: '*',
+      path: 'dddd',
       element: withOptionalGAPageTracking(<TotalPage />),
     },
   ],
