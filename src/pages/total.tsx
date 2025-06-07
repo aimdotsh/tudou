@@ -131,6 +131,14 @@ interface Activity {
 const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('run');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
+  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
+
+  const toggleFlip = (id: string) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
   const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
   const showTypes = [...playTypes].filter(type => type in TYPES_MAPPING);
 
@@ -232,6 +240,7 @@ const Total: React.FC = () => {
               onClick={closePhotoViewer}
             >
               ×
+
             </button>
           </div>
         </div>
@@ -498,111 +507,199 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Wonderful  Workouts</h3>
 
-          <div className={styles.gridContainer}>
-                {/* halfmarathon01Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
-                    <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./halfmarathon/2025-04-20.jpg')}
-                    >
-                      <Halfmarathon01Stat className="h-auto w-full" />
-                    </div>
-                  </Suspense>
+        <div className={styles.gridContainer}>
+          {/* Halfmarathon01Stat */}
+          <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
+            <div 
+              className={`${styles.flipCard} ${flippedCards['halfmarathon01'] ? styles.flipped : ''}`}
+              onClick={() => toggleFlip('halfmarathon01')}
+            >
+              <div className={styles.flipCardInner}>
+                <div className={styles.flipCardFront}>
+                  <Halfmarathon01Stat style={{ width: '100%', height: '100%' }} />
+                </div>
+                <div className={styles.flipCardBack}>
+                  <img 
+                    src="./halfmarathon/2025-04-20.jpg" 
+                    alt="Halfmarathon 2025-04-20"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = './placeholder.jpg';
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Suspense>
 
                 {/* Halfmarathon02Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./halfmarathon/2024-10-20.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['halfmarathon02'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('halfmarathon02')}
                     >
-                      <Halfmarathon02Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Halfmarathon02Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./halfmarathon/2024-10-20.jpg" 
+                            alt="Halfmarathon 2024-10-20"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
 
                 {/* Halfmarathon03Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./halfmarathon/2024-09-08.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['halfmarathon03'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('halfmarathon03')}
                     >
-                      <Halfmarathon03Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Halfmarathon03Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./halfmarathon/2024-09-08.jpg" 
+                            alt="Halfmarathon 2024-09-08"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
-                {/* Halfmarathon04Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                 {/* Halfmarathon04Stat */}
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./halfmarathon/2024-04-21.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['halfmarathon04'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('halfmarathon04')}
                     >
-                      <Halfmarathon04Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Halfmarathon04Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./halfmarathon/2024-04-21.jpg" 
+                            alt="Halfmarathon 2024-04-21"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
                 {/* Halfmarathon05Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./halfmarathon/2024-04-14.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['halfmarathon05'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('halfmarathon05')}
                     >
-                      <Halfmarathon05Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Halfmarathon05Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./halfmarathon/2024-04-14.jpg" 
+                            alt="Halfmarathon 2024-04-14"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
                 {/* Yueye01Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./yueye/2024-07-07.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['yueye01'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('yueye01')}
                     >
-                      <Yueye01Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Yueye01Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./yueye/2024-07-07.jpg" 
+                            alt="yueye 2024-07-07"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
                 {/* Newyear01Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./newyear/2025-01-01.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['Newyear01'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('Newyear01')}
                     >
-                      <Newyear01Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Newyear01Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./newyear/2025-01-01.jpg" 
+                            alt="newyear 2025-01-01"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
                 {/* Newyear02Stat */}
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading...</div>
-                    </div>
-                  }>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
                     <div 
-                      className={styles.svgCard}
-                      onClick={() => setCurrentPhoto('./newyear/2024-02-04.jpg')}
+                      className={`${styles.flipCard} ${flippedCards['Newyear02'] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip('Newyear02')}
                     >
-                      <Newyear02Stat className="h-auto w-full" />
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <Newyear02Stat style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src="./newyear/2024-02-04.jpg" 
+                            alt="newyear 2024-02-04"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Suspense>
           </div>
