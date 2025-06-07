@@ -224,7 +224,7 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts</h3>
 
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mt-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
             {currentItems.map(({ date, Component }) => (
               <ErrorBoundary
                 key={date}
@@ -252,17 +252,17 @@ const Total: React.FC = () => {
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              className="px-4 py-2 bg-[#0ed45e] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#0bc04d] hover:scale-105"
             >
               上一页
             </button>
-            <span className="text-gray-700">
+            <span className="text-gray-700 transition-opacity duration-300">
               {currentPage} / {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+              className="px-4 py-2 bg-[#0ed45e] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#0bc04d] hover:scale-105"
             >
               下一页
             </button>
