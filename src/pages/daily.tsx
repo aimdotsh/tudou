@@ -62,17 +62,17 @@ const getBeijingDate = (offset = 0) => {
   return `${year}-${month}-${day}`;
 };
 
-// 获取不同日期的日期字符串
-const today = getBeijingDate(0);        // 今天
-const yesterday = getBeijingDate(-1);   // 昨天
-const dayBeforeYesterday = getBeijingDate(-2);  // 前天
-const threeDaysAgo = getBeijingDate(-3);        // 大前天
+// 生成最近60天的日期数组
+const recentDates = Array.from({ length: 60 }, (_, i) => getBeijingDate(-i));
 
-// 创建对应的懒加载 SVG 组件
-const TodaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${today}.svg`));
-const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${yesterday}.svg`));
-const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${dayBeforeYesterday}.svg`));
-const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${threeDaysAgo}.svg`));
+// 创建动态SVG组件数组
+const RecentSvgs = recentDates.map(date => {
+  const SvgComponent = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${date}.svg`));
+  return {
+    date,
+    Component: SvgComponent
+  };
+});
 
 
 // 辅助函数：将时间字符串转换为秒数
@@ -110,6 +110,13 @@ const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('run');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 12;
+  const totalPages = Math.ceil(RecentSvgs.length / itemsPerPage);
+  const currentItems = RecentSvgs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
 
   const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
@@ -217,98 +224,50 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts</h3>
 
-          <div className={styles.gridContainer}>
-            {/* 今天 */}
-            <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{today}</div>
-                  <div className={styles.poemText}>"今日事繁且搁置，明朝振衣再登山"</div>
-                  <div className={styles.sourceText}>《明日歌》新解</div>
-                </div>
-              }
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mt-4">
+            {currentItems.map(({ date, Component }) => (
+              <ErrorBoundary
+                key={date}
+                fallback={
+                  <div className={styles.dateCard}>
+                    <div className={styles.dateText}>{date}</div>
+                    <div className={styles.poemText}>"今天没有运动"</div>
+                    <div className={styles.sourceText}>系统提示</div>
+                  </div>
+                }
+              >
+                <Suspense fallback={
+                  <div className={styles.loadingCard}>
+                    <div>Loading {date}...</div>
+                  </div>
+                }>
+                  <div className={styles.svgCard}>
+                    <Component className="h-auto w-full" />
+                  </div>
+                </Suspense>
+              </ErrorBoundary>
+            ))}
+          </div>
+          <div className="flex justify-center items-center mt-8 gap-4">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
             >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <TodaySvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
-
-            {/* 昨天 */}
-            <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{yesterday}</div>
-                  <div className={styles.poemText}>"昨日不可追，来日犹可期"</div>
-                  <div className={styles.sourceText}>化用陶渊明《归去来兮辞》</div>
-                </div>
-              }
+              上一页
+            </button>
+            <span className="text-gray-700">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
             >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <YesterdaySvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
-
-            {/* 前天 */}
-            <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{dayBeforeYesterday}</div>
-                  <div className={styles.poemText}>"世事如舟暂搁浅，重整征帆再启程"</div>
-                  <div className={styles.sourceText}>化用李白《行路难》</div>
-                </div>
-              }
-            >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <DayBeforeYesterdaySvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
-
-            {/* 大前天 */}
-            <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{threeDaysAgo}</div>
-                  <div className={styles.poemText}>"三日未行何足虑，长风破浪会有时"</div>
-                  <div className={styles.sourceText}>化用李白《行路难》</div>
-                </div>
-              }
-            >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <ThreeDaysAgoSvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
+              下一页
+            </button>
           </div>
         </div>
-
- 
-
-
-
-
       </div>
     </div>
   );
