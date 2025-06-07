@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense, Component, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   BarChart,
   Bar,
@@ -413,7 +413,7 @@ const Total: React.FC = () => {
 
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Recent Workouts</h3>
+          <h3><Link to="./recent" className="hover:underline">Recent Workouts</Link></h3>
 
           <div className={styles.gridContainer}>
             {/* 今天 */}
