@@ -146,6 +146,62 @@ const Total: React.FC = () => {
     return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
+  // 计算连续运动天数
+  const calculateMaxStreak = (activities: Activity[], year: number) => {
+    // 过滤指定年份的活动并按日期排序
+    const yearlyActivities = activities
+      .filter(activity => {
+        const activityYear = new Date(activity.start_date_local).getFullYear();
+        return activityYear === year;
+      })
+      .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
+
+    if (yearlyActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
+
+    // 获取所有不重复的运动日期
+    const uniqueDates = Array.from(new Set(
+      yearlyActivities.map(activity => {
+        const date = new Date(activity.start_date_local);
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+      })
+    )).sort((a, b) => a - b);
+
+    let maxStreak = 1;
+    let currentStreak = 1;
+    let maxStartIndex = 0;
+    let maxEndIndex = 0;
+    let currentStartIndex = 0;
+
+    for (let i = 1; i < uniqueDates.length; i++) {
+      const prevDate = uniqueDates[i - 1];
+      const currDate = uniqueDates[i];
+      const diffDays = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays <= 1) {
+        currentStreak += diffDays;
+        if (currentStreak > maxStreak) {
+          maxStreak = currentStreak;
+          maxStartIndex = currentStartIndex;
+          maxEndIndex = i;
+        }
+      } else {
+        currentStreak = 1;
+        currentStartIndex = i;
+      }
+    }
+
+    const formatDate = (timestamp: number) => {
+      const date = new Date(timestamp);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+    return {
+      streak: maxStreak,
+      startDate: maxStreak > 1 ? formatDate(uniqueDates[maxStartIndex]) : null,
+      endDate: maxStreak > 1 ? formatDate(uniqueDates[maxEndIndex]) : null
+    };
+  };
+
   // 计算统计数据
   const stats = React.useMemo(() => {
     const filteredActivities = (activities as Activity[])
@@ -159,13 +215,17 @@ const Total: React.FC = () => {
     // 计算平均配速（秒/公里）
     const avgPace = totalDistance > 0 ? totalTime / totalDistance : 0;
     const maxDistance = Math.max(...filteredActivities.map(activity => activity.distance / 1000));
+    const { streak, startDate, endDate } = calculateMaxStreak(filteredActivities, 2025);
 
     return {
       totalActivities: filteredActivities.length,
       totalDistance: totalDistance.toFixed(2),
       totalTime: formatPace(totalTime),
       avgPace: avgPace > 0 ? formatPace(avgPace) : '--:--',
-      maxDistance: maxDistance.toFixed(2)
+      maxDistance: maxDistance.toFixed(2),
+      maxStreak2025: streak,
+      streakStartDate: startDate,
+      streakEndDate: endDate
     };
   }, [activityType]);
 
@@ -193,14 +253,12 @@ const Total: React.FC = () => {
 
       {/* 统计卡片 */}
       <div className={styles.statsCards}>
-        <div className={styles.statCard}>
-          <h4>八年走过</h4>
-          <p>1 国 9 省 16 城</p>
-        </div>
+
         <div className={styles.statCard}>
           <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
           <p>{stats.totalActivities}</p>
         </div>
+
         <div className={styles.statCard}>
           <h4>{ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h4>
           <p>{stats.totalDistance} km</p>
@@ -216,6 +274,15 @@ const Total: React.FC = () => {
         <div className={styles.statCard}>
           <h4>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}</h4>
           <p>{stats.maxDistance} km</p>
+        </div>
+        <div className={styles.statCard}>
+          <h4>2025最长连续</h4>
+          <p>
+            {stats.maxStreak2025} 天
+            {stats.streakStartDate && stats.streakEndDate && (
+              <span className={styles.streakDates} style={{ fontSize: '0.5em' }}> ({stats.streakStartDate.split('-').slice(1).join('-')} 至 {stats.streakEndDate.split('-').slice(1).join('-')})</span>
+            )}
+          </p>
         </div>
       </div>
 
