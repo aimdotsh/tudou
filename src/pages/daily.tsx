@@ -299,7 +299,7 @@ const Total: React.FC = () => {
                   <div className={styles.dateCard}>
                     <div className={styles.dateText}>{date}</div>
                     <div className={styles.poemText}>"今天没有运动"</div>
-                    <div className={styles.sourceText}>系统提示</div>
+                    <div className={styles.sourceText}>--蓝皮书</div>
                   </div>
                 }
               >
