@@ -42,8 +42,8 @@ const routes = createBrowserRouter(
       element: withOptionalGAPageTracking(<SummaryPage />),
     },
     {
-      path: 'dddd',
-      element: withOptionalGAPageTracking(<TotalPage />),
+      path: '*',
+      element: withOptionalGAPageTracking(<Daily />),
     },
   ],
   { basename: import.meta.env.BASE_URL }
