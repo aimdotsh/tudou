@@ -247,7 +247,7 @@ const Total: React.FC = () => {
       )}
       <div className={styles.header}>
         <a href="https://liups.com/" className={styles.tohome}>自留地</a>
-        <h1 className={styles.title}>运动统计</h1>
+        <h1 className={styles.title}>蓝皮书的 Workouts Page</h1>
         <select 
           onChange={(e) => setActivityType(e.target.value)} 
           value={activityType}
@@ -265,7 +265,7 @@ const Total: React.FC = () => {
       {/* 统计卡片 */}
       <div className={styles.statsCards}>
         <div className={styles.statCard}>
-          <h4>八年走过</h4>
+          <h4>八年里走过</h4>
           <p>1 国 9 省 16 城</p>
         </div>
         <div className={styles.statCard}>
