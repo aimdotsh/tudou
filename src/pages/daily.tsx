@@ -291,7 +291,7 @@ const Total: React.FC = () => {
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts 本年度最长连续运动 {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.5em' }}> ({stats.streakStartDate.split('-').slice(1).join('-')} 至 {stats.streakEndDate.split('-').slice(1).join('-')})</span>
+              <span className={styles.streakDates} style={{ fontSize: '1em' }}> ({stats.streakStartDate.split('-').slice(1).join('-')} 至 {stats.streakEndDate.split('-').slice(1).join('-')})</span>
             )}</h3>
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
