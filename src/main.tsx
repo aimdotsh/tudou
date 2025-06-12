@@ -38,7 +38,7 @@ const routes = createBrowserRouter(
       element: withOptionalGAPageTracking(<Daily />),
     },
     {
-      path: 'summary',
+      path: 'sum',
       element: withOptionalGAPageTracking(<SummaryPage />),
     },
     {
