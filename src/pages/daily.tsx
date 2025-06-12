@@ -236,7 +236,7 @@ const Total: React.FC = () => {
     
       <div className={styles.header}>
         <a href="./" className={styles.tohome}>首页</a>
-        <h1 className={styles.title}>运动统计</h1>
+        <h1 className={styles.title}>蓝皮书的 Recent Workouts</h1>
         <select 
           onChange={(e) => setActivityType(e.target.value)} 
           value={activityType}
