@@ -195,7 +195,8 @@ jobs:
           python run_page/gen_svg.py --from-db --type circular --use-localtime
           python run_page/gen_svg.py --from-db --year $(date +"%Y")  --language zh_CN --title "$(date +"%Y") Workouts" --type github --athlete "${{ env.ATHLETE }}" --special-distance 10 --special-distance2 15 --special-color yellow --special-color2 red --output assets/github_$(date +"%Y").svg --use-localtime --min-distance 0.5
           python run_page/gen_svg_today.py --from-db --day $(date -d "+8 hours" +"%Y-%m-%d") --width 100 --height 130  --output assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg --athlete "${{ env.ATHLETE }}"   --use-localtime 
-        #  python run_page/gen_svg_today.py --from-db --day 2024-07-07 --width 100 --height 130  --output assets/yueye_2024-07-07.svg --athlete "蓝皮书" --use-localtime 
+          python run_page/gen_svg_today.py --from-db --day 2025-06-14 --width 100 --height 130  --output assets/2025-06-14.svg --athlete "${{ env.ATHLETE }}"   --use-localtime 
+#  python run_page/gen_svg_today.py --from-db --day 2024-07-07 --width 100 --height 130  --output assets/yueye_2024-07-07.svg --athlete "蓝皮书" --use-localtime 
 
         #python run_page/gen_svg_today.py --from-db --day 2025-01-01 --width 100 --height 130  --output assets/newear_2025-01-01.svg --athlete "蓝皮书" --use-localtime 
         #python run_page/gen_svg_today.py --from-db --day 2024-02-04 --width 100 --height 130  --output assets/newear_2024-02-04.svg --athlete "蓝皮书" --use-localtime 
