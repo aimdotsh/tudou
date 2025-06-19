@@ -146,9 +146,8 @@ const Total: React.FC = () => {
     return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
-  // 计算连续运动天数
+  // 计算连续运动天数(与index.tsx保持一致)
   const calculateMaxStreak = (activities: Activity[], year: number) => {
-    // 过滤指定年份的活动并按日期排序
     const yearlyActivities = activities
       .filter(activity => {
         const activityYear = new Date(activity.start_date_local).getFullYear();
@@ -156,49 +155,17 @@ const Total: React.FC = () => {
       })
       .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
 
-    if (yearlyActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
-
-    // 获取所有不重复的运动日期
-    const uniqueDates = Array.from(new Set(
-      yearlyActivities.map(activity => {
-        const date = new Date(activity.start_date_local);
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-      })
-    )).sort((a, b) => a - b);
-
-    let maxStreak = 1;
-    let currentStreak = 1;
-    let maxStartIndex = 0;
-    let maxEndIndex = 0;
-    let currentStartIndex = 0;
-
-    for (let i = 1; i < uniqueDates.length; i++) {
-      const prevDate = uniqueDates[i - 1];
-      const currDate = uniqueDates[i];
-      const diffDays = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays <= 1) {
-        currentStreak += diffDays;
-        if (currentStreak > maxStreak) {
-          maxStreak = currentStreak;
-          maxStartIndex = currentStartIndex;
-          maxEndIndex = i;
-        }
-      } else {
-        currentStreak = 1;
-        currentStartIndex = i;
+    let maxStreak = 0;
+    yearlyActivities.forEach(activity => {
+      if (activity.streak) {
+        maxStreak = Math.max(maxStreak, activity.streak);
       }
-    }
-
-    const formatDate = (timestamp: number) => {
-      const date = new Date(timestamp);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    };
+    });
 
     return {
       streak: maxStreak,
-      startDate: maxStreak > 1 ? formatDate(uniqueDates[maxStartIndex]) : null,
-      endDate: maxStreak > 1 ? formatDate(uniqueDates[maxEndIndex]) : null
+      startDate: null,
+      endDate: null
     };
   };
 
