@@ -164,9 +164,8 @@ const Total: React.FC = () => {
 
     let maxStreak = 1;
     let currentStreak = 1;
-    let maxStartIndex = 0;
-    let maxEndIndex = 0;
-    let currentStartIndex = 0;
+    let maxStartDate = uniqueDates[0];
+    let maxEndDate = uniqueDates[0];
 
     for (let i = 1; i < uniqueDates.length; i++) {
       const prevDate = uniqueDates[i - 1];
@@ -177,12 +176,11 @@ const Total: React.FC = () => {
         currentStreak += diffDays;
         if (currentStreak > maxStreak) {
           maxStreak = currentStreak;
-          maxStartIndex = currentStartIndex;
-          maxEndIndex = i;
+          maxStartDate = uniqueDates[i - currentStreak + 1];
+          maxEndDate = currDate;
         }
       } else {
         currentStreak = 1;
-        currentStartIndex = i;
       }
     }
 
@@ -191,16 +189,10 @@ const Total: React.FC = () => {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     };
 
-    // 计算日期范围对应的实际天数
-    const startDate = maxStreak > 1 ? formatDate(uniqueDates[maxStartIndex]) : null;
-    const endDate = maxStreak > 1 ? formatDate(uniqueDates[maxEndIndex]) : null;
-    const actualDays = startDate && endDate ? 
-      (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24) + 1 : 0;
-
     return {
-      streak: actualDays > 0 ? actualDays : maxStreak,
-      startDate,
-      endDate
+      streak: maxStreak,
+      startDate: maxStreak > 1 ? formatDate(maxStartDate) : null,
+      endDate: maxStreak > 1 ? formatDate(maxEndDate) : null
     };
   };
 
