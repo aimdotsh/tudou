@@ -146,16 +146,14 @@ const Total: React.FC = () => {
     return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
-  // 计算当年连续运动天数
+  // 计算当年连续运动天数(所有运动类型)
   const calculateMaxStreak = (activities: Activity[]) => {
     const currentYear = new Date().getFullYear();
-    // 过滤出当前年份的活动
-    const currentYearActivities = activities.filter(activity => 
-      new Date(activity.start_date_local).getFullYear() === currentYear
-    );
+    // 使用所有活动数据，不按类型过滤
+    const allActivities = activities;
     
     // 按日期排序所有活动
-    const sortedActivities = currentYearActivities
+    const sortedActivities = allActivities
       .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
 
     if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
@@ -277,16 +275,11 @@ const Total: React.FC = () => {
           <p>{stats.maxDistance} km</p>
         </div>
         <div className={styles.statCard}>
-          <h4>最长连续运动</h4>
+          <h4>本年最长连续运动</h4>
           <p>
             {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.7em' }}>
-                <br/>{stats.streakStartDate.split('-')[0]}年
-                {stats.streakStartDate.split('-')[1]}-{stats.streakStartDate.split('-')[2]}
-                <span style={{ margin: '0 4px' }}>→</span>
-                {stats.streakEndDate.split('-')[1]}-{stats.streakEndDate.split('-')[2]}
-              </span>
+              <span className={styles.streakDates} style={{ fontSize: '0.5em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}
           </p>
         </div>
@@ -295,7 +288,7 @@ const Total: React.FC = () => {
       <div className={styles.charts}>
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Recent Workouts 最长连续运动 {stats.maxStreak2025} 天
+          <h3>Recent Workouts 本年最长连续运动 {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
               <span className={styles.streakDates} style={{ fontSize: '1em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}</h3>
