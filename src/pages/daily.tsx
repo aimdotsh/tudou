@@ -166,6 +166,7 @@ const Total: React.FC = () => {
     let currentStreak = 1;
     let maxStartDate = uniqueDates[0];
     let maxEndDate = uniqueDates[0];
+    let latestStreakEndDate = uniqueDates[0];
 
     for (let i = 1; i < uniqueDates.length; i++) {
       const prevDate = uniqueDates[i - 1];
@@ -174,10 +175,14 @@ const Total: React.FC = () => {
       
       if (diffDays <= 1) {
         currentStreak += diffDays;
-        if (currentStreak > maxStreak) {
-          maxStreak = currentStreak;
-          maxStartDate = uniqueDates[i - currentStreak + 1];
-          maxEndDate = currDate;
+        // 当找到相同长度的记录时，比较结束日期，保留较新的一个
+        if (currentStreak >= maxStreak) {
+          const isNewer = currDate > maxEndDate;
+          if (currentStreak > maxStreak || (currentStreak === maxStreak && isNewer)) {
+            maxStreak = currentStreak;
+            maxStartDate = uniqueDates[i - currentStreak + 1];
+            maxEndDate = currDate;
+          }
         }
       } else {
         currentStreak = 1;
@@ -274,7 +279,12 @@ const Total: React.FC = () => {
           <p>
             {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.5em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+              <span className={styles.streakDates} style={{ fontSize: '0.7em' }}>
+                <br/>{stats.streakStartDate.split('-')[0]}年
+                {stats.streakStartDate.split('-')[1]}-{stats.streakStartDate.split('-')[2]}
+                <span style={{ margin: '0 4px' }}>→</span>
+                {stats.streakEndDate.split('-')[1]}-{stats.streakEndDate.split('-')[2]}
+              </span>
             )}
           </p>
         </div>
