@@ -216,7 +216,7 @@ const Total: React.FC = () => {
     // 计算平均配速（秒/公里）
     const avgPace = totalDistance > 0 ? totalTime / totalDistance : 0;
     const maxDistance = Math.max(...filteredActivities.map(activity => activity.distance / 1000));
-    const { streak, startDate, endDate } = calculateMaxStreak(filteredActivities, 2025);
+    const { streak, startDate, endDate } = calculateMaxStreak(activities as Activity[]);
 
     return {
       totalActivities: filteredActivities.length,
