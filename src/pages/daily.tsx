@@ -146,14 +146,16 @@ const Total: React.FC = () => {
     return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
-  // 计算当年连续运动天数(所有运动类型)
+  // 计算当年最长连续运动天数
   const calculateMaxStreak = (activities: Activity[]) => {
     const currentYear = new Date().getFullYear();
-    // 使用所有活动数据，不按类型过滤
-    const allActivities = activities;
+    // 过滤出当前年份的活动
+    const currentYearActivities = activities.filter(activity => 
+      new Date(activity.start_date_local).getFullYear() === currentYear
+    );
     
     // 按日期排序所有活动
-    const sortedActivities = allActivities
+    const sortedActivities = currentYearActivities
       .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
 
     if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
