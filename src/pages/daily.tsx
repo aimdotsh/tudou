@@ -146,15 +146,21 @@ const Total: React.FC = () => {
     return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
-  // 计算连续运动天数(包含所有运动类型和所有年份)
+  // 计算当年连续运动天数
   const calculateMaxStreak = (activities: Activity[]) => {
+    const currentYear = new Date().getFullYear();
+    // 过滤出当前年份的活动
+    const currentYearActivities = activities.filter(activity => 
+      new Date(activity.start_date_local).getFullYear() === currentYear
+    );
+    
     // 按日期排序所有活动
-    const sortedActivities = activities
+    const sortedActivities = currentYearActivities
       .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
 
     if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
 
-    // 获取所有不重复的运动日期(包含所有运动类型)
+    // 获取所有不重复的运动日期
     const uniqueDates = Array.from(new Set(
       sortedActivities.map(activity => {
         const date = new Date(activity.start_date_local);
@@ -166,7 +172,6 @@ const Total: React.FC = () => {
     let currentStreak = 1;
     let maxStartDate = uniqueDates[0];
     let maxEndDate = uniqueDates[0];
-    let latestStreakEndDate = uniqueDates[0];
 
     for (let i = 1; i < uniqueDates.length; i++) {
       const prevDate = uniqueDates[i - 1];
@@ -175,14 +180,10 @@ const Total: React.FC = () => {
       
       if (diffDays <= 1) {
         currentStreak += diffDays;
-        // 当找到相同长度的记录时，比较结束日期，保留较新的一个
-        if (currentStreak >= maxStreak) {
-          const isNewer = currDate > maxEndDate;
-          if (currentStreak > maxStreak || (currentStreak === maxStreak && isNewer)) {
-            maxStreak = currentStreak;
-            maxStartDate = uniqueDates[i - currentStreak + 1];
-            maxEndDate = currDate;
-          }
+        if (currentStreak > maxStreak) {
+          maxStreak = currentStreak;
+          maxStartDate = uniqueDates[i - currentStreak + 1];
+          maxEndDate = currDate;
         }
       } else {
         currentStreak = 1;
@@ -191,7 +192,8 @@ const Total: React.FC = () => {
 
     const formatDate = (timestamp: number) => {
       const date = new Date(timestamp);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      // 只返回月份和日期
+      return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     };
 
     return {
