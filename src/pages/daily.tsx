@@ -146,21 +146,17 @@ const Total: React.FC = () => {
     return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
-  // 计算连续运动天数(合并两种逻辑)
-  const calculateMaxStreak = (activities: Activity[], year: number) => {
-    // 过滤指定年份的活动并按日期排序
-    const yearlyActivities = activities
-      .filter(activity => {
-        const activityYear = new Date(activity.start_date_local).getFullYear();
-        return activityYear === year;
-      })
+  // 计算连续运动天数(包含所有运动类型和所有年份)
+  const calculateMaxStreak = (activities: Activity[]) => {
+    // 按日期排序所有活动
+    const sortedActivities = activities
       .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
 
-    if (yearlyActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
+    if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
 
-    // 获取所有不重复的运动日期
+    // 获取所有不重复的运动日期(包含所有运动类型)
     const uniqueDates = Array.from(new Set(
-      yearlyActivities.map(activity => {
+      sortedActivities.map(activity => {
         const date = new Date(activity.start_date_local);
         return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
       })
@@ -195,18 +191,16 @@ const Total: React.FC = () => {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     };
 
-    // 同时检查activity.streak字段
-    let activityStreak = 0;
-    yearlyActivities.forEach(activity => {
-      if (activity.streak) {
-        activityStreak = Math.max(activityStreak, activity.streak);
-      }
-    });
+    // 计算日期范围对应的实际天数
+    const startDate = maxStreak > 1 ? formatDate(uniqueDates[maxStartIndex]) : null;
+    const endDate = maxStreak > 1 ? formatDate(uniqueDates[maxEndIndex]) : null;
+    const actualDays = startDate && endDate ? 
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24) + 1 : 0;
 
     return {
-      streak: Math.max(maxStreak, activityStreak),
-      startDate: maxStreak > 1 ? formatDate(uniqueDates[maxStartIndex]) : null,
-      endDate: maxStreak > 1 ? formatDate(uniqueDates[maxEndIndex]) : null
+      streak: actualDays > 0 ? actualDays : maxStreak,
+      startDate,
+      endDate
     };
   };
 
