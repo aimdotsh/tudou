@@ -270,7 +270,7 @@ const Total: React.FC = () => {
           <p>{stats.maxDistance} km</p>
         </div>
         <div className={styles.statCard}>
-          <h4>最长连续</h4>
+          <h4>最长连续运动</h4>
           <p>
             {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
