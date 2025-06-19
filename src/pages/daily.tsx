@@ -277,7 +277,7 @@ const Total: React.FC = () => {
           <p>{stats.maxDistance} km</p>
         </div>
         <div className={styles.statCard}>
-          <h4>本年最长连续运动</h4>
+          <h4>当年最长连续运动</h4>
           <p>
             {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
@@ -290,7 +290,7 @@ const Total: React.FC = () => {
       <div className={styles.charts}>
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Recent Workouts 本年最长连续运动 {stats.maxStreak2025} 天
+          <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
               <span className={styles.streakDates} style={{ fontSize: '1em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}</h3>
