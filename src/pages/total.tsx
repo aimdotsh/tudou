@@ -504,7 +504,7 @@ const Total: React.FC = () => {
 
    {/* 添加 Finished SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Wonderful  Workouts</h3>
+          <h3>Wonderful  Workouts (点击卡片会翻转噢)</h3>
 
         <div className={styles.gridContainer}>
           {/* Halfmarathon01Stat */}
