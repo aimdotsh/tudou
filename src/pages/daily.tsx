@@ -281,7 +281,7 @@ const Total: React.FC = () => {
           <p>
             {stats.maxStreak2025} 天
             {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.3em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+              <span className={styles.streakDates} style={{ fontSize: '0.4em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}
           </p>
         </div>
