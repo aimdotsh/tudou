@@ -293,7 +293,7 @@ const Total: React.FC = () => {
           <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天
 <p>
             {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '1em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}
 </p>
 </h3>
