@@ -214,7 +214,7 @@ jobs:
           git config --local user.email "${{ env.GITHUB_EMAIL }}"
           git config --local user.name "${{ env.GITHUB_NAME }}"
           git add .
-          git commit -m "$(TZ=Asia/Shanghai date +"%Y-%m-%d") Add new workouts" || echo "nothing to commit"
+          git commit -m "$(TZ=Asia/Shanghai date +"%Y-%m-%d") auto Add new workouts" || echo "nothing to commit"
           git push || echo "nothing to push"
 
       - name: Set Output
