@@ -14,7 +14,7 @@ import { withOptionalGAPageTracking } from './utils/trackRoute';
 import TotalPage from "@/pages/total";
 import SummaryPage from "@/pages/summary";
 import Daily from './pages/daily';
-
+import Luck from './pages/luck';
 if (USE_GOOGLE_ANALYTICS) {
   ReactGA.initialize(GOOGLE_ANALYTICS_TRACKING_ID);
 }
@@ -40,6 +40,10 @@ const routes = createBrowserRouter(
     {
       path: 'sum',
       element: withOptionalGAPageTracking(<SummaryPage />),
+    },
+    {
+      path: 'luck',
+      element: withOptionalGAPageTracking(<Luck />),
     },
     {
       path: '*',
