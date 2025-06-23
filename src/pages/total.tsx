@@ -14,7 +14,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
+import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
 // 自定义错误边界组件
@@ -92,7 +92,74 @@ const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
 // const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
+// 吉象同行
+const Luck01Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-06-23.svg'));
+const Luck02Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-12-08.svg'));
+const Luck03Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-07-14.svg'));
+const Luck04Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-02-25.svg'));
+const Luck05Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-04-29.svg'));
+const Luck06Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-06-18.svg'));
+const Luck07Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-10-23.svg'));
+const Luck08Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-05-21.svg'));
 
+
+
+  // 计算当年最长连续运动天数
+  const calculateMaxStreak = (activities: Activity[]) => {
+    const currentYear = new Date().getFullYear();
+    // 过滤出当前年份的活动
+    const currentYearActivities = activities.filter(activity => 
+      new Date(activity.start_date_local).getFullYear() === currentYear
+    );
+    
+    // 按日期排序所有活动
+    const sortedActivities = currentYearActivities
+      .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
+
+    if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
+
+    // 获取所有不重复的运动日期
+    const uniqueDates = Array.from(new Set(
+      sortedActivities.map(activity => {
+        const date = new Date(activity.start_date_local);
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+      })
+    )).sort((a, b) => a - b);
+
+    let maxStreak = 1;
+    let currentStreak = 1;
+    let maxStartDate = uniqueDates[0];
+    let maxEndDate = uniqueDates[0];
+
+    for (let i = 1; i < uniqueDates.length; i++) {
+      const prevDate = uniqueDates[i - 1];
+      const currDate = uniqueDates[i];
+      const diffDays = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays <= 1) {
+        currentStreak += diffDays;
+        if (currentStreak > maxStreak) {
+          maxStreak = currentStreak;
+          maxStartDate = uniqueDates[i - currentStreak + 1];
+          maxEndDate = currDate;
+        }
+      } else {
+        currentStreak = 1;
+      }
+    }
+
+    const formatDate = (timestamp: number) => {
+      const date = new Date(timestamp);
+      // 只返回月份和日期
+      return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+    return {
+      streak: maxStreak,
+      startDate: maxStreak > 1 ? formatDate(maxStartDate) : null,
+      endDate: maxStreak > 1 ? formatDate(maxEndDate) : null
+    };
+  };
 
 
 
@@ -179,13 +246,17 @@ const Total: React.FC = () => {
     // 计算平均配速（秒/公里）
     const avgPace = totalDistance > 0 ? totalTime / totalDistance : 0;
     const maxDistance = Math.max(...filteredActivities.map(activity => activity.distance / 1000));
+    const { streak, startDate, endDate } = calculateMaxStreak(activities as Activity[]);
 
     return {
       totalActivities: filteredActivities.length,
       totalDistance: totalDistance.toFixed(2),
       totalTime: formatPace(totalTime),
       avgPace: avgPace > 0 ? formatPace(avgPace) : '--:--',
-      maxDistance: maxDistance.toFixed(2)
+      maxDistance: maxDistance.toFixed(2),
+      maxStreak2025: streak,
+      streakStartDate: startDate,
+      streakEndDate: endDate
     };
   }, [activityType]);
 
@@ -217,6 +288,7 @@ const Total: React.FC = () => {
   const closePhotoViewer = () => {
     setCurrentPhoto(null);
   };
+
 
   return (
     <div className={styles.container}>
@@ -413,7 +485,14 @@ const Total: React.FC = () => {
 
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3><Link to="./recent" className="hover:underline">Recent Workouts</Link></h3>
+          <h3><Link to="./recent" className="hover:underline">Recent Workouts </Link> 
+           <span className={styles.streakDates} style={{ fontSize: '0.8em', color: '#999' }}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
+                      {stats.streakStartDate && stats.streakEndDate && (
+              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+            )}
+          </h3>
+
+
 
           <div className={styles.gridContainer}>
             {/* 今天 */}
@@ -501,6 +580,94 @@ const Total: React.FC = () => {
             </ErrorBoundary>
           </div>
         </div>
+
+
+
+
+
+
+        {/* 大象周边跑 */}
+        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+          <h3><Link to="./luck" className="hover:underline">吉象同行</Link></h3>
+
+          <div className={styles.gridContainer}>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck01Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck02Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck03Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck04Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck05Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck06Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck07Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+              <Suspense fallback={
+                <div className={styles.loadingCard}>
+                  <div>Loading...</div>
+                </div>
+              }>
+                <div className={styles.svgCard}>
+                  <Luck08Svg className="h-auto w-full" />
+                </div>
+              </Suspense>
+          </div>
+          
+        </div>
+
+
 
    {/* 添加 Finished SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
