@@ -156,7 +156,6 @@ const Total: React.FC = () => {
         <a href="./" className={styles.tohome}>首页</a>
 <h1 className={styles.title}>
   蓝皮书的大象周边跑
-  <span className={styles.luckDateRange}>（2022-02-26至2025-06-23）</span>
 </h1>      </div>
       
 

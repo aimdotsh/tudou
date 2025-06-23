@@ -486,10 +486,11 @@ const Total: React.FC = () => {
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3><Link to="./recent" className="hover:underline">Recent Workouts </Link> 
-           <span className={styles.streakDates} style={{ fontSize: '0.8em', color: '#999' }}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
+          <p> <span className={styles.streakDates} style={{ fontSize: '0.8em', color: '#999' }}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
                       {stats.streakStartDate && stats.streakEndDate && (
               <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}
+          </p>
           </h3>
 
 
