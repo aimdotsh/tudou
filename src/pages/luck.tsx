@@ -14,7 +14,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
-import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
+import { totalStat ,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
 // 自定义错误边界组件
@@ -64,15 +64,91 @@ const getBeijingDate = (offset = 0) => {
 
 // 从./luck/目录加载随机日期的SVG文件
 const luckDates = [
-  '2025-06-23',
-  '2025-07-15',
-  '2025-08-30',
-  // 添加更多随机日期...
+'2025-06-23',
+'2025-06-08',
+'2025-05-24',
+'2024-12-15',
+'2024-12-08',
+'2024-12-01',
+'2024-11-03',
+'2024-07-28',
+'2024-07-14',
+'2024-03-03',
+'2024-03-02',
+'2024-02-25',
+'2024-01-27',
+'2024-01-26',
+'2023-12-15',
+'2023-09-20',
+'2023-08-22',
+'2023-08-13',
+'2023-08-04',
+'2023-07-03',
+'2023-06-23',
+'2023-06-18',
+'2023-05-28',
+'2023-05-14',
+'2023-03-08',
+'2023-02-17',
+'2023-01-28',
+'2023-01-20',
+'2022-12-08',
+'2022-11-07',
+'2022-11-02',
+'2022-10-23',
+'2022-10-19',
+'2022-10-18',
+'2022-10-16',
+'2022-10-04',
+'2022-09-06',
+'2022-08-31',
+'2022-08-09',
+'2022-08-08',
+'2022-08-03',
+'2022-07-27',
+'2022-07-21',
+'2022-07-08',
+'2022-07-05',
+'2022-07-04',
+'2022-07-02',
+'2022-07-01',
+'2022-06-28',
+'2022-06-23',
+'2022-06-18',
+'2022-06-17',
+'2022-06-15',
+'2022-06-14',
+'2022-06-13',
+'2022-06-11',
+'2022-06-09',
+'2022-06-08',
+'2022-06-06',
+'2022-06-02',
+'2022-06-01',
+'2022-05-28',
+'2022-05-21',
+'2022-05-03',
+'2022-05-01',
+'2022-04-30',
+'2022-04-29',
+'2022-04-28',
+'2022-04-27',
+'2022-04-26',
+'2022-04-24',
+'2022-04-20',
+'2022-04-17',
+'2022-04-15',
+'2022-04-14',
+'2022-04-09',
+'2022-04-06',
+'2022-04-02',
+'2022-03-20',
+'2022-02-26',
 ];
 
 // 创建动态SVG组件数组
 const RecentSvgs = luckDates.map(date => {
-  const SvgComponent = lazy(() => loadSvgComponent(recentStat, `./luck/${date}.svg`));
+  const SvgComponent = lazy(() => loadSvgComponent(luckStat, `./luck/${date}.svg`));
   return {
     date,
     Component: SvgComponent
@@ -295,13 +371,7 @@ const Total: React.FC = () => {
       <div className={styles.charts}>
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天
-<p>
-            {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
-            )}
-</p>
-</h3>
+          <h3>大象周边跑 from 2022-02-26 to 2025-06-23</h3>
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
             {currentItems.map(({ date, Component }) => (

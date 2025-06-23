@@ -4,3 +4,4 @@ export const recentStat = import.meta.glob(['./yyyymmdd/*.svg'], { import: 'Reac
 export const halfmarathonStat = import.meta.glob(['./halfmarathon/*.svg'], { import: 'ReactComponent' })
 export const newyearStat = import.meta.glob(['./newyear/*.svg'], { import: 'ReactComponent' })
 export const yueyeStat = import.meta.glob(['./yueye/*.svg'], { import: 'ReactComponent' })
+export const luckStat = import.meta.glob(['./luck/*.svg'], { import: 'ReactComponent' })
