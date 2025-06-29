@@ -75,11 +75,12 @@ const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmd
 const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${threeDaysAgo}.svg`));
 // halfmarathon SVG 
   
-const Halfmarathon01Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-04-20.svg`));
-const Halfmarathon02Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-10-20.svg`));
-const Halfmarathon03Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-09-08.svg`));
-const Halfmarathon04Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-21.svg`));
-const Halfmarathon05Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-14.svg`));
+const Halfmarathon01Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-06-26.svg`));
+const Halfmarathon02Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-04-20.svg`));
+const Halfmarathon03Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-10-20.svg`));
+const Halfmarathon04Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-09-08.svg`));
+const Halfmarathon05Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-21.svg`));
+const Halfmarathon06Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-14.svg`));
 
 const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
 
@@ -687,8 +688,8 @@ const Total: React.FC = () => {
                 </div>
                 <div className={styles.flipCardBack}>
                   <img 
-                    src="./halfmarathon/2025-04-20.jpg" 
-                    alt="Halfmarathon 2025-04-20"
+                    src="./halfmarathon/2025-06-26.jpg" 
+                    alt="烟台山海步道20250626"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
@@ -712,8 +713,8 @@ const Total: React.FC = () => {
                         </div>
                         <div className={styles.flipCardBack}>
                           <img 
-                            src="./halfmarathon/2024-10-20.jpg" 
-                            alt="Halfmarathon 2024-10-20"
+                            src="./halfmarathon/bjh2025-04-20.jpg" 
+                            alt="北半马 20250420"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null;
