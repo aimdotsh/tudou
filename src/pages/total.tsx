@@ -738,8 +738,8 @@ const Total: React.FC = () => {
                         </div>
                         <div className={styles.flipCardBack}>
                           <img 
-                            src="./halfmarathon/2024-09-08.jpg" 
-                            alt="Halfmarathon 2024-09-08"
+                            src="./halfmarathon/2024-10-20.jpg" 
+                            alt="Halfmarathon 2024-10-20"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null;
@@ -762,8 +762,8 @@ const Total: React.FC = () => {
                         </div>
                         <div className={styles.flipCardBack}>
                           <img 
-                            src="./halfmarathon/2024-04-21.jpg" 
-                            alt="Halfmarathon 2024-04-21"
+                            src="./halfmarathon/2024-09-08.jpg" 
+                            alt="Halfmarathon 2024-09-08"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null;
@@ -786,8 +786,8 @@ const Total: React.FC = () => {
                         </div>
                         <div className={styles.flipCardBack}>
                           <img 
-                            src="./halfmarathon/2024-04-14.jpg" 
-                            alt="Halfmarathon 2024-04-14"
+                            src="./halfmarathon/2024-04-21.jpg" 
+                            alt="Halfmarathon 2024-04-21"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null;
