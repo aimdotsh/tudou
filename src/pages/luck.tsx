@@ -45,6 +45,8 @@ class ErrorBoundary extends Component<{
 
 // 从./luck/目录加载随机日期的SVG文件
 const luckDates = [
+'2025-07-27',
+'2025-07-14',
 '2025-06-23',
 '2025-06-08',
 '2025-05-24',
