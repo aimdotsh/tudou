@@ -339,7 +339,7 @@ const Total: React.FC = () => {
       <div className={styles.statsCards}>
         <div className={styles.statCard}>
           <h4>八年里走过</h4>
-          <p>1 国 9 省 16 城</p>
+          <p>1 国 9 省 17 城</p>
         </div>
         <div className={styles.statCard}>
           <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
