@@ -94,14 +94,16 @@ const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 // const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
 // 吉象同行
+const Luck01Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-07-27.svg'));
+const Luck01Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-07-14.svg'));
 const Luck01Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-06-23.svg'));
 const Luck02Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-12-08.svg'));
 const Luck03Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-07-14.svg'));
 const Luck04Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-02-25.svg'));
 const Luck05Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-04-29.svg'));
 const Luck06Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-06-18.svg'));
-const Luck07Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-10-23.svg'));
-const Luck08Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-05-21.svg'));
+//const Luck07Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-10-23.svg'));
+//const Luck08Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-05-21.svg'));
 
 
 
