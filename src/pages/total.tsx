@@ -74,7 +74,6 @@ const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${yeste
 const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${dayBeforeYesterday}.svg`));
 const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${threeDaysAgo}.svg`));
 // halfmarathon SVG 
-  
 const Halfmarathon01Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-06-26.svg`));
 const Halfmarathon02Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-04-20.svg`));
 const Halfmarathon03Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-10-20.svg`));
@@ -199,7 +198,7 @@ interface Activity {
 }
 
 const Total: React.FC = () => {
-  const [activityType, setActivityType] = useState<string>('run');
+  const [activityType, setActivityType] = useState<string>('all');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
 
@@ -210,12 +209,12 @@ const Total: React.FC = () => {
     }));
   };
   const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
-  const showTypes = [...playTypes].filter(type => type in TYPES_MAPPING);
+  const showTypes = ['all', ...playTypes].filter(type => type in TYPES_MAPPING || type === 'all');
 
   // 按年份分组数据
   const yearlyData = React.useMemo(() => {
     const data = (activities as Activity[])
-      .filter(activity => activity.type.toLowerCase() === activityType)
+      .filter(activity => activityType === 'all' || activity.type.toLowerCase() === activityType)
       .reduce((acc, activity) => {
         const year = new Date(activity.start_date_local).getFullYear();
         if (!acc[year]) {
@@ -239,7 +238,7 @@ const Total: React.FC = () => {
   // 计算统计数据
   const stats = React.useMemo(() => {
     const filteredActivities = (activities as Activity[])
-      .filter(activity => activity.type.toLowerCase() === activityType);
+      .filter(activity => activityType === 'all' || activity.type.toLowerCase() === activityType);
 
     const totalDistance = filteredActivities.reduce((sum, activity) => sum + activity.distance / 1000, 0);
     const totalTime = filteredActivities.reduce((sum, activity) => {
@@ -328,8 +327,10 @@ const Total: React.FC = () => {
           value={activityType}
           className={styles.select}
         >
-          {showTypes.map((type) => (
-            <option key={type} value={type}>{TYPES_MAPPING[type]}</option>
+          {['all', ...showTypes.filter(type => type !== 'all')].map((type) => (
+            <option key={type} value={type}>
+              {type === 'all' ? 'All' : TYPES_MAPPING[type]}
+            </option>
           ))}
         </select>
       </div>
