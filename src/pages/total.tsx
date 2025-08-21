@@ -73,15 +73,53 @@ const TodaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${today}.sv
 const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${yesterday}.svg`));
 const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${dayBeforeYesterday}.svg`));
 const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${threeDaysAgo}.svg`));
-// halfmarathon SVG 
-const Halfmarathon01Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-06-26.svg`));
-const Halfmarathon02Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2025-04-20.svg`));
-const Halfmarathon03Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-10-20.svg`));
-const Halfmarathon04Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-09-08.svg`));
-const Halfmarathon05Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-21.svg`));
-const Halfmarathon06Stat = lazy(() => loadSvgComponent(halfmarathonStat, `./halfmarathon/2024-04-14.svg`));
+// 动态获取 halfmarathon 文件列表的函数
+const useHalfmarathonFiles = () => {
+  const [files, setFiles] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        // 从配置文件读取 halfmarathon 文件列表
+        const response = await fetch('/wonderful-files.json');
+        if (response.ok) {
+          const fileList = await response.json();
+          setFiles(fileList);
+        } else {
+          throw new Error('Failed to fetch halfmarathon files list');
+        }
+      } catch (error) {
+        console.error('Failed to fetch halfmarathon files:', error);
+        // 出错时返回空数组
+        setFiles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFiles();
+  }, []);
+
+  return { files, loading };
+};
+
+// 动态创建 halfmarathon SVG 组件
+const createHalfmarathonSvgs = (files: string[]) => {
+  return files.map((filename) => {
+    const baseName = filename.replace('.svg', '');
+    const pngName = baseName ;
+    
+    const LazySvgComponent = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${filename}`)
+      .catch(() => ({ 
+        default: () => <FailedLoadSvg filename={filename} />
+      })));
+    
+    return { LazySvgComponent, baseName, pngName };
+  });
+};
+
+//const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
 
 const Newyear01Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2025-01-01.svg`));
 const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-02-04.svg`));  
@@ -201,6 +239,17 @@ const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('all');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
+  
+  // 使用自定义hook获取halfmarathon文件列表
+  const { files: halfmarathonFiles, loading: halfmarathonLoading } = useHalfmarathonFiles();
+  const [halfmarathonSvgs, setHalfmarathonSvgs] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (halfmarathonFiles.length > 0) {
+      const svgs = createHalfmarathonSvgs(halfmarathonFiles);
+      setHalfmarathonSvgs(svgs);
+    }
+  }, [halfmarathonFiles]);
 
   const toggleFlip = (id: string) => {
     setFlippedCards(prev => ({
@@ -674,205 +723,41 @@ const Total: React.FC = () => {
 
 
 
-   {/* 添加 Finished SVG图表 */}
+        {/* 添加 Finished SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Wonderful  Workouts (点击卡片会翻转噢)</h3>
+          <h3>Wonderful Workouts (点击卡片会翻转噢)</h3>
 
-        <div className={styles.gridContainer}>
-          {/* Halfmarathon01Stat */}
-          <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-            <div 
-              className={`${styles.flipCard} ${flippedCards['halfmarathon01'] ? styles.flipped : ''}`}
-              onClick={() => toggleFlip('halfmarathon01')}
-            >
-              <div className={styles.flipCardInner}>
-                <div className={styles.flipCardFront}>
-                  <Halfmarathon01Stat style={{ width: '100%', height: '100%' }} />
-                </div>
-                <div className={styles.flipCardBack}>
-                  <img 
-                    src="./halfmarathon/2025-06-26.jpg" 
-                    alt="烟台山海步道20250626"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.onerror = null;
-                      target.src = './placeholder.jpg';
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </Suspense>
+          <div className={styles.gridContainer}>
+            {/* 动态生成 halfmarathon 卡片 */}
+            {!halfmarathonLoading && halfmarathonSvgs.map(({ LazySvgComponent, baseName, pngName }, index) => {
+              const cardId = `halfmarathon-${index}`;
 
-                {/* Halfmarathon02Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['halfmarathon02'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('halfmarathon02')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Halfmarathon02Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./halfmarathon/bjh2025-04-20.jpg" 
-                            alt="北半马 20250420"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
+              return (
+                <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
+                  <div 
+                    className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                    onClick={() => toggleFlip(cardId)}
+                  >
+                    <div className={styles.flipCardInner}>
+                      <div className={styles.flipCardFront}>
+                        <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                      </div>
+                      <div className={styles.flipCardBack}>
+                        <img 
+                          src={`./yyyymmdd/${pngName}.jpg`}
+                          alt={`yyyymmdd ${baseName}`}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.src = './placeholder.jpg';
+                          }}
+                        />
                       </div>
                     </div>
-                  </Suspense>
-
-                {/* Halfmarathon03Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['halfmarathon03'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('halfmarathon03')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Halfmarathon03Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./halfmarathon/2024-10-20.jpg" 
-                            alt="Halfmarathon 2024-10-20"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                 {/* Halfmarathon04Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['halfmarathon04'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('halfmarathon04')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Halfmarathon04Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./halfmarathon/2024-09-08.jpg" 
-                            alt="Halfmarathon 2024-09-08"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                {/* Halfmarathon05Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['halfmarathon05'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('halfmarathon05')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Halfmarathon05Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./halfmarathon/2024-04-21.jpg" 
-                            alt="Halfmarathon 2024-04-21"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                {/* Yueye01Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['yueye01'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('yueye01')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Yueye01Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./yueye/2024-07-07.jpg" 
-                            alt="yueye 2024-07-07"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                {/* Newyear01Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['Newyear01'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('Newyear01')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Newyear01Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./newyear/2025-01-01.jpg" 
-                            alt="newyear 2025-01-01"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                {/* Newyear02Stat */}
-                  <Suspense fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards['Newyear02'] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip('Newyear02')}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Newyear02Stat style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src="./newyear/2024-02-04.jpg" 
-                            alt="newyear 2024-02-04"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.jpg';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
+                  </div>
+                </Suspense>
+              );
+            })}
           </div>
         </div>
 
