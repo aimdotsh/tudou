@@ -637,9 +637,6 @@ const Total: React.FC = () => {
 
 
 
-
-
-
         {/* 吉象同行 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3><Link to="./luck" className="hover:underline">吉象同行</Link></h3>
