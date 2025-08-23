@@ -491,7 +491,7 @@ const Total: React.FC = () => {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 0, right: 0, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="year" tick={{ fill: '#ccc' }} interval="preserveStartEnd" />
+              <XAxis dataKey="year" tick={{ fill: '#ccc' }} interval={1} />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
@@ -509,7 +509,7 @@ const Total: React.FC = () => {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="year" tick={{ fill: '#ccc' }} interval="preserveStartEnd" />
+              <XAxis dataKey="year" tick={{ fill: '#ccc' }} interval={0} />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
