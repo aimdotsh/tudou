@@ -131,14 +131,68 @@ const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 // const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
 // 吉象同行
-const Luck01Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-07-27.svg'));
-const Luck02Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-07-14.svg'));
-const Luck03Svg = lazy(() => loadSvgComponent(luckStat, './luck/2025-06-23.svg'));
-const Luck04Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-12-08.svg'));
-const Luck05Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-07-14.svg'));
-const Luck06Svg = lazy(() => loadSvgComponent(luckStat, './luck/2024-02-25.svg'));
-const Luck07Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-04-29.svg'));
-const Luck08Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-06-18.svg'));
+const useLuckFiles = () => {
+  const [files, setFiles] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await fetch('/luck-files.json');
+        if (response.ok) {
+          const fileList = await response.json();
+          setFiles(fileList);
+        } else {
+          throw new Error('Failed to fetch luck files list');
+        }
+      } catch (error) {
+        console.error('Failed to fetch luck files:', error);
+        setFiles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFiles();
+  }, []);
+
+  return { files, loading };
+};
+
+// SVG 加载失败时的备用组件
+const FailedLoadSvg = ({ filename }: { filename: string }) => (
+  <div style={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    height: '100%',
+    color: '#999',
+    fontSize: '14px'
+  }}>
+    加载失败: {filename}
+  </div>
+);
+
+const createLuckSvgs = (files: string[]) => {
+  return files.map((filename) => {
+    const baseName = filename.replace('.svg', '');
+    // SVG路径需要匹配assets/index.tsx中的导入模式: ./luck/*.svg
+    const svgPath = `./luck/${filename}`;
+    // 修正为从public目录加载JPG
+    const jpgPath = `/luck/${baseName}.jpg`;
+    
+    const LazySvgComponent = lazy(() => loadSvgComponent(luckStat, svgPath)
+      .catch((error) => {
+        console.error('Failed to load SVG:', svgPath, error);
+        return { 
+          default: () => <FailedLoadSvg filename={filename} />
+        };
+      }));
+    
+    return { LazySvgComponent, baseName, jpgPath };
+  });
+};
+
 //const Luck07Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-10-23.svg'));
 //gconst Luck08Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-05-21.svg'));
 
@@ -242,7 +296,9 @@ const Total: React.FC = () => {
   
   // 使用自定义hook获取halfmarathon文件列表
   const { files: halfmarathonFiles, loading: halfmarathonLoading } = useHalfmarathonFiles();
+  const { files: luckFiles, loading: luckLoading } = useLuckFiles();
   const [halfmarathonSvgs, setHalfmarathonSvgs] = useState<any[]>([]);
+  const [luckSvgs, setLuckSvgs] = useState<any[]>([]);
 
   useEffect(() => {
     if (halfmarathonFiles.length > 0) {
@@ -250,6 +306,13 @@ const Total: React.FC = () => {
       setHalfmarathonSvgs(svgs);
     }
   }, [halfmarathonFiles]);
+
+  useEffect(() => {
+    if (luckFiles.length > 0) {
+      const svgs = createLuckSvgs(luckFiles);
+      setLuckSvgs(svgs);
+    }
+  }, [luckFiles]);
 
   const toggleFlip = (id: string) => {
     setFlippedCards(prev => ({
@@ -352,10 +415,10 @@ const Total: React.FC = () => {
               alt="Activity Photo" 
               className={styles.photoImage}
               onClick={(e) => e.stopPropagation()}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src = './placeholder.jpg';
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.png';
               }}
             />
             <button 
@@ -639,90 +702,55 @@ const Total: React.FC = () => {
 
         {/* 吉象同行 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3><Link to="./luck" className="hover:underline">吉象同行</Link></h3>
-
-          <div className={styles.gridContainer}>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck01Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck02Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck03Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck04Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck05Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck06Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck07Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <Luck08Svg className="h-auto w-full" />
-                </div>
-              </Suspense>
-          </div>
+          <h3><Link to="./luck" className="hover:underline">吉象同行</Link> <span className={styles.clickHint}>(点击卡片会翻转噢)</span> </h3>
           
+          {!luckLoading && luckSvgs.length > 0 ? (
+            <div className={styles.gridContainer}>
+              {luckSvgs.map(({ LazySvgComponent, baseName }, index) => {
+                const cardId = `luck-${index}`;
+                return (
+                  <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
+                    <div 
+                      className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip(cardId)}
+                    >
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src={`./luck/${baseName}.jpg`}
+                            alt={`Luck ${baseName}`}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.png';
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </Suspense>
+                );
+              })}
+            </div>
+          ) : !luckLoading && luckSvgs.length === 0 ? (
+            <div className={styles.emptyContainer}>
+              <div>暂无吉象同行数据</div>
+            </div>
+          ) : (
+            <div className={styles.loadingContainer}>
+              <div>加载中...</div>
+            </div>
+          )}
         </div>
 
 
 
         {/* 添加 Finished SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Wonderful Workouts (点击卡片会翻转噢)</h3>
+          <h3>Wonderful Workouts <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
 
           <div className={styles.gridContainer}>
             {/* 动态生成 halfmarathon 卡片 */}
@@ -743,10 +771,10 @@ const Total: React.FC = () => {
                         <img 
                           src={`./yyyymmdd/${pngName}.jpg`}
                           alt={`yyyymmdd ${baseName}`}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.onerror = null;
-                            target.src = './placeholder.jpg';
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.src = './placeholder.png';
                           }}
                         />
                       </div>

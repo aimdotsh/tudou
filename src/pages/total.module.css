@@ -618,6 +618,36 @@
   margin-bottom: 1.5rem;
 }
 
+/* 点击提示文本样式 */
+.clickHint {
+  font-size: 0.7em;
+  color: #999;
+  margin-left: 0.5em;
+  font-weight: normal;
+}
+
 .fullWidth {
   width: 100%;
+}
+
+/* 空数据容器样式 */
+.emptyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #999;
+  font-style: italic;
+  border: 2px dashed #444;
+  border-radius: 8px;
+  background-color: rgba(68, 68, 68, 0.1);
+}
+
+/* 加载容器样式 */
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #0ed45e;
 }
