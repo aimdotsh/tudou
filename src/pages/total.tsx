@@ -344,7 +344,7 @@ const Total: React.FC = () => {
         acc[year].months[month] += distance;
         return acc;
       }, {} as Record<number, { year: number; distance: number; count: number; months: number[] }>);
-    return Object.values(data).sort((a, b) => a.year - b.year);
+    return Object.values(data).sort((a, b) => b.year - a.year);
   }, [activityType]);
 
   // 计算统计数据
@@ -391,13 +391,19 @@ const Total: React.FC = () => {
         }
       });
     });
-    return allMonths;
+    // 按时间倒序排列：先按年份倒序，再按月份倒序
+    return allMonths.sort((a, b) => {
+      if (a.year !== b.year) {
+        return parseInt(b.year) - parseInt(a.year);
+      }
+      return parseInt(b.fullDate.split('-')[1]) - parseInt(a.fullDate.split('-')[1]);
+    });
   }, [yearlyData]);
 
   // 获取唯一的年份列表用于X轴标签
   const uniqueYears = Array.from(new Set(
     yearlyData.map(item => item.year.toString())
-  )).sort();
+  )).sort((a, b) => parseInt(b) - parseInt(a));
   // 关闭照片查看器
   const closePhotoViewer = () => {
     setCurrentPhoto(null);
@@ -485,7 +491,7 @@ const Total: React.FC = () => {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 0, right: 0, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
+              <XAxis dataKey="year" tick={{ fill: '#ccc' }} interval="preserveStartEnd" />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
@@ -503,7 +509,7 @@ const Total: React.FC = () => {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={yearlyData} margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="year" tick={{ fill: '#ccc' }} />
+              <XAxis dataKey="year" tick={{ fill: '#ccc' }} interval="preserveStartEnd" />
               <YAxis tick={{ fill: '#ccc' }} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#242424', border: '1px solid #444' }}
@@ -573,7 +579,7 @@ const Total: React.FC = () => {
                   </div>
                 </div>
                 <div className={styles.heatmapBody}>
-                  {[...yearlyData].reverse().map(({ year, months }) => (
+                  {yearlyData.map(({ year, months }) => (
                     <div key={year} className={styles.heatmapRow}>
                       <div className={styles.heatmapYear}>{year}</div>
                       <div className={styles.heatmapCells}>
