@@ -44,7 +44,6 @@ class ErrorBoundary extends Component<{
 
 
 // 获取当前日期的字符串，格式为 YYYY-MM-DD
-// 原代码
 // const today = new Date().toISOString().split('T')[0]; // 格式：YYYY-MM-DD
 
 // 获取北京时间的通用函数（支持日期偏移）
@@ -73,25 +72,24 @@ const TodaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${today}.sv
 const YesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${yesterday}.svg`));
 const DayBeforeYesterdaySvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${dayBeforeYesterday}.svg`));
 const ThreeDaysAgoSvg = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${threeDaysAgo}.svg`));
-// 动态获取 halfmarathon 文件列表的函数
-const useHalfmarathonFiles = () => {
+
+// 统一的文件获取 Hook
+const useFileList = (jsonPath: string) => {
   const [files, setFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        // 从配置文件读取 halfmarathon 文件列表
-        const response = await fetch('/wonderful-files.json');
+        const response = await fetch(jsonPath);
         if (response.ok) {
           const fileList = await response.json();
           setFiles(fileList);
         } else {
-          throw new Error('Failed to fetch halfmarathon files list');
+          throw new Error(`Failed to fetch files from ${jsonPath}`);
         }
       } catch (error) {
-        console.error('Failed to fetch halfmarathon files:', error);
-        // 出错时返回空数组
+        console.error(`Failed to fetch files from ${jsonPath}:`, error);
         setFiles([]);
       } finally {
         setLoading(false);
@@ -99,28 +97,20 @@ const useHalfmarathonFiles = () => {
     };
 
     fetchFiles();
-  }, []);
+  }, [jsonPath]);
 
   return { files, loading };
 };
 
-// 动态创建 halfmarathon SVG 组件
-const createHalfmarathonSvgs = (files: string[]) => {
-  return files.map((filename) => {
-    const baseName = filename.replace('.svg', '');
-    const pngName = baseName ;
-    
-    const LazySvgComponent = lazy(() => loadSvgComponent(recentStat, `./yyyymmdd/${filename}`)
-      .catch(() => ({ 
-        default: () => <FailedLoadSvg filename={filename} />
-      })));
-    
-    return { LazySvgComponent, baseName, pngName };
-  });
-};
+// 特定halfmarathon类型的文件获取 Hook
+const useHalfmarathonFiles = () => useFileList('/wonderful-files.json');
 
+// 特定halfmarathon类型的 SVG 创建函数
+const createHalfmarathonSvgs = (files: string[]) => 
+  createSvgComponents(files, recentStat, './yyyymmdd', './yyyymmdd');
+
+// Lazy svg yueye 和 newyear
 //const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
-
 const Newyear01Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2025-01-01.svg`));
 const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-02-04.svg`));  
 
@@ -128,36 +118,9 @@ const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-0
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
 const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
-// const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
 
-// 吉象同行
-const useLuckFiles = () => {
-  const [files, setFiles] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        const response = await fetch('/luck-files.json');
-        if (response.ok) {
-          const fileList = await response.json();
-          setFiles(fileList);
-        } else {
-          throw new Error('Failed to fetch luck files list');
-        }
-      } catch (error) {
-        console.error('Failed to fetch luck files:', error);
-        setFiles([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFiles();
-  }, []);
-
-  return { files, loading };
-};
+// 特定luck类型的文件获取 Hook
+const useLuckFiles = () => useFileList('/luck-files.json');
 
 // SVG 加载失败时的备用组件
 const FailedLoadSvg = ({ filename }: { filename: string }) => (
@@ -173,15 +136,20 @@ const FailedLoadSvg = ({ filename }: { filename: string }) => (
   </div>
 );
 
-const createLuckSvgs = (files: string[]) => {
+// 统一的 SVG 创建函数
+const createSvgComponents = (
+  files: string[], 
+  statModule: any, 
+  svgBasePath: string,
+  imageBasePath: string,
+  imageExtension: string = '.jpg'
+) => {
   return files.map((filename) => {
     const baseName = filename.replace('.svg', '');
-    // SVG路径需要匹配assets/index.tsx中的导入模式: ./luck/*.svg
-    const svgPath = `./luck/${filename}`;
-    // 修正为从public目录加载JPG
-    const jpgPath = `/luck/${baseName}.jpg`;
+    const svgPath = `${svgBasePath}/${filename}`;
+    const imagePath = `${imageBasePath}/${baseName}${imageExtension}`;
     
-    const LazySvgComponent = lazy(() => loadSvgComponent(luckStat, svgPath)
+    const LazySvgComponent = lazy(() => loadSvgComponent(statModule, svgPath)
       .catch((error) => {
         console.error('Failed to load SVG:', svgPath, error);
         return { 
@@ -189,12 +157,13 @@ const createLuckSvgs = (files: string[]) => {
         };
       }));
     
-    return { LazySvgComponent, baseName, jpgPath };
+    return { LazySvgComponent, baseName, imagePath };
   });
 };
 
-//const Luck07Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-10-23.svg'));
-//gconst Luck08Svg = lazy(() => loadSvgComponent(luckStat, './luck/2022-05-21.svg'));
+// 特定luck类型的 SVG 创建函数
+const createLuckSvgs = (files: string[]) => 
+  createSvgComponents(files, luckStat, './luck', '/luck');
 
 
 
@@ -712,7 +681,7 @@ const Total: React.FC = () => {
           
           {!luckLoading && luckSvgs.length > 0 ? (
             <div className={styles.gridContainer}>
-              {luckSvgs.map(({ LazySvgComponent, baseName }, index) => {
+              {luckSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
                 const cardId = `luck-${index}`;
                 return (
                   <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
@@ -726,7 +695,7 @@ const Total: React.FC = () => {
                         </div>
                         <div className={styles.flipCardBack}>
                           <img 
-                            src={`./luck/${baseName}.jpg`}
+                            src={imagePath}
                             alt={`Luck ${baseName}`}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
@@ -754,42 +723,51 @@ const Total: React.FC = () => {
 
 
 
-        {/* 添加 Finished SVG图表 */}
+        {/* halfmarathon */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Wonderful Workouts <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
-
-          <div className={styles.gridContainer}>
-            {/* 动态生成 halfmarathon 卡片 */}
-            {!halfmarathonLoading && halfmarathonSvgs.map(({ LazySvgComponent, baseName, pngName }, index) => {
-              const cardId = `halfmarathon-${index}`;
-
-              return (
-                <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                  <div 
-                    className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                    onClick={() => toggleFlip(cardId)}
-                  >
-                    <div className={styles.flipCardInner}>
-                      <div className={styles.flipCardFront}>
-                        <LazySvgComponent style={{ width: '100%', height: '100%' }} />
-                      </div>
-                      <div className={styles.flipCardBack}>
-                        <img 
-                          src={`./yyyymmdd/${pngName}.jpg`}
-                          alt={`yyyymmdd ${baseName}`}
+          
+          {!halfmarathonLoading && halfmarathonSvgs.length > 0 ? (
+            <div className={styles.gridContainer}>
+              {halfmarathonSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
+                const cardId = `halfmarathon-${index}`;
+                
+                return (
+                  <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
+                    <div 
+                      className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                      onClick={() => toggleFlip(cardId)}
+                    >
+                      <div className={styles.flipCardInner}>
+                        <div className={styles.flipCardFront}>
+                          <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                        </div>
+                        <div className={styles.flipCardBack}>
+                          <img 
+                            src={imagePath}
+                            alt={`yyyymmdd ${baseName}`}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.onerror = null;
                               target.src = './placeholder.png';
-                          }}
-                        />
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Suspense>
-              );
-            })}
-          </div>
+                  </Suspense>
+                );
+              })}
+            </div>
+          ) : !halfmarathonLoading && halfmarathonSvgs.length === 0 ? (
+            <div className={styles.emptyContainer}>
+              <div>暂无Wonderful Workouts数据</div>
+            </div>
+          ) : (
+            <div className={styles.loadingContainer}>
+              <div>加载中...</div>
+            </div>
+          )}
         </div>
 
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
