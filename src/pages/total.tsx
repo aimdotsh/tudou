@@ -103,7 +103,7 @@ const useFileList = (jsonPath: string) => {
 };
 
 // 特定halfmarathon类型的文件获取 Hook
-const useHalfmarathonFiles = () => useFileList('/wonderful-files.json');
+const useHalfmarathonFiles = () => useFileList('/wonderful.json');
 
 // 特定halfmarathon类型的 SVG 创建函数
 const createHalfmarathonSvgs = (files: string[]) => 
@@ -120,7 +120,7 @@ const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
 
 // 特定luck类型的文件获取 Hook
-const useLuckFiles = () => useFileList('/luck-files.json');
+const useLuckFiles = () => useFileList('/luck.json');
 
 // SVG 加载失败时的备用组件
 const FailedLoadSvg = ({ filename }: { filename: string }) => (
