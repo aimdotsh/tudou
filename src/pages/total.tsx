@@ -416,7 +416,7 @@ const Total: React.FC = () => {
         >
           {['all', ...showTypes.filter(type => type !== 'all')].map((type) => (
             <option key={type} value={type}>
-              {type === 'all' ? 'All' : TYPES_MAPPING[type]}
+              {type === 'all' ? '所有' : TYPES_MAPPING[type]}
             </option>
           ))}
         </select>
