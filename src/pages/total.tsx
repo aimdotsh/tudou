@@ -780,10 +780,25 @@ const Total: React.FC = () => {
             <GridSvg className="mt-2 h-auto w-full" />
           </Suspense>
         </div>
-
-
+      <div className={styles.header}>
+      <h1 className={styles.footer} style={{color: 'gray'}}>©2016 - 2025 Liups.com thanks <a 
+          href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          style={{
+            color: '#8888ff',
+            textDecoration: 'none',
+            transition: 'color 0.3s ease'
+          }}
+          className="running-page-link"
+          onMouseOver={(e) => e.currentTarget.style.color = '#aaaaaa'}
+          onMouseOut={(e) => e.currentTarget.style.color = '#8888ff'}>
+          running_page
+        </a></h1>
+      </div>
       </div>
     </div>
+
   );
 };
 
