@@ -291,12 +291,10 @@ const Total: React.FC = () => {
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天
-<p>
             {stats.streakStartDate && stats.streakEndDate && (
               <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}
-</p>
-</h3>
+          </h3>
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
             {currentItems.map(({ date, Component }) => (
