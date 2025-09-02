@@ -2,9 +2,10 @@
   padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
-  color: #ccc;
+  color: #5A5A5A;
   width: 100%;
   box-sizing: border-box;
+  background-color: #FAF9F5;
 }
 
 @media (min-width: 1024px) {
@@ -146,22 +147,24 @@
 }
 
 .statCard {
-  background-color: #1a1a1a;
+  background-color: #FFFFFF;
   border-radius: 10px;
   padding: 1rem;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  color: #5A5A5A;
 }
 
 .statCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f99206; /* 添加柔和蓝色边框 */
 }
 
 .statCard h4 {
   margin: 0 0 0.5rem;
-  color: #0ed45e;
+  color: #f99206; /* 统一使用柔和蓝色 */
   font-size: 1rem;
 }
 
@@ -169,6 +172,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: bold;
+  color: #0ed45e; /* 统一使用深灰色 */
 }
 
 @media (max-width: 480px) {
@@ -191,10 +195,10 @@
 }
 
 .chartContainer {
-  background-color: #1a1a1a;
+  background-color: #FFFFFF;
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .chartContainer h3 {
@@ -202,6 +206,14 @@
   margin-bottom: 1rem;
   color: #0ed45e;
   font-size: 1.1rem;
+  text-align: center;
+}
+
+.chartContainer p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #0ed45e;
+  font-size: 1rem;
   text-align: center;
 }
 
@@ -275,8 +287,9 @@
 .heatmapYear {
   width: 3rem;
   flex-shrink: 0;
-  color: #0ed45e;
+  color: #0ed45e; /* 保持原有绿色 */
   font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .heatmapMonths {
@@ -289,9 +302,10 @@
 .heatmapMonth {
   text-align: center;
   font-size: 0.75rem;
-  color: #666;
+  color: #5A5A5A; /* 更深的灰色 */
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .heatmapBody {
@@ -317,10 +331,14 @@
   min-width: 0.75rem;
   border-radius: 2px;
   transition: all 0.2s ease;
+  border: 1px solid #DDD;
+  background-color: rgba(14, 212, 94, 0.3); /* 更深的绿色透明度 */
 }
 
 .heatmapCell:hover {
   transform: scale(1.1);
+  background-color: rgba(14, 212, 94, 0.5); /* 悬停时更深的绿色 */
+  box-shadow: 0 0 5px rgba(14, 212, 94, 0.5);
 }
 
 @media (max-width: 480px) {
@@ -338,7 +356,7 @@
 }
 
 :global(.recharts-default-tooltip) {
-  background-color: #242424 !important;
+  background-color: #F3FDF7 !important;
   border: 1px solid #444 !important;
   border-radius: 4px;
   padding: 0.5rem 1rem;
@@ -350,11 +368,11 @@
 }
 
 :global(.recharts-tooltip-item) {
-  color: #ccc !important;
+  color: #f99206 !important;
 }
 
 :global(.recharts-legend-item) {
-  color: #ccc !important;
+  color: #f99206 !important;
 }
 
 :global(.recharts-cartesian-grid-horizontal line),
@@ -439,7 +457,7 @@
   margin-bottom: 0.25rem;
   font-family: monospace;
   font-size: 0.875rem;
-  color: #FFFF00;
+  color: #f99206;
 }
 
 .poemText {
@@ -447,14 +465,14 @@
   font-size: 0.75rem;
   line-height: 1.25;
   padding: 0.25rem 0;
-  color: #FFFF00;
+  color: #0ed45e;
 }
 
 .sourceText {
   font-size: 0.6rem;
   margin-top: 0.25rem;
   opacity: 0.8;
-  color: #FFFF00;
+  color: #f99206;
   text-align: right;
 }
 
@@ -546,10 +564,10 @@
   transition: transform 0.6s;
   transform-style: preserve-3d;
   border-radius: 0.5rem;
-  border: 2px solid #0ed45e;
+  border: 2px solid #89CFF0;
   aspect-ratio: 10 / 13;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  background: rgba(14, 212, 94, 0.05);
+  background: rgba(137, 207, 240, 0.05);
 }
 
 /* 翻转状态 */

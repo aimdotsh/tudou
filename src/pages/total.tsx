@@ -560,7 +560,7 @@ const Total: React.FC = () => {
                               backgroundColor: distance > 0 
                                 ? `rgba(14, 212, 94, ${Math.min(0.1 + distance / 100, 1)})` 
                                 : 'transparent',
-                              border: distance > 0 ? '1px solid #0ed45e33' : '1px solid #444'
+                              border: distance > 0 ? '1px solid #0ed45e33' : '1px solid #eee'
                             }}
                             title={`${year}-${i+1}: ${distance.toFixed(2)} km`}
                           />
@@ -577,9 +577,9 @@ const Total: React.FC = () => {
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3><Link to="./recent" className="hover:underline">Recent Workouts </Link> 
-          <p> <span className={styles.streakDates} style={{ fontSize: '0.8em', color: '#999' }}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
+          <p> <span className={styles.streakDates}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
                       {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#5A5A5A' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
             )}
           </p>
           </h3>
@@ -786,13 +786,13 @@ const Total: React.FC = () => {
           target="_blank" 
           rel="noopener noreferrer" 
           style={{
-            color: '#8888ff',
+            color: 'gray',
             textDecoration: 'none',
             transition: 'color 0.3s ease'
           }}
           className="running-page-link"
           onMouseOver={(e) => e.currentTarget.style.color = '#aaaaaa'}
-          onMouseOut={(e) => e.currentTarget.style.color = '#8888ff'}>
+          onMouseOut={(e) => e.currentTarget.style.color = 'gray'}>
           running_page
         </a></h1>
       </div>
