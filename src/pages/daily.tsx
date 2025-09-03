@@ -324,7 +324,7 @@ const Total: React.FC = () => {
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-[#0ed45e] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#0bc04d] hover:scale-105"
+              className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#0bc04d] hover:scale-105"
             >
               上一页
             </button>
@@ -334,7 +334,7 @@ const Total: React.FC = () => {
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-[#0ed45e] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#0bc04d] hover:scale-105"
+              className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#0bc04d] hover:scale-105"
             >
               下一页
             </button>

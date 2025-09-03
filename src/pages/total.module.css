@@ -1,3 +1,24 @@
+:root {
+  /* 主色调 */
+  --primary-color: #20B2AA;  /* 绿色 */
+  --secondary-color: #f99206; /* 橙色 */
+  --accent-color: #89CFF0;   /* 蓝色 */
+  
+  /* 文字颜色 */
+  --text-primary: #5A5A5A;   /* 深灰色 */
+  --text-secondary: #888888; /* 中灰色 */
+  --text-light: #FFFFFF;     /* 白色 */
+  
+  /* 背景色 */
+  --bg-primary: #FAF9F5;     /* 浅米色背景 */
+  --bg-secondary: #FFFFFF;   /* 白色背景 */
+  --bg-card: #FFFFFF;        /* 卡片白色背景 */
+  
+  /* 边框颜色 */
+  --border-primary: #DDDDDD; /* 浅灰色边框 */
+  --border-accent: #20B2AA;  /* 绿色边框 */
+}
+
 .container {
   padding: 1rem;
   max-width: 1200px;
@@ -45,9 +66,9 @@
 .tohome {
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  background-color: #0ed45e;
-  color: #ffffff;
-  border: 0px solid #0ed45e;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  border: 0px solid var(--primary-color);
   cursor: pointer;
   font-size: 0.9rem;
   white-space: nowrap;
@@ -55,7 +76,7 @@
 
 .title {
   font-size: 1.5rem;
-  color: #0ed45e;
+  color: var(--primary-color);
   font-weight: bold;
   margin: 0 auto;
   text-align: center;
@@ -65,7 +86,7 @@
 .select {
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  background-color: #0ed45e;
+  background-color: #20B2AA;
   color: #ffffff;
   border: 0px;
   cursor: pointer;
@@ -75,7 +96,7 @@
 
 .footer {
   font-size: 0.9rem;
-  color: #0ed45e;
+  color: #20B2AA;
   font-weight: bold;
   text-align: center;
   flex-grow: 1;
@@ -172,7 +193,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: bold;
-  color: #0ed45e; /* 统一使用深灰色 */
+  color: #20B2AA; /* 统一使用深灰色 */
 }
 
 @media (max-width: 480px) {
@@ -204,7 +225,7 @@
 .chartContainer h3 {
   margin-top: 0;
   margin-bottom: 1rem;
-  color: #0ed45e;
+  color: #20B2AA;
   font-size: 1.1rem;
   text-align: center;
 }
@@ -212,7 +233,7 @@
 .chartContainer p {
   margin-top: 0;
   margin-bottom: 1rem;
-  color: #0ed45e;
+  color: #20B2AA;
   font-size: 1rem;
   text-align: center;
 }
@@ -242,7 +263,7 @@
     padding: 1.5rem;
   }
   .chartContainer h3 {
-    font-size: 1.25rem;
+    font-size: 1rem;
     margin-bottom: 1.5rem;
   }
 }
@@ -287,8 +308,8 @@
 .heatmapYear {
   width: 3rem;
   flex-shrink: 0;
-  color: #0ed45e; /* 保持原有绿色 */
-  font-size: 0.8rem;
+  color: #20B2AA; /* 保持原有绿色 */
+  font-size: 1.0rem;
   font-weight: 600;
 }
 
@@ -301,17 +322,17 @@
 
 .heatmapMonth {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   color: #5A5A5A; /* 更深的灰色 */
   overflow: hidden;
   text-overflow: ellipsis;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .heatmapBody {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 
 .heatmapRow {
@@ -363,7 +384,7 @@
 }
 
 :global(.recharts-tooltip-label) {
-  color: #0ed45e !important;
+  color: #20B2AA !important;
   margin-bottom: 0.5rem;
 }
 
@@ -426,14 +447,14 @@
   border: 2px solid #C19A6B;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background: rgba(14, 212, 94, 0.05);
-  color: #0ed45e;
+  color: #20B2AA;
   font-weight: 600;
 }
 
 /* SVG卡片样式 - 正常状态 */
 .svgCard {
   composes: cardBase;
-  border: 2px solid #0ed45e;
+  border: 2px solid #20B2AA;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background: rgba(14, 212, 94, 0.05);
   display: flex;
@@ -465,7 +486,7 @@
   font-size: 0.75rem;
   line-height: 1.25;
   padding: 0.25rem 0;
-  color: #0ed45e;
+  color: #20B2AA;
 }
 
 .sourceText {
@@ -515,7 +536,7 @@
   right: -10px;
   width: 30px;
   height: 30px;
-  background-color: #0ed45e;
+  background-color: #20B2AA;
   color: white;
   border: none;
   border-radius: 50%;
@@ -639,7 +660,7 @@
 }
 
 .chartContainer h3 {
-  color: #0ed45e;
+  color: #20B2AA;
   text-align: center;
   margin-bottom: 1.5rem;
 }
@@ -675,5 +696,5 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  color: #0ed45e;
+  color: #20B2AA;
 }
