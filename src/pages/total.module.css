@@ -297,6 +297,13 @@
 
 .heatmap {
   min-width: 100%;
+}
+
+
+
+
+
+.heatmapYear {
   padding: 0 0.5rem;
 }
 
@@ -305,12 +312,55 @@
   margin-bottom: 0.5rem;
 }
 
-.heatmapYear {
+/* 强制覆盖所有热图年份样式 */
+.heatmap .heatmap-year, 
+.heatmap .heatmapYear,
+.heatmap-header .heatmap-year,
+.heatmap-header .heatmapYear,
+.heatmap-body .heatmap-year,
+.heatmap-body .heatmapYear {
   width: 3rem;
   flex-shrink: 0;
-  color: #20B2AA; /* 保持原有绿色 */
-  font-size: 1.0rem;
+  color: #20B2AA;
+  font-size: 0.9rem !important;
   font-weight: 600;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .heatmap .heatmap-year,
+  .heatmap .heatmapYear,
+  .heatmap-header .heatmap-year,
+  .heatmap-header .heatmapYear,
+  .heatmap-body .heatmap-year,
+  .heatmap-body .heatmapYear {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap .heatmap-year,
+  .heatmap .heatmapYear,
+  .heatmap-header .heatmap-year,
+  .heatmap-header .heatmapYear,
+  .heatmap-body .heatmap-year,
+  .heatmap-body .heatmapYear {
+    font-size: 0.7rem !important;
+    width: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heatmapYear {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmapYear {
+    font-size: 0.7rem;
+    width: 2.5rem;
+  }
 }
 
 .heatmapMonths {
@@ -697,4 +747,49 @@
   justify-content: center;
   padding: 2rem;
   color: #20B2AA;
+}
+
+/* 强制覆盖所有热图年份样式 */
+.heatmap-year,
+.heatmapYear,
+[class*='heatmap'] [class*='year'],
+[class*='heatmap'] [class*='Year'] {
+  width: 3rem !important;
+  flex-shrink: 0 !important;
+  color: #20B2AA !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.7rem !important;
+    width: 2.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .heatmapYear {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmapYear {
+    font-size: 0.7rem;
+    width: 2.5rem;
+  }
 }
