@@ -22,11 +22,11 @@
   width: 100%;
   font-variant: tabular-nums;
   margin: 2rem 0 5rem 0;
-  color: rgb(204, 204, 204);
-  background-color: rgb(26, 26, 26);
+  color: #333333;
+  background-color: #ffffff;
 
   :is(thead) {
-    color: rgb(204, 204, 204);
+    color: #333333;
     text-align: right;
 
     :is(th) {
@@ -49,7 +49,7 @@
   }
 
   &:hover {
-    background-color: lighten(rgb(26, 26, 26), 3%);
+    background-color: rgba(32, 178, 170, 0.1);
   }
 }
 
@@ -63,5 +63,5 @@
 }
 
 .runDate {
-  color: rgb(204, 204, 204);
+  color: #000000;
 }
