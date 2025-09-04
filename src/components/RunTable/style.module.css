@@ -22,11 +22,11 @@
   width: 100%;
   font-variant: tabular-nums;
   margin: 2rem 0 5rem 0;
-  color: #333333;
-  background-color: #ffffff;
-
+  color: #20B2AA;
+  background-color: #FAF9F5;
+ 
   :is(thead) {
-    color: #333333;
+    color: #20B2AA;
     text-align: right;
 
     :is(th) {
@@ -63,5 +63,5 @@
 }
 
 .runDate {
-  color: #000000;
+  color: #20B2AA;
 }
