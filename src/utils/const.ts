@@ -177,12 +177,18 @@ const purple = 'rgb(154,118,252)';
 const veryPeri = 'rgb(105,106,173)';//长春花蓝
 const red = 'rgb(255,0,0)';//大红色
 
+
+const primarycolor = 'rgb(32, 178, 170)';
+const secondarycolor = 'rgb(249, 149, 6)';
+const accentcolor = 'rgb(137, 207, 240)';
+
 // If your map has an offset please change this line
 // issues #92 and #198
 export const NEED_FIX_MAP = false;
-export const MAIN_COLOR = green;
-export const RUN_COLOR = 'rgb(137, 207, 240)'; // #89CFF0
-export const RIDE_COLOR = cyan;
+export const MAIN_COLOR = primarycolor;
+//export const RUN_COLOR = 'rgb(0, 137, 200)'; //rgb(0, 137, 200)
+export const RUN_COLOR = primarycolor;
+export const RIDE_COLOR = secondarycolor;
 export const VIRTUAL_RIDE_COLOR = veryPeri;
 export const HIKE_COLOR = pink;
 export const SWIM_COLOR = gold;
