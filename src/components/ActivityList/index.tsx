@@ -72,6 +72,22 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
         return [];
     };
 
+    // 处理week格式的显示
+    const formatPeriodDisplay = (period: string, interval: string) => {
+        if (interval === 'week' && period.includes('|')) {
+            const [weekPart, datePart] = period.split('|');
+            return (
+                <span>
+                    {weekPart}
+                    <span style={{ color: '#999', fontSize: '0.8em', marginLeft: '8px' }}>
+                        {datePart}
+                    </span>
+                </span>
+            );
+        }
+        return period;
+    };
+
     const data: ChartData[] = generateLabels().map((day) => ({
         day,
         distance: (dailyDistances[day - 1] || 0).toFixed(2), // Keep two decimal places
@@ -110,7 +126,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
 
     return (
         <div className={styles.activityCard}>
-            <h2 className={styles.activityName}>{period}</h2>
+            <h2 className={styles.activityName}>{formatPeriodDisplay(period, interval)}</h2>
             <div className={styles.activityDetails}>
                 <p><strong>{ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}:</strong> {summary.totalDistance.toFixed(2)} km</p>
                 <p><strong>{ACTIVITY_TOTAL.AVERAGE_SPEED_TITLE}:</strong> {isFastType(activityType) ? `${summary.averageSpeed.toFixed(2)} km/h` : formatPace(summary.averageSpeed)}</p>
@@ -129,21 +145,20 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
                     <div className={styles.chart} style={{ height: '250px', width: '100%' }}>
                         <ResponsiveContainer>
                             <BarChart data={data} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                                <XAxis dataKey="day" tick={{ fill: 'rgb(204, 204, 204)' }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#e1f5fe" />
+                                <XAxis dataKey="day" tick={{ fill: '#5a6c7d' }} />
                                 <YAxis
-                                    label={{ value: 'km', angle: -90, position: 'insideLeft', fill: 'rgb(204, 204, 204)' }}
+                                    label={{ value: 'km', angle: -90, position: 'insideLeft', fill: '#5a6c7d' }}
                                     domain={[0, yAxisMax]} // 动态设置最大值
                                     ticks={yAxisTicks} // 动态生成刻度
-                                    tick={{ fill: 'rgb(204, 204, 204)', fontSize: 14 }} // 调整 Y 轴数字大小
-                                    margin={{ left: 60 }} // 进一步增大左侧边距
+                                    tick={{ fill: '#5a6c7d', fontSize: 14 }} // 调整 Y 轴数字大小
                                 />
                                 <Tooltip
                                     formatter={(value) => `${value} km`}
-                                    contentStyle={{ backgroundColor: 'rgb(36, 36, 36)', border: '1px solid #444', color: 'rgb(204, 204, 204)' }}
-                                    labelStyle={{ color: 'rgb(6, 251, 243)' }}
+                                    contentStyle={{ backgroundColor: '#ffffff', border: '2px solid #20B2AA', color: '#2c3e50', borderRadius: '10px' }}
+                                    labelStyle={{ color: '#20B2AA' }}
                                 />
-                                <Bar dataKey="distance" fill="rgb(6, 251, 243)" />
+                                <Bar dataKey="distance" fill="#20B2AA" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -155,17 +170,17 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
 
 const ActivityList: React.FC = () => {
     const [interval, setInterval] = useState<IntervalType>('month');
-    const [activityType, setActivityType] = useState<string>('run');
+    const [activityType, setActivityType] = useState<string>('all');
     const navigate = useNavigate();
     const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
-    const showTypes =[...playTypes].filter(type => type in TYPES_MAPPING);
+    const showTypes = ['all', ...Array.from(playTypes).filter(type => type in TYPES_MAPPING)];
 
     const toggleInterval = (newInterval: IntervalType): void => {
         setInterval(newInterval);
     };
 
     const filterActivities = (activity: Activity): boolean => {
-        return activity.type.toLowerCase() === activityType;
+        return activityType === 'all' || activity.type.toLowerCase() === activityType;
     };
 
     const convertTimeToSeconds = (time: string): number => {
@@ -188,11 +203,28 @@ const ActivityList: React.FC = () => {
                     index = date.getDate() - 1; // Return current day (0-30)
                     break;
                 case 'week':
+                    // 计算ISO周数
                     const currentDate = new Date(date.valueOf());
                     currentDate.setDate(currentDate.getDate() + 4 - (currentDate.getDay() || 7)); // Set to nearest Thursday (ISO weeks defined by Thursday)
                     const yearStart = new Date(currentDate.getFullYear(), 0, 1);
                     const weekNum = Math.ceil((((currentDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-                    key = `${currentDate.getFullYear()}-W${weekNum.toString().padStart(2, '0')}`;
+                    
+                    // 计算周的开始日期（周一）
+                    const weekStart = new Date(date.valueOf());
+                    const dayOfWeek = weekStart.getDay();
+                    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 周日为0，需要调整
+                    weekStart.setDate(weekStart.getDate() - daysToMonday);
+                    
+                    // 计算周的结束日期（周日）
+                    const weekEnd = new Date(weekStart.valueOf());
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    
+                    // 格式化日期为 MM/DD - MM/DD
+                    const formatDate = (d: Date) => `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+                    const dateRange = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+                    
+                    // 组合格式：周数 + 日期范围
+                    key = `${currentDate.getFullYear()}-W${weekNum.toString().padStart(2, '0')}|${dateRange}`;
                     index = (date.getDay() + 6) % 7; // Return current day (0-6, Monday-Sunday)
                     break;
                 case 'day':
@@ -247,7 +279,9 @@ const ActivityList: React.FC = () => {
                 </button>
                 <select onChange={(e) => setActivityType(e.target.value)} value={activityType}>
                     { showTypes.map((type) => (
-                      <option value={type}>{TYPES_MAPPING[type]}</option>
+                      <option key={type} value={type}>
+                        {type === 'all' ? '所有' : (TYPES_MAPPING as any)[type]}
+                      </option>
                     ))}
                 </select>
                 <select
@@ -264,34 +298,35 @@ const ActivityList: React.FC = () => {
 
             {interval === 'life' && (
                 <div className={styles.lifeContainer}>
-                    <div className={styles.chart} style={{ height: '500px', width: '50%' }}>
+                    <div className={styles.chart} style={{ height: '500px', width: '60%' }}>
                         <ResponsiveContainer>
                             <BarChart
-                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({ period, totalDistance: summary.totalDistance.toFixed(2) }))}
-                                margin={{ top: 20, right: 20, left: -20, bottom: 5 }}
+                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({ 
+                                    period, 
+                                    totalDistance: parseFloat(summary.totalDistance.toFixed(2))
+                                }))}
+                                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                             >
-                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#e1f5fe" />
                                 <XAxis
                                     dataKey="period"
-                                    tick={{ fill: 'rgb(204, 204, 204)', fontSize: 14 }}
+                                    tick={{ fill: '#5a6c7d', fontSize: 12 }}
                                     interval={0}
                                     angle={0}
-                                    textAnchor="end"
+                                    textAnchor="middle"
+                                    height={40}
                                 />
                                 <YAxis
-                                    label={{ fill: 'rgb(204, 204, 204)' }}
-                                    tick={{ fill: 'rgb(204, 204, 204)', fontSize: 12 }} // 调整 Y 轴数字大小
-                                    domain={[0, 'dataMax']}
-                                    ticks={[0, 200, 400, 600, 800, 1000, 1200, 1400, 1600]}
-                                    // 进一步增大左右边距
-                                    margin={{ left: 20, right: 20 }}
+                                    label={{ value: 'km', angle: -90, position: 'insideLeft', fill: '#5a6c7d' }}
+                                    tick={{ fill: '#5a6c7d', fontSize: 12 }}
+                                    domain={[0, (dataMax: number) => Math.ceil(dataMax / 100) * 100]}
                                 />
                                 <Tooltip
                                     formatter={(value) => `${value} km`}
-                                    contentStyle={{ backgroundColor: 'rgb(36, 36, 36)', border: '1px solid #444', color: 'rgb(204, 204, 204)' }}
-                                    labelStyle={{ color: 'rgb(6, 251, 243)' }}
+                                    contentStyle={{ backgroundColor: '#ffffff', border: '2px solid #20B2AA', color: '#2c3e50', borderRadius: '10px' }}
+                                    labelStyle={{ color: '#20B2AA' }}
                                 />
-                                <Bar dataKey="totalDistance" fill="rgb(6, 251, 243)" />
+                                <Bar dataKey="totalDistance" fill="#20B2AA" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -305,8 +340,11 @@ const ActivityList: React.FC = () => {
                             if (interval === 'day') {
                                 return new Date(b).getTime() - new Date(a).getTime(); // Sort by date
                             } else if (interval === 'week') {
-                                const [yearA, weekA] = a.split('-W').map(Number);
-                                const [yearB, weekB] = b.split('-W').map(Number);
+                                // 解析新格式 "YYYY-WXX|MM/DD - MM/DD"
+                                const [weekPartA] = a.split('|');
+                                const [weekPartB] = b.split('|');
+                                const [yearA, weekA] = weekPartA.split('-W').map(Number);
+                                const [yearB, weekB] = weekPartB.split('-W').map(Number);
                                 return yearB - yearA || weekB - weekA; // Sort by year and week number
                             } else {
                                 const [yearA, monthA = 0] = a.split('-').map(Number);
@@ -329,6 +367,7 @@ const ActivityList: React.FC = () => {
                                 }}
                                 dailyDistances={summary.dailyDistances}
                                 interval={interval}
+                                activityType={activityType}
                             />
                         ))}
                 </div>
