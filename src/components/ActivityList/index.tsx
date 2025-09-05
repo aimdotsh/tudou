@@ -77,9 +77,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
         if (interval === 'week' && period.includes('|')) {
             const [weekPart, datePart] = period.split('|');
             return (
-                <span>
+                <span style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {weekPart}
-                    <span style={{ color: '#999', fontSize: '0.8em', marginLeft: '8px' }}>
+                    <span style={{ color: '#999', fontSize: '0.65em', marginLeft: '6px', fontWeight: 'normal' }}>
                         {datePart}
                     </span>
                 </span>
