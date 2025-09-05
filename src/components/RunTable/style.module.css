@@ -31,6 +31,10 @@
 
     :is(th) {
       padding: 0.5rem;
+      
+      &:first-child {
+        text-align: left;
+      }
     }
   }
 }

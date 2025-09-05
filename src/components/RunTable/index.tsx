@@ -64,9 +64,17 @@ const RunTable = ({
       ? aTotalSeconds - bTotalSeconds
       : bTotalSeconds - aTotalSeconds;
   };
+  const sortNameFunc: SortFunc = (a, b) => {
+    const aName = a.name || '';
+    const bName = b.name || '';
+    return sortFuncInfo === 'Name' 
+      ? aName.localeCompare(bName)
+      : bName.localeCompare(aName);
+  };
   const sortDateFuncClick =
     sortFuncInfo === 'Date' ? sortDateFunc : sortDateFuncReverse;
   const sortFuncMap = new Map([
+    ['Name', sortNameFunc],
     ['Type', sortTypeFunc],
     ['KM', sortKMFunc],
     ['Elevation Gain', sortElevationGainFunc],
@@ -92,7 +100,6 @@ const RunTable = ({
       <table className={styles.runTable} cellSpacing="0" cellPadding="0">
         <thead>
           <tr>
-            <th />
             {Array.from(sortFuncMap.keys()).map((k) => (
               <th key={k} onClick={handleClick}>
                 {k}
