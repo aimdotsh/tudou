@@ -93,9 +93,24 @@ const RunMap = ({
         if (map && IS_CHINESE) {
             map.addControl(new MapboxLanguage({defaultLanguage: 'zh-Hans'}));
         }
+        
+        // 添加错误处理
+        map.on('error', (e) => {
+          console.error('Mapbox error:', e.error);
+        });
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
-        map.on('style.load', () => {
+        // 确保样式已加载
+          const checkStyleLoaded = () => {
+            if (!map.isStyleLoaded()) {
+              setTimeout(checkStyleLoaded, 100);
+              return;
+            }
+            map.on('style.load', () => {
+            });
+          };
+          checkStyleLoaded();
+          map.on('style.load', () => {
           // 在非隐私模式下且不显示道路标签时，移除道路图层
           if (!isPrivacyMode && !ROAD_LABEL_DISPLAY) {
             MAP_LAYER_LIST.forEach((layerId) => {
