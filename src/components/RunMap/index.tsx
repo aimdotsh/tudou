@@ -14,6 +14,7 @@ import {
   LINE_OPACITY,
   MAP_HEIGHT,
   LIGHTS_ON,
+  TYPES_MAPPING,
 } from '@/utils/const';
 import { usePrivacyModeContext } from '@/context/PrivacyModeContext';
 import { Coordinate, IViewState, geoJsonForMap } from '@/utils/utils';
@@ -176,6 +177,30 @@ const RunMap = ({
     [startLon, startLat] = points[0];
     [endLon, endLat] = points[points.length - 1];
   }
+
+  // 提取运动类型
+  const sportTypes = Array.from(new Set(
+    geoData.features
+      .map(feature => (feature.geometry as any)?.workoutType)
+      .filter(type => type)
+  ));
+  
+  // 提取运动类型并生成显示文本
+  // 当有运动类型数据且不是混合多种类型时显示
+  const isSpecificType = sportTypes.length === 1;
+  
+  // 调试信息
+  console.log('Debug - sportTypes:', sportTypes);
+  console.log('Debug - isSpecificType:', isSpecificType);
+  console.log('Debug - title:', title);
+  
+  // 生成运动类型显示文本
+  const sportTypeText = (sportTypes.length > 0 && isSpecificType)
+    ? sportTypes.map(type => {
+        const lowerType = type?.toLowerCase();
+        return (TYPES_MAPPING as any)[lowerType] || type;
+      }).join(' · ') + '：'
+    : '';
   let dash = USE_DASH_LINE && !isSingleRun && !isBigMap ? [2, 2] : [2, 0];
   const onMove = React.useCallback(({ viewState }: { viewState: IViewState }) => {
     setViewState(viewState);
@@ -287,7 +312,7 @@ const RunMap = ({
           endLon={endLon}
         />
       )}
-      <span className={styles.runTitle}>{title}</span>
+      <span className={styles.runTitle}>{sportTypeText}{title}</span>
       <FullscreenControl style={fullscreenButton}/>
               {!isPrivacyMode && <LightsControl setLights={setLights} lights={lights}/>}
       <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>
