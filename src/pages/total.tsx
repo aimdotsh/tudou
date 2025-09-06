@@ -464,34 +464,34 @@ const Total: React.FC = () => {
 
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="var(--border-primary)" />
+                stroke="#e1f5fe" />
 
               <XAxis
                 dataKey="year"
                 tick={{
-                  fill: 'var(--text-primary)',
-                  fontSize: 12       // 添加字体大小
+                  fill: '#5a6c7d',
+                  fontSize: 12
                 }}
                 interval={1}
               />
 
               <YAxis
                 tick={{
-                  fill: 'var(--text-primary)',  // 改为深灰色文字
-                  fontSize: 12      // 添加字体大小
+                  fill: '#5a6c7d',
+                  fontSize: 12
                 }}
               />
 
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--chart-tooltip-bg)',
-                  border: '1px solid var(--chart-tooltip-border)',
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  backgroundColor: '#ffffff',
+                  border: '2px solid #20B2AA',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
                 }}
                 labelStyle={{
-                  color: 'var(--chart-tooltip-text)',
-                  fontWeight: 500    // 中等字重
+                  color: '#20B2AA',
+                  fontWeight: 600
                 }}
               />
 
@@ -522,34 +522,34 @@ const Total: React.FC = () => {
 
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="var(--border-primary)" />  // 浅灰色网格线
+                stroke="#e1f5fe" />
 
               <XAxis
                 dataKey="year"
                 tick={{
-                  fill: '#5A5A5A',  // 深灰色文字
-                  fontSize: 12      // 统一字体大小
+                  fill: '#5a6c7d',
+                  fontSize: 12
                 }}
                 interval={1}
               />
 
               <YAxis
                 tick={{
-                  fill: '#5A5A5A',  // 深灰色文字
-                  fontSize: 12      // 统一字体大小
+                  fill: '#5a6c7d',
+                  fontSize: 12
                 }}
               />
 
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#FFFFFF',  // 白色背景
-                  border: '1px solid #89CFF0', // 柔和蓝色边框
-                  borderRadius: '6px',         // 圆角
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // 柔和阴影
+                  backgroundColor: '#ffffff',
+                  border: '2px solid #20B2AA',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
                 }}
                 labelStyle={{
-                  color: '#89CFF0',  // 柔和蓝色标签
-                  fontWeight: 500    // 中等字重
+                  color: '#20B2AA',
+                  fontWeight: 600
                 }}
                 formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
               />
@@ -582,7 +582,7 @@ const Total: React.FC = () => {
 
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#DDD" />  {/* 浅灰色网格线 */}
+                stroke="#e1f5fe" />
 
               <XAxis
                 dataKey="fullDate"
@@ -608,8 +608,8 @@ const Total: React.FC = () => {
 
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#FFFFFF',  // 白色背景
-                  border: '1px solid #89CFF0', // 柔和蓝色边框
+                  backgroundColor: '#ffffff',
+                  border: '2px solid #20B2AA',
                   borderRadius: '6px',         // 圆角
                   padding: '8px 12px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // 柔和阴影
@@ -908,22 +908,17 @@ const Total: React.FC = () => {
             <GridSvg className="mt-2 h-auto w-full" />
           </Suspense>
         </div>
-      <div className={styles.header}>
-      <h1 className={styles.footer} style={{color: 'gray'}}>©2016 - 2025 Liups.com thanks <a 
+
+      <div className={styles.footer}>
+        ©2016 - 2025 Liups.com thanks{' '}
+        <a 
           href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
           target="_blank" 
-          rel="noopener noreferrer" 
-          style={{
-            color: 'gray',
-            textDecoration: 'none',
-            transition: 'color 0.3s ease'
-          }}
-          className="running-page-link"
-          onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-primary)'}>
+          rel="noopener noreferrer">
           running_page
-        </a></h1>
+        </a>
       </div>
+
       </div>
     </div>
 
