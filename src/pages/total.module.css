@@ -65,17 +65,17 @@
   align-items: center;
   position: relative;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.5rem;
   background: var(--bg-card);
   padding: 1.5rem;
-  border-radius: 15px;
+  border-radius: 10px;
   box-shadow: 0 4px 20px var(--shadow-light);
   border: 1px solid var(--border-light);
 }
 
 .tohome {
   padding: 12px 24px;
-  border-radius: 25px;
+  border-radius: 10px;
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
   color: var(--text-light);
   border: none;
@@ -105,7 +105,7 @@
 
 .select {
   padding: 12px 20px;
-  border-radius: 25px;
+  border-radius: 10px;
   background: linear-gradient(135deg, var(--secondary-color), #ffb347);
   color: var(--text-light);
   border: none;
@@ -213,7 +213,7 @@
 
 .statCard {
   background: var(--bg-card);
-  border-radius: 15px;
+  border-radius: 10px;
   padding: 1.5rem;
   text-align: center;
   box-shadow: 0 6px 20px var(--shadow-light);
@@ -270,12 +270,12 @@
 .charts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: 0.75rem; /* 进一步减小网格间距 */
 }
 
 .chartContainer {
   background: var(--bg-card);
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 1rem;
   box-shadow: 0 8px 25px var(--shadow-light);
   border: 2px solid var(--border-light);
@@ -289,7 +289,7 @@
 
 .chartContainer h3 {
   margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; /* 减小标题下边距 */
   color: var(--primary-color);
   font-size: 1.3rem;
   text-align: center;
@@ -318,7 +318,7 @@
 @media (min-width: 768px) {
   .charts {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 0.75rem; /* 进一步减小网格间距 */
   }
   
   .fullWidth {
@@ -330,7 +330,7 @@
   }
   .chartContainer h3 {
     font-size: 1.3rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* 减小标题下边距 */
   }
 }
 
@@ -360,7 +360,7 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--bg-card);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 1rem;
 }
 
@@ -531,11 +531,11 @@
 
 /* 卡片通用样式 */
 .cardBase {
-  border-radius: 15px;
+  border-radius: 10px;
   min-height: 140px;
   transition: all 0.3s ease;
   overflow: hidden;
-  box-shadow: 0 4px 15px var(--shadow-light);
+  box-shadow: 0 4px 10px var(--shadow-light);
 }
 
 .cardBase:hover {
@@ -567,7 +567,7 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden; /* This will clip the SVG's corners */
 }
 
@@ -635,7 +635,7 @@
   max-height: 100%;
   background-color: var(--bg-card);
   padding: 1.5rem;
-  border-radius: 15px;
+  border-radius: 10px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   cursor: default;
 }
@@ -703,7 +703,7 @@
   min-height: 0;
   transition: transform 0.6s;
   transform-style: preserve-3d;
-  border-radius: 15px;
+  border-radius: 10px;
   border: 2px solid var(--accent-color);
   aspect-ratio: 10 / 13;
   box-shadow: 0 6px 20px var(--shadow-light);
@@ -729,7 +729,7 @@
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 0;
 }
 
@@ -754,14 +754,14 @@
   min-width: 0;
   min-height: 0;
   object-fit: contain;
-  border-radius: 20px;
+  border-radius: 10px;
   max-width: 100%;
   max-height: 100%;
 }
 
 /* 标题样式 */
 .chartContainer {
-  margin-bottom: 1.5rem;
+  /* Spacing is now handled by the 'gap' property on the parent '.charts' grid container */
 }
 
 .chartContainer h3 {
@@ -791,7 +791,7 @@
   color: var(--text-muted);
   font-style: italic;
   border: 2px dashed var(--border-light);
-  border-radius: 15px;
+  border-radius: 10px;
   background: var(--bg-card);
 }
 
@@ -803,7 +803,7 @@
   padding: 3rem;
   color: var(--primary-color);
   background: var(--bg-card);
-  border-radius: 15px;
+  border-radius: 10px;
 }
 
 /* 强制覆盖所有热图年份样式 */
