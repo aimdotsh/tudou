@@ -31,7 +31,7 @@ const Index = () => {
   const [year, setYear] = useState(thisYear);
   const [runIndex, setRunIndex] = useState(-1);
   const [runs, setActivity] = useState(
-    filterAndSortRuns(activities, year, filterYearRuns, sortDateFunc)
+    filterAndSortRuns(activities, year, filterYearRuns, sortDateFunc, null, null)
   );
   const [title, setTitle] = useState('');
   const [geoData, setGeoData] = useState(geoJsonForRuns(runs));
@@ -52,7 +52,7 @@ const Index = () => {
     if (name != 'Year') {
       setYear(thisYear);
     }
-    setActivity(filterAndSortRuns(activities, item, func, sortDateFunc));
+    setActivity(filterAndSortRuns(activities, item, func, sortDateFunc, null, null));
     setRunIndex(-1);
     setTitle(`${item} ${name} Heatmap`);
   };
@@ -92,7 +92,7 @@ const Index = () => {
     }
     else {
       setYear(thisYear);
-      setActivity(filterAndSortRuns(activities, type, filterTypeRuns, sortDateFunc));
+      setActivity(filterAndSortRuns(activities, type, filterTypeRuns, sortDateFunc, null, null));
     }
     setRunIndex(-1);
     setTitle(`${year} ${type} Type Heatmap`);

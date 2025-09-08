@@ -1,0 +1,50 @@
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import useSiteMetadata from '@/hooks/useSiteMetadata';
+import { usePrivacyModeContext } from '@/context/PrivacyModeContext';
+import styles from './style.module.css';
+
+const Nav = () => {
+  const location = useLocation();
+  const { navLinks, logo, siteUrl } = useSiteMetadata();
+  const { isPrivacyMode, setIsPrivacyMode } = usePrivacyModeContext();
+
+  return (
+    <nav className={styles.mainNav}>
+      <div className={styles.logoSection}>
+        <Link to={siteUrl} className={styles.logoLink}>
+          <img className={styles.logo} alt="logo" src={logo} />
+        </Link>
+      </div>
+      <div className={styles.navLinks}>
+        {navLinks.map((link) => {
+          const isInternal = link.url.startsWith('/');
+          const isActive = isInternal && location.pathname === link.url;
+
+          return isInternal ? (
+            <Link
+              key={link.name}
+              to={link.url}
+              className={`${styles.navLink} ${isActive ? styles.active : ''}`}
+            >
+              {link.name}
+            </Link>
+          ) : (
+            <a
+              key={link.name}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.navLink}
+            >
+              {link.name}
+            </a>
+          );
+        })}
+
+      </div>
+    </nav>
+  );
+};
+
+export default Nav;

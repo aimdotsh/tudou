@@ -14,6 +14,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
+import Nav from '@/components/Nav';
 import { totalStat ,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
@@ -24,12 +25,12 @@ class ErrorBoundary extends Component<{
 }, { hasError: boolean }> {
   state = { hasError: false };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error) {
     console.error('Error caught by ErrorBoundary:', error);
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
   }
 
@@ -152,66 +153,69 @@ const Total: React.FC = () => {
   );
 
   return (
-    <div className={styles.container}>
-    
-      <div className={styles.header}>
-        <a href="./" className={styles.tohome}>首页</a>
-<h1 className={styles.title}>
-  蓝皮书的大象周边跑
-</h1>      </div>
-      
+    <>
+      <Nav />
+      <div className={styles.container}>
+          <div className={styles.activityList}>
+            <div className={styles.filterContainer}>
 
-      <div className={styles.charts}>
-        {/* 添加recent SVG图表 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+<h1 className={styles.title}>蓝皮书的大象周边跑</h1>
 
-
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
-            {currentItems.map(({ date, Component }) => (
-              <ErrorBoundary
-                key={date}
-                fallback={
-                  <div className={styles.dateCard}>
-                    <div className={styles.dateText}>{date}</div>
-                    <div className={styles.poemText}>"今天没有运动"</div>
-                    <div className={styles.sourceText}>--蓝皮书</div>
-                  </div>
-                }
-              >
-                <Suspense fallback={
-                  <div className={styles.loadingCard}>
-                    <div>Loading {date}...</div>
-                  </div>
-                }>
-                  <div className={styles.svgCard}>
-                    <Component className="h-auto w-full" />
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-            ))}
+            </div>
           </div>
-          <div className="flex justify-center items-center mt-8 gap-4">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
-            >
-              上一页
-            </button>
-            <span className="text-gray-700 transition-opacity duration-300">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
-            >
-              下一页
-            </button>
+
+        <div className={styles.charts}>
+          {/* 添加recent SVG图表 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+
+
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
+              {currentItems.map(({ date, Component }) => (
+                <ErrorBoundary
+                  key={date}
+                  fallback={
+                    <div className={styles.dateCard}>
+                      <div className={styles.dateText}>{date}</div>
+                      <div className={styles.poemText}>"今天没有运动"</div>
+                      <div className={styles.sourceText}>--蓝皮书</div>
+                    </div>
+                  }
+                >
+                  <Suspense fallback={
+                    <div className={styles.loadingCard}>
+                      <div>Loading {date}...</div>
+                    </div>
+                  }>
+                    <div className={styles.svgCard}>
+                      <Component className="h-auto w-full" />
+                    </div>
+                  </Suspense>
+                </ErrorBoundary>
+              ))}
+            </div>
+            <div className="flex justify-center items-center mt-8 gap-4">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
+              >
+                上一页
+              </button>
+              <span className="text-gray-700 transition-opacity duration-300">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
+              >
+                下一页
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

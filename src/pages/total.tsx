@@ -14,6 +14,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
+import Nav from '@/components/Nav';
 import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
@@ -24,12 +25,12 @@ class ErrorBoundary extends Component<{
 }, { hasError: boolean }> {
   state = { hasError: false };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error) {
     console.error('Error caught by ErrorBoundary:', error);
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
   }
 
@@ -378,9 +379,10 @@ const Total: React.FC = () => {
     setCurrentPhoto(null);
   };
 
-
   return (
-    <div className={styles.container}>
+    <>
+      <Nav />
+      <div className={styles.container}>
       {/* 照片查看模态框 */}
       {currentPhoto && (
         <div className={styles.photoModal} onClick={closePhotoViewer}>
@@ -406,23 +408,21 @@ const Total: React.FC = () => {
           </div>
         </div>
       )}
-      <div className={styles.header}>
-        <a href="https://liups.com/" className={styles.tohome}>自留地</a>
-        <h1 className={styles.title}>蓝皮书的 Workouts Page</h1>
-        <select 
-          onChange={(e) => setActivityType(e.target.value)} 
-          value={activityType}
-          className={styles.select}
-        >
-          {['all', ...showTypes.filter(type => type !== 'all')].map((type) => (
-            <option key={type} value={type}>
-              {type === 'all' ? '所有' : TYPES_MAPPING[type]}
-            </option>
-          ))}
-        </select>
-      </div>
-      
 
+
+        <div className="w-full flex justify-center">
+          <select
+            onChange={(e) => setActivityType(e.target.value)}
+            value={activityType}
+            className={styles.select}
+          >
+            {['all', ...showTypes.filter(type => type !== 'all')].map((type) => (
+              <option key={type} value={type}>
+                {type === 'all' ? '所有' : TYPES_MAPPING[type as keyof typeof TYPES_MAPPING]}
+              </option>
+            ))}
+          </select>
+        </div>
 
 
       {/* 统计卡片 */}
@@ -909,6 +909,8 @@ const Total: React.FC = () => {
           </Suspense>
         </div>
 
+      </div>
+
       <div className={styles.footer}>
         ©2016 - 2025 Liups.com thanks{' '}
         <a 
@@ -919,9 +921,8 @@ const Total: React.FC = () => {
         </a>
       </div>
 
-      </div>
     </div>
-
+    </>
   );
 };
 

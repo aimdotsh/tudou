@@ -24,7 +24,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
   let sumElevationGain = 0;
   let heartRate = 0;
   let heartRateNullCount = 0;
-  const workoutsCounts = {};
+  const workoutsCounts: { [key: string]: [number, number, number] } = {};
 
   runs.forEach((run) => {
     sumDistance += run.distance || 0;
@@ -66,23 +66,27 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
         { sumDistance > 0 &&
           <WorkoutStat
             key='total'
-            value={runs.length}
+            value={runs.length.toString()}
             description={" Total"}
             distance={(sumDistance / 1000.0).toFixed(0)}
+            pace=""
+            className=""
+            onClick={() => {}}
+            color=""
           />
         }
         { workoutsArr.map(([type, count]) => (
           <WorkoutStat
             key={type}
-            value={count[0]}
+            value={count[0].toString()}
             description={` ${type}`+"s"}
-            // pace={formatPace(count[2] / count[1])}
+            pace=""
             distance={(count[2] / 1000.0).toFixed(0)}
-            // color={colorFromType(type)}
-            onClick={(e: Event) => {
+            className=""
+            onClick={() => {
               onClickTypeInYear(year, type);
-              e.stopPropagation();
             }}
+            color=""
           />
         ))}
         { SHOW_ELEVATION_GAIN && sumElevationGain > 0 &&

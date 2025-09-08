@@ -10,6 +10,7 @@
   --text-light: #FFFFFF;      /* 白色 */
   --text-muted: #8a9ba8;      /* 浅灰色 */
   
+  
   /* 背景色 */
   --bg-primary: #FAF9F5;      /* 浅色背景 */
   --bg-secondary: #FAF9F5;    /* 白色背景 */
@@ -24,82 +25,45 @@
 }
 
 .container {
-  padding: 0.75rem;
-  max-width: 1200px;
-  margin: 0 auto;
   color: var(--text-primary);
   width: 100%;
+  background: #FAF9F5;
+  padding: 1rem;
+  margin: 0 auto;
   box-sizing: border-box;
-  background: var(--bg-gradient);
-  min-height: 100vh;
 }
 
-@media (min-width: 1024px) {
-  .container {
-    padding: 1rem 2rem;
-  }
+
+.activityList {
+  background: #FAF9F5;
+  color: var(--text-primary);
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-}
+.filterContainer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+  background: #FAF9F5;
 
-@media (max-width: 480px) {
-  .container {
-    padding: 0.75rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .container {
-    padding: 0.5rem;
-  }
 }
 
 .header {
-  margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  background: var(--bg-card);
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px var(--shadow-light);
-  border: 1px solid var(--border-light);
-}
-
-.tohome {
-  padding: 12px 24px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  color: var(--text-light);
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(32, 178, 170, 0.3);
-}
-
-.tohome:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(32, 178, 170, 0.4);
-  background: linear-gradient(135deg, #1a9b94, #7bc4e8);
+  gap: 15px;
+  background: #FAF9F5;
+  color: var(--text-primary);
+  padding: 1rem 0;
 }
 
 .title {
   font-size: 1.8rem;
   color: var(--primary-color);
   font-weight: 700;
-  margin: 0 auto;
+  margin: 0;
   text-align: center;
-  flex-grow: 1;
   text-shadow: 0 2px 4px rgba(32, 178, 170, 0.1);
 }
 
@@ -115,6 +79,9 @@
   white-space: nowrap;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(249, 146, 6, 0.3);
+  display: block;
+  margin: 0 auto;
+  min-width: 120px;
 }
 
 .select:hover {
@@ -192,6 +159,7 @@
 /* 统计卡片样式 */
 .statsCards {
   display: grid;
+  padding: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -877,3 +845,4 @@
     width: 2.5rem !important;
   }
 }
+

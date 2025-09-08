@@ -48,13 +48,11 @@ interface Offset {
   lng: number;
 }
 
-const getRandomOffset = (): Offset => {
-  const randomAngle = Math.random() * Math.PI * 2;
-  return {
-    lat: (300 / 111.32) * Math.sin(randomAngle),
-    lng: (300 / 111.32) * Math.cos(randomAngle)
-  };
-};
+const getOffset = (): Offset => ({
+  // lat: 300 / 111.32, lng: 0 is 300km to the north
+  lat: 300 / 111.32,
+  lng: 0,
+});
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
   const distance = (run.distance / 1000.0).toFixed(2);
@@ -252,7 +250,7 @@ const pathForRun = (run: Activity): Coordinate[] => {
 };
 
 const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => {
-  const offset = getRandomOffset();
+  const offset = getOffset();
   
   return {
     type: 'FeatureCollection',
@@ -524,5 +522,5 @@ export {
   colorFromType,
   formatRunTime,
   convertMovingTime2Sec,
-  getRandomOffset, // 添加这行
+  getOffset,
 };

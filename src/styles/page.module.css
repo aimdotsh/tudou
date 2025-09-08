@@ -1,0 +1,41 @@
+/* 统一的页面容器样式 */
+.pageContainer {
+  min-height: 100vh;
+  background-color: #FAF9F5;
+  color: #20B2AA;
+}
+
+.pageContent {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 1600px) {
+  .pageContent {
+    max-width: 1200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageContent {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 0.75rem;
+  }
+}
+
+/* 内容区域间距 */
+.contentSection {
+  margin-bottom: 2rem;
+}
+
+.contentSection:last-child {
+  margin-bottom: 0;
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { PrivacyModeProvider } from '@/context/PrivacyModeContext';
 import Index from './pages';
 import NotFound from './pages/404';
 import ReactGA from 'react-ga4';
@@ -23,10 +24,6 @@ const routes = createBrowserRouter(
   [
     {
       path: '/',
-      element: withOptionalGAPageTracking(<TotalPage />),
-    },
-    {
-      path: 'i',
       element: withOptionalGAPageTracking(<Index />),
     },
     {
@@ -38,7 +35,7 @@ const routes = createBrowserRouter(
       element: withOptionalGAPageTracking(<Daily />),
     },
     {
-      path: 'sum',
+      path: 'summary',
       element: withOptionalGAPageTracking(<SummaryPage />),
     },
     {
@@ -56,7 +53,9 @@ const routes = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <RouterProvider router={routes} />
+      <PrivacyModeProvider>
+        <RouterProvider router={routes} />
+      </PrivacyModeProvider>
     </HelmetProvider>
   </React.StrictMode>
 );

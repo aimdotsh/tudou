@@ -14,6 +14,7 @@ import activities from '@/static/activities.json';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
+import Nav from '@/components/Nav';
 import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 
@@ -24,12 +25,12 @@ class ErrorBoundary extends Component<{
 }, { hasError: boolean }> {
   state = { hasError: false };
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error) {
     console.error('Error caught by ErrorBoundary:', error);
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
   }
 
@@ -233,60 +234,17 @@ const Total: React.FC = () => {
 
 
   return (
-    <div className={styles.container}>
-    
-      <div className={styles.header}>
-        <a href="./" className={styles.tohome}>首页</a>
-        <h1 className={styles.title}>蓝皮书的 Recent Workouts</h1>
-        <select 
-          onChange={(e) => setActivityType(e.target.value)} 
-          value={activityType}
-          className={styles.select}
-        >
-          {showTypes.map((type) => (
-            <option key={type} value={type}>{TYPES_MAPPING[type]}</option>
-          ))}
-        </select>
-      </div>
+    <>
+      <Nav />
+      <div className={styles.container}>
+        <div className={styles.activityList}>
+          <div className={styles.filterContainer}>
+
+            <h1 className={styles.title}>蓝皮书的 Daily Workouts</h1>
+
+          </div>
+        </div>
       
-
-
-
-      {/* 统计卡片 */}
-      <div className={styles.statsCards}>
-
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
-          <p>{stats.totalActivities}</p>
-        </div>
-
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h4>
-          <p>{stats.totalDistance} km</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.TOTAL_TIME_TITLE}</h4>
-          <p>{stats.totalTime}</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.AVERAGE_SPEED_TITLE}</h4>
-          <p>{stats.avgPace} /km</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}</h4>
-          <p>{stats.maxDistance} km</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>当年最长连续运动</h4>
-          <p>
-            {stats.maxStreak2025} 天
-            {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.4em' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
-            )}
-          </p>
-        </div>
-      </div>
-
       <div className={styles.charts}>
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
@@ -342,6 +300,7 @@ const Total: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

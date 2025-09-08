@@ -6,7 +6,7 @@ interface PrivacyModeContextType {
   setIsPrivacyMode: (value: boolean) => void;
 }
 
-const PrivacyModeContext = createContext<PrivacyModeContextType | undefined>(undefined);
+export const PrivacyModeContext = createContext<PrivacyModeContextType | undefined>(undefined);
 
 export const PrivacyModeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { isPrivacyMode, setIsPrivacyMode } = usePrivacyMode();

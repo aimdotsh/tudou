@@ -23,8 +23,24 @@ const data: ISiteMetadataResult = {
   keywords: 'workouts, running, cycling, riding, roadtrip, hiking, swimming',
   navLinks: [
     {
+      name: 'Home',
+      url: `${getBasePath()}/`,
+    },
+    {
       name: 'Summary',
       url: `${getBasePath()}/summary`,
+    },
+    {
+      name: 'Total',
+      url: `${getBasePath()}/total`,
+    },
+    {
+      name: 'Luck',
+      url: `${getBasePath()}/luck`,
+    },
+    {
+      name: 'Daily',
+      url: `${getBasePath()}/daily`,
     },
     {
       name: 'Blog',

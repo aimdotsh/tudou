@@ -271,12 +271,6 @@ const ActivityList: React.FC = () => {
     return (
         <div className={styles.activityList}>
             <div className={styles.filterContainer}>
-                <button
-                    className={styles.smallHomeButton}
-                    onClick={() => navigate('/')}
-                >
-                    Home
-                </button>
                 <select onChange={(e) => setActivityType(e.target.value)} value={activityType}>
                     { showTypes.map((type) => (
                       <option key={type} value={type}>
