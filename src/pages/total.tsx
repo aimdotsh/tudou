@@ -381,7 +381,22 @@ const Total: React.FC = () => {
 
   return (
     <>
-      <Nav />
+      <div className={styles.stickyHeader}>
+        <Nav />
+        <div className={styles.selectContainer}>
+          <select
+            onChange={(e) => setActivityType(e.target.value)}
+            value={activityType}
+            className={styles.select}
+          >
+            {['all', ...showTypes.filter(type => type !== 'all')].map((type) => (
+              <option key={type} value={type}>
+                {type === 'all' ? '所有' : TYPES_MAPPING[type as keyof typeof TYPES_MAPPING]}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className={styles.container}>
       {/* 照片查看模态框 */}
       {currentPhoto && (
@@ -410,19 +425,7 @@ const Total: React.FC = () => {
       )}
 
 
-        <div className="w-full flex justify-center">
-          <select
-            onChange={(e) => setActivityType(e.target.value)}
-            value={activityType}
-            className={styles.select}
-          >
-            {['all', ...showTypes.filter(type => type !== 'all')].map((type) => (
-              <option key={type} value={type}>
-                {type === 'all' ? '所有' : TYPES_MAPPING[type as keyof typeof TYPES_MAPPING]}
-              </option>
-            ))}
-          </select>
-        </div>
+
 
 
       {/* 统计卡片 */}

@@ -48,6 +48,27 @@
 
 }
 
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #FAF9F5;
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.1);
+}
+
+.stickyHeader :global(.mainNav) {
+  position: static;
+  box-shadow: none;
+}
+
+.selectContainer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: #FAF9F5;
+  border-top: 1px solid rgba(32, 178, 170, 0.1);
+}
+
 .header {
   display: flex;
   justify-content: space-between;

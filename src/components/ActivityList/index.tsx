@@ -168,9 +168,32 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
     );
 };
 
-const ActivityList: React.FC = () => {
-    const [interval, setInterval] = useState<IntervalType>('month');
-    const [activityType, setActivityType] = useState<string>('all');
+interface ActivityListProps {
+    activityType?: string;
+    interval?: IntervalType;
+    hideFilters?: boolean;
+}
+
+const ActivityList: React.FC<ActivityListProps> = ({ 
+    activityType: propActivityType, 
+    interval: propInterval, 
+    hideFilters = false 
+}) => {
+    const [interval, setInterval] = useState<IntervalType>(propInterval || 'month');
+    const [activityType, setActivityType] = useState<string>(propActivityType || 'all');
+    
+    // Update state when props change
+    React.useEffect(() => {
+        if (propActivityType !== undefined) {
+            setActivityType(propActivityType);
+        }
+    }, [propActivityType]);
+    
+    React.useEffect(() => {
+        if (propInterval !== undefined) {
+            setInterval(propInterval);
+        }
+    }, [propInterval]);
     const navigate = useNavigate();
     const playTypes = new Set((activities as Activity[]).map(activity => activity.type.toLowerCase()));
     const showTypes = ['all', ...Array.from(playTypes).filter(type => type in TYPES_MAPPING)];
@@ -270,25 +293,27 @@ const ActivityList: React.FC = () => {
 
     return (
         <div className={styles.activityList}>
-            <div className={styles.filterContainer}>
-                <select onChange={(e) => setActivityType(e.target.value)} value={activityType}>
-                    { showTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type === 'all' ? '所有' : (TYPES_MAPPING as any)[type]}
-                      </option>
-                    ))}
-                </select>
-                <select
-                    onChange={(e) => toggleInterval(e.target.value as IntervalType)}
-                    value={interval}
-                >
-                    <option value="year">{ACTIVITY_TOTAL.YEARLY_TITLE}</option>
-                    <option value="month">{ACTIVITY_TOTAL.MONTHLY_TITLE}</option>
-                    <option value="week">{ACTIVITY_TOTAL.WEEKLY_TITLE}</option>
-                    <option value="day">{ACTIVITY_TOTAL.DAILY_TITLE}</option>
-                    <option value="life">Life</option>
-                </select>
-            </div>
+            {!hideFilters && (
+                <div className={styles.filterContainer}>
+                    <select onChange={(e) => setActivityType(e.target.value)} value={activityType}>
+                        { showTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type === 'all' ? '所有' : (TYPES_MAPPING as any)[type]}
+                          </option>
+                        ))}
+                    </select>
+                    <select
+                        onChange={(e) => toggleInterval(e.target.value as IntervalType)}
+                        value={interval}
+                    >
+                        <option value="year">{ACTIVITY_TOTAL.YEARLY_TITLE}</option>
+                        <option value="month">{ACTIVITY_TOTAL.MONTHLY_TITLE}</option>
+                        <option value="week">{ACTIVITY_TOTAL.WEEKLY_TITLE}</option>
+                        <option value="day">{ACTIVITY_TOTAL.DAILY_TITLE}</option>
+                        <option value="life">Life</option>
+                    </select>
+                </div>
+            )}
 
             {interval === 'life' && (
                 <div className={styles.lifeContainer}>

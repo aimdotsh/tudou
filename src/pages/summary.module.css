@@ -1,0 +1,42 @@
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #FAF9F5;
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.1);
+}
+
+.stickyHeader :global(.mainNav) {
+  position: static;
+  box-shadow: none;
+}
+
+.selectContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: #FAF9F5;
+  border-top: 1px solid rgba(32, 178, 170, 0.1);
+}
+
+.selectContainer select {
+  padding: 12px 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f99206, #ffb347);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(249, 146, 6, 0.3);
+  min-width: 120px;
+}
+
+.selectContainer select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 146, 6, 0.4);
+  background: linear-gradient(135deg, #e8830a, #ff9f33);
+}
