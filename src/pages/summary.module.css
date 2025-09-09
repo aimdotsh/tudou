@@ -10,6 +10,20 @@
   justify-content: space-between;
   padding: 0;
   transition: all 0.3s ease;
+  overflow-x: hidden; /* 防止水平溢出 */
+}
+
+@media (max-width: 768px) {
+  .stickyHeader {
+    flex-wrap: wrap; /* 允许在需要时换行 */
+  }
+}
+
+@media (max-width: 480px) {
+  .stickyHeader {
+    flex-direction: column; /* 在非常小的屏幕上改为垂直布局 */
+    align-items: stretch;
+  }
 }
 
 .stickyHeader :global(.mainNav) {
@@ -31,6 +45,24 @@
   min-width: 150px;
 }
 
+@media (max-width: 768px) {
+  .selectContainer {
+    padding: 0.75rem 1rem;
+    min-width: auto;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .selectContainer {
+    padding: 0.5rem 1rem;
+    width: 100%;
+    justify-content: center; /* 在小屏幕上居中显示 */
+    gap: 0.5rem;
+    flex-wrap: wrap; /* 允许在超小屏幕上换行 */
+  }
+}
+
 
 
 .selectContainer select {
@@ -46,6 +78,32 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(249, 146, 6, 0.3);
   min-width: 120px;
+}
+
+@media (max-width: 768px) {
+  .selectContainer select {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .selectContainer select {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    min-width: 90px;
+    flex: 1;
+    max-width: 45%; /* 确保在一行中可以放下两个select */
+  }
+}
+
+@media (max-width: 360px) {
+  .selectContainer select {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-width: 80px;
+  }
 }
 
 .selectContainer select:hover {
