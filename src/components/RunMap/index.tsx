@@ -46,7 +46,8 @@ const RunMap = ({
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
   const { isPrivacyMode } = usePrivacyModeContext();
-  const [lights, setLights] = useState(isPrivacyMode ? false : LIGHTS_ON);
+  // 在亮色地图上，默认开启lights
+  const [lights, setLights] = useState(true);
 
   // 监听隐私模式变化
   useEffect(() => {
@@ -293,10 +294,10 @@ const RunMap = ({
           type="line"
           paint={{
             'line-color': ['get', 'color'],
-            'line-width': isBigMap && lights ? 1 : 2,
+            'line-width': isBigMap ? 1 : 2.5, // 增加线宽，在亮色背景上更明显
             'line-dasharray': dash,
-            'line-opacity': isSingleRun || isBigMap || !lights ? 1 : LINE_OPACITY,
-            'line-blur': 1,
+            'line-opacity': 0.8, // 提高不透明度，在亮色背景上更明显
+            'line-blur': 0.5, // 减少模糊，使线条更清晰
           }}
           layout={{
             'line-join': 'round',
