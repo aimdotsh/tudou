@@ -4,7 +4,7 @@
   top: 0;
   z-index: 100;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 1rem 2rem;
   background-color: var(--bg-card, #FAF9F5);
@@ -41,6 +41,7 @@
   display: flex;
   align-items: center;
   gap: 2rem;
+  margin-left: 2rem;
 }
 
 /* Privacy Toggle Button */
@@ -130,14 +131,15 @@
     gap: 0.5rem; /* 减小间距以适应小屏幕 */
     margin-bottom: 0; /* 移除底部间距 */
     padding: 0.5rem; /* 减小内边距 */
-    justify-content: space-between; /* 保持元素分布 */
+    justify-content: flex-start; /* 改为靠左对齐 */
     text-align: left; /* 文本左对齐 */
   }
   
   .navLinks {
     flex-wrap: nowrap; /* 确保不换行 */
-    justify-content: flex-end; /* 链接靠右 */
+    justify-content: flex-start; /* 改为靠左对齐 */
     gap: 0.25rem; /* 进一步减小链接间距 */
+    margin-left: 1rem; /* 在小屏幕上减小左边距 */
   }
   
   .navLink {

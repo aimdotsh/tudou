@@ -54,6 +54,19 @@
   z-index: 100;
   background: #FAF9F5;
   box-shadow: 0 4px 12px rgba(32, 178, 170, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.stickyHeader :global(.mainNav) {
+  flex: 1;
+  padding: 1rem 2rem;
+  position: static;
+  box-shadow: none;
 }
 
 .selectContainer {
@@ -61,7 +74,15 @@
   justify-content: flex-end; /* 改为靠右对齐 */
   padding: 1rem 2rem;
   background: #FAF9F5;
-  border-top: 1px solid rgba(32, 178, 170, 0.1);
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+/* 当页面向上滚动时，调整select容器样式 */
+.stickyHeader.scrolled .selectContainer {
+  padding: 0.5rem 0;
+  border-top: none;
+  min-width: 150px;
 }
 
 .header {
