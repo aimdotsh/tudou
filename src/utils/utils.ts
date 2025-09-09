@@ -49,9 +49,10 @@ interface Offset {
 }
 
 const getOffset = (): Offset => ({
-  // lat: 300 / 111.32, lng: 0 is 300km to the north
-  lat: 300 / 111.32,
-  lng: 0,
+  // 直线距离偏移: 403.28 公里，偏移的方位角: 114.45° (东南方向)
+  
+  lat: -1.4528, // 纬度偏移
+  lng: 3.3235,  // 经度偏移
 });
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
@@ -499,6 +500,46 @@ const sortDateFunc = (a: Activity, b: Activity) => {
 };
 const sortDateFuncReverse = (a: Activity, b: Activity) => sortDateFunc(b, a);
 
+// 计算两点之间的距离（单位：公里）
+const calculateDistance = (
+  lat1: number, 
+  lon1: number, 
+  lat2: number, 
+  lon2: number
+): number => {
+  const R = 6371; // 地球半径，单位为公里
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c;
+  return distance;
+};
+
+// 计算两点之间的角度（方位角，单位：度）
+const calculateBearing = (
+  lat1: number, 
+  lon1: number, 
+  lat2: number, 
+  lon2: number
+): number => {
+  const lat1Rad = lat1 * Math.PI / 180;
+  const lat2Rad = lat2 * Math.PI / 180;
+  const lonDiff = (lon2 - lon1) * Math.PI / 180;
+  
+  const y = Math.sin(lonDiff) * Math.cos(lat2Rad);
+  const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+            Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(lonDiff);
+  
+  let bearing = Math.atan2(y, x) * 180 / Math.PI;
+  bearing = (bearing + 360) % 360; // 转换为0-360度
+  
+  return bearing;
+};
+
 export {
   titleForShow,
   formatPace,
@@ -523,4 +564,6 @@ export {
   formatRunTime,
   convertMovingTime2Sec,
   getOffset,
+  calculateDistance,
+  calculateBearing,
 };
