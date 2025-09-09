@@ -225,7 +225,18 @@ const intComma = (x = '') => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
-const pathForRun = (run: Activity): Coordinate[] => {
+
+
+// 应用偏移到坐标点
+const applyOffset = (points: Coordinate[]): Coordinate[] => {
+  const offset = getOffset();
+  return points.map(coord => [
+    coord[0] + offset.lng,
+    coord[1] + offset.lat
+  ]);
+};
+
+const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordinate[] => {
   try {
     if (!run.summary_polyline) {
       return [];
@@ -241,28 +252,21 @@ const pathForRun = (run: Activity): Coordinate[] => {
     if (c.length === 2 && String(c[0]) === String(c[1])) {
       const { coordinate } = locationForRun(run);
       if (coordinate?.[0] && coordinate?.[1]) {
-        return [coordinate, coordinate];
+        return applyOffsetToPath ? applyOffset([coordinate, coordinate]) : [coordinate, coordinate];
       }
     }
-    return c;
+    return applyOffsetToPath ? applyOffset(c) : c;
   } catch (err) {
     return [];
   }
 };
 
 const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => {
-  const offset = getOffset();
-  
   return {
     type: 'FeatureCollection',
     features: runs.map((run) => {
-      let points = pathForRun(run);
-      
-      // 应用随机偏移
-      points = points.map(coord => [
-        coord[0] + offset.lng,
-        coord[1] + offset.lat
-      ]);
+      // 获取路径并应用偏移
+      const points = pathForRun(run, true);
 
       return {
         type: 'Feature',

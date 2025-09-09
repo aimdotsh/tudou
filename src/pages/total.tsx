@@ -10,7 +10,7 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-import activities from '@/static/activities.json';
+import activities from '@/static/activities_export';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';

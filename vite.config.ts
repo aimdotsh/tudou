@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
+import path from 'path';
 
 // The following are known larger packages or packages that can be loaded asynchronously.
 const individuallyPackages = ['activities', 'github.svg', 'grid.svg', 'mol.svg'];
@@ -35,6 +36,14 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: [
+      {
+        find: /^@\/static\/activities\.json$/,
+        replacement: path.resolve(__dirname, 'src/static/activities_py4567.json')
+      }
+    ]
+  },
   base: process.env.PATH_PREFIX || '/',
   define: {
     "import.meta.env.VERCEL": JSON.stringify(process.env.VERCEL),

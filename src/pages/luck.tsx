@@ -10,7 +10,7 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-import activities from '@/static/activities.json';
+import activities from '@/static/activities_export';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
@@ -156,13 +156,13 @@ const Total: React.FC = () => {
     <>
       <Nav />
       <div className={styles.container}>
-          <div className={styles.activityList}>
-            <div className={styles.filterContainer}>
+        <div className={styles.activityList}>
+          <div className={styles.filterContainer}>
 
-<h1 className={styles.title}>蓝皮书的大象周边跑</h1>
+            <h1 className={styles.title}>蓝皮书的大象周边跑</h1>
 
-            </div>
           </div>
+        </div>
 
         <div className={styles.charts}>
           {/* 添加recent SVG图表 */}
