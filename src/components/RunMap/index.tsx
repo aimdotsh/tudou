@@ -122,24 +122,7 @@ const RunMap = ({
             });
           }
           
-          // 隐藏所有地名标签
-          const labelLayerIds = map.getStyle().layers
-            .filter(layer => 
-              layer.id.includes('label') || 
-              layer.id.includes('place') || 
-              layer.id.includes('poi') ||
-              layer.id.includes('text') ||
-              layer.id.includes('symbol')
-            )
-            .map(layer => layer.id);
-            
-          labelLayerIds.forEach(layerId => {
-            try {
-              map.setLayoutProperty(layerId, 'visibility', 'none');
-            } catch (e) {
-              // 忽略错误，有些图层可能没有visibility属性
-            }
-          });
+
 
           // 确保地图引用被设置
           mapRef.current = ref;
