@@ -13,7 +13,7 @@
 
 .selectContainer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end; /* 改为靠右对齐 */
   gap: 1rem;
   padding: 1rem 2rem;
   background: #FAF9F5;

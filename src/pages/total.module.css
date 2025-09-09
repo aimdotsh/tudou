@@ -58,8 +58,8 @@
 
 .selectContainer {
   display: flex;
-  justify-content: center;
-  padding: 1rem 2rem; /* 减少垂直内边距 */
+  justify-content: flex-end; /* 改为靠右对齐 */
+  padding: 1rem 2rem;
   background: #FAF9F5;
   border-top: 1px solid rgba(32, 178, 170, 0.1);
 }
@@ -96,7 +96,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(249, 146, 6, 0.3);
   display: block;
-  margin: 0 auto;
+  margin: 0; /* 移除自动居中的margin */
   min-width: 120px;
 }
 
