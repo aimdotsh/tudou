@@ -248,7 +248,7 @@ const RunMap = ({
               id: 'background',
               type: 'background',
               paint: {
-                'background-color': '#111111'
+                'background-color': '#FAF9F5' // 改为亮色背景，与导航色彩一致
               }
             },
             {
@@ -257,12 +257,12 @@ const RunMap = ({
               source: 'composite',
               'source-layer': 'water',
               paint: {
-                'fill-color': '#000000'
+                'fill-color': '#E6F2F9' // 水域改为浅蓝色
               }
             }
           ]
         } : 
-        "mapbox://styles/mapbox/dark-v10"
+        "mapbox://styles/mapbox/light-v10" // 改为亮色地图样式
       }
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
