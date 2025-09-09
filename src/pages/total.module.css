@@ -56,15 +56,10 @@
   box-shadow: 0 4px 12px rgba(32, 178, 170, 0.1);
 }
 
-.stickyHeader :global(.mainNav) {
-  position: static;
-  box-shadow: none;
-}
-
 .selectContainer {
   display: flex;
   justify-content: center;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem; /* 减少垂直内边距 */
   background: #FAF9F5;
   border-top: 1px solid rgba(32, 178, 170, 0.1);
 }
@@ -325,7 +320,7 @@
 
 @media (min-width: 1024px) {
   .charts {
-    grid-template-columns: 35% 65%;
+    grid-template-columns: 33% 63%;
     gap: 2.5rem;
   }
 }
