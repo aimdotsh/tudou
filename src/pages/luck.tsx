@@ -214,6 +214,15 @@ const Total: React.FC = () => {
             </div>
           </div>
         </div>
+        <div className={styles.footer}>
+          ©2016 - 2025 Liups.com thanks{' '}
+          <a 
+            href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
+            target="_blank" 
+            rel="noopener noreferrer">
+            running_page
+          </a>
+        </div>
       </div>
     </>
   );

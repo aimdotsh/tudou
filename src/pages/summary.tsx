@@ -60,6 +60,23 @@ const SummaryPage = () => {
           hideFilters={true}
         />
       </div>
+      <div className="footer" style={{
+        textAlign: 'center',
+        padding: '20px 0',
+        marginTop: '40px',
+        borderTop: '1px solid #eaeaea',
+        color: '#666'
+      }}>
+        ©2016 - 2025 Liups.com thanks{' '}
+        <a 
+          href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ color: '#20B2AA', textDecoration: 'none' }}
+        >
+          running_page
+        </a>
+      </div>
     </>
   );
 };
