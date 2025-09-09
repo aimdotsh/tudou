@@ -49,10 +49,9 @@ interface Offset {
 }
 
 const getOffset = (): Offset => ({
-  // 直线距离偏移: 403.28 公里，偏移的方位角: 114.45° (东南方向)
-  
-  lat: -1.4528, // 纬度偏移
-  lng: 3.3235,  // 经度偏移
+  // 直线距离偏移: 456.78 公里，偏移的方位角: 114.45° (东南方向)
+  lat: -1.642, // 纬度偏移
+  lng: 3.762,  // 经度偏移
 });
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
