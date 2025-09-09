@@ -60,7 +60,8 @@ const titleForShow = (run: Activity): string => {
   if (run.name) {
     name = run.name;
   }
-  return `${name} ${date} ${distance} KM ${!run.summary_polyline ? '(No map data for this workout)' : ''
+  const sportType = typeForRun(run); // 获取运动类型
+  return `${sportType}: ${name} ${date} ${distance} KM ${!run.summary_polyline ? '(No map data for this workout)' : ''
     }`;
 };
 
