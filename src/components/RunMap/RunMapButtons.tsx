@@ -1,5 +1,5 @@
 import useActivities from '@/hooks/useActivities';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from './style.module.css';
 
 const RunMapButtons = ({ changeYear, thisYear }: { changeYear: (_year: string) => void, thisYear: string }) => {
@@ -7,67 +7,48 @@ const RunMapButtons = ({ changeYear, thisYear }: { changeYear: (_year: string) =
   const yearsButtons = years.slice();
   yearsButtons.push('Total');
   
-  const [isSticky, setIsSticky] = useState(false);
   const buttonsRef = useRef<HTMLUListElement>(null);
-  const initialPositionRef = useRef<{ top: number, left: number } | null>(null);
   
   useEffect(() => {
-    // 获取导航栏高度
-    const navHeight = document.querySelector('nav')?.getBoundingClientRect().height || 0;
-    
-    const handleScroll = () => {
-      if (!buttonsRef.current || !initialPositionRef.current) return;
+    // 获取导航栏高度并设置按钮位置
+    const updateButtonPosition = () => {
+      if (!buttonsRef.current) return;
       
-      // 如果还没有记录初始位置，记录下来
-      if (!initialPositionRef.current) {
-        const rect = buttonsRef.current.getBoundingClientRect();
-        initialPositionRef.current = {
-          top: rect.top,
-          left: rect.left
-        };
-      }
-      
-      // 当按钮的顶部接触到导航栏底部时，切换为固定定位
-      const buttonRect = buttonsRef.current.getBoundingClientRect();
-      if (buttonRect.top <= navHeight && !isSticky) {
-        setIsSticky(true);
-      } else if (buttonRect.top > navHeight && isSticky) {
-        setIsSticky(false);
+      const navElement = document.querySelector('nav');
+      if (navElement) {
+        const navRect = navElement.getBoundingClientRect();
+        const navHeight = navRect.height;
+        
+        // 获取地图容器的左侧位置
+        const mapContainer = document.querySelector('.mapboxgl-map');
+        const mapLeft = mapContainer ? mapContainer.getBoundingClientRect().left : 10;
+        
+        // 设置按钮位置在导航栏下方，与地图左侧对齐
+        buttonsRef.current.style.position = 'fixed';
+        buttonsRef.current.style.top = `${navHeight}px`;
+        buttonsRef.current.style.left = `${mapLeft}px`;
+        buttonsRef.current.style.zIndex = '99';
+        buttonsRef.current.style.backgroundColor = 'rgba(250, 249, 245, 0.8)';
+        buttonsRef.current.style.borderRadius = '4px';
+        buttonsRef.current.style.padding = '4px 8px';
+        buttonsRef.current.style.boxShadow = '0 1px 4px rgba(0, 0, 0, 0.1)';
       }
     };
     
-    // 初始化时记录按钮的初始位置
-    if (buttonsRef.current && !initialPositionRef.current) {
-      const rect = buttonsRef.current.getBoundingClientRect();
-      initialPositionRef.current = {
-        top: rect.top,
-        left: rect.left
-      };
-    }
+    // 初始化时设置位置
+    updateButtonPosition();
     
-    window.addEventListener('scroll', handleScroll);
+    // 监听窗口大小变化，更新按钮位置
+    window.addEventListener('resize', updateButtonPosition);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateButtonPosition);
     };
-  }, [isSticky]);
-  
-  // 动态样式
-  const buttonStyle = isSticky ? {
-    position: 'fixed',
-    top: `${document.querySelector('nav')?.getBoundingClientRect().height || 0}px`,
-    left: `${initialPositionRef.current?.left || 10}px`,
-    zIndex: 99,
-    backgroundColor: 'rgba(250, 249, 245, 0.8)',
-    borderRadius: '4px',
-    padding: '4px 8px',
-    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)'
-  } : {};
+  }, []);
 
   return (
     <ul 
       ref={buttonsRef}
       className={styles.buttons}
-      style={buttonStyle as React.CSSProperties}
     >
       {yearsButtons.map((year) => (
         <li
