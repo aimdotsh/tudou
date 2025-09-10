@@ -216,8 +216,8 @@ jobs:
             sed -i 's/fill="#FFFFFF"/fill="#5A5A5A"/g' assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg
             sed -i 's/stroke="#FFFF00"/stroke="#89CFF0"/g' assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg
           fi
-          sed -i '' 's/#1a1a1a/#FAF9F5/g; s/#e1ed5e/#5A5A5A/g; s/#FFFFFF/#5A5A5F/g' assets/year_*.svg
           
+          sed -i 's/#1a1a1a/#FAF9F5/g; s/#e1ed5e/#5A5A5A/g; s/#FFFFFF/#5A5A5F/g' assets/year_*.svg
           
       
       ##    # python run_page/gen_svg_today.py --from-db --day 2025-06-14 --width 100 --height 130  --output assets/yyyymmdd/2025-06-14.svg --athlete "${{ env.ATHLETE }}"   --use-localtime 
