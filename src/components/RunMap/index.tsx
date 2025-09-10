@@ -237,7 +237,7 @@ const RunMap = ({
               source: 'composite',
               'source-layer': 'water',
               paint: {
-                'fill-color': '#E6F2F9' // 水域改为浅蓝色
+                'fill-color': '#FAF9F5' // 水域改为导航色，原来为：E6F2F9浅蓝色
               }
             }
           ]
