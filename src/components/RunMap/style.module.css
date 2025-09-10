@@ -23,6 +23,28 @@
   font-weight: 500;
 }
 
+/* 隐藏滚动条但保留功能 */
+.buttons::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* 响应式样式 */
+@media (max-width: 768px) {
+  .button {
+    padding: 0.7rem 0.3rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+    margin-right: 2px;
+  }
+}
+
 .selected {
   color: #f99206;
 }
