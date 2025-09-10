@@ -233,7 +233,7 @@ jobs:
 
      #    python run_page/gen_svg_today.py --from-db --day 2025-05-25 --width 100 --height 130 --output assets/2025-05-25.svg --title "2025-05-25 Workouts" --athlete "${{ env.ATHLETE }}"   --use-localtime 
      #    python run_page/gen_svg_today.py --from-db --day 2025-05-24 --width 100 --height 130 --output assets/2025-05-24.svg --title "2025-05-24 Workouts" --athlete "${{ env.ATHLETE }}"   --use-localtime 
-     - name: Apply offset to activities
+      - name: Apply offset to activities
         if: env.RUN_TYPE != 'pass'
         run: |
           npm install
