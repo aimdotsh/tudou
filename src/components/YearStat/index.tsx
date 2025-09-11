@@ -103,7 +103,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
       </section>
       {year !== 'Total' && (
         <Suspense fallback="loading...">
-          <YearSVG className="my-4 h-4/6 w-[100%] border-0 p-0" />
+          <YearSVG className="my-2 md:my-4 h-4/6 w-[100%] border-0 p-0" />
         </Suspense>
       )}
       <hr color="red" />

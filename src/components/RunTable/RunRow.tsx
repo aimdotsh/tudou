@@ -28,6 +28,13 @@ const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex }: IR
     };
     setRunIndex(elementIndex);
     locateActivity([run.run_id]);
+    
+    // 滚动到地图位置
+    const mapContainer = document.querySelector('.sticky-map-container');
+    if (mapContainer) {
+      // 使用平滑滚动效果
+      mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (

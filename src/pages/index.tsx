@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Layout from '@/components/Layout';
 import LocationStat from '@/components/LocationStat';
@@ -9,6 +9,7 @@ import YearsStat from '@/components/YearsStat';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { IS_CHINESE } from '@/utils/const';
+import '@/styles/stickyMap.css';
 import {
   Activity,
   IViewState,
@@ -208,41 +209,53 @@ const Index = () => {
 
   return (
     <Layout>
-      <div className="w-full lg:w-1/4">
-        <h1 className="my-12 text-5xl font-extrabold italic">
-          <a href="/">{siteTitle}</a>
-        </h1>
-        {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
-          <LocationStat
-            changeYear={changeYear}
-            changeCity={changeCity}
-            changeType={changeType}
-            onClickTypeInYear={changeTypeInYear}
-          />
-        ) : (
-          <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear}/>
-        )}
-      </div>
-      <div className="w-full lg:w-4/5">
-        <RunMap
-          title={title}
-          viewState={viewState}
-          geoData={geoData}
-          setViewState={setViewState}
-          changeYear={changeYear}
-          thisYear={year}
-        />
-        {year === 'Total' ? (
-          <SVGStat />
-        ) : (
-          <RunTable
-            runs={runs}
-            locateActivity={locateActivity}
-            setActivity={setActivity}
-            runIndex={runIndex}
-            setRunIndex={setRunIndex}
-          />
-        )}
+      <div className="flex flex-col lg:flex-row w-full">
+        {/* 左侧栏 */}
+        <div className="w-full lg:w-1/4">
+          <h1 className="my-12 text-5xl font-extrabold italic">
+            <a href="/">{siteTitle}</a>
+          </h1>
+          {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
+            <LocationStat
+              changeYear={changeYear}
+              changeCity={changeCity}
+              changeType={changeType}
+              onClickTypeInYear={changeTypeInYear}
+            />
+          ) : (
+            <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear}/>
+          )}
+        </div>
+        
+        {/* 右侧内容区 */}
+        <div className="w-full lg:w-4/5 flex flex-col">
+          {/* 固定地图区域 */}
+          <div className="sticky-map-container">
+            <RunMap
+              title={title}
+              viewState={viewState}
+              geoData={geoData}
+              setViewState={setViewState}
+              changeYear={changeYear}
+              thisYear={year}
+            />
+          </div>
+          
+          {/* 可滚动内容区域 */}
+          <div className="content-container">
+            {year === 'Total' ? (
+              <SVGStat />
+            ) : (
+              <RunTable
+                runs={runs}
+                locateActivity={locateActivity}
+                setActivity={setActivity}
+                runIndex={runIndex}
+                setRunIndex={setRunIndex}
+              />
+            )}
+          </div>
+        </div>
       </div>
       {/* Enable Audiences in Vercel Analytics: https://vercel.com/docs/concepts/analytics/audiences/quickstart */}
       {import.meta.env.VERCEL && <Analytics /> }
