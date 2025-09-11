@@ -53,10 +53,10 @@ const RICH_TITLE = true;
 const IS_CHINESE = true;
 const USE_ANIMATION_FOR_GRID = false;
 const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string =>
-  `户外运动 ${yearLength} 年 ` + ( year === 'Total' ? '' : `，地图展示的是 ${year} 年的轨迹`);
+  `户外运动 ${yearLength} 年 ` + ( year === 'Total' ? '' : `，这里展示的是 ${year} 年的轨迹`);
 
 const ENGLISH_INFO_MESSAGE = (yearLength: number, year: string): string =>
-  `Logged ${yearLength} Years of Outdoor Journey` +  ( year === 'Total' ? '' : `, the map show routes in ${year}`);
+  `Logged ${yearLength} Years of Outdoor Journey` +  ( year === 'Total' ? '' : `, the page show routes in ${year}`);
 
 // not support English for now
 const CHINESE_LOCATION_INFO_MESSAGE_FIRST =
