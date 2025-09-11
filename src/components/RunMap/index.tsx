@@ -240,112 +240,129 @@ const RunMap = ({
   useEffect(() => {
     // 当选中单个轨迹时，准备动画数据
     if (isSingleRun && allPoints.length > 1) {
-      // 重置动画状态
-      setAnimating(true);
-      setAnimationProgress(0);
-      
-      // 清除之前的动画
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      
-      // 先显示完整轨迹（轮廓）
-      // 创建一个轮廓轨迹数据，使用原始轨迹但线条更细、更透明
-      const outlineGeoData = {
-        type: 'FeatureCollection',
-        features: [{
-          ...geoData.features[0],
-          properties: {
-            ...geoData.features[0].properties,
-            isOutline: true // 标记为轮廓
-          }
-        }]
-      } as FeatureCollection<RPGeometry>;
-      
-      // 创建初始动画数据（只有起点）
-      const initialGeoData = {
-        type: 'FeatureCollection',
-        features: [
-          // 先添加完整轨迹作为轮廓
-          {
-            ...geoData.features[0],
-            properties: {
-              ...geoData.features[0].properties,
-              isOutline: true
-            }
-          },
-          // 再添加动画轨迹（初始只有起点）
-          {
-            ...geoData.features[0],
-            geometry: {
-              ...geoData.features[0].geometry,
-              coordinates: [allPoints[0]]
-            },
-            properties: {
-              ...geoData.features[0].properties,
-              isAnimating: true
-            }
-          }
-        ]
-      } as FeatureCollection<RPGeometry>;
-      
-      setAnimatedGeoData(initialGeoData);
-      
-      // 延迟一小段时间后开始动画，让用户先看到完整轨迹
-      setTimeout(() => {
-        // 开始动画
-        let startTime: number | null = null;
-        const animationDuration = 2000; // 动画持续2秒
+      try {
+        // 重置动画状态
+        setAnimating(true);
+        setAnimationProgress(0);
         
-        const animate = (timestamp: number) => {
-          if (!startTime) startTime = timestamp;
-          const elapsed = timestamp - startTime;
-          const progress = Math.min(elapsed / animationDuration, 1);
-          setAnimationProgress(progress);
-          
-          // 计算当前应该显示的点数
-          const pointsToShow = Math.max(2, Math.floor(progress * allPoints.length));
-          
-          // 更新动画数据
-          const updatedGeoData = {
-            type: 'FeatureCollection',
-            features: [
-              // 保留轮廓
-              {
-                ...geoData.features[0],
-                properties: {
-                  ...geoData.features[0].properties,
-                  isOutline: true
-                }
-              },
-              // 更新动画轨迹
-              {
-                ...geoData.features[0],
-                geometry: {
-                  ...geoData.features[0].geometry,
-                  coordinates: allPoints.slice(0, pointsToShow)
-                },
-                properties: {
-                  ...geoData.features[0].properties,
-                  isAnimating: true
-                }
+        // 清除之前的动画
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+        }
+        
+        // 创建初始动画数据（包含完整轨迹作为轮廓和起点）
+        const initialGeoData = {
+          type: 'FeatureCollection',
+          features: [
+            // 先添加完整轨迹作为轮廓
+            {
+              ...geoData.features[0],
+              properties: {
+                ...geoData.features[0].properties,
+                isOutline: true
               }
-            ]
-          } as FeatureCollection<RPGeometry>;
+            },
+            // 再添加动画轨迹（初始只有起点）
+            {
+              ...geoData.features[0],
+              geometry: {
+                ...geoData.features[0].geometry,
+                coordinates: [allPoints[0]]
+              },
+              properties: {
+                ...geoData.features[0].properties,
+                isAnimating: true
+              }
+            }
+          ]
+        } as FeatureCollection<RPGeometry>;
+        
+        setAnimatedGeoData(initialGeoData);
+        
+        // 为移动设备优化动画
+        const isLowPerfDevice = isMobile || window.navigator.userAgent.includes('Mobile');
+        const animationDuration = isLowPerfDevice ? 3000 : 2000; // 移动设备上延长动画时间
+        const frameInterval = isLowPerfDevice ? 50 : 16; // 移动设备上降低帧率
+        
+        // 使用setTimeout替代requestAnimationFrame在低性能设备上
+        const runAnimation = () => {
+          let progress = 0;
+          let lastUpdate = Date.now();
           
-          setAnimatedGeoData(updatedGeoData);
+          const updateFrame = () => {
+            const now = Date.now();
+            const elapsed = now - lastUpdate;
+            
+            // 只有经过足够的时间才更新帧
+            if (elapsed >= frameInterval) {
+              lastUpdate = now;
+              progress += elapsed / animationDuration;
+              progress = Math.min(progress, 1);
+              
+              setAnimationProgress(progress);
+              
+              // 计算当前应该显示的点数
+              const pointsToShow = Math.max(2, Math.floor(progress * allPoints.length));
+              
+              try {
+                // 更新动画数据
+                const updatedGeoData = {
+                  type: 'FeatureCollection',
+                  features: [
+                    // 保留轮廓
+                    {
+                      ...geoData.features[0],
+                      properties: {
+                        ...geoData.features[0].properties,
+                        isOutline: true
+                      }
+                    },
+                    // 更新动画轨迹
+                    {
+                      ...geoData.features[0],
+                      geometry: {
+                        ...geoData.features[0].geometry,
+                        coordinates: allPoints.slice(0, pointsToShow)
+                      },
+                      properties: {
+                        ...geoData.features[0].properties,
+                        isAnimating: true
+                      }
+                    }
+                  ]
+                } as FeatureCollection<RPGeometry>;
+                
+                setAnimatedGeoData(updatedGeoData);
+              } catch (error) {
+                console.error('Error updating animation data:', error);
+              }
+              
+              // 继续动画或结束
+              if (progress < 1) {
+                animationRef.current = requestAnimationFrame(updateFrame);
+              } else {
+                setAnimating(false);
+                animationRef.current = null;
+              }
+            } else {
+              // 如果时间间隔不够，继续等待
+              animationRef.current = requestAnimationFrame(updateFrame);
+            }
+          };
           
-          // 继续动画或结束
-          if (progress < 1) {
-            animationRef.current = requestAnimationFrame(animate);
-          } else {
-            setAnimating(false);
-            animationRef.current = null;
-          }
+          // 延迟一小段时间后开始动画，让用户先看到完整轨迹
+          setTimeout(() => {
+            animationRef.current = requestAnimationFrame(updateFrame);
+          }, 500);
         };
         
-        animationRef.current = requestAnimationFrame(animate);
-      }, 500); // 延迟500毫秒开始动画
+        runAnimation();
+      } catch (error) {
+        console.error('Error in animation setup:', error);
+        // 出错时回退到显示完整轨迹
+        setAnimatedGeoData(geoData);
+        setAnimating(false);
+      }
       
       // 清理函数
       return () => {
@@ -359,7 +376,7 @@ const RunMap = ({
       setAnimatedGeoData(geoData);
       setAnimating(false);
     }
-  }, [geoData, isSingleRun, allPoints]);
+  }, [geoData, isSingleRun, allPoints, isMobile]);
 
   return (
     <Map
