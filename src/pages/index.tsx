@@ -33,7 +33,7 @@ const Index = () => {
   const [runs, setActivity] = useState(
     filterAndSortRuns(activities, year, filterYearRuns, sortDateFunc, null, null)
   );
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(`${thisYear} Year Heatmap`);
   const [geoData, setGeoData] = useState(geoJsonForRuns(runs));
   // for auto zoom
   const bounds = getBoundsForGeoData(geoData);
@@ -67,7 +67,15 @@ const Index = () => {
       });
     }
 
-    changeByItem(y, 'Year', filterYearRuns);
+    // 强制更新标题，确保与选中的年份同步
+    setActivity(filterAndSortRuns(activities, y, filterYearRuns, sortDateFunc, null, null));
+    setRunIndex(-1);
+    
+    // 确保标题更新为当前选中的年份
+    setTimeout(() => {
+      setTitle(`${y} Year Heatmap`);
+    }, 0);
+    
     clearInterval(intervalId);
   };
 
@@ -126,6 +134,13 @@ const Index = () => {
       ...bounds,
     });
   }, [geoData]);
+
+  // 确保标题与当前选中的年份同步
+  useEffect(() => {
+    if (!title.includes(year) && !title.includes('Run:')) {
+      setTitle(`${year} Year Heatmap`);
+    }
+  }, [year, title]);
 
   useEffect(() => {
     const runsNum = runs.length;
