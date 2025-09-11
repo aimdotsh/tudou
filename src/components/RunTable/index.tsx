@@ -80,6 +80,7 @@ const RunTable = ({
     ['Elevation Gain', sortElevationGainFunc],
     ['Pace', sortPaceFunc],
     ['Time', sortRunTimeFunc],
+    ['BPM', sortBPMFunc],
     ['Date', sortDateFuncClick],
   ]);
   if (!SHOW_ELEVATION_GAIN){
