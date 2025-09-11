@@ -21,9 +21,10 @@
 .runTable {
   width: 100%;
   font-variant: tabular-nums;
-  margin: 2rem 0 5rem 0;
+  margin: 0 0 5rem 0; /* 减少顶部边距 */
   color: #20B2AA;
   background-color: #FAF9F5;
+  border-collapse: collapse; /* 确保没有单元格间距 */
  
   :is(thead) {
     color: #20B2AA;
@@ -45,6 +46,7 @@
     padding: 0.1rem;
     border: 0;
     text-align: right;
+    padding-top: 0; /* 减少顶部内边距 */
 
     &:first-child {
       text-align: left;
@@ -55,6 +57,28 @@
   &:hover {
     background-color: rgba(32, 178, 170, 0.1);
   }
+}
+
+/* 在移动设备和平板上限制名称长度为6个字符 */
+@media only screen and (max-width: 768px) {
+  .runRow td:first-child {
+    max-width: 6em; /* 约6个汉字的宽度 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* 在更小的屏幕上进一步限制 */
+@media only screen and (max-width: 480px) {
+  .runRow td:first-child {
+    max-width: 5em; /* 约5个汉字的宽度 */
+  }
+}
+
+/* 第一行特殊处理，减少与表头的间距 */
+.runRow:first-child td {
+  padding-top: 0;
 }
 
 .selected {
@@ -77,9 +101,9 @@
 /* 表头中的单元格样式 */
 .stickyHeader th {
   background-color: #FAF9F5;
-  padding: 0.75rem 0.5rem !important;
+  padding: 0.5rem 0.5rem 0.3rem 0.5rem !important; /* 减少底部内边距 */
   font-weight: 600;
-  border-bottom: 2px solid rgba(32, 178, 170, 0.2);
+  border-bottom: 1px solid rgba(32, 178, 170, 0.2); /* 减小边框厚度 */
 }
 
 /* 适配移动设备的固定表头 */

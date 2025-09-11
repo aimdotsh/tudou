@@ -215,11 +215,10 @@ const Index = () => {
           tableHeader.style.zIndex = '5';
           tableHeader.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
           
-          // 添加padding-top到表格容器，防止内容跳动
+          // 添加padding-top到表格容器，防止内容跳动，但大幅减小间隙
           const headerHeight = tableHeader.offsetHeight;
-          if (!tableContainer.style.paddingTop) {
-            tableContainer.style.paddingTop = `${headerHeight}px`;
-          }
+          // 减少8px的间隙，使表头和内容更紧凑
+          tableContainer.style.paddingTop = `${headerHeight - 8}px`;
         } 
         // 如果地图底部在视口中
         else if (mapRect.bottom > navHeight) {
@@ -231,11 +230,10 @@ const Index = () => {
           tableHeader.style.zIndex = '5';
           tableHeader.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
           
-          // 添加padding-top到表格容器，防止内容跳动
+          // 添加padding-top到表格容器，防止内容跳动，但大幅减小间隙
           const headerHeight = tableHeader.offsetHeight;
-          if (!tableContainer.style.paddingTop) {
-            tableContainer.style.paddingTop = `${headerHeight}px`;
-          }
+          // 减少8px的间隙，使表头和内容更紧凑
+          tableContainer.style.paddingTop = `${headerHeight - 8}px`;
         }
       };
       
