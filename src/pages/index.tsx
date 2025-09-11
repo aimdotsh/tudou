@@ -6,6 +6,7 @@ import RunMap from '@/components/RunMap';
 import RunTable from '@/components/RunTable';
 import SVGStat from '@/components/SVGStat';
 import YearsStat from '@/components/YearsStat';
+import BackToTop from '@/components/BackToTop';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { IS_CHINESE } from '@/utils/const';
@@ -410,6 +411,8 @@ const Index = () => {
           </div>
         </div>
       </div>
+      {/* 返回顶部按钮 */}
+      <BackToTop />
       {/* Enable Audiences in Vercel Analytics: https://vercel.com/docs/concepts/analytics/audiences/quickstart */}
       {import.meta.env.VERCEL && <Analytics /> }
     </Layout>
