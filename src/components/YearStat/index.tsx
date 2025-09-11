@@ -3,7 +3,6 @@ import Stat from '@/components/Stat';
 import WorkoutStat from '@/components/WorkoutStat';
 import useActivities from '@/hooks/useActivities';
 import { formatPace, colorFromType } from '@/utils/utils';
-import useHover from '@/hooks/useHover';
 import { yearStats } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import { SHOW_ELEVATION_GAIN } from "@/utils/const";
@@ -11,8 +10,6 @@ import { SHOW_ELEVATION_GAIN } from "@/utils/const";
 const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick: (_year: string) => void ,
     onClickTypeInYear: (_year: string, _type: string) => void }) => {
   let { activities: runs, years } = useActivities();
-  // for hover
-  const [hovered, eventHandlers] = useHover();
   // lazy Component
   const YearSVG = lazy(() => loadSvgComponent(yearStats, `./year_${year}.svg`));
 
@@ -59,7 +56,6 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
     <div
       className="cursor-pointer"
       onClick={() => onClick(year)}
-      {...eventHandlers}
     >
       <section>
         <Stat value={year} description=" Journey" />
