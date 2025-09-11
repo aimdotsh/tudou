@@ -198,6 +198,7 @@ const RunMap = ({
   const onMove = React.useCallback(({ viewState }: { viewState: IViewState }) => {
     setViewState(viewState);
   }, []);
+  // 恢复直接设置高度，确保地图正确显示
   const style: React.CSSProperties = {
     width: '100%',
     height: isMobile ? MOBILE_MAP_HEIGHT : MAP_HEIGHT,

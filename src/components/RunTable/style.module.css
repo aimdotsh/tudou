@@ -64,6 +64,45 @@
 .tableContainer {
   width: 100%;
   overflow-x: auto;
+  position: relative;
+}
+
+/* 表头样式 - 不再使用position:sticky，由JavaScript控制 */
+.stickyHeader {
+  background-color: #FAF9F5;
+  width: 100%;
+  transition: box-shadow 0.3s ease;
+}
+
+/* 表头中的单元格样式 */
+.stickyHeader th {
+  background-color: #FAF9F5;
+  padding: 0.75rem 0.5rem !important;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(32, 178, 170, 0.2);
+}
+
+/* 适配移动设备的固定表头 */
+@media only screen and (max-width: 768px) {
+  .stickyHeader {
+    top: calc(3.5rem + 350px); /* 移动设备导航栏高度 + 移动设备地图高度 */
+  }
+  
+  .stickyHeader th {
+    padding: 0.5rem 0.4rem !important;
+    font-size: 0.9rem;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .stickyHeader {
+    top: calc(2.5rem + 350px); /* 小屏幕设备导航栏高度 + 移动设备地图高度 */
+  }
+  
+  .stickyHeader th {
+    padding: 0.4rem 0.3rem !important;
+    font-size: 0.8rem;
+  }
 }
 
 .runDate {

@@ -29,11 +29,19 @@ const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex }: IR
     setRunIndex(elementIndex);
     locateActivity([run.run_id]);
     
-    // 滚动到地图位置
+    // 滚动到地图位置，但保留一些顶部空间以确保导航栏可见
     const mapContainer = document.querySelector('.sticky-map-container');
     if (mapContainer) {
+      // 获取导航栏高度
+      const nav = document.querySelector('nav');
+      const navHeight = nav ? nav.offsetHeight : 0;
+      
+      // 计算滚动位置：窗口顶部 + 导航栏高度
+      const yOffset = navHeight;
+      const y = mapContainer.getBoundingClientRect().top + window.pageYOffset - yOffset;
+      
       // 使用平滑滚动效果
-      mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo({top: y, behavior: 'smooth'});
     }
   };
 

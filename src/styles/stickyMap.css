@@ -12,8 +12,10 @@
 
 /* 确保内容区域有足够的空间 */
 .content-container {
-  padding-top: 1rem;
+  padding-top: 0;
   min-height: 300px; /* 确保有足够的滚动空间 */
+  position: relative; /* 为固定表头提供定位上下文 */
+  margin-top: 0.5rem; /* 与地图之间的间距 */
 }
 
 /* 移动设备适配 */

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Layout from '@/components/Layout';
 import LocationStat from '@/components/LocationStat';
@@ -10,6 +10,7 @@ import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { IS_CHINESE } from '@/utils/const';
 import '@/styles/stickyMap.css';
+import '@/styles/stickyHeader.css';
 import {
   Activity,
   IViewState,
@@ -142,6 +143,160 @@ const Index = () => {
       setTitle(`${year} Year Heatmap`);
     }
   }, [year, title]);
+  
+  // 处理表头固定在地图下方
+  useLayoutEffect(() => {
+    // 只在年份不是Total时处理表头固定
+    if (year !== 'Total') {
+      // 获取必要的DOM元素
+      const tableHeader = document.getElementById('run-table-header');
+      const mapContainer = document.querySelector('.sticky-map-container');
+      const navBar = document.querySelector('nav');
+      
+      if (!tableHeader || !mapContainer || !navBar) return;
+      
+      // 计算导航栏高度
+      const navHeight = navBar.offsetHeight;
+      
+      // 同步表头列宽与表格列宽
+      const syncColumnWidths = () => {
+        const tableContainer = document.getElementById('run-table-container');
+        if (!tableContainer) return;
+        
+        const table = tableContainer.querySelector('table');
+        if (!table) return;
+        
+        // 获取表格中的第一行（表头行）
+        const headerRow = tableHeader.querySelector('tr');
+        // 获取表格中的第一个数据行
+        const firstDataRow = table.querySelector('tbody tr');
+        
+        if (!headerRow || !firstDataRow) return;
+        
+        // 获取表头中的所有列
+        const headerCells = headerRow.querySelectorAll('th');
+        // 获取数据行中的所有列
+        const dataCells = firstDataRow.querySelectorAll('td');
+        
+        // 确保两者数量匹配
+        if (headerCells.length !== dataCells.length) return;
+        
+        // 同步每一列的宽度
+        for (let i = 0; i < headerCells.length; i++) {
+          const width = dataCells[i].offsetWidth;
+          (headerCells[i] as HTMLElement).style.width = `${width}px`;
+          (headerCells[i] as HTMLElement).style.minWidth = `${width}px`;
+          (headerCells[i] as HTMLElement).style.maxWidth = `${width}px`;
+        }
+      };
+      
+      // 处理滚动事件
+      const handleScroll = () => {
+        const mapRect = mapContainer.getBoundingClientRect();
+        const tableContainer = document.getElementById('run-table-container');
+        
+        if (!tableContainer) return;
+        
+        // 获取表格容器的位置和尺寸信息
+        const tableRect = tableContainer.getBoundingClientRect();
+        const tableLeft = tableRect.left;
+        const tableWidth = tableContainer.querySelector('table')?.offsetWidth || tableRect.width;
+        
+        // 同步列宽
+        syncColumnWidths();
+        
+        // 如果地图底部已经滚动到导航栏下方或更上方
+        if (mapRect.bottom <= navHeight) {
+          // 固定表头在导航栏下方
+          tableHeader.style.position = 'fixed';
+          tableHeader.style.top = `${navHeight}px`;
+          tableHeader.style.left = `${tableLeft}px`;
+          tableHeader.style.width = `${tableWidth}px`;
+          tableHeader.style.zIndex = '5';
+          tableHeader.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+          
+          // 添加padding-top到表格容器，防止内容跳动
+          const headerHeight = tableHeader.offsetHeight;
+          if (!tableContainer.style.paddingTop) {
+            tableContainer.style.paddingTop = `${headerHeight}px`;
+          }
+        } 
+        // 如果地图底部在视口中
+        else if (mapRect.bottom > navHeight) {
+          // 固定表头在地图底部
+          tableHeader.style.position = 'fixed';
+          tableHeader.style.top = `${mapRect.bottom}px`;
+          tableHeader.style.left = `${tableLeft}px`;
+          tableHeader.style.width = `${tableWidth}px`;
+          tableHeader.style.zIndex = '5';
+          tableHeader.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+          
+          // 添加padding-top到表格容器，防止内容跳动
+          const headerHeight = tableHeader.offsetHeight;
+          if (!tableContainer.style.paddingTop) {
+            tableContainer.style.paddingTop = `${headerHeight}px`;
+          }
+        }
+      };
+      
+      // 添加滚动事件监听
+      window.addEventListener('scroll', handleScroll);
+      // 添加窗口大小变化监听
+      window.addEventListener('resize', handleScroll);
+      
+      // 初始调用一次确保正确状态
+      setTimeout(() => {
+        syncColumnWidths();
+        handleScroll();
+      }, 300); // 延迟确保DOM已完全渲染
+      
+      // 监听表格容器的变化（如果有的话）
+      const resizeObserver = new ResizeObserver(() => {
+        syncColumnWidths();
+        handleScroll();
+      });
+      
+      const tableContainer = document.getElementById('run-table-container');
+      if (tableContainer) {
+        resizeObserver.observe(tableContainer);
+      }
+      
+      // 清理函数
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('resize', handleScroll);
+        
+        // 断开ResizeObserver连接
+        const tableContainer = document.getElementById('run-table-container');
+        if (tableContainer) {
+          resizeObserver.unobserve(tableContainer);
+        }
+        resizeObserver.disconnect();
+        
+        // 恢复表头和表格容器样式
+        if (tableHeader) {
+          tableHeader.style.position = '';
+          tableHeader.style.top = '';
+          tableHeader.style.left = '';
+          tableHeader.style.width = '';
+          tableHeader.style.zIndex = '';
+          tableHeader.style.boxShadow = '';
+          
+          // 清除列宽样式
+          const headerCells = tableHeader.querySelectorAll('th');
+          headerCells.forEach((cell) => {
+            (cell as HTMLElement).style.width = '';
+            (cell as HTMLElement).style.minWidth = '';
+            (cell as HTMLElement).style.maxWidth = '';
+          });
+        }
+        
+        if (tableContainer) {
+          tableContainer.style.paddingTop = '';
+        }
+      };
+    }
+  }, [year]);
 
   useEffect(() => {
     const runsNum = runs.length;
@@ -242,7 +397,7 @@ const Index = () => {
           </div>
           
           {/* 可滚动内容区域 */}
-          <div className="content-container">
+          <div className="content-container" id="run-table-container">
             {year === 'Total' ? (
               <SVGStat />
             ) : (

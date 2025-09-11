@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   sortDateFunc,
   sortDateFuncReverse,
@@ -95,10 +95,20 @@ const RunTable = ({
     setActivity(runs.sort(f));
   };
 
+  // 创建表头引用
+  const tableHeaderRef = useRef<HTMLTableSectionElement>(null);
+  
+  // 在组件挂载后添加id，方便外部JavaScript定位
+  useEffect(() => {
+    if (tableHeaderRef.current) {
+      tableHeaderRef.current.id = 'run-table-header';
+    }
+  }, []);
+  
   return (
-    <div className={styles.tableContainer}>
+    <div className={styles.tableContainer} id="run-table-container">
       <table className={styles.runTable} cellSpacing="0" cellPadding="0">
-        <thead>
+        <thead className={styles.stickyHeader} ref={tableHeaderRef}>
           <tr>
             {Array.from(sortFuncMap.keys()).map((k) => (
               <th key={k} onClick={handleClick}>
