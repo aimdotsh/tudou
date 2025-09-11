@@ -1,6 +1,7 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import React, {useRef, useCallback, useState, useEffect} from 'react';
 import Map, {Layer, Source, FullscreenControl, NavigationControl, MapRef} from 'react-map-gl';
+import mapboxgl from 'mapbox-gl';
 import {MapInstance} from "react-map-gl/src/types/lib";
 import useActivities from '@/hooks/useActivities';
 import {
@@ -13,6 +14,7 @@ import {
   USE_DASH_LINE,
   LINE_OPACITY,
   MAP_HEIGHT,
+  MOBILE_MAP_HEIGHT,
   LIGHTS_ON,
   TYPES_MAPPING,
 } from '@/utils/const';
@@ -48,6 +50,8 @@ const RunMap = ({
   const { isPrivacyMode } = usePrivacyModeContext();
   // 在亮色地图上，默认开启lights
   const [lights, setLights] = useState(true);
+  // 响应式地图高度
+  const [isMobile, setIsMobile] = useState(false);
 
   // 监听隐私模式变化
   useEffect(() => {
@@ -175,19 +179,28 @@ const RunMap = ({
   let startLat = 0;
   let endLon = 0;
   let endLat = 0;
+  let allPoints: Coordinate[] = [];
   if (isSingleRun) {
-    const points = geoData.features[0].geometry.coordinates as Coordinate[];
-    [startLon, startLat] = points[0];
-    [endLon, endLat] = points[points.length - 1];
+    allPoints = geoData.features[0].geometry.coordinates as Coordinate[];
+    [startLon, startLat] = allPoints[0];
+    [endLon, endLat] = allPoints[allPoints.length - 1];
   }
 
+  // 为单个轨迹使用实线，便于动画效果
   let dash = USE_DASH_LINE && !isSingleRun && !isBigMap ? [2, 2] : [2, 0];
+  // 动画相关状态
+  const [animating, setAnimating] = useState(false);
+  const [animationProgress, setAnimationProgress] = useState(0);
+  const animationRef = useRef<number | null>(null);
+  const [animatedGeoData, setAnimatedGeoData] = useState<FeatureCollection<RPGeometry>>(geoData);
+
+  // 处理地图移动
   const onMove = React.useCallback(({ viewState }: { viewState: IViewState }) => {
     setViewState(viewState);
   }, []);
   const style: React.CSSProperties = {
     width: '100%',
-    height: MAP_HEIGHT,
+    height: isMobile ? MOBILE_MAP_HEIGHT : MAP_HEIGHT,
   };
   const fullscreenButton: React.CSSProperties = {
     position: 'absolute',
@@ -196,17 +209,156 @@ const RunMap = ({
     opacity: 0.3,
   };
 
+  // 处理全屏变化和响应式布局
   useEffect(() => {
     const handleFullscreenChange = () => {
       if (mapRef.current) {
         mapRef.current.getMap().resize();
       }
     };
+    
+    // 检测设备类型
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    // 初始检测
+    checkMobile();
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', checkMobile);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    
     return () => {
+      window.removeEventListener('resize', checkMobile);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
+
+  // 处理轨迹动画
+  useEffect(() => {
+    // 当选中单个轨迹时，准备动画数据
+    if (isSingleRun && allPoints.length > 1) {
+      // 重置动画状态
+      setAnimating(true);
+      setAnimationProgress(0);
+      
+      // 清除之前的动画
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      
+      // 先显示完整轨迹（轮廓）
+      // 创建一个轮廓轨迹数据，使用原始轨迹但线条更细、更透明
+      const outlineGeoData = {
+        type: 'FeatureCollection',
+        features: [{
+          ...geoData.features[0],
+          properties: {
+            ...geoData.features[0].properties,
+            isOutline: true // 标记为轮廓
+          }
+        }]
+      } as FeatureCollection<RPGeometry>;
+      
+      // 创建初始动画数据（只有起点）
+      const initialGeoData = {
+        type: 'FeatureCollection',
+        features: [
+          // 先添加完整轨迹作为轮廓
+          {
+            ...geoData.features[0],
+            properties: {
+              ...geoData.features[0].properties,
+              isOutline: true
+            }
+          },
+          // 再添加动画轨迹（初始只有起点）
+          {
+            ...geoData.features[0],
+            geometry: {
+              ...geoData.features[0].geometry,
+              coordinates: [allPoints[0]]
+            },
+            properties: {
+              ...geoData.features[0].properties,
+              isAnimating: true
+            }
+          }
+        ]
+      } as FeatureCollection<RPGeometry>;
+      
+      setAnimatedGeoData(initialGeoData);
+      
+      // 延迟一小段时间后开始动画，让用户先看到完整轨迹
+      setTimeout(() => {
+        // 开始动画
+        let startTime: number | null = null;
+        const animationDuration = 2000; // 动画持续2秒
+        
+        const animate = (timestamp: number) => {
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / animationDuration, 1);
+          setAnimationProgress(progress);
+          
+          // 计算当前应该显示的点数
+          const pointsToShow = Math.max(2, Math.floor(progress * allPoints.length));
+          
+          // 更新动画数据
+          const updatedGeoData = {
+            type: 'FeatureCollection',
+            features: [
+              // 保留轮廓
+              {
+                ...geoData.features[0],
+                properties: {
+                  ...geoData.features[0].properties,
+                  isOutline: true
+                }
+              },
+              // 更新动画轨迹
+              {
+                ...geoData.features[0],
+                geometry: {
+                  ...geoData.features[0].geometry,
+                  coordinates: allPoints.slice(0, pointsToShow)
+                },
+                properties: {
+                  ...geoData.features[0].properties,
+                  isAnimating: true
+                }
+              }
+            ]
+          } as FeatureCollection<RPGeometry>;
+          
+          setAnimatedGeoData(updatedGeoData);
+          
+          // 继续动画或结束
+          if (progress < 1) {
+            animationRef.current = requestAnimationFrame(animate);
+          } else {
+            setAnimating(false);
+            animationRef.current = null;
+          }
+        };
+        
+        animationRef.current = requestAnimationFrame(animate);
+      }, 500); // 延迟500毫秒开始动画
+      
+      // 清理函数
+      return () => {
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      };
+    } else {
+      // 非单个轨迹，使用原始数据
+      setAnimatedGeoData(geoData);
+      setAnimating(false);
+    }
+  }, [geoData, isSingleRun, allPoints]);
 
   return (
     <Map
@@ -248,7 +400,7 @@ const RunMap = ({
       mapboxAccessToken={MAPBOX_TOKEN}
     >
       <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
-      <Source id="data" type="geojson" data={geoData}>
+      <Source id="data" type="geojson" data={animating ? animatedGeoData : geoData}>
         <Layer
           id="province"
           type="fill"
@@ -272,11 +424,25 @@ const RunMap = ({
           id="runs2"
           type="line"
           paint={{
+            // 根据属性决定线条样式
             'line-color': ['get', 'color'],
-            'line-width': isBigMap ? 1 : 2.5, // 增加线宽，在亮色背景上更明显
+            'line-width': [
+              'case',
+              ['has', 'isOutline'], 1.5, // 轮廓线更细
+              ['has', 'isAnimating'], isBigMap ? 1.5 : 3, // 动画线更粗
+              isBigMap ? 1 : 2.5 // 默认线宽
+            ],
             'line-dasharray': dash,
-            'line-opacity': 0.8, // 提高不透明度，在亮色背景上更明显
-            'line-blur': 0.5, // 减少模糊，使线条更清晰
+            'line-opacity': [
+              'case',
+              ['has', 'isOutline'], 0.3, // 轮廓线更透明
+              0.8 // 默认不透明度
+            ],
+            'line-blur': [
+              'case',
+              ['has', 'isOutline'], 0.8, // 轮廓线更模糊
+              0.5 // 默认模糊度
+            ],
           }}
           layout={{
             'line-join': 'round',
@@ -292,7 +458,14 @@ const RunMap = ({
           endLon={endLon}
         />
       )}
-      <span className={styles.runTitle}>{title}</span>
+      <span className={styles.runTitle}>
+        {title}
+        {animating && (
+          <span className={styles.animationProgress}> 
+            {Math.round(animationProgress * 100)}%
+          </span>
+        )}
+      </span>
       <FullscreenControl style={fullscreenButton}/>
               {!isPrivacyMode && <LightsControl setLights={setLights} lights={lights}/>}
       <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>

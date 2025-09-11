@@ -35,7 +35,8 @@ const USE_DASH_LINE = false;
 // styling: route line opacity: [0, 1]
 const LINE_OPACITY = 0.6;
 // styling: map height
-const MAP_HEIGHT = 500;
+const MAP_HEIGHT = 500; // 桌面版高度
+const MOBILE_MAP_HEIGHT = 350; // 移动设备高度
 //set to `false` if you want to hide the road label characters
 const ROAD_LABEL_DISPLAY = true;
 // update for now 2024/11/17 the privacy mode is true
@@ -157,6 +158,7 @@ export {
   USE_DASH_LINE,
   LINE_OPACITY,
   MAP_HEIGHT,
+  MOBILE_MAP_HEIGHT,
   PRIVACY_MODE,
   LIGHTS_ON,
   SHOW_ELEVATION_GAIN,
