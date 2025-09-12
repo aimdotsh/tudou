@@ -35,7 +35,7 @@ const RunTable = ({
   const sortKMFunc: SortFunc = (a, b) =>
     sortFuncInfo === 'KM' ? a.distance - b.distance : b.distance - a.distance;
   const sortElevationGainFunc: SortFunc = (a, b) =>
-    sortFuncInfo === 'Elevation Gain'
+    sortFuncInfo === 'Elevation'
       ? (a.elevation_gain ?? 0) - (b.elevation_gain ?? 0)
       : (b.elevation_gain ?? 0) - (a.elevation_gain ?? 0);
   const sortPaceFunc: SortFunc = (a, b) => {
@@ -77,14 +77,14 @@ const RunTable = ({
     ['Name', sortNameFunc],
     ['Type', sortTypeFunc],
     ['KM', sortKMFunc],
-    ['Elevation Gain', sortElevationGainFunc],
+    ['Elevation', sortElevationGainFunc],
     ['Pace', sortPaceFunc],
     ['Time', sortRunTimeFunc],
     ['BPM', sortBPMFunc],
     ['Date', sortDateFuncClick],
   ]);
   if (!SHOW_ELEVATION_GAIN){
-    sortFuncMap.delete('Elevation Gain')
+    sortFuncMap.delete('Elevation')
   }
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {

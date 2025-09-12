@@ -45,7 +45,7 @@ const PRIVACY_MODE = false;
 // update for now 2024/11/17 the lights on default is false
 //set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
 const LIGHTS_ON =false;
-//set to `true` if you want to show the 'Elevation Gain' column
+//set to `true` if you want to show the 'Elevation' column
 const SHOW_ELEVATION_GAIN = true;
 // richer title for the activity types (like garmin style)
 const RICH_TITLE = true;

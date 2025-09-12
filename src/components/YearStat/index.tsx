@@ -88,7 +88,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
         { SHOW_ELEVATION_GAIN && sumElevationGain > 0 &&
           <Stat
             value={`${(sumElevationGain).toFixed(0)} `}
-            description="M Elevation Gain"
+            description="M Elevation"
             className="pb-2"
           />
         }
