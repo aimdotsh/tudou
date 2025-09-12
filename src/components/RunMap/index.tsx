@@ -50,6 +50,7 @@ const RunMap = ({
   const animationRef = useRef<number>();
   const [animatedGeo, setAnimatedGeo] = useState<FeatureCollection<LineString>>(); // 动态轨迹geojson
   const [animating, setAnimating] = useState(false);
+  const [animationProgress, setAnimationProgress] = useState(0);
 
   // --- 保证 geoData 只在必要时合并（避免闪烁） ---
   const [geoData, setGeoData] = useState<FeatureCollection<RPGeometry>>(propGeoData);
@@ -93,8 +94,12 @@ const RunMap = ({
       if (current >= points.length) {
         setAnimating(false);
         setAnimatedGeo(undefined);
+        setAnimationProgress(100);
         return;
       }
+      const progress = Math.round((current / points.length) * 100);
+      setAnimationProgress(progress);
+      
       const animFeature: Feature<LineString> = {
         ...geoData.features[0],
         geometry: {
@@ -249,7 +254,14 @@ const RunMap = ({
           endLon={endLon}
         />
       )}
-      <span className={styles.runTitle}>{title}</span>
+      <span className={styles.runTitle}>
+        {title}
+        {animating && (
+          <span className={styles.animationProgress}>
+            {animationProgress}%
+          </span>
+        )}
+      </span>
       <FullscreenControl style={fullscreenButton}/>
       {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights}/>}
       <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>
