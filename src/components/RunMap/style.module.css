@@ -15,9 +15,9 @@
   display: inline-block;
   position: relative;
   cursor: pointer;
-  padding: 1rem 0.4rem;
+  padding: 0.5rem 0.4rem;
   margin-top: 0.1rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-align: center;
   color: #20B2AA;
   font-weight: 500;
@@ -31,16 +31,16 @@
 /* 响应式样式 */
 @media (max-width: 768px) {
   .button {
-    padding: 0.7rem 0.3rem;
-    font-size: 0.9rem;
+    padding: 0.4rem 0.3rem;
+    font-size: 0.85rem;
     white-space: nowrap;
   }
 }
 
 @media (max-width: 480px) {
   .button {
-    padding: 0.5rem 0.25rem;
-    font-size: 0.8rem;
+    padding: 0.3rem 0.25rem;
+    font-size: 0.75rem;
     margin-right: 2px;
   }
 }
