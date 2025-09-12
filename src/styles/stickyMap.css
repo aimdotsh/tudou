@@ -1,7 +1,7 @@
 /* 固定地图样式 */
 .sticky-map-container {
   position: sticky;
-  top: 3rem; /* 减小后的导航栏高度 + 一点额外空间 */
+  top: 0; /* 紧贴导航栏底部，不留间距 */
   z-index: 10;
   background-color: #FAF9F5;
   margin-bottom: 1rem;
@@ -21,13 +21,13 @@
 /* 移动设备适配 */
 @media (max-width: 768px) {
   .sticky-map-container {
-    top: 2.5rem; /* 减小后的移动设备导航栏高度 + 一点额外空间 */
+    top: 0; /* 紧贴导航栏底部，不留间距 */
   }
 }
 
 /* 小屏幕设备适配 */
 @media (max-width: 480px) {
   .sticky-map-container {
-    top: 1.8rem; /* 减小后的小屏幕设备导航栏高度 + 一点额外空间 */
+    top: 0; /* 紧贴导航栏底部，不留间距 */
   }
 }
