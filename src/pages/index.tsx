@@ -251,7 +251,7 @@ const Index = () => {
         {/* 右侧内容区 */}
         <div className="w-full lg:w-4/5 flex flex-col">
           {/* 固定地图区域 */}
-          <div className="sticky-map-container">
+          <div className={year === 'Total' ? 'map-container' : 'sticky-map-container'}>
             <RunMap
               title={title}
               viewState={viewState}

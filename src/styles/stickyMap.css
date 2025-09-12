@@ -10,6 +10,16 @@
   overflow: hidden;
 }
 
+/* 非悬浮地图样式 - 用于Total年份 */
+.map-container {
+  position: relative; /* 不悬浮 */
+  background-color: #FAF9F5;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 /* 确保内容区域有足够的空间 */
 .content-container {
   padding-top: 0;
