@@ -65,7 +65,14 @@ const Index = () => {
     // default year
     setYear(y);
 
-    if ((viewState.zoom ?? 0) > 3 && bounds) {
+    // 当选择Total时，设置适合显示中国全貌的视图
+    if (y === 'Total') {
+      setViewState({
+        longitude: 104.195397,  // 中国中心经度
+        latitude: 35.86166,     // 中国中心纬度
+        zoom: 3,                // 适合显示中国全貌的缩放级别
+      });
+    } else if ((viewState.zoom ?? 0) > 3 && bounds) {
       setViewState({
         ...bounds,
       });
@@ -134,10 +141,13 @@ const Index = () => {
   };
 
   useEffect(() => {
-    setViewState({
-      ...bounds,
-    });
-  }, [geoData]);
+    // 当年份为Total时，保持中国全貌视图，不使用bounds
+    if (year !== 'Total') {
+      setViewState({
+        ...bounds,
+      });
+    }
+  }, [geoData, year]);
 
   // 确保标题与当前选中的年份同步
   useEffect(() => {

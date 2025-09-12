@@ -57,18 +57,19 @@ const RunMap = ({
 
   useEffect(() => {
     let tmpGeo = propGeoData;
-    const initGeoDataLength = propGeoData.features.length;
-    const isBigMap = (viewState.zoom ?? 0) <= 3;
+    const isBigMap = (viewState.zoom ?? 0) <= 3 || thisYear === 'Total';
+    
     if (isBigMap && IS_CHINESE) {
-      if(propGeoData.features.length === initGeoDataLength){
+      const chinaGeoData = geoJsonForMap();
+      if (chinaGeoData && chinaGeoData.features) {
         tmpGeo = {
             "type": "FeatureCollection",
-            "features": propGeoData.features.concat(geoJsonForMap().features)
+            "features": propGeoData.features.concat(chinaGeoData.features)
         };
       }
     }
     setGeoData(tmpGeo);
-  }, [IS_CHINESE, propGeoData, viewState.zoom]);
+  }, [IS_CHINESE, propGeoData, viewState.zoom, thisYear]);
 
   // ----------- 动态轨迹动画逻辑 -----------
   // 只对单条轨迹进行动画
