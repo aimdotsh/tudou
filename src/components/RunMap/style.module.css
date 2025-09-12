@@ -87,16 +87,18 @@
 
 @media (max-width: 768px) {
   .runTitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     max-width: calc(100% - 80px);
+    padding: 2px 6px;
   }
 }
 
 @media (max-width: 480px) {
   .runTitle {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     max-width: calc(100% - 60px);
     bottom: 2px;
+    padding: 2px 5px;
   }
 }
 

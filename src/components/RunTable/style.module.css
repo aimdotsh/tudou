@@ -61,6 +61,9 @@
 
 /* 在移动设备和平板上限制名称长度为6个字符 */
 @media only screen and (max-width: 768px) {
+  .runRow td {
+    font-size: 0.85rem;
+  }
   .runRow td:first-child {
     max-width: 6em; /* 约6个汉字的宽度 */
     white-space: nowrap;
@@ -71,6 +74,10 @@
 
 /* 在更小的屏幕上进一步限制 */
 @media only screen and (max-width: 480px) {
+  .runRow td {
+    font-size: 0.75rem;
+    padding: 0.05rem;
+  }
   .runRow td:first-child {
     max-width: 5em; /* 约5个汉字的宽度 */
   }
