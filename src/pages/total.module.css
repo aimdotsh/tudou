@@ -78,7 +78,7 @@
 
 .stickyHeader :global(.mainNav) {
   flex: 1;
-  padding: 1rem 2rem;
+  padding: 0.4rem 2rem;
   position: static;
   box-shadow: none;
 }
@@ -86,7 +86,7 @@
 .selectContainer {
   display: flex;
   justify-content: flex-end; /* 改为靠右对齐 */
-  padding: 1rem 2rem;
+  padding: 0.4rem 2rem;
   background: #FAF9F5;
   transition: all 0.3s ease;
   min-width: 150px;
@@ -94,14 +94,14 @@
 
 @media (max-width: 768px) {
   .selectContainer {
-    padding: 0.75rem 1rem;
+    padding: 0.3rem 1rem;
     min-width: auto;
   }
 }
 
 @media (max-width: 480px) {
   .selectContainer {
-    padding: 0.5rem 1rem;
+    padding: 0.25rem 1rem;
     width: 100%;
     justify-content: center; /* 在小屏幕上居中显示 */
   }
@@ -134,8 +134,8 @@
 }
 
 .select {
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: 8px;
   background: linear-gradient(135deg, var(--secondary-color), #ffb347);
   color: var(--text-light);
   border: none;
