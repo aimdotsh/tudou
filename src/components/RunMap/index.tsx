@@ -217,10 +217,10 @@ const RunMap = ({
             id="background-runs"
             type="line"
             paint={{
-              'line-color': ['get', 'color'],
+              'line-color': '#FF8C00', // 设置为指定的橙黄色
               'line-width': ((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2,
               'line-dasharray': dash,
-              'line-opacity': 0.3, // 浅色背景轨迹
+              'line-opacity': 0.3, // 适当提高透明度以显示橙黄色
               'line-blur': 1,
             }}
             layout={{
