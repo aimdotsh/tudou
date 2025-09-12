@@ -210,7 +210,28 @@ const RunMap = ({
       mapboxAccessToken={MAPBOX_TOKEN}
     >
       <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
-      {/* 动态轨迹动画时只渲染动画，非动画时正常渲染geoData */}
+      {/* 背景轨迹层 - 在动画时显示浅色完整轨迹 */}
+      {animating && (
+        <Source id="background-data" type="geojson" data={geoData}>
+          <Layer
+            id="background-runs"
+            type="line"
+            paint={{
+              'line-color': ['get', 'color'],
+              'line-width': ((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2,
+              'line-dasharray': dash,
+              'line-opacity': 0.3, // 浅色背景轨迹
+              'line-blur': 1,
+            }}
+            layout={{
+              'line-join': 'round',
+              'line-cap': 'round',
+            }}
+          />
+        </Source>
+      )}
+      
+      {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
       <Source id="data" type="geojson" data={animatedGeo || geoData}>
         <Layer
           id="province"
