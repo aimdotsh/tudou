@@ -25,6 +25,17 @@ const MAP_LAYER_LIST = [
   'settlement-label',
   'state-label',
   'country-label',
+  'place-label',
+  'place-city-label',
+  'place-town-label',
+  'place-village-label',
+  'place-hamlet-label',
+  'place-neighbourhood-label',
+  'place-suburb-label',
+  'road-number-shield',
+  'road-exit-shield',
+  'golf-hole-label',
+  'transit-label',
 ];
 
 const USE_GOOGLE_ANALYTICS = false;
@@ -38,7 +49,7 @@ const LINE_OPACITY = 0.6;
 const MAP_HEIGHT = 456; // 桌面版高度
 const MOBILE_MAP_HEIGHT = 350; // 移动设备高度
 //set to `false` if you want to hide the road label characters
-const ROAD_LABEL_DISPLAY = true;
+const ROAD_LABEL_DISPLAY = false;
 // update for now 2024/11/17 the privacy mode is true
 //set to `true` if you want to display only the routes without showing the map.
 const PRIVACY_MODE = false;

@@ -660,3 +660,33 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
   .mapboxgl-canvas {
   touch-action: pan-x pan-y;
 }
+
+/* 隐藏所有地图标签 */
+.mapbox-gl-draw_polygon,
+.mapbox-gl-draw_line_string,
+.mapbox-gl-draw_point {
+  display: none !important;
+}
+
+/* 隐藏所有文字标签 */
+.mapboxgl-canvas .mapboxgl-canvas-container canvas {
+  /* 这将通过 CSS 隐藏所有标签层 */
+}
+
+/* 通过类名隐藏标签 */
+[class*="label"],
+[class*="text"],
+[class*="symbol"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* 隐藏特定的标签类型 */
+.mapboxgl-popup,
+.mapboxgl-marker,
+.mapbox-gl-draw_polygon,
+.mapbox-gl-draw_line_string,
+.mapbox-gl-draw_point {
+  display: none !important;
+}

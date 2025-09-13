@@ -147,9 +147,39 @@ const RunMap = ({
         }
         map.on('style.load', () => {
           if (!ROAD_LABEL_DISPLAY) {
-            MAP_LAYER_LIST.forEach((layerId) => {
-              map.removeLayer(layerId);
-            });
+            // 延迟执行以确保所有图层都已加载
+            setTimeout(() => {
+              const style = map.getStyle();
+              if (style && style.layers) {
+                style.layers.forEach((layer: any) => {
+                  // 更全面的标签图层检测
+                  const isLabelLayer = 
+                    layer.id.includes('label') || 
+                    layer.id.includes('text') || 
+                    layer.id.includes('symbol') ||
+                    layer.id.includes('place') ||
+                    layer.id.includes('poi') ||
+                    layer.id.includes('road-number') ||
+                    layer.id.includes('road-exit') ||
+                    layer.id.includes('transit') ||
+                    layer.type === 'symbol';
+                  
+                  if (isLabelLayer) {
+                    try {
+                      map.setLayoutProperty(layer.id, 'visibility', 'none');
+                      // 额外设置透明度为0
+                      if (layer.paint) {
+                        map.setPaintProperty(layer.id, 'text-opacity', 0);
+                        map.setPaintProperty(layer.id, 'icon-opacity', 0);
+                      }
+                    } catch (e) {
+                      // 忽略无法设置的图层
+                      console.log('无法隐藏图层:', layer.id, e);
+                    }
+                  }
+                });
+              }
+            }, 100);
           }
           mapRef.current = ref;
           switchLayerVisibility(map, lights);
@@ -217,7 +247,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       style={style}
-      mapStyle="mapbox://styles/mapbox/light-v11"
+      mapStyle={ROAD_LABEL_DISPLAY ? "mapbox://styles/mapbox/light-v11" : "mapbox://styles/mapbox/light-v11"}
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
     >
