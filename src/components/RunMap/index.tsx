@@ -206,7 +206,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       style={style}
-      mapStyle="mapbox://styles/mapbox/dark-v10"
+      mapStyle="mapbox://styles/mapbox/light-v11"
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
     >
