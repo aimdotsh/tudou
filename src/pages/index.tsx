@@ -2,11 +2,13 @@ import { useEffect, useState, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Layout from '@/components/Layout';
 import LocationStat from '@/components/LocationStat';
+import LocationSummary from '@/components/LocationStat/LocationSummary';
 import RunMap from '@/components/RunMap';
 import RunTable from '@/components/RunTable';
 import SVGStat from '@/components/SVGStat';
 import YearsStat from '@/components/YearsStat';
 import BackToTop from '@/components/BackToTop';
+import locationStats from '@/static/location_stats.json';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { IS_CHINESE } from '@/utils/const';
@@ -246,15 +248,275 @@ const Index = () => {
           <h1 className="my-12 text-5xl font-extrabold italic">
             <a href="/">{siteTitle}</a>
           </h1>
-          {(viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
-            <LocationStat
-              changeYear={changeYear}
-              changeCity={changeCity}
-              changeType={changeType}
-              onClickTypeInYear={changeTypeInYear}
-            />
+          {year === 'Total' ? (
+            <div className="w-full pb-16 lg:w-full lg:pr-16">
+              <section className="pb-0">
+                <p className="leading-relaxed">
+                  这里记录了我的运动轨迹和数据统计。
+                  <br />
+                  每一次运动都是对自己的挑战和突破。
+                  <br />
+                  <br />
+                  Yesterday you said tomorrow.
+                </p>
+              </section>
+              <hr color="red" />
+              <div className="cursor-pointer">
+                <section>
+                  <div className="mb-4">
+                    <div className="flex items-center mb-2">
+                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.years}</span>
+                      <span style={{color: '#20B2AA'}}>年里我走过</span>
+                    </div>
+                    <div className="text-sm ml-4" style={{color: '#20B2AA'}}>
+                      {locationStats.yearsList.join('、')}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex items-center mb-2">
+                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.countries}</span>
+                      <span style={{color: '#20B2AA'}}>个国家</span>
+                    </div>
+                    <div className="text-sm ml-4" style={{color: '#20B2AA'}}>
+                      {locationStats.countriesList.filter(c => c !== 'Other').join('、')}
+                      {locationStats.countriesList.includes('Other') && locationStats.countriesList.length > 1 ? '等' : ''}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex items-center mb-2">
+                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.provinces}</span>
+                      <span style={{color: '#20B2AA'}}>个省份</span>
+                    </div>
+                    <div className="text-sm ml-4" style={{color: '#20B2AA'}}>
+                      {locationStats.provincesList.join('、')}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex items-center mb-2">
+                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.cities}</span>
+                      <span style={{color: '#20B2AA'}}>个城市</span>
+                    </div>
+                    <div className="text-sm ml-4 leading-relaxed" style={{color: '#20B2AA'}}>
+                      {locationStats.citiesList.join('、')}
+                    </div>
+                  </div>
+                </section>
+                <hr color="red" />
+              </div>
+              <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear}/>
+            </div>
+          ) : (viewState.zoom ?? 0) <= 3 && IS_CHINESE ? (
+            <div>
+              {/* 显示当年新增地点 */}
+              {locationStats.yearlyNewLocations[year] && (
+                <div className="mb-4 cursor-pointer pr-4 border-r border-transparent">
+                  <section>
+                    <div className="mb-4">
+                      <div className="flex items-center mb-2">
+                        <span style={{color: '#20B2AA'}}>{year}年新增<span className="text-2xl font-bold text-red-500 mx-1">
+                          {(() => {
+                            const newLocs = locationStats.yearlyNewLocations[year];
+                            const formattedItems = [];
+                            
+                            // 处理新增国家
+                            if (newLocs.countries && newLocs.countries.length > 0) {
+                              newLocs.countries.forEach(country => {
+                                if (country !== 'Other') {
+                                  formattedItems.push(country);
+                                }
+                              });
+                            }
+                            
+                            // 处理新增省份和城市的组合
+                            const provinces = newLocs.provinces || [];
+                            const cities = newLocs.cities || [];
+                            
+                            // 为每个城市找到对应的省份（使用自动生成的关联关系）
+                            cities.forEach(city => {
+                              const matchedProvince = locationStats.cityProvinceMap[city];
+                              
+                              if (matchedProvince) {
+                                formattedItems.push(`${matchedProvince}-${city}`);
+                              } else {
+                                formattedItems.push(city);
+                              }
+                            });
+                            
+                            // 添加单独的新增省份（没有对应城市的）
+                            provinces.forEach(province => {
+                              const hasMatchingCity = cities.some(city => {
+                                return locationStats.cityProvinceMap[city] === province;
+                              });
+                              
+                              if (!hasMatchingCity) {
+                                formattedItems.push(province);
+                              }
+                            });
+                            
+                            return formattedItems.length;
+                          })()}
+                        </span><span style={{color: '#20B2AA'}}>处地点：</span></span>
+                      </div>
+                      <div className="text-sm ml-4 leading-relaxed" style={{color: '#20B2AA'}}>
+                        {(() => {
+                          const newLocs = locationStats.yearlyNewLocations[year];
+                          const formattedItems = [];
+                          
+                          // 处理新增国家
+                          if (newLocs.countries && newLocs.countries.length > 0) {
+                            newLocs.countries.forEach(country => {
+                              if (country !== 'Other') {
+                                formattedItems.push(country);
+                              }
+                            });
+                          }
+                          
+                          // 处理新增省份和城市的组合
+                          const provinces = newLocs.provinces || [];
+                          const cities = newLocs.cities || [];
+                          
+                          // 为每个城市找到对应的省份（使用自动生成的关联关系）
+                          cities.forEach(city => {
+                            const matchedProvince = locationStats.cityProvinceMap[city];
+                            
+                            if (matchedProvince) {
+                              formattedItems.push(`${matchedProvince}-${city}`);
+                            } else {
+                              formattedItems.push(city);
+                            }
+                          });
+                          
+                          // 添加单独的新增省份（没有对应城市的）
+                          provinces.forEach(province => {
+                            const hasMatchingCity = cities.some(city => {
+                              return locationStats.cityProvinceMap[city] === province;
+                            });
+                            
+                            if (!hasMatchingCity) {
+                              formattedItems.push(province);
+                            }
+                          });
+                          
+                          return formattedItems.length > 0 ? formattedItems.join('、') : '暂无新增地点';
+                        })()}
+                      </div>
+                    </div>
+                  </section>
+                  <hr color="red" />
+                </div>
+              )}
+              <LocationStat
+                changeYear={changeYear}
+                changeCity={changeCity}
+                changeType={changeType}
+                onClickTypeInYear={changeTypeInYear}
+              />
+            </div>
           ) : (
-            <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear}/>
+            <div>
+              {/* 显示当年新增地点 */}
+              {locationStats.yearlyNewLocations[year] && (
+                <div className="mb-4 cursor-pointer pr-4 border-r border-transparent">
+                  <section>
+                    <div className="mb-4">
+                      <div className="flex items-center mb-2">
+                        <span style={{color: '#20B2AA'}}>{year}年新增<span className="text-2xl font-bold text-red-500 mx-1">
+                          {(() => {
+                            const newLocs = locationStats.yearlyNewLocations[year];
+                            const formattedItems = [];
+                            
+                            // 处理新增国家
+                            if (newLocs.countries && newLocs.countries.length > 0) {
+                              newLocs.countries.forEach(country => {
+                                if (country !== 'Other') {
+                                  formattedItems.push(country);
+                                }
+                              });
+                            }
+                            
+                            // 处理新增省份和城市的组合
+                            const provinces = newLocs.provinces || [];
+                            const cities = newLocs.cities || [];
+                            
+                            // 为每个城市找到对应的省份（使用自动生成的关联关系）
+                            cities.forEach(city => {
+                              const matchedProvince = locationStats.cityProvinceMap[city];
+                              
+                              if (matchedProvince) {
+                                formattedItems.push(`${matchedProvince}-${city}`);
+                              } else {
+                                formattedItems.push(city);
+                              }
+                            });
+                            
+                            // 添加单独的新增省份（没有对应城市的）
+                            provinces.forEach(province => {
+                              const hasMatchingCity = cities.some(city => {
+                                return locationStats.cityProvinceMap[city] === province;
+                              });
+                              
+                              if (!hasMatchingCity) {
+                                formattedItems.push(province);
+                              }
+                            });
+                            
+                            return formattedItems.length;
+                          })()}
+                        </span><span style={{color: '#20B2AA'}}>处地点：</span></span>
+                      </div>
+                      <div className="text-sm ml-4 leading-relaxed" style={{color: '#20B2AA'}}>
+                        {(() => {
+                          const newLocs = locationStats.yearlyNewLocations[year];
+                          const formattedItems = [];
+                          
+                          // 处理新增国家
+                          if (newLocs.countries && newLocs.countries.length > 0) {
+                            newLocs.countries.forEach(country => {
+                              if (country !== 'Other') {
+                                formattedItems.push(country);
+                              }
+                            });
+                          }
+                          
+                          // 处理新增省份和城市的组合
+                          const provinces = newLocs.provinces || [];
+                          const cities = newLocs.cities || [];
+                          
+                          // 为每个城市找到对应的省份（使用自动生成的关联关系）
+                          cities.forEach(city => {
+                            const matchedProvince = locationStats.cityProvinceMap[city];
+                            
+                            if (matchedProvince) {
+                              formattedItems.push(`${matchedProvince}-${city}`);
+                            } else {
+                              formattedItems.push(city);
+                            }
+                          });
+                          
+                          // 添加单独的新增省份（没有对应城市的）
+                          provinces.forEach(province => {
+                            const hasMatchingCity = cities.some(city => {
+                              return locationStats.cityProvinceMap[city] === province;
+                            });
+                            
+                            if (!hasMatchingCity) {
+                              formattedItems.push(province);
+                            }
+                          });
+                          
+                          return formattedItems.length > 0 ? formattedItems.join('、') : '暂无新增地点';
+                        })()}
+                      </div>
+                    </div>
+                  </section>
+                  <hr color="red" />
+                </div>
+              )}
+              <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear}/>
+            </div>
           )}
         </div>
         

@@ -17,6 +17,7 @@ import styles from './total.module.css';
 import Nav from '@/components/Nav';
 import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
+import locationStats from '@/static/location_stats.json';
 
 // 自定义错误边界组件
 class ErrorBoundary extends Component<{ 
@@ -431,8 +432,8 @@ const Total: React.FC = () => {
       {/* 统计卡片 */}
       <div className={styles.statsCards}>
         <div className={styles.statCard}>
-          <h4>八年里走过</h4>
-          <p>1 国 9 省 17 城</p>
+          <h4>{locationStats.years}年里走过</h4>
+          <p>{locationStats.countries} 国 {locationStats.provinces} 省 {locationStats.cities} 城</p>
         </div>
         <div className={styles.statCard}>
           <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
