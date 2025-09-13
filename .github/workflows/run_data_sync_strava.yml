@@ -240,6 +240,11 @@ jobs:
           npm install @mapbox/polyline --save
           node scripts/apply_offset_to_activities.js
 
+      - name: Generate location statistics
+        if: env.RUN_TYPE != 'pass'
+        run: |
+          cd run_page && python generate_location_stats.py
+
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'
         run: |
