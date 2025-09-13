@@ -12,39 +12,49 @@ if sys.version_info[0] >= 3:
 
 def extract_location_info(location_str):
     """从location_country字段提取城市、省份、国家信息"""
-    if not location_str or location_str.strip() == '':
+    if not location_str:
         return None, None, None
     
-    # 确保是字符串类型
+    # 确保是字符串类型并处理编码
     if isinstance(location_str, bytes):
         try:
-            location_str = location_str.decode('utf-8')
+            location_str = location_str.decode('utf-8', 'ignore')
         except:
             return None, None, None
     
+    # 去除空白，但不进行额外的str()转换
+    if hasattr(location_str, 'strip'):
+        location_str = location_str.strip()
+    
+    if not location_str:
+        return None, None, None
+    
     # 提取国家
     country = None
-    if '中国' in location_str:
-        country = '中国'
-    elif location_str and location_str.strip():
+    try:
+        if u'中国' in location_str:
+            country = u'中国'
+        elif location_str:
+            country = 'Other'
+    except (UnicodeDecodeError, UnicodeEncodeError):
         country = 'Other'
     
     # 提取省份（包含'省'或'自治区'的部分）
     province = None
     try:
-        province_match = re.search(r'[\u4e00-\u9fa5]{2,}(省|自治区)', location_str)
+        province_match = re.search(u'[\u4e00-\u9fa5]{2,}(省|自治区)', location_str)
         if province_match:
             province = province_match.group(0)
-    except:
+    except (UnicodeDecodeError, UnicodeEncodeError, Exception):
         pass
     
     # 提取城市（包含'市'的部分）
     city = None
     try:
-        city_match = re.search(r'[\u4e00-\u9fa5]{2,}市', location_str)
+        city_match = re.search(u'[\u4e00-\u9fa5]{2,}市', location_str)
         if city_match:
             city = city_match.group(0)
-    except:
+    except (UnicodeDecodeError, UnicodeEncodeError, Exception):
         pass
     
     return city, province, country
@@ -56,12 +66,12 @@ def generate_location_stats():
         # 连接数据库
         conn = sqlite3.connect('data.db')
         # 设置文本工厂来处理编码
-        conn.text_factory = lambda x: str(x, 'utf-8', 'ignore') if isinstance(x, bytes) else x
+        conn.text_factory = lambda x: x.decode('utf-8', 'ignore') if isinstance(x, bytes) else x
         cursor = conn.cursor()
         
-        # 获取所有活动的年份和位置信息，按时间排序
+        # 获取所有活动的详细信息，按时间排序
         cursor.execute("""
-            SELECT start_date_local, location_country 
+            SELECT start_date_local, location_country, type, name, run_id, distance, moving_time
             FROM activities 
             WHERE start_date_local IS NOT NULL AND location_country IS NOT NULL
             ORDER BY start_date_local
@@ -83,7 +93,10 @@ def generate_location_stats():
         # 记录城市和省份的关联关系
         city_province_map = {}
         
-        for start_date, location_country in results:
+        # 记录每个地点的首次运动详细信息
+        location_first_activity = {}
+        
+        for start_date, location_country, activity_type, activity_name, run_id, distance, moving_time in results:
             # 提取年份
             try:
                 year = str(start_date)[:4]  # 取前4位作为年份
@@ -106,18 +119,42 @@ def generate_location_stats():
                 if city and province:
                     city_province_map[city] = province
                 
-                # 检查是否为新增地点
+                # 检查是否为新增地点并记录首次运动信息
                 if country and country not in all_time_countries:
                     all_time_countries.add(country)
                     yearly_new_locations[year]['countries'].append(country)
+                    location_first_activity[country] = {
+                        'date': start_date,
+                        'type': activity_type or 'Unknown',
+                        'name': activity_name or 'Unnamed Activity',
+                        'run_id': run_id,
+                        'distance': distance or 0,
+                        'moving_time': moving_time or 0
+                    }
                 
                 if province and province not in all_time_provinces:
                     all_time_provinces.add(province)
                     yearly_new_locations[year]['provinces'].append(province)
+                    location_first_activity[province] = {
+                        'date': start_date,
+                        'type': activity_type or 'Unknown',
+                        'name': activity_name or 'Unnamed Activity',
+                        'run_id': run_id,
+                        'distance': distance or 0,
+                        'moving_time': moving_time or 0
+                    }
                 
                 if city and city not in all_time_cities:
                     all_time_cities.add(city)
                     yearly_new_locations[year]['cities'].append(city)
+                    location_first_activity[city] = {
+                        'date': start_date,
+                        'type': activity_type or 'Unknown',
+                        'name': activity_name or 'Unnamed Activity',
+                        'run_id': run_id,
+                        'distance': distance or 0,
+                        'moving_time': moving_time or 0
+                    }
                 
                 # 总体统计
                 if city:
@@ -137,18 +174,25 @@ def generate_location_stats():
             'provincesList': sorted(list(provinces)),
             'citiesList': sorted(list(cities)),
             'yearlyNewLocations': yearly_new_locations,
-            'cityProvinceMap': city_province_map
+            'cityProvinceMap': city_province_map,
+            'locationFirstActivity': location_first_activity
         }
         
         # 保存统计结果到JSON文件
-        with open('../src/static/location_stats.json', 'w', encoding='utf-8') as f:
+        import codecs
+        with codecs.open('../src/static/location_stats.json', 'w', encoding='utf-8') as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
         
         print("Location stats generated:")
         print("- {} years: {}".format(stats['years'], ', '.join(stats['yearsList'])))
-        print("- {} countries: {}".format(stats['countries'], ', '.join(stats['countriesList'])))
-        print("- {} provinces: {}".format(stats['provinces'], ', '.join(stats['provincesList'])))
-        print("- {} cities: {}".format(stats['cities'], ', '.join(stats['citiesList'])))
+        try:
+            print("- {} countries: {}".format(stats['countries'], ', '.join(stats['countriesList']).encode('utf-8')))
+            print("- {} provinces: {}".format(stats['provinces'], ', '.join(stats['provincesList']).encode('utf-8')))
+            print("- {} cities: {}".format(stats['cities'], ', '.join(stats['citiesList']).encode('utf-8')))
+        except UnicodeEncodeError:
+            print("- {} countries".format(stats['countries']))
+            print("- {} provinces".format(stats['provinces']))
+            print("- {} cities".format(stats['cities']))
         
         # 打印每年新增地点
         for year in sorted(yearly_new_locations.keys()):
@@ -162,7 +206,10 @@ def generate_location_stats():
                 new_items.extend(new_locs['cities'])
             
             if new_items:
-                print("- {}年新增: {}".format(year, ', '.join(new_items)))
+                try:
+                    print("- {}年新增: {}".format(year, ', '.join(new_items).encode('utf-8')))
+                except UnicodeEncodeError:
+                    print("- {}年新增: {} items".format(year, len(new_items)))
         
         return stats
         
