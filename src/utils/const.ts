@@ -44,7 +44,7 @@ const ROAD_LABEL_DISPLAY = true;
 const PRIVACY_MODE = false;
 // update for now 2024/11/17 the lights on default is false
 //set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
-const LIGHTS_ON =false;
+const LIGHTS_ON = true;
 //set to `true` if you want to show the 'Elevation' column
 const SHOW_ELEVATION_GAIN = true;
 // richer title for the activity types (like garmin style)
@@ -199,6 +199,7 @@ export const ROAD_TRIP_COLOR = 'rgb(156, 39, 176)'; // 更亮的紫色
 export const FLIGHT_COLOR = 'rgb(121, 85, 72)'; // 更深的棕色，在亮色背景上更明显
 export const PROVINCE_FILL_COLOR = '#A5D7E8'; // 更浅的蓝色，适合亮色地图
 export const COUNTRY_FILL_COLOR = '#D2E0FB'; // 更浅的紫色，适合亮色地图
+export const VISITED_CITY_FILL_COLOR = '#90EE90'; // 访问过的城市高亮颜色（浅绿色）
 export const KAYAKING_COLOR = 'rgb(244, 67, 54)'; // 更亮的红色
 export const SNOWBOARD_COLOR = 'rgb(76, 175, 80)'; // 更亮的绿色，替换原来的dark_vanilla
 export const TRAIL_RUN_COLOR = 'rgb(33, 150, 243)'; // 更亮的蓝色，替换原来的IKB

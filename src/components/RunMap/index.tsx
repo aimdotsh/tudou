@@ -10,6 +10,7 @@ import {
   MAPBOX_TOKEN,
   PROVINCE_FILL_COLOR,
   COUNTRY_FILL_COLOR,
+  VISITED_CITY_FILL_COLOR,
   USE_DASH_LINE,
   LINE_OPACITY,
   MAP_HEIGHT,
@@ -22,6 +23,7 @@ import RunMapButtons from './RunMapButtons';
 import styles from './style.module.css';
 import { FeatureCollection, LineString, Feature } from 'geojson';
 import { RPGeometry } from '@/static/run_countries';
+import locationStats from '@/static/location_stats.json';
 import './mapbox.css';
 import LightsControl from "@/components/RunMap/LightsControl";
 
@@ -166,6 +168,15 @@ const RunMap = ({
   filterProvinces.unshift('in', 'name');
   filterCountries.unshift('in', 'name');
 
+  // 创建访问过的城市和省份过滤器（仅在 Total 年份时显示）
+  const visitedCities = thisYear === 'Total' ? locationStats.citiesList : [];
+  const visitedProvinces = thisYear === 'Total' ? locationStats.provincesList : [];
+  
+  // 合并直辖市和省份进行高亮
+  const highlightAreas = [...visitedCities, ...visitedProvinces];
+  const filterHighlightAreas = highlightAreas.slice();
+  filterHighlightAreas.unshift('in', 'name');
+
   // Marker
   let startLon = 0, startLat = 0, endLon = 0, endLat = 0;
   if (isSingleRun) {
@@ -243,6 +254,18 @@ const RunMap = ({
           }}
           filter={filterProvinces}
         />
+        {/* 访问过的区域高亮层 - 仅在 Total 年份时显示（包括直辖市和省份） */}
+        {thisYear === 'Total' && highlightAreas.length > 0 && (
+          <Layer
+            id="visited-areas"
+            type="fill"
+            paint={{
+              'fill-color': VISITED_CITY_FILL_COLOR,
+              'fill-opacity': 0.4,
+            }}
+            filter={filterHighlightAreas}
+          />
+        )}
         <Layer
           id="countries"
           type="fill"
