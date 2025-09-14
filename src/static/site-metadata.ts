@@ -48,7 +48,7 @@ const data: ISiteMetadataResult = {
     },
     {
       name: 'About',
-      url: 'https://liups.com/about/',
+      url: 'https://liups.com/posts/workouts_page/',
     },
   ],
 };
