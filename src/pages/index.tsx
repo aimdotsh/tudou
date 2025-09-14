@@ -384,30 +384,22 @@ const Index = () => {
                       <div className="text-sm leading-relaxed" style={{color: '#20B2AA'}}>
                         {(() => {
                           const newLocs = locationStats.yearlyNewLocations[year];
-                          const formattedItems = [];
+                          
+                          // 收集所有新增地点信息
+                          const allNewLocations = [];
                           
                           // 处理新增国家
                           if (newLocs.countries && newLocs.countries.length > 0) {
                             newLocs.countries.forEach((country, index) => {
                               if (country !== 'Other') {
                                 const activityInfo = locationStats.locationFirstActivity?.[country];
-                                if (activityInfo) {
-                                  const distance = activityInfo.distance ? `${(activityInfo.distance / 1000).toFixed(1)}km` : '未知距离';
-                                  const duration = activityInfo.moving_time ? formatDuration(activityInfo.moving_time) : '未知耗时';
-                                  const locationElement = (
-                                    <div key={`country-${country}-${index}`} className="mb-1" style={{color: '#20B2AA'}}>
-                                      <span className="font-bold">{country}</span>
-                                      （首次 Workout： {activityInfo.type} {activityInfo.date?.slice(0, 10)} {activityInfo.name} {distance} {duration}）
-                                    </div>
-                                  );
-                                  formattedItems.push(locationElement);
-                                } else {
-                                  formattedItems.push(
-                                    <div key={`country-${country}-${index}`} className="mb-1" style={{color: '#20B2AA'}}>
-                                      <span className="font-bold">{country}</span>
-                                    </div>
-                                  );
-                                }
+                                allNewLocations.push({
+                                  name: country,
+                                  displayText: country,
+                                  activityInfo,
+                                  type: 'country',
+                                  key: `country-${country}-${index}`
+                                });
                               }
                             });
                           }
@@ -421,30 +413,20 @@ const Index = () => {
                             const matchedProvince = locationStats.cityProvinceMap[city];
                             const activityInfo = locationStats.locationFirstActivity?.[city];
                             
-                            let locationText;
+                            let displayText;
                             if (matchedProvince) {
-                              locationText = `${matchedProvince}-${city}`;
+                              displayText = `${matchedProvince}-${city}`;
                             } else {
-                              locationText = city;
+                              displayText = city;
                             }
                             
-                            if (activityInfo) {
-                              const distance = activityInfo.distance ? `${(activityInfo.distance / 1000).toFixed(1)}km` : '未知距离';
-                              const duration = activityInfo.moving_time ? formatDuration(activityInfo.moving_time) : '未知耗时';
-                              const locationElement = (
-                                <div key={`city-${city}-${index}`} className="mb-1" style={{color: '#20B2AA'}}>
-                                  <span className="font-bold">{locationText}</span>
-                                  （首次 Workout ： {activityInfo.type} {activityInfo.date?.slice(0, 10)} {activityInfo.name} {distance} {duration}）
-                                </div>
-                              );
-                              formattedItems.push(locationElement);
-                            } else {
-                              formattedItems.push(
-                                <div key={`city-${city}-${index}`} className="mb-1" style={{color: '#20B2AA'}}>
-                                  <span className="font-bold">{locationText}</span>
-                                </div>
-                              );
-                            }
+                            allNewLocations.push({
+                              name: city,
+                              displayText,
+                              activityInfo,
+                              type: 'city',
+                              key: `city-${city}-${index}`
+                            });
                           });
                           
                           // 添加单独的新增省份（没有对应城市的）
@@ -455,23 +437,40 @@ const Index = () => {
                             
                             if (!hasMatchingCity) {
                               const activityInfo = locationStats.locationFirstActivity?.[province];
-                              if (activityInfo) {
-                                const distance = activityInfo.distance ? `${(activityInfo.distance / 1000).toFixed(1)}km` : '未知距离';
-                                const duration = activityInfo.moving_time ? formatDuration(activityInfo.moving_time) : '未知耗时';
-                                const locationElement = (
-                                  <div key={`province-${province}-${index}`} className="mb-1" style={{color: '#20B2AA'}}>
-                                    <span className="font-bold">{province}</span>
-                                    （首次 Workout： {activityInfo.type} {activityInfo.date?.slice(0, 10)} {activityInfo.name} {distance} {duration}）
-                                  </div>
-                                );
-                                formattedItems.push(locationElement);
-                              } else {
-                                formattedItems.push(
-                                  <div key={`province-${province}-${index}`} className="mb-1" style={{color: '#20B2AA'}}>
-                                    <span className="font-bold">{province}</span>
-                                  </div>
-                                );
-                              }
+                              allNewLocations.push({
+                                name: province,
+                                displayText: province,
+                                activityInfo,
+                                type: 'province',
+                                key: `province-${province}-${index}`
+                              });
+                            }
+                          });
+                          
+                          // 按时间倒序排列（最新的在前）
+                          allNewLocations.sort((a, b) => {
+                            const dateA = a.activityInfo?.date || '0000-00-00';
+                            const dateB = b.activityInfo?.date || '0000-00-00';
+                            return dateB.localeCompare(dateA);
+                          });
+                          
+                          // 生成排序后的JSX元素
+                          const formattedItems = allNewLocations.map((location) => {
+                            if (location.activityInfo) {
+                              const distance = location.activityInfo.distance ? `${(location.activityInfo.distance / 1000).toFixed(1)}km` : '未知距离';
+                              const duration = location.activityInfo.moving_time ? formatDuration(location.activityInfo.moving_time) : '未知耗时';
+                              return (
+                                <div key={location.key} className="mb-1" style={{color: '#20B2AA'}}>
+                                  <span className="font-bold">{location.displayText}</span>
+                                  （首次 Workout： {location.activityInfo.type} {location.activityInfo.date?.slice(0, 10)} {location.activityInfo.name} {distance} {duration}）
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div key={location.key} className="mb-1" style={{color: '#20B2AA'}}>
+                                  <span className="font-bold">{location.displayText}</span>
+                                </div>
+                              );
                             }
                           });
                           
