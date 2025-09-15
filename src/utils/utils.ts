@@ -4,6 +4,7 @@ import { WebMercatorViewport } from 'viewport-mercator-project';
 import { chinaGeojson, RPGeometry } from '@/static/run_countries';
 import worldGeoJson from '@surbowl/world-geo-json-zh/world.zh.json';
 import { chinaCities } from '@/static/city';
+import siteMetadata from '@/static/site-metadata';
 import {
   MAIN_COLOR,
   MUNICIPALITY_CITIES_ARR,
@@ -49,9 +50,10 @@ interface Offset {
 }
 
 const getOffset = (): Offset => ({
-  // 直线距离偏移: 234.56 公里，偏移的方位角: 225° (西南方向)
-  lat: -1.49, // 纬度偏移（西南方向，约165.9公里）
-  lng: -1.49, // 经度偏移（西南方向，约165.9公里）
+  // 从 site-metadata 中读取偏移配置
+  // 直线距离偏移: ${siteMetadata.mapOffset.distance} 公里，偏移的方位角: ${siteMetadata.mapOffset.bearing}° 
+  lat: siteMetadata.mapOffset.lat, // 纬度偏移
+  lng: siteMetadata.mapOffset.lng, // 经度偏移
 });
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);

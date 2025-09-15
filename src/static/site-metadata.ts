@@ -8,6 +8,12 @@ interface ISiteMetadataResult {
     name: string;
     url: string;
   }[];
+  mapOffset: {
+    distance: number; // 偏移距离（公里）
+    bearing: number;  // 偏移方位角（度）
+    lat: number;      // 纬度偏移
+    lng: number;      // 经度偏移
+  };
 }
 
 const getBasePath = () => {
@@ -51,6 +57,12 @@ const data: ISiteMetadataResult = {
       url: 'https://liups.com/posts/workouts_page/',
     },
   ],
+  mapOffset: {
+    distance: 234.56,  // 偏移距离: 234.56 公里
+    bearing: 225,      // 偏移方位角: 225° (西南方向)
+    lat: -1.49,        // 纬度偏移（西南方向）
+    lng: -1.49,        // 经度偏移（西南方向）
+  },
 };
 
 export default data;
