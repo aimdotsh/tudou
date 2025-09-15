@@ -10,9 +10,7 @@ interface ISiteMetadataResult {
   }[];
   mapOffset: {
     distance: number; // 偏移距离（公里）
-    bearing: number;  // 偏移方位角（度）
-    lat: number;      // 纬度偏移
-    lng: number;      // 经度偏移
+    bearing: number;  // 偏移方位角（度，0°=正北，90°=正东，180°=正南，270°=正西）
   };
 }
 
@@ -58,10 +56,8 @@ const data: ISiteMetadataResult = {
     },
   ],
   mapOffset: {
-    distance: 234.56,  // 偏移距离: 234.56 公里
-    bearing: 225,      // 偏移方位角: 225° (西南方向)
-    lat: -1.49,        // 纬度偏移（西南方向）
-    lng: -1.49,        // 经度偏移（西南方向）
+    distance: 234.56,   // 偏移距离（公里）
+    bearing: 225,      // 偏移方位角（度，0°=正北，90°=正东，180°=正南，270°=正西）
   },
 };
 

@@ -49,12 +49,27 @@ interface Offset {
   lng: number;
 }
 
-const getOffset = (): Offset => ({
-  // 从 site-metadata 中读取偏移配置
-  // 直线距离偏移: ${siteMetadata.mapOffset.distance} 公里，偏移的方位角: ${siteMetadata.mapOffset.bearing}° 
-  lat: siteMetadata.mapOffset.lat, // 纬度偏移
-  lng: siteMetadata.mapOffset.lng, // 经度偏移
-});
+const getOffset = (): Offset => {
+  const { distance, bearing } = siteMetadata.mapOffset;
+  
+  // 将方位角转换为弧度
+  const bearingRad = (bearing * Math.PI) / 180;
+  
+  // 计算南北和东西方向的距离分量
+  const northDistance = distance * Math.cos(bearingRad); // 正值向北，负值向南
+  const eastDistance = distance * Math.sin(bearingRad);  // 正值向东，负值向西
+  
+  // 转换为度数偏移
+  // 1度纬度 ≈ 111 公里
+  // 1度经度 ≈ 111 * cos(纬度) 公里，在中国大陆约为 89 公里
+  const latOffset = northDistance / 111;
+  const lngOffset = eastDistance / 89;
+  
+  return {
+    lat: latOffset,
+    lng: lngOffset,
+  };
+};
 const titleForShow = (run: Activity): string => {
   const date = run.start_date_local.slice(0, 11);
   const distance = (run.distance / 1000.0).toFixed(2);
