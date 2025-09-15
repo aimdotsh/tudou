@@ -7,12 +7,59 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 定义偏移量（与 utils.ts 中的 getOffset 函数保持一致）
-const OFFSET = {
-  // 直线距离偏移: 456.78 公里，偏移的方位角: 114.45° (东南方向)
-  lat: -1.642, // 纬度偏移
-  lng: 3.762,  // 经度偏移
+// 默认偏移配置
+const DEFAULT_OFFSET_CONFIG = {
+  distance: 456.78,  // 直线距离偏移: 456.78 公里
+  bearing: 114.45    // 偏移的方位角: 114.45° (东南方向)
 };
+
+// 尝试读取 site-metadata 配置
+let distance = DEFAULT_OFFSET_CONFIG.distance;
+let bearing = DEFAULT_OFFSET_CONFIG.bearing;
+
+try {
+  const siteMetadataPath = path.join(__dirname, '../src/static/site-metadata.ts');
+  const siteMetadataContent = fs.readFileSync(siteMetadataPath, 'utf8');
+
+  // 提取 mapOffset 配置（简单的正则匹配）
+  const distanceMatch = siteMetadataContent.match(/distance:\s*([0-9.]+)/);
+  const bearingMatch = siteMetadataContent.match(/bearing:\s*([0-9.]+)/);
+
+  if (distanceMatch && bearingMatch) {
+    distance = parseFloat(distanceMatch[1]);
+    bearing = parseFloat(bearingMatch[1]);
+    console.log('成功从 site-metadata.ts 读取偏移配置');
+  } else {
+    console.warn('无法解析 site-metadata.ts 中的偏移配置，使用默认值');
+  }
+} catch (error) {
+  console.warn('读取 site-metadata.ts 失败，使用默认偏移配置:', error.message);
+}
+
+// 根据距离和方位角计算偏移量（与 utils.ts 中的 getOffset 函数逻辑一致）
+function calculateOffset(distance, bearing) {
+  // 将方位角转换为弧度
+  const bearingRad = (bearing * Math.PI) / 180;
+  
+  // 计算南北和东西方向的距离分量
+  const northDistance = distance * Math.cos(bearingRad); // 正值向北，负值向南
+  const eastDistance = distance * Math.sin(bearingRad);  // 正值向东，负值向西
+  
+  // 转换为度数偏移
+  // 1度纬度 ≈ 111 公里
+  // 1度经度 ≈ 111 * cos(纬度) 公里，在中国大陆约为 89 公里
+  const latOffset = northDistance / 111;
+  const lngOffset = eastDistance / 89;
+  
+  return {
+    lat: latOffset,
+    lng: lngOffset,
+  };
+}
+
+const OFFSET = calculateOffset(distance, bearing);
+console.log(`使用偏移配置: 距离=${distance}km, 方位角=${bearing}°`);
+console.log(`计算得到偏移量: lat=${OFFSET.lat.toFixed(6)}, lng=${OFFSET.lng.toFixed(6)}`);
 
 // 输入和输出文件路径
 const INPUT_FILE = path.join(__dirname, '../src/static/activities.json');
