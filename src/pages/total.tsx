@@ -19,9 +19,42 @@ import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat,luckSta
 import { loadSvgComponent } from '@/utils/svgUtils';
 import locationStats from '@/static/location_stats.json';
 
+// 每日一言显示组件
+const DailyQuoteCard: React.FC<{ 
+  date: string, 
+  dailyQuotes: {[key: string]: {text: string, author: string}},
+  styles: any 
+}> = ({ date, dailyQuotes, styles }) => {
+  // 添加调试信息
+  console.log('DailyQuoteCard - date:', date);
+  console.log('DailyQuoteCard - dailyQuotes:', dailyQuotes);
+  console.log('DailyQuoteCard - quote for date:', dailyQuotes[date]);
+  
+  return (
+    <div className={styles.dateCard}>
+      <div className={styles.dateText}>{date}</div>
+      <div className={styles.descriptionText}>今日没有运动，跟你分享每日一言养养眼：</div>
+      <div className={styles.poemText}>
+        {dailyQuotes[date] ? (
+          <>
+            "{dailyQuotes[date].text}"
+            {dailyQuotes[date].author && (
+              <div className={styles.sourceText}>—— {dailyQuotes[date].author}</div>
+            )}
+          </>
+        ) : (
+          '加载中...'
+        )}
+      </div>
+    </div>
+  );
+};
+
 // 自定义错误边界组件
 class ErrorBoundary extends Component<{ 
-  fallback: ReactNode,
+  date: string,
+  dailyQuotes: {[key: string]: {text: string, author: string}},
+  styles: any,
   children: ReactNode 
 }, { hasError: boolean }> {
   state = { hasError: false };
@@ -37,7 +70,7 @@ class ErrorBoundary extends Component<{
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback;
+      return <DailyQuoteCard date={this.props.date} dailyQuotes={this.props.dailyQuotes} styles={this.props.styles} />;
     }
     return this.props.children;
   }
@@ -264,7 +297,60 @@ const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('all');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
-  
+  const [dailyQuotes, setDailyQuotes] = useState<{[key: string]: {text: string, author: string}}>({});
+
+  // 获取指定日期的每日一言
+  const fetchDailyQuoteForDate = async (dateStr: string) => {
+    console.log('fetchDailyQuoteForDate called for:', dateStr);
+    const cacheKey = `dailyQuote_${dateStr}`;
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (cached) {
+      try {
+        const quote = JSON.parse(cached);
+        console.log('Found cached quote for', dateStr, ':', quote);
+        setDailyQuotes(prev => ({ ...prev, [dateStr]: quote }));
+        return;
+      } catch (e) {
+        localStorage.removeItem(cacheKey);
+      }
+    }
+    
+    try {
+      console.log('Fetching new quote for', dateStr);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const response = await fetch('https://v1.hitokoto.cn/?c=d&c=i&c=k');
+      const data = await response.json();
+      console.log('API response for', dateStr, ':', data);
+      const quote = { text: data.hitokoto || "今天没有运动", author: data.from || "佚名" };
+      
+      localStorage.setItem(cacheKey, JSON.stringify(quote));
+      console.log('Setting quote for', dateStr, ':', quote);
+      setDailyQuotes(prev => {
+        const newState = { ...prev, [dateStr]: quote };
+        console.log('New dailyQuotes state:', newState);
+        return newState;
+      });
+      
+      // 清理7天前的缓存
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const cutoffKey = `dailyQuote_${sevenDaysAgo.toISOString().split('T')[0]}`;
+      
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('dailyQuote_') && key < cutoffKey) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error('获取每日一言失败:', error);
+      setDailyQuotes(prev => ({ 
+        ...prev, 
+        [dateStr]: { text: '今天没有运动', author: '' }
+      }));
+    }
+  };
+
   // 使用自定义hook获取halfmarathon文件列表
   const { files: halfmarathonFiles, loading: halfmarathonLoading } = useHalfmarathonFiles();
   const { files: luckFiles, loading: luckLoading } = useLuckFiles();
@@ -284,6 +370,16 @@ const Total: React.FC = () => {
       setLuckSvgs(svgs);
     }
   }, [luckFiles]);
+
+  // 在组件加载时获取最近几天的每日一言
+  useEffect(() => {
+    console.log('useEffect triggered for daily quotes');
+    const dates = [today, yesterday, dayBeforeYesterday, threeDaysAgo];
+    console.log('Dates to fetch quotes for:', dates);
+    dates.forEach(date => {
+      fetchDailyQuoteForDate(date);
+    });
+  }, []);
 
   const toggleFlip = (id: string) => {
     setFlippedCards(prev => ({
@@ -708,7 +804,7 @@ const Total: React.FC = () => {
 
         {/* 添加recent SVG图表 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3><Link to="./recent" className="hover:underline">Recent Workouts </Link> 
+          <h3><Link to="../daily" className="hover:underline">Recent Workouts </Link> 
           <p> <span className={styles.streakDates}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
                       {stats.streakStartDate && stats.streakEndDate && (
               <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#5A5A5A' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
@@ -721,13 +817,9 @@ const Total: React.FC = () => {
           <div className={styles.gridContainer}>
             {/* 今天 */}
             <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{today}</div>
-                  <div className={styles.poemText}>"今日事繁且搁置，明朝振衣再登山"</div>
-                  <div className={styles.sourceText}>《明日歌》新解</div>
-                </div>
-              }
+              date={today}
+              dailyQuotes={dailyQuotes}
+              styles={styles}
             >
               <Suspense fallback={
                 <div className={styles.loadingCard}>
@@ -742,13 +834,9 @@ const Total: React.FC = () => {
 
             {/* 昨天 */}
             <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{yesterday}</div>
-                  <div className={styles.poemText}>"昨日不可追，来日犹可期"</div>
-                  <div className={styles.sourceText}>化用陶渊明《归去来兮辞》</div>
-                </div>
-              }
+              date={yesterday}
+              dailyQuotes={dailyQuotes}
+              styles={styles}
             >
               <Suspense fallback={
                 <div className={styles.loadingCard}>
@@ -763,13 +851,9 @@ const Total: React.FC = () => {
 
             {/* 前天 */}
             <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{dayBeforeYesterday}</div>
-                  <div className={styles.poemText}>"世事如舟暂搁浅，重整征帆再启程"</div>
-                  <div className={styles.sourceText}>化用李白《行路难》</div>
-                </div>
-              }
+              date={dayBeforeYesterday}
+              dailyQuotes={dailyQuotes}
+              styles={styles}
             >
               <Suspense fallback={
                 <div className={styles.loadingCard}>
@@ -784,13 +868,9 @@ const Total: React.FC = () => {
 
             {/* 大前天 */}
             <ErrorBoundary
-              fallback={
-                <div className={styles.dateCard}>
-                  <div className={styles.dateText}>{threeDaysAgo}</div>
-                  <div className={styles.poemText}>"三日未行何足虑，长风破浪会有时"</div>
-                  <div className={styles.sourceText}>化用李白《行路难》</div>
-                </div>
-              }
+              date={threeDaysAgo}
+              dailyQuotes={dailyQuotes}
+              styles={styles}
             >
               <Suspense fallback={
                 <div className={styles.loadingCard}>

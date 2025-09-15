@@ -112,6 +112,66 @@ const Total: React.FC = () => {
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [dailyQuotes, setDailyQuotes] = useState<Record<string, {text: string, author: string}>>({});
+
+  // 为特定日期获取每日一言
+  const fetchQuoteForDate = async (date: string) => {
+    const storageKey = `dailyQuote_${date}`;
+    
+    // 先检查本地存储中是否有该日期的每日一言
+    const cachedQuote = localStorage.getItem(storageKey);
+    if (cachedQuote) {
+      try {
+        const parsedQuote = JSON.parse(cachedQuote);
+        return parsedQuote;
+      } catch (error) {
+        console.error('解析缓存的每日一言失败:', error);
+      }
+    }
+    
+    // 如果没有缓存，则获取新的每日一言
+    try {
+      const response = await fetch('https://v1.hitokoto.cn/?c=d&c=i&c=k');
+      const data = await response.json();
+      const quote = {
+        text: data.hitokoto || "今天没有运动",
+        author: data.from || "蓝皮书"
+      };
+      
+      // 保存到本地存储
+      localStorage.setItem(storageKey, JSON.stringify(quote));
+      return quote;
+    } catch (error) {
+      console.error('获取每日一言失败:', error);
+      return {
+        text: "今天没有运动",
+        author: "蓝皮书"
+      };
+    }
+  };
+
+  // 获取当前页面所有日期的每日一言
+  useEffect(() => {
+    const loadQuotesForCurrentPage = async () => {
+      const quotes: Record<string, {text: string, author: string}> = {};
+      
+      for (const { date } of currentItems) {
+        if (!dailyQuotes[date]) {
+          const quote = await fetchQuoteForDate(date);
+          quotes[date] = quote;
+          // 添加小延迟避免API请求过于频繁
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+      
+      if (Object.keys(quotes).length > 0) {
+        setDailyQuotes(prev => ({ ...prev, ...quotes }));
+      }
+    };
+
+    loadQuotesForCurrentPage();
+  }, [currentPage]); // 当页面变化时重新加载
+
   const itemsPerPage = 12;
   const totalPages = Math.ceil(RecentSvgs.length / itemsPerPage);
   const currentItems = RecentSvgs.slice(
@@ -261,8 +321,9 @@ const Total: React.FC = () => {
                 fallback={
                   <div className={styles.dateCard}>
                     <div className={styles.dateText}>{date}</div>
-                    <div className={styles.poemText}>"今天没有运动"</div>
-                    <div className={styles.sourceText}>--蓝皮书</div>
+                    <div className={styles.descriptionText}>今日没有运动，跟你分享每日一言养养眼：</div>
+                    <div className={styles.poemText}>"{dailyQuotes[date]?.text || '加载中...'}"</div>
+                    <div className={styles.sourceText}>--{dailyQuotes[date]?.author || '蓝皮书'}</div>
                   </div>
                 }
               >
