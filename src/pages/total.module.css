@@ -10,10 +10,12 @@
   --text-light: #FFFFFF;      /* 白色 */
   --text-muted: #8a9ba8;      /* 浅灰色 */
   
+  
   /* 背景色 */
   --bg-primary: #FAF9F5;      /* 浅色背景 */
   --bg-secondary: #FAF9F5;    /* 白色背景 */
   --bg-card: #FAF9F5;         /* 卡片白色背景 */
+  
   
   /* 边框颜色 */
   --border-light: #e1f5fe;    /* 浅色边框 */
@@ -31,6 +33,7 @@
   box-sizing: border-box;
 }
 
+
 .activityList {
   background: #FAF9F5;
   color: var(--text-primary);
@@ -42,6 +45,7 @@
   gap: 15px;
   padding: 20px;
   background: #FAF9F5;
+
 }
 
 .stickyHeader {
@@ -56,18 +60,18 @@
   justify-content: space-between;
   padding: 0;
   transition: all 0.3s ease;
-  overflow-x: hidden;
+  overflow-x: hidden; /* 防止水平溢出 */
 }
 
 @media (max-width: 768px) {
   .stickyHeader {
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* 允许在需要时换行 */
   }
 }
 
 @media (max-width: 480px) {
   .stickyHeader {
-    flex-direction: column;
+    flex-direction: column; /* 在非常小的屏幕上改为垂直布局 */
     align-items: stretch;
   }
 }
@@ -81,7 +85,7 @@
 
 .selectContainer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* 改为靠右对齐 */
   padding: 0.4rem 2rem;
   background: #FAF9F5;
   transition: all 0.3s ease;
@@ -95,114 +99,507 @@
   }
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  text-align: center;
-  margin-bottom: 1rem;
+@media (max-width: 480px) {
+  .selectContainer {
+    padding: 0.25rem 1rem;
+    width: 100%;
+    justify-content: center; /* 在小屏幕上居中显示 */
+  }
 }
 
-.typeSelector {
-  padding: 0.5rem 1rem;
-  border: 2px solid var(--primary-color);
-  border-radius: 8px;
-  background: var(--bg-card);
-  color: var(--text-primary);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* 当页面向上滚动时，调整select容器样式 */
+.stickyHeader.scrolled .selectContainer {
+  padding: 0.5rem 0;
+  border-top: none;
+  min-width: 150px;
 }
 
-.typeSelector:hover {
-  background: var(--primary-color);
-  color: var(--text-light);
-}
-
-.charts {
+.header {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  background: #FAF9F5;
+  color: var(--text-primary);
+  padding: 1rem 0;
 }
 
-.chartContainer {
-  background: var(--bg-card);
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 6px 20px var(--shadow-light);
-  border: 1px solid var(--border-light);
-}
-
-.chartContainer h3 {
+.title {
+  font-size: 1.8rem;
   color: var(--primary-color);
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(32, 178, 170, 0.1);
+}
+
+.select {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--secondary-color), #ffb347);
+  color: var(--text-light);
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
   font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(249, 146, 6, 0.3);
+  display: block;
+  margin: 0; /* 移除自动居中的margin */
+  min-width: 120px;
 }
 
-.fullWidth {
-  width: 100%;
+@media (max-width: 768px) {
+  .select {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
 }
 
-.statsGrid {
+@media (max-width: 480px) {
+  .select {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    min-width: 90px;
+    width: 100%; /* 在小屏幕上占满容器宽度 */
+  }
+}
+
+@media (max-width: 360px) {
+  .select {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+  
+  .title {
+    font-size: 1.1rem;
+  }
+  
+  .statCard h4 {
+    font-size: 0.75rem;
+  }
+  
+  .statCard p {
+    font-size: 0.9rem;
+  }
+  
+  .chartContainer h3 {
+    font-size: 0.9rem;
+  }
+  
+  .chartContainer p {
+    font-size: 0.8rem;
+  }
+}
+
+.select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 146, 6, 0.4);
+  background: linear-gradient(135deg, #e8830a, #ff9f33);
+}
+
+.footer {
+  font-size: 0.9rem;
+  color: #7a8a99;
+  font-weight: 400;
+  text-align: center;
+}
+
+.footer a {
+  color: var(--primary-color) !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.footer a:hover {
+  color: var(--secondary-color) !important;
+  border-bottom-color: var(--secondary-color);
+  transform: translateY(-1px);
+}
+
+@media (min-width: 640px) {
+  .header {
+    margin-bottom: 2.5rem;
+    flex-wrap: nowrap;
+  }
+  .title {
+    font-size: 2rem;
+    margin: 0;
+  }
+  .tohome,
+  .select {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+  }
+  .title {
+    font-size: 1.2rem;
+    order: -1;
+    flex-basis: 100%;
+  }
+  .tohome,
+  .select {
+    padding: 10px 16px;
+    font-size: 0.75rem;
+  }
+}
+
+.luckDateRange {
+  font-size: 0.5em;
+  color: var(--text-muted);
+  margin-left: 0.5em;
+  font-weight: normal;
+}
+
+/* 统计卡片样式 */
+.statsCards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  padding: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .statsCards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsCards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
 }
 
 .statCard {
   background: var(--bg-card);
   border-radius: 10px;
-  padding: 1rem;
+  padding: 1.5rem;
   text-align: center;
+  box-shadow: 0 6px 20px var(--shadow-light);
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+  border: 2px solid var(--border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--secondary-color));
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px var(--shadow-medium);
+  border-color: var(--primary-color);
+}
+
+.statCard h4 {
+  margin: 0 0 0.75rem;
+  color: var(--secondary-color);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.statCard p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+@media (max-width: 480px) {
+  .statCard {
+    padding: 1rem;
+  }
+  .statCard h4 {
+    font-size: 0.8rem;
+  }
+  .statCard p {
+    font-size: 1rem;
+  }
+}
+
+/* 图表布局 */
+.charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem; /* 进一步减小网格间距 */
+}
+
+.chartContainer {
+  background: var(--bg-card);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 8px 25px var(--shadow-light);
   border: 2px solid var(--border-light);
   transition: all 0.3s ease;
 }
 
-.statCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--shadow-medium);
+.chartContainer:hover {
+  box-shadow: 0 12px 35px var(--shadow-medium);
+  border-color: var(--accent-color);
+}
+
+.chartContainer h3 {
+  margin-top: 0;
+  margin-bottom: 1rem; /* 减小标题下边距 */
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.chartContainer p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* 响应式布局 */
+@media (min-width: 640px) {
+  .chartContainer {
+    padding: 2rem;
+  }
+  .chartContainer h3 {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .charts {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem; /* 进一步减小网格间距 */
+  }
+  
+  .fullWidth {
+    grid-column: 1 / -1;
+  }
+  
+  .chartContainer {
+    padding: 1.5rem;
+  }
+  .chartContainer h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem; /* 减小标题下边距 */
+  }
+}
+
+@media (min-width: 1024px) {
+  .charts {
+    grid-template-columns: 33% 63%;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .charts {
+    gap: 1.5rem;
+  }
+  .chartContainer {
+    padding: 1rem;
+  }
+  .chartContainer h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .chartContainer p {
+    font-size: 0.85rem;
+  }
+}
+
+/* 热力图样式 */
+.heatmapContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg-card);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.heatmap {
+  min-width: 100%;
+}
+
+.heatmapYear {
+  padding: 0 0.5rem;
+}
+
+.heatmapHeader {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+/* 强制覆盖所有热图年份样式 */
+.heatmap .heatmap-year, 
+.heatmap .heatmapYear,
+.heatmap-header .heatmap-year,
+.heatmap-header .heatmapYear,
+.heatmap-body .heatmap-year,
+.heatmap-body .heatmapYear {
+  width: 3rem;
+  flex-shrink: 0;
+  color: var(--primary-color);
+  font-size: 0.9rem !important;
+  font-weight: 600;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .heatmap .heatmap-year,
+  .heatmap .heatmapYear,
+  .heatmap-header .heatmap-year,
+  .heatmap-header .heatmapYear,
+  .heatmap-body .heatmap-year,
+  .heatmap-body .heatmapYear {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap .heatmap-year,
+  .heatmap .heatmapYear,
+  .heatmap-header .heatmap-year,
+  .heatmap-header .heatmapYear,
+  .heatmap-body .heatmap-year,
+  .heatmap-body .heatmapYear {
+    font-size: 0.7rem !important;
+    width: 2.5rem;
+  }
+}
+
+.heatmapMonths {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.25rem;
+  flex-grow: 1;
+}
+
+.heatmapMonth {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.heatmapBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.heatmapRow {
+  display: flex;
+  align-items: center;
+}
+
+.heatmapCells {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.25rem;
+  flex-grow: 1;
+}
+
+.heatmapCell {
+  aspect-ratio: 1;
+  min-width: 0.75rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-light);
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.2), rgba(137, 207, 240, 0.2));
+}
+
+.heatmapCell:hover {
+  transform: scale(1.15);
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.4), rgba(137, 207, 240, 0.4));
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
   border-color: var(--primary-color);
 }
 
-.statValue {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
+@media (max-width: 480px) {
+  .heatmapYear {
+    width: 2.5rem;
+  }
+  .heatmapMonth {
+    font-size: 0.6rem;
+  }
 }
 
-.statLabel {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+/* 图表组件样式 */
+:global(.recharts-tooltip-wrapper) {
+  outline: none;
 }
 
+:global(.recharts-default-tooltip) {
+  background-color: var(--bg-card) !important;
+  border: 2px solid var(--primary-color) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 1rem !important;
+  box-shadow: 0 4px 15px var(--shadow-light) !important;
+}
+
+:global(.recharts-tooltip-label) {
+  color: var(--primary-color) !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: 600 !important;
+}
+
+:global(.recharts-tooltip-item) {
+  color: var(--secondary-color) !important;
+  font-weight: 500 !important;
+}
+
+:global(.recharts-legend-item) {
+  color: var(--secondary-color) !important;
+}
+
+:global(.recharts-cartesian-grid-horizontal line),
+:global(.recharts-cartesian-grid-vertical line) {
+  stroke: var(--border-light) !important;
+}
+
+/* 容器样式 */
 .gridContainer {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-@media (max-width: 1200px) {
-  .gridContainer {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 900px) {
   .gridContainer {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .gridContainer {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
   }
 }
 
@@ -213,18 +610,13 @@
   }
 }
 
-/* 卡片通用样式 - 7:9 比例，高度300px */
+/* 卡片通用样式 */
 .cardBase {
   border-radius: 10px;
-  width: 100%;
-  height: 300px;
-  min-height: 300px;
-  max-height: 300px;
-  aspect-ratio: 7 / 9;
+  min-height: 140px;
   transition: all 0.3s ease;
   overflow: hidden;
   box-shadow: 0 4px 10px var(--shadow-light);
-  box-sizing: border-box;
 }
 
 .cardBase:hover {
@@ -232,55 +624,22 @@
   box-shadow: 0 8px 25px var(--shadow-medium);
 }
 
-/* 卡片翻转容器 - 7:9 比例，高度300px */
-.cardFlipContainer {
-  perspective: 1000px;
-  width: 100%;
-  height: 300px;
-  min-height: 300px;
-  max-height: 300px;
-  aspect-ratio: 7 / 9;
-  position: relative;
-  overflow: visible;
-  border-radius: 10px;
+/* 日期卡片样式 */
+.dateCard {
+  composes: cardBase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  border: 2px solid var(--accent-color);
+  background: linear-gradient(135deg, rgba(137, 207, 240, 0.1), rgba(32, 178, 170, 0.05));
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
-.cardFront,
-.cardBack {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 300px;
-  min-height: 300px;
-  max-height: 300px;
-  aspect-ratio: 7 / 9;
-  backface-visibility: hidden;
-  transition: transform 0.6s ease-in-out;
-  border-radius: 10px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.cardFront {
-  transform: rotateY(0deg);
-  z-index: 2;
-}
-
-.cardBack {
-  transform: rotateY(180deg);
-  z-index: 1;
-}
-
-.cardFlipContainer.flipped .cardFront {
-  transform: rotateY(-180deg);
-}
-
-.cardFlipContainer.flipped .cardBack {
-  transform: rotateY(0deg);
-}
-
-/* SVG卡片样式 - 固定尺寸 */
+/* SVG卡片样式 */
 .svgCard {
   composes: cardBase;
   border: 2px solid var(--primary-color);
@@ -289,7 +648,8 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  position: relative;
+  border-radius: 10px;
+  overflow: hidden; /* This will clip the SVG's corners */
 }
 
 .svgCard svg {
@@ -297,42 +657,6 @@
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-/* 地图卡片样式 - 固定尺寸 */
-.mapCard {
-  composes: cardBase;
-  border: 2px solid var(--secondary-color);
-  background: var(--bg-card);
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.cardMapContainer {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-/* 日期卡片样式 - 固定尺寸 */
-.dateCard {
-  composes: cardBase;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 1rem;
-  border: 2px solid var(--accent-color);
-  background: linear-gradient(135deg, rgba(137, 207, 240, 0.1), rgba(32, 178, 170, 0.05));
-  color: var(--text-primary);
-  font-weight: 600;
 }
 
 /* 加载状态样式 */
@@ -346,68 +670,6 @@
   background: var(--bg-card);
 }
 
-/* 可点击的卡片样式 */
-.clickable {
-  cursor: pointer;
-  position: relative;
-}
-
-.clickable:hover {
-  transform: translateY(-2px) scale(1.02);
-}
-
-/* 翻转提示 */
-.flipHint {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background: rgba(32, 178, 170, 0.9);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.6rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 10;
-}
-
-.clickable:hover .flipHint {
-  opacity: 1;
-}
-
-.backHint {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background: rgba(249, 146, 6, 0.9);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.6rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 10;
-}
-
-.mapCard:hover .backHint {
-  opacity: 1;
-}
-
-/* 无活动地图样式 */
-.noActivityMap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  color: var(--text-muted);
-}
-
-.noActivityText {
-  font-size: 0.8rem;
-  text-align: center;
-}
-
 /* 文字样式 */
 .dateText {
   margin-bottom: 0.5rem;
@@ -415,15 +677,6 @@
   font-size: 0.9rem;
   color: var(--secondary-color);
   font-weight: 600;
-}
-
-.descriptionText {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-  opacity: 0.8;
-  font-weight: 400;
-  line-height: 1.3;
 }
 
 .poemText {
@@ -442,9 +695,14 @@
   text-align: right;
 }
 
-.streakDates {
-  font-size: 0.7em;
-  color: #999;
+/* 描述文字样式 */
+.descriptionText {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+  font-weight: 400;
+  line-height: 1.3;
 }
 
 /* 照片查看器样式 */
@@ -488,85 +746,24 @@
   width: 32px;
   height: 32px;
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  color: white;
   border: none;
   border-radius: 50%;
-  color: white;
+  font-size: 1.2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(32, 178, 170, 0.4);
+  transition: all 0.3s ease;
 }
 
 .closeButton:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #1a9b94, #7bc4e8);
 }
 
-/* 页脚样式 */
-.footer {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  border-top: 1px solid var(--border-light);
-  margin-top: 3rem;
-}
-
-.footer a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer a:hover {
-  color: var(--secondary-color);
-}
-
-/* 响应式调整 */
-@media (max-width: 640px) {
-  .dateText {
-    font-size: 0.8rem;
-  }
-  
-  .poemText {
-    font-size: 0.7rem;
-  }
-  
-  .descriptionText {
-    font-size: 0.65rem;
-  }
-  
-  .sourceText {
-    font-size: 0.6rem;
-  }
-  
-  .cardBase {
-    height: 250px;
-    min-height: 250px;
-    max-height: 250px;
-    aspect-ratio: 7 / 9;
-  }
-  
-  .cardFlipContainer {
-    height: 250px;
-    min-height: 250px;
-    max-height: 250px;
-    aspect-ratio: 7 / 9;
-  }
-  
-  .cardFront,
-  .cardBack {
-    height: 250px;
-    min-height: 250px;
-    max-height: 250px;
-    aspect-ratio: 7 / 9;
-  }
-}
-
+/* 响应式文字 */
 @media (min-width: 640px) {
   .dateText {
     font-size: 1rem;
@@ -576,3 +773,199 @@
     font-size: 0.9rem;
   }
 }
+
+/* 翻转卡片容器 */
+.flipCard {
+  perspective: 1000px;
+  aspect-ratio: 10 / 13;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* 翻转卡片内部 */
+.flipCardInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  border-radius: 10px;
+  border: 2px solid var(--accent-color);
+  aspect-ratio: 10 / 13;
+  box-shadow: 0 6px 20px var(--shadow-light);
+  background: linear-gradient(135deg, rgba(137, 207, 240, 0.1), rgba(32, 178, 170, 0.05));
+}
+
+/* 翻转状态 */
+.flipCard.flipped .flipCardInner {
+  transform: rotateY(180deg);
+}
+
+/* 卡片正反面共用样式 */
+.flipCardFront,
+.flipCardBack {
+  aspect-ratio: 10 / 13;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+  padding: 0;
+}
+
+/* 卡片正面样式 */
+.flipCardFront {
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.05), rgba(137, 207, 240, 0.1));
+  width: 100%;
+  height: 100%;
+}
+
+/* 卡片背面样式 */
+.flipCardBack {
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.05), rgba(137, 207, 240, 0.1));
+  transform: rotateY(180deg);
+}
+
+/* 卡片内容样式 */
+.flipCardFront svg,
+.flipCardBack img {
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+  border-radius: 10px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 标题样式 */
+.chartContainer {
+  /* Spacing is now handled by the 'gap' property on the parent '.charts' grid container */
+}
+
+.chartContainer h3 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* 点击提示文本样式 */
+.clickHint {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  margin-left: 0.5em;
+  font-weight: normal;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* 空数据容器样式 */
+.emptyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-style: italic;
+  border: 2px dashed var(--border-light);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+
+/* 加载容器样式 */
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--primary-color);
+  background: var(--bg-card);
+  border-radius: 10px;
+}
+
+/* 强制覆盖所有热图年份样式 */
+.heatmap-year,
+.heatmapYear,
+[class*='heatmap'] [class*='year'],
+[class*='heatmap'] [class*='Year'] {
+  width: 3rem !important;
+  flex-shrink: 0 !important;
+  color: var(--primary-color) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.7rem !important;
+    width: 2.5rem !important;
+  }
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.7rem !important;
+    width: 2.5rem !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.7rem !important;
+    width: 2.5rem !important;
+  }
+  
+  [class*='Year'] {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap-year,
+  .heatmapYear,
+  [class*='heatmap'] [class*='year'],
+  [class*='heatmap'] [class*='Year'] {
+    font-size: 0.7rem !important;
+    width: 2.5rem !important;
+  }
+}
+
