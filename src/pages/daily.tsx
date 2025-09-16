@@ -12,11 +12,12 @@ import {
 } from 'recharts';
 import activities from '@/static/activities_export';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
-import { formatPace } from '@/utils/utils';
+import { formatPace, geoJsonForRuns } from '@/utils/utils';
 import styles from './total.module.css';
 import Nav from '@/components/Nav';
 import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
+import RunMap from '@/components/RunMap';
 
 // 自定义错误边界组件
 class ErrorBoundary extends Component<{ 
@@ -107,12 +108,111 @@ interface Activity {
   location_country?: string;
 }
 
+// 简化的地图组件用于卡片显示
+const CardMap: React.FC<{ date: string; activities: Activity[] }> = ({ date, activities }) => {
+  const [viewState, setViewState] = useState({ longitude: 0, latitude: 0, zoom: 12 });
+  
+  const dayActivities = activities.filter(activity => 
+    activity.start_date_local.startsWith(date)
+  );
+
+  if (dayActivities.length === 0) {
+    return (
+      <div className={styles.noActivityMap}>
+        <div className={styles.noActivityText}>今日无运动记录</div>
+      </div>
+    );
+  }
+
+  // 创建地图数据
+  const geoData = geoJsonForRuns(dayActivities);
+  
+  // 计算边界和统计信息
+  const getBounds = () => {
+    if (!geoData.features.length) return null;
+    
+    let minLng = Infinity, maxLng = -Infinity;
+    let minLat = Infinity, maxLat = -Infinity;
+    
+    geoData.features.forEach(feature => {
+      if (feature.geometry.type === 'LineString') {
+        feature.geometry.coordinates.forEach(([lng, lat]) => {
+          minLng = Math.min(minLng, lng);
+          maxLng = Math.max(maxLng, lng);
+          minLat = Math.min(minLat, lat);
+          maxLat = Math.max(maxLat, lat);
+        });
+      }
+    });
+    
+    // 计算合适的缩放级别
+    const lngDiff = maxLng - minLng;
+    const latDiff = maxLat - minLat;
+    const maxDiff = Math.max(lngDiff, latDiff);
+    
+    let zoom = 12;
+    if (maxDiff > 0.1) zoom = 10;
+    else if (maxDiff > 0.05) zoom = 11;
+    else if (maxDiff > 0.01) zoom = 13;
+    else zoom = 14;
+    
+    return {
+      longitude: (minLng + maxLng) / 2,
+      latitude: (minLat + maxLat) / 2,
+      zoom: zoom
+    };
+  };
+
+  const bounds = getBounds();
+  
+  // 计算总距离
+  const totalDistance = dayActivities.reduce((sum, activity) => sum + (activity.distance / 1000), 0);
+  
+  useEffect(() => {
+    if (bounds) {
+      setViewState(bounds);
+    }
+  }, [date]);
+  
+  return (
+    <div className={styles.cardMapContainer}>
+      {bounds && (
+        <RunMap
+          title=""
+          viewState={viewState}
+          setViewState={setViewState}
+          changeYear={() => {}}
+          geoData={geoData}
+          thisYear=""
+          hideButtons={true}
+        />
+      )}
+    </div>
+  );
+};
+
 const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('run');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [dailyQuotes, setDailyQuotes] = useState<Record<string, {text: string, author: string}>>({});
+
+  // 处理卡片翻转
+  const handleCardFlip = (date: string) => {
+    // 检查该日期是否有运动记录
+    const hasActivity = (activities as Activity[]).some(activity => 
+      activity.start_date_local.startsWith(date)
+    );
+    
+    // 只有有运动记录的日期才能翻转
+    if (hasActivity) {
+      setFlippedCards(prev => ({
+        ...prev,
+        [date]: !prev[date]
+      }));
+    }
+  };
 
   // 为特定日期获取每日一言
   const fetchQuoteForDate = async (date: string) => {
@@ -315,29 +415,64 @@ const Total: React.FC = () => {
           </h3>
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
-            {currentItems.map(({ date, Component }) => (
-              <ErrorBoundary
-                key={date}
-                fallback={
-                  <div className={styles.dateCard}>
-                    <div className={styles.dateText}>{date}</div>
-                    <div className={styles.descriptionText}>今日没有运动，跟你分享每日一言养养眼：</div>
-                    <div className={styles.poemText}>"{dailyQuotes[date]?.text || '加载中...'}"</div>
-                    <div className={styles.sourceText}>--{dailyQuotes[date]?.author || '蓝皮书'}</div>
+            {currentItems.map(({ date, Component }) => {
+              const hasActivity = (activities as Activity[]).some(activity => 
+                activity.start_date_local.startsWith(date)
+              );
+              const isFlipped = flippedCards[date];
+              
+              return (
+                <ErrorBoundary
+                  key={date}
+                  fallback={
+                    <div className={styles.dateCard}>
+                      <div className={styles.dateText}>{date}</div>
+                      <div className={styles.descriptionText}>今日没有运动，跟你分享每日一言养养眼：</div>
+                      <div className={styles.poemText}>"{dailyQuotes[date]?.text || '加载中...'}"</div>
+                      <div className={styles.sourceText}>--{dailyQuotes[date]?.author || '蓝皮书'}</div>
+                    </div>
+                  }
+                >
+                  <div className={`${styles.cardFlipContainer} ${isFlipped ? styles.flipped : ''}`}>
+                    {/* 卡片正面 */}
+                    <div className={styles.cardFront}>
+                      <Suspense fallback={
+                        <div className={styles.loadingCard}>
+                          <div>Loading {date}...</div>
+                        </div>
+                      }>
+                        <div 
+                          className={`${styles.svgCard} ${hasActivity ? styles.clickable : ''}`}
+                          onClick={() => handleCardFlip(date)}
+                        >
+                          <Component className="h-auto w-full" />
+                          {hasActivity && (
+                            <div className={styles.flipHint}>
+                              <span>点击查看轨迹</span>
+                            </div>
+                          )}
+                        </div>
+                      </Suspense>
+                    </div>
+                    
+                    {/* 卡片背面 - 地图 */}
+                    {hasActivity && (
+                      <div className={styles.cardBack}>
+                        <div 
+                          className={styles.mapCard}
+                          onClick={() => handleCardFlip(date)}
+                        >
+                          <CardMap date={date} activities={activities as Activity[]} />
+                          <div className={styles.backHint}>
+                            <span>点击返回</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                }
-              >
-                <Suspense fallback={
-                  <div className={styles.loadingCard}>
-                    <div>Loading {date}...</div>
-                  </div>
-                }>
-                  <div className={styles.svgCard}>
-                    <Component className="h-auto w-full" />
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-            ))}
+                </ErrorBoundary>
+              );
+            })}
           </div>
           <div className="flex justify-center items-center mt-8 gap-4">
             <button

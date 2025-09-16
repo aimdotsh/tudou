@@ -34,6 +34,7 @@ interface IRunMapProps {
   changeYear: (_year: string) => void;
   geoData: FeatureCollection<RPGeometry>;
   thisYear: string;
+  hideButtons?: boolean;
 }
 
 const RunMap = ({
@@ -43,6 +44,7 @@ const RunMap = ({
   changeYear,
   geoData: propGeoData,
   thisYear,
+  hideButtons = false,
 }: IRunMapProps) => {
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
@@ -192,7 +194,7 @@ const RunMap = ({
   }, []);
   const style: React.CSSProperties = {
     width: '100%',
-    height: MAP_HEIGHT,
+    height: hideButtons ? '100%' : MAP_HEIGHT,
   };
   const fullscreenButton: React.CSSProperties = {
     position: 'absolute',
@@ -223,7 +225,7 @@ const RunMap = ({
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
     >
-      <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
+      {!hideButtons && <RunMapButtons changeYear={changeYear} thisYear={thisYear} />}
       {/* 背景轨迹层 - 在动画时显示浅色完整轨迹 */}
       {animating && (
         <Source id="background-data" type="geojson" data={geoData}>
@@ -301,17 +303,19 @@ const RunMap = ({
           endLon={endLon}
         />
       )}
-      <span className={styles.runTitle}>
-        {title}
-        {animating && (
-          <span className={styles.animationProgress}>
-            {animationProgress}%
-          </span>
-        )}
-      </span>
-      <FullscreenControl style={fullscreenButton}/>
-      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights}/>}
-      <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>
+      {title && (
+        <span className={styles.runTitle}>
+          {title}
+          {animating && (
+            <span className={styles.animationProgress}>
+              {animationProgress}%
+            </span>
+          )}
+        </span>
+      )}
+      {!hideButtons && <FullscreenControl style={fullscreenButton}/>}
+      {!hideButtons && !PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights}/>}
+      {!hideButtons && <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>}
     </Map>
   );
 };
