@@ -8,9 +8,10 @@ interface IRunRowProperties {
   run: Activity;
   runIndex: number;
   setRunIndex: (_ndex: number) => void;
+  selectedRunId?: number | null;
 }
 
-const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex }: IRunRowProperties) => {
+const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex, selectedRunId }: IRunRowProperties) => {
   const distance = (run.distance / 1000.0).toFixed(2);
   const elevation_gain = run.elevation_gain?.toFixed(0);
   // 计算配速：每公里所需时间（分:秒）

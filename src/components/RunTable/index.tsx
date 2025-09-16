@@ -17,6 +17,7 @@ interface IRunTableProperties {
   setActivity: (_runs: Activity[]) => void;
   runIndex: number;
   setRunIndex: (_index: number) => void;
+  selectedRunId?: number | null;
 }
 
 type SortFunc = (_a: Activity, _b: Activity) => number;
@@ -27,6 +28,7 @@ const RunTable = ({
   setActivity,
   runIndex,
   setRunIndex,
+  selectedRunId,
 }: IRunTableProperties) => {
   const [sortFuncInfo, setSortFuncInfo] = useState('');
   // TODO refactor?
@@ -127,6 +129,7 @@ const RunTable = ({
               run={run}
               runIndex={runIndex}
               setRunIndex={setRunIndex}
+              selectedRunId={selectedRunId}
             />
           ))}
         </tbody>

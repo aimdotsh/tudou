@@ -68,6 +68,7 @@ const Index = () => {
   const { activities, thisYear } = useActivities();
   const [year, setYear] = useState(thisYear);
   const [runIndex, setRunIndex] = useState(-1);
+  const [selectedRunId, setSelectedRunId] = useState<number | null>(null);
   const [runs, setActivity] = useState(
     filterAndSortRuns(activities, year, filterYearRuns, sortDateFunc, null, null)
   );
@@ -80,6 +81,26 @@ const Index = () => {
   const [viewState, setViewState] = useState<IViewState>({
     ...bounds,
   });
+
+  // URL分享功能：更新URL中的运动记录ID
+  const updateUrlWithRunId = (runId: number | null) => {
+    const url = new URL(window.location.href);
+    if (runId) {
+      url.searchParams.set('run_id', runId.toString());
+    } else {
+      url.searchParams.delete('run_id');
+    }
+    window.history.replaceState({}, '', url.toString());
+  };
+
+  // URL分享功能：从URL中读取运动记录ID
+  const getRunIdFromUrl = (): number | null => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const runIdParam = urlParams.get('run_id');
+    return runIdParam ? parseInt(runIdParam, 10) : null;
+  };
+
+
 
   const changeByItem = (
     item: string,
@@ -152,7 +173,7 @@ const Index = () => {
   };
 
 
-  const locateActivity = (runIds: RunIds) => {
+  const locateActivity = (runIds: RunIds, updateUrl: boolean = true) => {
     const ids = new Set(runIds);
 
     const selectedRuns = !runIds.length
@@ -160,6 +181,11 @@ const Index = () => {
       : runs.filter((r: any) => ids.has(r.run_id));
 
     if (!selectedRuns.length) {
+      // 清除选中状态和URL
+      setSelectedRunId(null);
+      if (updateUrl) {
+        updateUrlWithRunId(null);
+      }
       return;
     }
 
@@ -168,6 +194,13 @@ const Index = () => {
     if (!lastRun) {
       return;
     }
+    
+    // 更新选中的运动记录ID和URL
+    setSelectedRunId(lastRun.run_id);
+    if (updateUrl) {
+      updateUrlWithRunId(lastRun.run_id);
+    }
+    
     setGeoData(geoJsonForRuns(selectedRuns));
     setTitle(titleForShow(lastRun));
     clearInterval(intervalId);
@@ -182,6 +215,106 @@ const Index = () => {
       });
     }
   }, [geoData, year]);
+
+  // 页面加载时检查URL中是否有运动记录ID
+  useEffect(() => {
+    const runIdFromUrl = getRunIdFromUrl();
+    if (runIdFromUrl && activities.length > 0) {
+      // 找到对应的运动记录
+      const targetRun = activities.find(run => run.run_id === runIdFromUrl);
+      if (targetRun) {
+        // 获取运动记录的年份
+        const runYear = new Date(targetRun.start_date_local).getFullYear().toString();
+        
+        // 如果当前年份不匹配，切换到对应年份
+        if (year !== runYear) {
+          setYear(runYear);
+          const yearRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
+          setActivity(yearRuns);
+        }
+      }
+    }
+  }, [activities]);
+
+  // 当runs数据更新后，检查是否需要选中URL中的运动记录
+  useEffect(() => {
+    const runIdFromUrl = getRunIdFromUrl();
+    
+    if (runIdFromUrl && runs.length > 0) {
+      const runIndex = runs.findIndex(run => run.run_id === runIdFromUrl);
+      
+      if (runIndex !== -1) {
+        // 设置运行索引
+        setRunIndex(runIndex);
+        
+        // 调用完整的locateActivity函数，但不更新URL（因为URL已经正确）
+        // 这样可以确保触发完整的动画效果
+        locateActivity([runIdFromUrl], false);
+        
+        // 先滚动到地图
+        scrollToMap();
+        
+        // 延迟滚动到对应的运动记录行
+        setTimeout(() => {
+          const tableContainer = document.getElementById('run-table-container');
+          const tableRows = tableContainer?.querySelectorAll('tbody tr');
+          
+          if (tableRows && tableRows[runIndex]) {
+            const targetRow = tableRows[runIndex] as HTMLElement;
+            
+            // 获取导航栏、地图和表头的高度
+            const nav = document.querySelector('nav');
+            const mapContainer = document.querySelector('.sticky-map-container');
+            const tableHeader = document.getElementById('run-table-header');
+            
+            const navHeight = nav ? nav.offsetHeight : 0;
+            const mapHeight = mapContainer ? mapContainer.clientHeight : 0;
+            const headerHeight = tableHeader ? tableHeader.offsetHeight : 0;
+            
+            // 计算滚动位置：目标行位置 - 导航栏高度 - 地图高度 - 表头高度 - 一些额外空间
+            const yOffset = navHeight + mapHeight + headerHeight + 20;
+            const y = targetRow.getBoundingClientRect().top + window.pageYOffset - yOffset;
+            
+            // 使用平滑滚动效果
+            window.scrollTo({top: y, behavior: 'smooth'});
+          }
+        }, 500); // 等待地图动画完成后再滚动到记录行
+      }
+    }
+  }, [runs]);
+
+  // 监听浏览器前进后退按钮
+  useEffect(() => {
+    const handlePopState = () => {
+      const runIdFromUrl = getRunIdFromUrl();
+      if (runIdFromUrl && runs.length > 0) {
+        const runIndex = runs.findIndex(run => run.run_id === runIdFromUrl);
+        if (runIndex !== -1) {
+          setRunIndex(runIndex);
+          setSelectedRunId(runIdFromUrl);
+          
+          const selectedRuns = runs.filter((r: any) => r.run_id === runIdFromUrl);
+          if (selectedRuns.length > 0) {
+            const targetRun = selectedRuns[0];
+            setGeoData(geoJsonForRuns(selectedRuns));
+            setTitle(titleForShow(targetRun));
+            clearInterval(intervalId);
+            scrollToMap();
+          }
+        }
+      } else {
+        // 清除选中状态
+        setRunIndex(-1);
+        setSelectedRunId(null);
+        locateActivity([]);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [runs]);
 
   // 确保标题与当前选中的年份同步
   useEffect(() => {
@@ -209,6 +342,17 @@ const Index = () => {
   }, [year]);
 
   useEffect(() => {
+    // 如果已经选中了特定的运动记录，不执行动画
+    if (selectedRunId) {
+      return;
+    }
+    
+    // 如果URL中有run_id参数，也不执行动画（等待URL处理完成）
+    const runIdFromUrl = getRunIdFromUrl();
+    if (runIdFromUrl) {
+      return;
+    }
+    
     const runsNum = runs.length;
     // maybe change 20 ?
     const sliceNum = runsNum >= 10 ? runsNum / 10 : 1;
@@ -223,7 +367,7 @@ const Index = () => {
       i += sliceNum;
     }, 10);
     setIntervalId(id);
-  }, [runs]);
+  }, [runs.length, selectedRunId]);
 
   useEffect(() => {
     if (year !== 'Total') {
@@ -523,6 +667,7 @@ const Index = () => {
                 setActivity={setActivity}
                 runIndex={runIndex}
                 setRunIndex={setRunIndex}
+                selectedRunId={selectedRunId}
               />
             )}
           </div>
