@@ -780,6 +780,9 @@
   aspect-ratio: 10 / 13;
   width: 100%;
   cursor: pointer;
+  /* 确保在网格中保持位置 */
+  position: relative;
+  overflow: visible;
 }
 
 /* 翻转卡片内部 */
@@ -789,7 +792,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: auto;
+  height: 100%;
   min-width: 0;
   min-height: 0;
   transition: transform 0.6s;
@@ -799,6 +802,8 @@
   aspect-ratio: 10 / 13;
   box-shadow: 0 6px 20px var(--shadow-light);
   background: linear-gradient(135deg, rgba(137, 207, 240, 0.1), rgba(32, 178, 170, 0.05));
+  /* 防止翻转时影响布局 */
+  transform-origin: center center;
 }
 
 /* 翻转状态 */
@@ -871,6 +876,101 @@
 
 .fullWidth {
   width: 100%;
+}
+
+/* 翻转卡片响应式样式 */
+@media (max-width: 768px) {
+  .flipCard {
+    perspective: 800px;
+    /* 确保在网格中保持稳定 */
+    contain: layout;
+  }
+  
+  .flipCardInner {
+    border-width: 1px;
+    box-shadow: 0 4px 15px var(--shadow-light);
+  }
+  
+  .flipCardFront,
+  .flipCardBack {
+    padding: 0.25rem;
+  }
+  
+  /* 确保网格容器在中等屏幕下稳定 */
+  .gridContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .flipCard {
+    perspective: 600px;
+    width: 100%;
+    max-width: 100%;
+    /* 防止翻转时影响其他元素 */
+    contain: layout style;
+    isolation: isolate;
+  }
+  
+  .flipCardInner {
+    border-width: 1px;
+    box-shadow: 0 2px 10px var(--shadow-light);
+    /* 确保在小屏幕下保持固定的宽高比 */
+    position: relative;
+    overflow: hidden;
+    /* 防止翻转时的布局偏移 */
+    will-change: transform;
+  }
+  
+  .flipCardFront,
+  .flipCardBack {
+    padding: 0.125rem;
+    /* 确保绝对定位在小屏幕下正常工作 */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* 防止内容溢出 */
+    overflow: hidden;
+  }
+  
+  /* 确保SVG和内容在小屏幕下正确缩放 */
+  .flipCardFront svg,
+  .flipCardBack > * {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  /* 小屏幕下使用单列布局 */
+  .gridContainer {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 360px) {
+  .flipCard {
+    perspective: 500px;
+    /* 进一步优化性能 */
+    contain: strict;
+  }
+  
+  .flipCardInner {
+    border-radius: 8px;
+  }
+  
+  .flipCardFront,
+  .flipCardBack {
+    border-radius: 8px;
+    padding: 0;
+  }
+  
+  .gridContainer {
+    gap: 0.5rem;
+  }
 }
 
 /* 空数据容器样式 */

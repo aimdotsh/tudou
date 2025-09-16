@@ -17,6 +17,7 @@ import styles from './total.module.css';
 import Nav from '@/components/Nav';
 import { totalStat ,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
+import DynamicTrackMap from '@/components/DynamicTrackMap';
 
 // 自定义错误边界组件
 class ErrorBoundary extends Component<{ 
@@ -152,6 +153,13 @@ const Total: React.FC = () => {
     currentPage * itemsPerPage
   );
 
+  const toggleFlip = (id: string) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
   return (
     <>
       <Nav />
@@ -167,31 +175,48 @@ const Total: React.FC = () => {
         <div className={styles.charts}>
           {/* 添加recent SVG图表 */}
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-
+            <h3>蓝皮书的大象周边跑 <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
 
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
-              {currentItems.map(({ date, Component }) => (
-                <ErrorBoundary
-                  key={date}
-                  fallback={
-                    <div className={styles.dateCard}>
-                      <div className={styles.dateText}>{date}</div>
-                      <div className={styles.poemText}>"今天没有运动"</div>
-                      <div className={styles.sourceText}>--蓝皮书</div>
-                    </div>
-                  }
-                >
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading {date}...</div>
-                    </div>
-                  }>
-                    <div className={styles.svgCard}>
-                      <Component className="h-auto w-full" />
-                    </div>
-                  </Suspense>
-                </ErrorBoundary>
-              ))}
+              {currentItems.map(({ date, Component }) => {
+                const cardId = `luck-${date}`;
+                return (
+                  <ErrorBoundary
+                    key={date}
+                    fallback={
+                      <div className={styles.dateCard}>
+                        <div className={styles.dateText}>{date}</div>
+                        <div className={styles.poemText}>"今天没有运动"</div>
+                        <div className={styles.sourceText}>--蓝皮书</div>
+                      </div>
+                    }
+                  >
+                    <Suspense fallback={
+                      <div className={styles.loadingCard}>
+                        <div>Loading {date}...</div>
+                      </div>
+                    }>
+                      <div 
+                        className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                        onClick={() => toggleFlip(cardId)}
+                      >
+                        <div className={styles.flipCardInner}>
+                          <div className={styles.flipCardFront}>
+                            <Component className="h-auto w-full" />
+                          </div>
+                          <div className={styles.flipCardBack}>
+                            <DynamicTrackMap 
+                              date={date} 
+                              className="w-full h-full" 
+                              isVisible={flippedCards[cardId] || false}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </Suspense>
+                  </ErrorBoundary>
+                );
+              })}
             </div>
             <div className="flex justify-center items-center mt-8 gap-4">
               <button
