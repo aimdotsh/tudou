@@ -12,9 +12,9 @@ const Nav = () => {
   return (
     <nav className={styles.mainNav}>
       <div className={styles.logoSection}>
-        <Link to={siteUrl} className={styles.logoLink}>
+        <a href={siteUrl} className={styles.logoLink}>
           <img className={styles.logo} alt="logo" src={logo} />
-        </Link>
+        </a>
       </div>
       <div className={styles.navLinks}>
         {navLinks.map((link) => {
@@ -22,13 +22,24 @@ const Nav = () => {
           const isActive = isInternal && location.pathname === link.url;
 
           return isInternal ? (
-            <Link
-              key={link.name}
-              to={link.url}
-              className={`${styles.navLink} ${isActive ? styles.active : ''}`}
-            >
-              {link.name}
-            </Link>
+            // 对于Home链接，使用原生a标签触发页面重新加载
+            link.name === 'Home' || link.url === '/' ? (
+              <a
+                key={link.name}
+                href={link.url}
+                className={`${styles.navLink} ${isActive ? styles.active : ''}`}
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link
+                key={link.name}
+                to={link.url}
+                className={`${styles.navLink} ${isActive ? styles.active : ''}`}
+              >
+                {link.name}
+              </Link>
+            )
           ) : (
             <a
               key={link.name}
