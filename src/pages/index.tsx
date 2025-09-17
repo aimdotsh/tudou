@@ -603,10 +603,29 @@ const Index = () => {
                             if (location.activityInfo) {
                               const distance = location.activityInfo.distance ? `${(location.activityInfo.distance / 1000).toFixed(1)}km` : '未知距离';
                               const duration = location.activityInfo.moving_time ? formatDuration(location.activityInfo.moving_time) : '未知耗时';
+                              
+                              // 创建运动详情的超链接
+                              const handleActivityClick = (e: React.MouseEvent) => {
+                                e.preventDefault();
+                                if (location.activityInfo?.run_id) {
+                                  // 直接调用 locateActivity 来定位到该运动记录
+                                  locateActivity([location.activityInfo.run_id]);
+                                }
+                              };
+                              
                               return (
                                 <div key={location.key} className="mb-1" style={{color: '#20B2AA'}}>
                                   <span className="font-bold">{location.displayText}</span>
-                                  （首次 Workout： {location.activityInfo.type} {location.activityInfo.date?.slice(0, 10)} {location.activityInfo.name} {distance} {duration}）
+                                  （首次 Workout： 
+                                  <a 
+                                    href={`?run_id=${location.activityInfo.run_id}`}
+                                    onClick={handleActivityClick}
+                                    className="cursor-pointer"
+                                    style={{color: '#20B2AA', textDecoration: 'none'}}
+                                  >
+                                    {location.activityInfo.type} {location.activityInfo.date?.slice(0, 10)} {location.activityInfo.name} {distance} {duration}
+                                  </a>
+                                  ）
                                 </div>
                               );
                             } else {
