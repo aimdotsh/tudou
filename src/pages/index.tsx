@@ -120,6 +120,11 @@ const Index = () => {
     // default year
     setYear(y);
 
+    // 清除选中的运动状态和URL参数
+    setSelectedRunId(null);
+    setRunIndex(-1);
+    updateUrlWithRunId(null);
+
     // 当选择Total时，设置适合显示中国全貌的视图
     if (y === 'Total') {
       setViewState({
@@ -134,8 +139,11 @@ const Index = () => {
     }
 
     // 强制更新标题，确保与选中的年份同步
-    setActivity(filterAndSortRuns(activities, y, filterYearRuns, sortDateFunc, null, null));
-    setRunIndex(-1);
+    const newRuns = filterAndSortRuns(activities, y, filterYearRuns, sortDateFunc, null, null);
+    setActivity(newRuns);
+    
+    // 重置地图数据为新年份的所有运动
+    setGeoData(geoJsonForRuns(newRuns));
     
     // 确保标题更新为当前选中的年份
     setTimeout(() => {
