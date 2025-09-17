@@ -908,12 +908,15 @@
     overflow: hidden;
   }
   
-  /* 确保SVG不会覆盖边框 */
+  /* 确保SVG不会覆盖边框 - 使用padding而不是直接修改SVG尺寸 */
+  .flipCardFront {
+    padding: 1px;
+  }
+  
   .flipCardFront svg {
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
-    max-width: calc(100% - 4px);
-    max-height: calc(100% - 4px);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
   
   /* 确保背面在中等屏幕下有正确的初始旋转 */
@@ -998,24 +1001,21 @@
     overflow: hidden;
   }
   
-  /* 确保SVG不会覆盖边框 */
+  /* 确保SVG不会覆盖边框 - 使用padding而不是直接修改SVG尺寸 */
+  .flipCardFront {
+    padding: 1px;
+  }
+  
   .flipCardFront svg {
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
-    max-width: calc(100% - 4px);
-    max-height: calc(100% - 4px);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
   }
   
   /* 确保背面在小屏幕下有正确的初始旋转 */
   .flipCardBack {
     transform: rotateY(180deg);
-  }
-  
-  /* 确保SVG和内容在小屏幕下正确缩放 */
-  .flipCardFront svg {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
   }
   
   /* DynamicTrackMap组件需要特殊处理 */
@@ -1098,10 +1098,10 @@
   
   /* 确保SVG不会覆盖边框 */
   .flipCardFront svg {
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
-    max-width: calc(100% - 2px);
-    max-height: calc(100% - 2px);
+    width: 98%;
+    height: 98%;
+    max-width: 98%;
+    max-height: 98%;
   }
   
   /* 确保背面在超小屏幕下有正确的初始旋转 */
