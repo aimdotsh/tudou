@@ -106,7 +106,7 @@ const RunMap = ({
       const animFeature: Feature<LineString> = {
         ...geoData.features[0],
         geometry: {
-          ...geoData.features[0].geometry,
+          type: 'LineString',
           coordinates: points.slice(0, current)
         }
       };
@@ -231,10 +231,10 @@ const RunMap = ({
             id="background-runs"
             type="line"
             paint={{
-              'line-color': '#FF8C00', // 设置为指定的橙黄色
-              'line-width': ((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2,
+              'line-color': '#FF8C00',
+              'line-width': 2,
               'line-dasharray': dash,
-              'line-opacity': 0.3, // 适当提高透明度以显示橙黄色
+              'line-opacity': 0.3,
               'line-blur': 1,
             }}
             layout={{
@@ -281,11 +281,11 @@ const RunMap = ({
           id="runs2"
           type="line"
           paint={{
-            'line-color': ['get', 'color'],
-            'line-width': ((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2,
+            'line-color': animating ? '#FF8C00' : ['get', 'color'],
+            'line-width': animating ? 3 : (((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2),
             'line-dasharray': dash,
             'line-opacity': isSingleRun || ((viewState.zoom ?? 0) <= 3) || !lights ? 1 : LINE_OPACITY,
-            'line-blur': 1,
+            'line-blur': animating ? 0.5 : 1,
           }}
           layout={{
             'line-join': 'round',
