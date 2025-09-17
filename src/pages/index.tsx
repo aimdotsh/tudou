@@ -608,8 +608,77 @@ const Index = () => {
                               const handleActivityClick = (e: React.MouseEvent) => {
                                 e.preventDefault();
                                 if (location.activityInfo?.run_id) {
-                                  // 直接调用 locateActivity 来定位到该运动记录
-                                  locateActivity([location.activityInfo.run_id]);
+                                  const targetRunId = location.activityInfo.run_id;
+                                  
+                                  // 滚动到目标记录的函数
+                                  const scrollToTargetRecord = (targetRunIndex: number) => {
+                                    // 先滚动到地图
+                                    scrollToMap();
+                                    
+                                    // 延迟滚动到对应的运动记录行
+                                    setTimeout(() => {
+                                      const tableContainer = document.getElementById('run-table-container');
+                                      const tableRows = tableContainer?.querySelectorAll('tbody tr');
+                                      
+                                      if (tableRows && tableRows[targetRunIndex]) {
+                                        const targetRow = tableRows[targetRunIndex] as HTMLElement;
+                                        
+                                        // 获取导航栏、地图和表头的高度
+                                        const nav = document.querySelector('nav');
+                                        const mapContainer = document.querySelector('.sticky-map-container');
+                                        const tableHeader = document.getElementById('run-table-header');
+                                        
+                                        const navHeight = nav ? nav.offsetHeight : 0;
+                                        const mapHeight = mapContainer ? mapContainer.clientHeight : 0;
+                                        const headerHeight = tableHeader ? tableHeader.offsetHeight : 0;
+                                        
+                                        // 计算滚动位置：目标行位置 - 导航栏高度 - 地图高度 - 表头高度 - 一些额外空间
+                                        const yOffset = navHeight + mapHeight + headerHeight + 20;
+                                        const y = targetRow.getBoundingClientRect().top + window.pageYOffset - yOffset;
+                                        
+                                        // 使用平滑滚动效果
+                                        window.scrollTo({top: y, behavior: 'smooth'});
+                                      }
+                                    }, 500); // 等待地图动画完成后再滚动到记录行
+                                  };
+                                  
+                                  // 更新URL
+                                  updateUrlWithRunId(targetRunId);
+                                  
+                                  // 找到对应的运动记录
+                                  const targetRun = activities.find(run => run.run_id === targetRunId);
+                                  if (targetRun) {
+                                    // 获取运动记录的年份
+                                    const runYear = new Date(targetRun.start_date_local).getFullYear().toString();
+                                    
+                                    // 如果当前年份不匹配，切换到对应年份
+                                    if (year !== runYear) {
+                                      setYear(runYear);
+                                      const yearRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
+                                      setActivity(yearRuns);
+                                      
+                                      // 年份切换后，需要等待runs更新，然后再定位
+                                      setTimeout(() => {
+                                        const updatedRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
+                                        const runIndex = updatedRuns.findIndex(run => run.run_id === targetRunId);
+                                        if (runIndex !== -1) {
+                                          setRunIndex(runIndex);
+                                          locateActivity([targetRunId], false);
+                                          // 滚动到目标记录
+                                          scrollToTargetRecord(runIndex);
+                                        }
+                                      }, 100);
+                                    } else {
+                                      // 当前年份匹配，直接定位
+                                      const runIndex = runs.findIndex(run => run.run_id === targetRunId);
+                                      if (runIndex !== -1) {
+                                        setRunIndex(runIndex);
+                                        locateActivity([targetRunId], false);
+                                        // 滚动到目标记录
+                                        scrollToTargetRecord(runIndex);
+                                      }
+                                    }
+                                  }
                                 }
                               };
                               
