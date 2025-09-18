@@ -1,0 +1,7 @@
+export const yearStats = import.meta.glob('./year_*.svg', { import: 'ReactComponent' })
+export const totalStat = import.meta.glob(['./github.svg', './grid.svg', './mol.svg'], { import: 'ReactComponent' })
+export const recentStat = import.meta.glob(['./yyyymmdd/*.svg'], { import: 'ReactComponent' })
+export const halfmarathonStat = import.meta.glob(['./halfmarathon/*.svg'], { import: 'ReactComponent' })
+export const newyearStat = import.meta.glob(['./newyear/*.svg'], { import: 'ReactComponent' })
+export const yueyeStat = import.meta.glob(['./yueye/*.svg'], { import: 'ReactComponent' })
+export const luckStat = import.meta.glob(['./luck/*.svg'], { import: 'ReactComponent' })
