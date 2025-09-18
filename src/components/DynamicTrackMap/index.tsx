@@ -141,8 +141,13 @@ const getBoundsForGeoData = (geoData: FeatureCollection<LineString>) => {
   };
 };
 
-const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({ date, className = '', isVisible = false }) => {
+const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({ 
+  date, 
+  className = '', 
+  isVisible = false
+}) => {
   const mapRef = useRef<MapRef>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
   
   const [geoData, setGeoData] = useState<FeatureCollection<LineString>>();
@@ -164,6 +169,8 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({ date, className = ''
       setViewState(bounds);
     }
   }, [date]);
+
+
 
   // 动画逻辑 - 只在卡片可见时启动动画
   useEffect(() => {
@@ -270,7 +277,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({ date, className = ''
   const dash = USE_DASH_LINE && !isSingleRun ? [2, 2] : [2, 0];
 
   return (
-    <div className={`dynamic-track-map-container ${className}`}>
+    <div ref={containerRef} className={`dynamic-track-map-container ${className}`}>
       <Map
         {...viewState}
         onMove={onMove}
@@ -302,8 +309,8 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({ date, className = ''
         )}
         
         {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
-        {(animatedGeo || (geoData && geoData.features.length > 0)) && (
-          <Source id="data" type="geojson" data={animatedGeo || geoData!}>
+        {(animatedGeo || geoData) && (
+          <Source id="data" type="geojson" data={animatedGeo || geoData}>
             <Layer
               id="runs"
               type="line"

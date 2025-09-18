@@ -17,7 +17,7 @@ import styles from './total.module.css';
 import Nav from '@/components/Nav';
 import { totalStat ,luckStat} from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
-import DynamicTrackMap from '@/components/DynamicTrackMap';
+import PreGeneratedGif from '@/components/PreGeneratedGif';
 
 // 自定义错误边界组件
 class ErrorBoundary extends Component<{ 
@@ -205,7 +205,7 @@ const Total: React.FC = () => {
                             <Component className="h-auto w-full" />
                           </div>
                           <div className={styles.flipCardBack}>
-                            <DynamicTrackMap 
+                            <PreGeneratedGif 
                               date={date} 
                               className="w-full h-full" 
                               isVisible={flippedCards[cardId] || false}
