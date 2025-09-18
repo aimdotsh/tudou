@@ -145,9 +145,12 @@ const Index = () => {
     // 重置地图数据为新年份的所有运动
     setGeoData(geoJsonForRuns(newRuns));
     
-    // 确保标题更新为当前选中的年份
+    // 确保标题更新为当前选中的年份，但不覆盖URL中指定的运动记录标题
     setTimeout(() => {
-      setTitle(`${y} Year Heatmap`);
+      const runIdFromUrl = getRunIdFromUrl();
+      if (!runIdFromUrl) {
+        setTitle(`${y} Year Heatmap`);
+      }
     }, 0);
     
     clearInterval(intervalId);
@@ -240,6 +243,9 @@ const Index = () => {
           const yearRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
           setActivity(yearRuns);
         }
+        
+        // 直接设置运动记录的标题，避免被年份标题覆盖
+        setTitle(titleForShow(targetRun));
       }
     }
   }, [activities]);
@@ -324,9 +330,10 @@ const Index = () => {
     };
   }, [runs]);
 
-  // 确保标题与当前选中的年份同步
+  // 确保标题与当前选中的年份同步，但不覆盖URL中指定的运动记录标题
   useEffect(() => {
-    if (!title.includes(year) && !title.includes('Run:')) {
+    const runIdFromUrl = getRunIdFromUrl();
+    if (!runIdFromUrl && !title.includes(year) && !title.includes('Run:')) {
       setTitle(`${year} Year Heatmap`);
     }
   }, [year, title]);
