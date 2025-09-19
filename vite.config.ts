@@ -37,12 +37,10 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: [
-      {
-        find: /^@\/static\/activities\.json$/,
-        replacement: path.resolve(__dirname, 'src/static/activities_py4567.json')
-      }
-    ]
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@/static/activities.json': path.resolve(__dirname, 'src/static/activities_py4567.json')
+    }
   },
   base: process.env.PATH_PREFIX || '/',
   define: {
