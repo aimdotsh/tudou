@@ -560,7 +560,8 @@ const Total: React.FC = () => {
           <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
             <BarChart
               data={yearlyData}
-              margin={{ top: 0, right: 0, left: -15, bottom: 5 }}>
+              margin={{ top: 0, right: 0, left: window.innerWidth <= 480 ? 10 : -15, bottom: 5 }}
+              className={styles.barChart}>
 
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -618,7 +619,7 @@ const Total: React.FC = () => {
           <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
             <BarChart
               data={yearlyData}
-              margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
+              margin={{ top: 0, right: 20, left: window.innerWidth <= 480 ? 10 : -15, bottom: 5 }}>
 
               <CartesianGrid
                 strokeDasharray="3 3"

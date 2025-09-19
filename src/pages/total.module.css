@@ -537,6 +537,42 @@
   }
 }
 
+/* 修复移动端图表 X 轴坐标错位问题 */
+@media (max-width: 480px) {
+  /* 重写图表的 margin 设置 */
+  .chartContainer :global(.recharts-wrapper .recharts-surface) {
+    overflow: visible !important;
+  }
+  
+  /* 调整 X 轴标签位置 */
+  .chartContainer :global(.recharts-cartesian-axis-tick-value) {
+    font-size: 10px !important;
+  }
+  
+  /* 确保 X 轴标签不被裁剪 */
+  .chartContainer :global(.recharts-xAxis .recharts-cartesian-axis-tick) {
+    transform: translateX(0) !important;
+  }
+  
+  /* 调整图表内边距以适应移动端 */
+  .chartContainer :global(.recharts-wrapper) {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* 超小屏幕进一步优化 */
+  .chartContainer :global(.recharts-cartesian-axis-tick-value) {
+    font-size: 9px !important;
+  }
+  
+  .chartContainer :global(.recharts-wrapper) {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+}
+
 /* 热力图样式 */
 .heatmapContainer {
   width: 100%;
