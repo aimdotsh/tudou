@@ -31,6 +31,7 @@
   padding: 1rem;
   margin: 0 auto;
   box-sizing: border-box;
+  overflow-x: hidden; /* 防止水平滚动 */
 }
 
 
@@ -432,6 +433,107 @@
   }
   .chartContainer p {
     font-size: 0.85rem;
+  }
+}
+
+/* 响应式图表容器 */
+.responsiveChart {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+@media (max-width: 768px) {
+  .responsiveChart {
+    height: 250px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsiveChart {
+    height: 200px !important;
+  }
+  
+  /* 防止图表在小屏幕上自动放大 */
+  .chartContainer {
+    overflow: hidden;
+    max-width: 100%;
+    position: relative;
+  }
+  
+  /* 确保图表容器不会超出屏幕 */
+  .chartContainer > div {
+    max-width: 100% !important;
+    overflow: hidden;
+  }
+  
+  /* 防止 Recharts 组件在移动端自动缩放 */
+  .chartContainer :global(.recharts-wrapper) {
+    max-width: 100% !important;
+    overflow: hidden;
+  }
+  
+  /* 确保图表内容不会溢出 */
+  .chartContainer :global(.recharts-surface) {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .responsiveChart {
+    height: 180px !important;
+  }
+}
+
+/* 额外的移动端图表优化 */
+@media (max-width: 480px) {
+  /* 强制限制所有图表相关元素的最大宽度 */
+  .chartContainer * {
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* 防止 SVG 元素超出容器 */
+  .chartContainer svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* 确保工具提示不会导致布局问题 */
+  .chartContainer :global(.recharts-tooltip-wrapper) {
+    max-width: 90vw !important;
+  }
+  
+  /* 移动端容器优化 */
+  .container {
+    padding: 0.5rem;
+    overflow-x: hidden;
+  }
+  
+  /* 防止图表容器在移动端产生水平滚动 */
+  .charts {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* 确保所有图表容器都不会超出视口 */
+  .chartContainer {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0; /* 允许收缩 */
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .chartContainer {
+    /* 为触摸设备优化交互 */
+    touch-action: pan-y pinch-zoom;
+  }
+  
+  .chartContainer :global(.recharts-tooltip-wrapper) {
+    /* 触摸设备上的工具提示优化 */
+    pointer-events: none;
   }
 }
 

@@ -557,7 +557,7 @@ const Total: React.FC = () => {
         {/* 年度活动次数统计图 - 40%宽度 */}
         <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
             <BarChart
               data={yearlyData}
               margin={{ top: 0, right: 0, left: -15, bottom: 5 }}>
@@ -615,7 +615,7 @@ const Total: React.FC = () => {
         {/* 年度总距离统计图 - 60%宽度 */}
         <div className={styles.chartContainer}>
           <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
             <BarChart
               data={yearlyData}
               margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
@@ -675,7 +675,7 @@ const Total: React.FC = () => {
         {/* 月度总距离统计图 - 整行宽度 */}
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
           <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
             <BarChart
               data={monthlyData}
               margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
