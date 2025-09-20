@@ -1,82 +1,233 @@
- python3 scripts/generate_gifs_orange.py -day  2022-02-26 
- python3 scripts/generate_gifs_orange.py -day  2022-03-20 
- python3 scripts/generate_gifs_orange.py -day  2022-04-02 
- python3 scripts/generate_gifs_orange.py -day  2022-04-06 
- python3 scripts/generate_gifs_orange.py -day  2022-04-09 
- python3 scripts/generate_gifs_orange.py -day  2022-04-14 
- python3 scripts/generate_gifs_orange.py -day  2022-04-15 
- python3 scripts/generate_gifs_orange.py -day  2022-04-17 
- python3 scripts/generate_gifs_orange.py -day  2022-04-20 
- python3 scripts/generate_gifs_orange.py -day  2022-04-24 
- python3 scripts/generate_gifs_orange.py -day  2022-04-26 
- python3 scripts/generate_gifs_orange.py -day  2022-04-27 
- python3 scripts/generate_gifs_orange.py -day  2022-04-28 
- python3 scripts/generate_gifs_orange.py -day  2022-04-29 
- python3 scripts/generate_gifs_orange.py -day  2022-04-30 
- python3 scripts/generate_gifs_orange.py -day  2022-05-01 
- python3 scripts/generate_gifs_orange.py -day  2022-05-03 
- python3 scripts/generate_gifs_orange.py -day  2022-05-21 
- python3 scripts/generate_gifs_orange.py -day  2022-05-28 
- python3 scripts/generate_gifs_orange.py -day  2022-06-01 
- python3 scripts/generate_gifs_orange.py -day  2022-06-02 
- python3 scripts/generate_gifs_orange.py -day  2022-06-06 
- python3 scripts/generate_gifs_orange.py -day  2022-06-08 
- python3 scripts/generate_gifs_orange.py -day  2022-06-09 
- python3 scripts/generate_gifs_orange.py -day  2022-06-11 
- python3 scripts/generate_gifs_orange.py -day  2022-06-13 
- python3 scripts/generate_gifs_orange.py -day  2022-06-14 
- python3 scripts/generate_gifs_orange.py -day  2022-06-15 
- python3 scripts/generate_gifs_orange.py -day  2022-06-17 
- python3 scripts/generate_gifs_orange.py -day  2022-06-18 
- python3 scripts/generate_gifs_orange.py -day  2022-06-23 
- python3 scripts/generate_gifs_orange.py -day  2022-06-28 
- python3 scripts/generate_gifs_orange.py -day  2022-07-01 
- python3 scripts/generate_gifs_orange.py -day  2022-07-02 
- python3 scripts/generate_gifs_orange.py -day  2022-07-04 
- python3 scripts/generate_gifs_orange.py -day  2022-07-05 
- python3 scripts/generate_gifs_orange.py -day  2022-07-08 
- python3 scripts/generate_gifs_orange.py -day  2022-07-21 
- python3 scripts/generate_gifs_orange.py -day  2022-07-27 
- python3 scripts/generate_gifs_orange.py -day  2022-08-03 
- python3 scripts/generate_gifs_orange.py -day  2022-08-08 
- python3 scripts/generate_gifs_orange.py -day  2022-08-09 
- python3 scripts/generate_gifs_orange.py -day  2022-08-31 
- python3 scripts/generate_gifs_orange.py -day  2022-09-06 
- python3 scripts/generate_gifs_orange.py -day  2022-10-04 
- python3 scripts/generate_gifs_orange.py -day  2022-10-16 
- python3 scripts/generate_gifs_orange.py -day  2022-10-18 
- python3 scripts/generate_gifs_orange.py -day  2022-10-19 
- python3 scripts/generate_gifs_orange.py -day  2022-10-23 
- python3 scripts/generate_gifs_orange.py -day  2022-11-02 
- python3 scripts/generate_gifs_orange.py -day  2022-11-07 
- python3 scripts/generate_gifs_orange.py -day  2022-12-08 
- python3 scripts/generate_gifs_orange.py -day  2023-01-20 
- python3 scripts/generate_gifs_orange.py -day  2023-01-28 
- python3 scripts/generate_gifs_orange.py -day  2023-02-17 
- python3 scripts/generate_gifs_orange.py -day  2023-03-08 
- python3 scripts/generate_gifs_orange.py -day  2023-05-14 
- python3 scripts/generate_gifs_orange.py -day  2023-05-28 
- python3 scripts/generate_gifs_orange.py -day  2023-06-18 
- python3 scripts/generate_gifs_orange.py -day  2023-06-23 
- python3 scripts/generate_gifs_orange.py -day  2023-07-03 
- python3 scripts/generate_gifs_orange.py -day  2023-08-04 
- python3 scripts/generate_gifs_orange.py -day  2023-08-13 
- python3 scripts/generate_gifs_orange.py -day  2023-08-22 
- python3 scripts/generate_gifs_orange.py -day  2023-09-20 
- python3 scripts/generate_gifs_orange.py -day  2023-12-15 
- python3 scripts/generate_gifs_orange.py -day  2024-01-26 
- python3 scripts/generate_gifs_orange.py -day  2024-01-27 
- python3 scripts/generate_gifs_orange.py -day  2024-02-25 
- python3 scripts/generate_gifs_orange.py -day  2024-03-02 
- python3 scripts/generate_gifs_orange.py -day  2024-03-03 
- python3 scripts/generate_gifs_orange.py -day  2024-07-14 
- python3 scripts/generate_gifs_orange.py -day  2024-07-28 
- python3 scripts/generate_gifs_orange.py -day  2024-11-03 
- python3 scripts/generate_gifs_orange.py -day  2024-12-01 
- python3 scripts/generate_gifs_orange.py -day  2024-12-08 
- python3 scripts/generate_gifs_orange.py -day  2024-12-15 
- python3 scripts/generate_gifs_orange.py -day  2025-05-24 
- python3 scripts/generate_gifs_orange.py -day  2025-06-08 
- python3 scripts/generate_gifs_orange.py -day  2025-06-23 
- python3 scripts/generate_gifs_orange.py -day  2025-07-14 
- python3 scripts/generate_gifs_orange.py -day  2025-07-27 
+ python3 scripts/generate_gifs_orange.py -day  2022-02-26     -line-width 1   -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-03-20     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-02     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-06     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-09     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-14     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-15     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-17     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-20     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-24     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-26     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-27     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-28     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-29     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-04-30     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-05-01     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-05-03     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-05-21     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-05-28     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-01     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-02     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-06     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-09     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-11     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-13     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-14     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-15     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-17     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-18     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-23     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-06-28     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-01     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-02     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-04     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-05     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-21     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-07-27     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-08-03     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-08-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-08-09     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-08-31     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-09-06     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-10-04     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-10-16     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-10-18     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-10-19     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-10-23     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-11-02     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-11-07     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2022-12-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-01-20     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-01-28     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-02-17     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-03-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-05-14     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-05-28     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-06-18     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-06-23     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-07-03     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-08-04     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-08-13     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-08-22     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-09-20     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2023-12-15     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-01-26     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-01-27     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-02-25     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-03-02     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-03-03     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-07-14     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-07-28     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-11-03     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-12-01     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-12-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2024-12-15     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2025-05-24     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2025-06-08     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2025-06-23     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2025-07-14     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2025-07-27     -line-width 1  -current-size 2 -width 250 -animation-frames 80
+ python3 scripts/generate_gifs_orange.py -day  2025-09-17    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-09-15    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-09-12    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-09-11    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-09-09    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-09-04    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-09-02    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-31    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-29    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-27    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-26    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-23    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-12    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-11    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-10    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-06    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-05    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-08-01    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-29    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-27    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-23    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-22    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-18    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-17    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-14    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-13    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-09    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-06    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-05    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-04    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-07-02    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-30    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-28    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-26    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-25    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-24    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-23    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-22    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-21    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-19    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-18    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-17    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-16    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-15    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-14    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-13    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-12    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-11    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-10    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-09    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-08    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-06    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-05    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-04    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-03    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-06-02    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-31    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-29    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-28    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-27    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-25    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-24    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-22    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-21    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-18    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-17    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-15    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-10    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-08    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-05    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-03    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-02    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-05-01    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-29    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-28    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-26    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-24    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-22    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-17    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-16    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-15    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-14    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-06    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-03    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-04-01    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-31    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-28    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-26    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-25    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-23    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-19    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-18    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-16    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-14    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-13    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-12    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-09    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-06    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-03-05    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-28    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-27    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-26    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-25    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-22    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-21    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-18    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-15    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-13    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-10    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-09    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-04    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-03    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-02-02    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-31    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-30    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-29    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-25    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-23    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-19    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-18    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-16    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-15    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-14    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-13    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-11    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-10    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-09    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-08    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-06    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-04    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2025-01-01    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-10-20    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-09-08    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-07-07    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-04-21    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-04-14    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-02-04    -line-width 1  -current-size 2 -width 250 -animation-frames 80
+python3 scripts/generate_gifs_orange.py -day  2024-07-28    -line-width 1  -current-size 2 -width 250 -animation-frames 80

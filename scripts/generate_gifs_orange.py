@@ -45,8 +45,16 @@ except ImportError:
 class GifGenerator:
     def __init__(self, project_root=None, width=200, height=None, track_color='#FF8C00', 
                  dot_color='green', animation_frames=50, static_frames=20, 
-                 animation_duration=0.06, static_duration=0.05, line_width=3):
-        """初始化GIF生成器"""
+                 animation_duration=0.06, static_duration=0.05, line_width=3,
+                 start_dot_size=6, end_dot_size=6, current_dot_size=5):
+        """
+        初始化GIF生成器
+        
+        新增参数:
+        - start_dot_size: 起点圆点半径 (默认: 6)
+        - end_dot_size: 终点圆点半径 (默认: 6) 
+        - current_dot_size: 当前位置圆点半径 (默认: 5)
+        """
         if project_root is None:
             # 自动检测项目根目录
             current_dir = Path(__file__).parent
@@ -69,9 +77,18 @@ class GifGenerator:
         self.static_duration = static_duration
         self.line_width = line_width
         
+        # 远点大小参数 - 新增功能
+        self.start_dot_size = start_dot_size
+        self.end_dot_size = end_dot_size
+        self.current_dot_size = current_dot_size
+        
         print(f"📁 项目根目录: {self.project_root}")
         print(f"📊 活动数据文件: {self.activities_file}")
         print(f"📁 输出目录: {self.output_dir}")
+        print(f"🎨 远点大小设置:")
+        print(f"   - 起点大小: {self.start_dot_size}px")
+        print(f"   - 终点大小: {self.end_dot_size}px") 
+        print(f"   - 当前位置大小: {self.current_dot_size}px")
         
         # 加载起点和终点图标
         self.start_icon = self.load_svg_icon("start.svg")
@@ -134,13 +151,16 @@ class GifGenerator:
         
         return color_map.get(color.lower(), 'black')
     
-    def draw_icon(self, img, icon, x, y):
+    def draw_icon(self, img, icon, x, y, size=None):
         """在指定位置绘制图标"""
         if icon is None:
             return
         
-        # 调整图标大小
-        icon_size = 16
+        # 调整图标大小 - 支持自定义大小
+        if size:
+            icon_size = size * 2  # 图标大小是圆点直径的2倍
+        else:
+            icon_size = 16  # 默认大小
         icon_resized = icon.resize((icon_size, icon_size), Image.Resampling.LANCZOS)
         
         # 计算粘贴位置（居中）
@@ -327,32 +347,35 @@ class GifGenerator:
                 x2, y2 = track_points[i + 1]
                 draw.line([(x1, y1), (x2, y2)], fill=self.track_color, width=self.line_width)
         
-        # 绘制起点图标
+        # 绘制起点图标 - 使用自定义大小
         if coordinates and self.start_icon:
             start_x, start_y = coordinates[0]
-            self.draw_icon(img, self.start_icon, start_x, start_y)
+            self.draw_icon(img, self.start_icon, start_x, start_y, self.start_dot_size)
         elif coordinates:
-            # 备用方案：绘制绿色圆点
+            # 备用方案：绘制绿色圆点 - 使用自定义大小
             start_x, start_y = coordinates[0]
-            draw.ellipse([start_x-6, start_y-6, start_x+6, start_y+6], 
+            size = self.start_dot_size
+            draw.ellipse([start_x-size, start_y-size, start_x+size, start_y+size], 
                         fill='green', outline='darkgreen', width=2)
         
-        # 绘制终点图标（只在动画完成时显示）
+        # 绘制终点图标（只在动画完成时显示）- 使用自定义大小
         if progress >= 1.0 and coordinates and self.end_icon:
             end_x, end_y = coordinates[-1]
-            self.draw_icon(img, self.end_icon, end_x, end_y)
+            self.draw_icon(img, self.end_icon, end_x, end_y, self.end_dot_size)
         elif progress >= 1.0 and coordinates:
-            # 备用方案：绘制红色圆点
+            # 备用方案：绘制红色圆点 - 使用自定义大小
             end_x, end_y = coordinates[-1]
-            draw.ellipse([end_x-6, end_y-6, end_x+6, end_y+6], 
+            size = self.end_dot_size
+            draw.ellipse([end_x-size, end_y-size, end_x+size, end_y+size], 
                         fill='red', outline='darkred', width=2)
         
-        # 只在动画进行中显示当前位置点 - 使用可配置颜色
+        # 只在动画进行中显示当前位置点 - 使用自定义大小和颜色
         if progress < 1.0 and points_to_show > 0 and points_to_show <= len(coordinates):
             current_x, current_y = coordinates[points_to_show - 1]
             # 为动态圆点生成深色边框
             outline_color = self.get_darker_color(self.dot_color)
-            draw.ellipse([current_x-5, current_y-5, current_x+5, current_y+5], 
+            size = self.current_dot_size
+            draw.ellipse([current_x-size, current_y-size, current_x+size, current_y+size], 
                         fill=self.dot_color, outline=outline_color, width=2)
     
     def draw_sample_track(self, img, draw, progress, date):
@@ -383,29 +406,32 @@ class GifGenerator:
                 x2, y2 = track_points[i + 1]
                 draw.line([(x1, y1), (x2, y2)], fill=self.track_color, width=self.line_width)
         
-        # 绘制起点图标
+        # 绘制起点图标 - 使用自定义大小
         if track_points and self.start_icon:
             start_x, start_y = track_points[0]
-            self.draw_icon(img, self.start_icon, start_x, start_y)
+            self.draw_icon(img, self.start_icon, start_x, start_y, self.start_dot_size)
         elif track_points:
             start_x, start_y = track_points[0]
-            draw.ellipse([start_x-6, start_y-6, start_x+6, start_y+6], 
+            size = self.start_dot_size
+            draw.ellipse([start_x-size, start_y-size, start_x+size, start_y+size], 
                         fill='green', outline='darkgreen', width=2)
         
-        # 绘制终点图标（只在动画完成时显示）
+        # 绘制终点图标（只在动画完成时显示）- 使用自定义大小
         if progress >= 1.0 and track_points and self.end_icon:
             end_x, end_y = track_points[-1]
-            self.draw_icon(img, self.end_icon, end_x, end_y)
+            self.draw_icon(img, self.end_icon, end_x, end_y, self.end_dot_size)
         elif progress >= 1.0 and track_points:
             end_x, end_y = track_points[-1]
-            draw.ellipse([end_x-6, end_y-6, end_x+6, end_y+6], 
+            size = self.end_dot_size
+            draw.ellipse([end_x-size, end_y-size, end_x+size, end_y+size], 
                         fill='red', outline='darkred', width=2)
         
-        # 只在动画进行中显示当前位置点 - 使用可配置颜色
+        # 只在动画进行中显示当前位置点 - 使用自定义大小和颜色
         if progress < 1.0 and len(track_points) > 1:
             current_x, current_y = track_points[-1]
             outline_color = self.get_darker_color(self.dot_color)
-            draw.ellipse([current_x-5, current_y-5, current_x+5, current_y+5], 
+            size = self.current_dot_size
+            draw.ellipse([current_x-size, current_y-size, current_x+size, current_y+size], 
                         fill=self.dot_color, outline=outline_color, width=2)
     
     def generate_single_gif(self, date_info, index, total):
@@ -589,12 +615,18 @@ def main():
     parser.add_argument('-animation-duration', '--animation-duration', type=float, default=0.06, help='动画帧持续时间/秒 (默认: 0.06)')
     parser.add_argument('-static-duration', '--static-duration', type=float, default=0.05, help='静止帧持续时间/秒 (默认: 0.05)')
     parser.add_argument('-line-width', '--line-width', type=int, default=3, help='轨迹线宽度 (默认: 3)')
+    
+    # 新增远点大小参数
+    parser.add_argument('-start-size', '--start-size', type=int, default=6, help='起点圆点半径 (默认: 6)')
+    parser.add_argument('-end-size', '--end-size', type=int, default=6, help='终点圆点半径 (默认: 6)')
+    parser.add_argument('-current-size', '--current-size', type=int, default=5, help='当前位置圆点半径 (默认: 5)')
+    
     args = parser.parse_args()
     
     print("🎯 轨迹GIF生成器 - 可自定义参数版本")
     print("=" * 50)
     
-    # 创建生成器实例，传入命令行参数
+    # 创建生成器实例，传入命令行参数（包括新增的远点大小参数）
     generator = GifGenerator(
         width=args.width,
         height=args.height,
@@ -604,7 +636,10 @@ def main():
         static_frames=args.static_frames,
         animation_duration=args.animation_duration,
         static_duration=args.static_duration,
-        line_width=args.line_width
+        line_width=args.line_width,
+        start_dot_size=args.start_size,
+        end_dot_size=args.end_size,
+        current_dot_size=args.current_size
     )
     
     # 检查依赖
