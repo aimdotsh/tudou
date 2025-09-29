@@ -201,7 +201,7 @@ jobs:
               cursor = conn.cursor()
               
               # 删除 name 包含 'min/km' 且长度大于 60 的记录
-              cursor.execute(\"DELETE FROM activities WHERE name LIKE '%min/km%' AND length(name) > 60\")
+              cursor.execute(\"DELETE FROM activities WHERE name LIKE '%min/km%' AND length(name) > 60 or  distance=0\")
               deleted_count = cursor.rowcount
               
               conn.commit()
