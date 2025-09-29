@@ -21,6 +21,7 @@ env:
   GITHUB_NAME: aimdotsh  # change to yours
   GITHUB_EMAIL: liups@liups.com # change to yours
 
+  ENABLE_DB_CLEANUP: true # set to false to disable database cleanup of long min/km records
 
   IGNORE_BEFORE_SAVING: True # if you want to ignore some data before saving, set this to True
   IGNORE_START_END_RANGE: 0 # Unit meter
@@ -186,6 +187,30 @@ jobs:
         if: env.RUN_TYPE == 'db_updater'
         run: |
             python run_page/db_updater.py
+
+      - name: Clean up database - Remove long min/km records
+        if: env.RUN_TYPE != 'pass' && env.ENABLE_DB_CLEANUP == 'true'
+        run: |
+          python -c "
+          import sqlite3
+          import os
+          
+          db_path = 'run_page/data.db'
+          if os.path.exists(db_path):
+              conn = sqlite3.connect(db_path)
+              cursor = conn.cursor()
+              
+              # 删除 name 包含 'min/km' 且长度大于 60 的记录
+              cursor.execute(\"DELETE FROM activities WHERE name LIKE '%min/km%' AND length(name) > 60\")
+              deleted_count = cursor.rowcount
+              
+              conn.commit()
+              conn.close()
+              
+              print(f'已删除 {deleted_count} 条符合条件的记录')
+          else:
+              print('数据库文件不存在，跳过清理操作')
+          "
 
       - name: Make svg GitHub profile
         if: env.RUN_TYPE != 'pass'
