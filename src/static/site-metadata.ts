@@ -19,6 +19,29 @@ const getBasePath = () => {
   return baseUrl === '/' ? '' : baseUrl;
 };
 
+// 获取动态的地图偏移值，每天变化
+const getDynamicMapOffset = () => {
+  const baseDate = new Date('2025-01-01'); // 基准日期
+  const currentDate = new Date();
+  
+  // 计算从基准日期到当前日期的天数差
+  const timeDiff = currentDate.getTime() - baseDate.getTime();
+  const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+  
+  // 基础值
+  const baseDistance = 234.56; // 基础距离（公里）
+  const baseBearing = 225;     // 基础角度（度）
+  
+  // 每天增加10公里，角度每天增加1度
+  const distance = baseDistance + (daysDiff * 10);
+  const bearing = (baseBearing + daysDiff) % 360; // 使用模运算确保角度在0-359度范围内
+  
+  return {
+    distance,
+    bearing
+  };
+};
+
 const data: ISiteMetadataResult = {
   siteTitle: '蓝皮书的 Workouts Page',
   siteUrl: 'https://run.liups.com',
@@ -55,10 +78,7 @@ const data: ISiteMetadataResult = {
       url: 'https://liups.com/posts/workouts_page/',
     },
   ],
-  mapOffset: {
-    distance: 234.56,   // 偏移距离（公里）
-    bearing: 225,      // 偏移方位角（度，方位角说明：0° = 正北;90° = 正东;135° = 东南;180° = 正南;225° = 西南;270° = 正西;315° = 西北）
-  },
+  mapOffset: getDynamicMapOffset(),
 };
 
 export default data;
