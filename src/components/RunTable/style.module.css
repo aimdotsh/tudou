@@ -35,7 +35,7 @@
       
       &:first-child {
         text-align: left;
-        padding-left: 2em; /* Name列表头添加左边距，与数据行对齐 */
+        padding-left: 0.5em; /* Name列表头添加左边距，与数据行对齐 */
       }
     }
   }
@@ -52,7 +52,7 @@
     &:first-child {
       text-align: left;
       min-width: 100px;
-      padding-left: 2em; /* Name列添加左边距，相当于2个字符的间距 */
+      padding-left: 0.5em; /* Name列添加左边距，相当于2个字符的间距 */
     }
   }
 
