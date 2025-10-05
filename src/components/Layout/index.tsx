@@ -5,7 +5,12 @@ import Nav from '@/components/Nav';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import styles from './style.module.css';
 
-const Layout = ({ children }: React.PropsWithChildren) => {
+interface LayoutProps extends React.PropsWithChildren {
+  onSearch?: (searchTerm: string) => void;
+  showSearch?: boolean;
+}
+
+const Layout = ({ children, onSearch, showSearch = false }: LayoutProps) => {
   const { siteTitle, description, keywords } = useSiteMetadata();
 
   return (
@@ -20,7 +25,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
       </Helmet>
-      <Nav />
+      <Nav onSearch={onSearch} showSearch={showSearch} />
       <div className="lg:flex lg:px-16">
         {children}
       </div>

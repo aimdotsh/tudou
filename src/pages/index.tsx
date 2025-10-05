@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import LocationStat from '@/components/LocationStat';
 import LocationSummary from '@/components/LocationStat/LocationSummary';
@@ -64,6 +65,7 @@ const Index = () => {
     return '未知耗时';
   };
 
+  const location = useLocation();
   const { siteTitle } = useSiteMetadata();
   const { activities, thisYear } = useActivities();
   const [year, setYear] = useState(thisYear);
@@ -72,11 +74,64 @@ const Index = () => {
   const [runs, setActivity] = useState(
     filterAndSortRuns(activities, year, filterYearRuns, sortDateFunc, null, null)
   );
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredRuns, setFilteredRuns] = useState(runs);
   const [title, setTitle] = useState(`${thisYear} Year Heatmap`);
-  const [geoData, setGeoData] = useState(geoJsonForRuns(runs));
+  const [geoData, setGeoData] = useState(geoJsonForRuns(filteredRuns));
   // for auto zoom
   const bounds = getBoundsForGeoData(geoData);
   const [intervalId, setIntervalId] = useState<number>();
+
+  // 搜索功能
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    
+    if (!term.trim()) {
+      // 如果搜索词为空，显示所有运动记录
+      setFilteredRuns(runs);
+      setGeoData(geoJsonForRuns(runs));
+      
+      // 重置选中状态
+      setRunIndex(-1);
+      setSelectedRunId(null);
+      updateUrlWithRunId(null);
+      
+      // 恢复原始标题
+      if (!selectedRunId) {
+        setTitle(`${year} Year Heatmap`);
+      }
+    } else {
+      // 根据name进行模糊搜索
+      const filtered = runs.filter(run => 
+        run.name && run.name.toLowerCase().includes(term.toLowerCase())
+      );
+      
+      setFilteredRuns(filtered);
+      setGeoData(geoJsonForRuns(filtered));
+      
+      // 重置选中状态
+      setRunIndex(-1);
+      setSelectedRunId(null);
+      updateUrlWithRunId(null);
+      
+      // 更新标题显示搜索结果
+      setTitle(`搜索 "${term}" - 找到 ${filtered.length} 条记录`);
+    }
+  };
+
+  // 当runs数据变化时，更新filteredRuns
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredRuns(runs);
+    } else {
+      const filtered = runs.filter(run => 
+        run.name && run.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredRuns(filtered);
+      setGeoData(geoJsonForRuns(filtered));
+      setTitle(`搜索 "${searchTerm}" - 找到 ${filtered.length} 条记录`);
+    }
+  }, [runs, searchTerm]);
 
   const [viewState, setViewState] = useState<IViewState>({
     ...bounds,
@@ -111,9 +166,14 @@ const Index = () => {
     if (name != 'Year') {
       setYear(thisYear);
     }
-    setActivity(filterAndSortRuns(activities, item, func, sortDateFunc, null, null));
+    const newRuns = filterAndSortRuns(activities, item, func, sortDateFunc, null, null);
+    setActivity(newRuns);
     setRunIndex(-1);
     setTitle(`${item} ${name} Heatmap`);
+    
+    // 清除搜索状态
+    setSearchTerm('');
+    setFilteredRuns(newRuns);
   };
 
   const changeYear = (y: string) => {
@@ -141,6 +201,10 @@ const Index = () => {
     // 强制更新标题，确保与选中的年份同步
     const newRuns = filterAndSortRuns(activities, y, filterYearRuns, sortDateFunc, null, null);
     setActivity(newRuns);
+    
+    // 清除搜索状态
+    setSearchTerm('');
+    setFilteredRuns(newRuns);
     
     // 重置地图数据为新年份的所有运动
     setGeoData(geoJsonForRuns(newRuns));
@@ -188,8 +252,8 @@ const Index = () => {
     const ids = new Set(runIds);
 
     const selectedRuns = !runIds.length
-      ? runs
-      : runs.filter((r: any) => ids.has(r.run_id));
+      ? filteredRuns
+      : filteredRuns.filter((r: any) => ids.has(r.run_id));
 
     if (!selectedRuns.length) {
       // 清除选中状态和URL
@@ -254,8 +318,8 @@ const Index = () => {
   useEffect(() => {
     const runIdFromUrl = getRunIdFromUrl();
     
-    if (runIdFromUrl && runs.length > 0) {
-      const runIndex = runs.findIndex(run => run.run_id === runIdFromUrl);
+    if (runIdFromUrl && filteredRuns.length > 0) {
+      const runIndex = filteredRuns.findIndex(run => run.run_id === runIdFromUrl);
       
       if (runIndex !== -1) {
         // 设置运行索引
@@ -295,19 +359,19 @@ const Index = () => {
         }, 500); // 等待地图动画完成后再滚动到记录行
       }
     }
-  }, [runs]);
+  }, [filteredRuns]);
 
   // 监听浏览器前进后退按钮
   useEffect(() => {
     const handlePopState = () => {
       const runIdFromUrl = getRunIdFromUrl();
-      if (runIdFromUrl && runs.length > 0) {
-        const runIndex = runs.findIndex(run => run.run_id === runIdFromUrl);
+      if (runIdFromUrl && filteredRuns.length > 0) {
+        const runIndex = filteredRuns.findIndex(run => run.run_id === runIdFromUrl);
         if (runIndex !== -1) {
           setRunIndex(runIndex);
           setSelectedRunId(runIdFromUrl);
           
-          const selectedRuns = runs.filter((r: any) => r.run_id === runIdFromUrl);
+          const selectedRuns = filteredRuns.filter((r: any) => r.run_id === runIdFromUrl);
           if (selectedRuns.length > 0) {
             const targetRun = selectedRuns[0];
             setGeoData(geoJsonForRuns(selectedRuns));
@@ -328,7 +392,7 @@ const Index = () => {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [runs]);
+  }, [filteredRuns]);
 
   // 确保标题与当前选中的年份同步，但不覆盖URL中指定的运动记录标题
   useEffect(() => {
@@ -368,7 +432,7 @@ const Index = () => {
       return;
     }
     
-    const runsNum = runs.length;
+    const runsNum = filteredRuns.length;
     // maybe change 20 ?
     const sliceNum = runsNum >= 10 ? runsNum / 10 : 1;
     let i = sliceNum;
@@ -377,12 +441,12 @@ const Index = () => {
         clearInterval(id);
       }
 
-      const tempRuns = runs.slice(0, i);
+      const tempRuns = filteredRuns.slice(0, i);
       setGeoData(geoJsonForRuns(tempRuns));
       i += sliceNum;
     }, 10);
     setIntervalId(id);
-  }, [runs.length, selectedRunId]);
+  }, [filteredRuns.length, selectedRunId]);
 
   useEffect(() => {
     if (year !== 'Total') {
@@ -415,7 +479,7 @@ const Index = () => {
           const [runDate] = titleEl.innerHTML.match(
             /\d{4}-\d{1,2}-\d{1,2}/
           ) || [`${+thisYear + 1}`];
-          const runIDsOnDate = runs
+          const runIDsOnDate = filteredRuns
             .filter((r) => r.start_date_local.slice(0, 10) === runDate)
             .map((r) => r.run_id);
           if (!runIDsOnDate.length) {
@@ -432,7 +496,10 @@ const Index = () => {
   }, [year]);
 
   return (
-    <Layout>
+    <Layout 
+      onSearch={handleSearch} 
+      showSearch={location.pathname === '/' || location.pathname === '/index'}
+    >
       <div className="flex flex-col lg:flex-row w-full">
         {/* 左侧栏 */}
         <div className="w-full lg:w-1/4">
@@ -675,6 +742,9 @@ const Index = () => {
                                       // 年份切换后，需要等待runs更新，然后再定位
                                       setTimeout(() => {
                                         const updatedRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
+                                        // 清除搜索状态以显示完整的年份数据
+                                        setSearchTerm('');
+                                        setFilteredRuns(updatedRuns);
                                         const runIndex = updatedRuns.findIndex(run => run.run_id === targetRunId);
                                         if (runIndex !== -1) {
                                           setRunIndex(runIndex);
@@ -685,6 +755,11 @@ const Index = () => {
                                       }, 100);
                                     } else {
                                       // 当前年份匹配，直接定位
+                                      // 如果有搜索状态，需要清除以显示完整数据
+                                      if (searchTerm) {
+                                        setSearchTerm('');
+                                        setFilteredRuns(runs);
+                                      }
                                       const runIndex = runs.findIndex(run => run.run_id === targetRunId);
                                       if (runIndex !== -1) {
                                         setRunIndex(runIndex);
@@ -765,9 +840,15 @@ const Index = () => {
               <SVGStat />
             ) : (
               <RunTable
-                runs={runs}
+                runs={filteredRuns}
                 locateActivity={locateActivity}
-                setActivity={setActivity}
+                setActivity={(newRuns) => {
+                  setActivity(newRuns);
+                  // 如果没有搜索状态，同步更新filteredRuns
+                  if (!searchTerm.trim()) {
+                    setFilteredRuns(newRuns);
+                  }
+                }}
                 runIndex={runIndex}
                 setRunIndex={setRunIndex}
                 selectedRunId={selectedRunId}

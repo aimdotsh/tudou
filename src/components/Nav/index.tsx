@@ -2,9 +2,15 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { usePrivacyModeContext } from '@/context/PrivacyModeContext';
+import SearchBox from '@/components/SearchBox';
 import styles from './style.module.css';
 
-const Nav = () => {
+interface NavProps {
+  onSearch?: (searchTerm: string) => void;
+  showSearch?: boolean;
+}
+
+const Nav: React.FC<NavProps> = ({ onSearch, showSearch = false }) => {
   const location = useLocation();
   const { navLinks, logo, siteUrl } = useSiteMetadata();
   const { isPrivacyMode, setIsPrivacyMode } = usePrivacyModeContext();
@@ -52,8 +58,16 @@ const Nav = () => {
             </a>
           );
         })}
-
       </div>
+      
+      {/* 搜索框 - 只在首页显示 */}
+      {showSearch && onSearch && (
+        <SearchBox 
+          onSearch={onSearch}
+          placeholder="搜索运动记录..."
+          className={styles.searchBoxContainer}
+        />
+      )}
     </nav>
   );
 };

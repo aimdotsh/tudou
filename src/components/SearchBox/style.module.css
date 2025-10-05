@@ -1,0 +1,134 @@
+.searchContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.searchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #FAF9F5;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+
+.searchBox.expanded {
+  width: 250px;
+  border-color: #20B2AA;
+  box-shadow: 0 2px 8px rgba(32, 178, 170, 0.2);
+}
+
+.searchIcon {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #20B2AA;
+}
+
+.searchIcon:hover {
+  background-color: rgba(32, 178, 170, 0.1);
+  transform: scale(1.1);
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  color: #333;
+  width: 100%;
+}
+
+.searchInput::placeholder {
+  color: #999;
+}
+
+.clearButton {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 8px;
+  color: #999;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.clearButton:hover {
+  color: #20B2AA;
+  background-color: rgba(32, 178, 170, 0.1);
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+  .searchBox.expanded {
+    width: 200px;
+  }
+  
+  .searchInput {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+  
+  .searchIcon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  
+  .searchBox {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchBox.expanded {
+    width: 160px;
+  }
+  
+  .searchInput {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+  
+  .searchIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .searchBox {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .clearButton {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+}
