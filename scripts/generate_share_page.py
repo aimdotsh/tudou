@@ -166,11 +166,49 @@ def pick_image_url(act, base_url, date_override=None, image_override=None):
         png_out_dir.mkdir(parents=True, exist_ok=True)
         png_path = png_out_dir / f"{date_str}.png"
         if svg_path.exists():
-            # 使用 cairosvg 转换
+            # 读取 SVG 并注入中文字体，避免中文乱码
             try:
+                svg_text = svg_path.read_text(encoding="utf-8")
+                # 检测项目内字体
+                font_dir = proj / "assets" / "fonts"
+                preferred_font = None
+                for fname in ["NotoSansSC-Regular.otf", "SourceHanSansSC-Regular.otf", "NotoSansCJKsc-Regular.otf", "SourceHanSansCN-Regular.otf"]:
+                    fpath = font_dir / fname
+                    if fpath.exists():
+                        preferred_font = fpath
+                        break
+                # 系统字体备选名称（macOS）
+                system_families = '"PingFang SC","STHeiti","Heiti SC","Microsoft YaHei","Arial Unicode MS"'
+                font_css = ""
+                if preferred_font:
+                    font_css = f"""
+                    @font-face {{
+                      font-family: 'AppChinese';
+                      src: url('file://{preferred_font}') format('opentype');
+                      font-weight: normal;
+                      font-style: normal;
+                    }}
+                    * {{
+                      font-family: 'AppChinese', {system_families}, sans-serif !important;
+                    }}
+                    """
+                else:
+                    font_css = f"""
+                    * {{
+                      font-family: {system_families}, sans-serif !important;
+                    }}
+                    """
+                # 在 <svg> 里注入 <style>
+                if "<style" in svg_text:
+                    # 已有样式，追加全局字体
+                    svg_text = svg_text.replace("</style>", font_css + "</style>")
+                else:
+                    # 注入新的样式块
+                    svg_text = svg_text.replace("<svg", "<svg><style><![CDATA[" + font_css + "]]></style>", 1) if "<svg" in svg_text else svg_text
+                # 使用 bytestring 渲染，确保字体规则生效
                 import cairosvg
-                cairosvg.svg2png(url=str(svg_path), write_to=str(png_path), output_width=1200, output_height=630)
-            except Exception as e:
+                cairosvg.svg2png(bytestring=svg_text.encode("utf-8"), write_to=str(png_path), output_width=1200, output_height=630, dpi=96)
+            except Exception:
                 # 转换失败则忽略，后续用占位图
                 pass
             # 若已生成 PNG，返回绝对 URL
