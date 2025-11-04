@@ -50,7 +50,7 @@ const SHOW_LIGHTS_TOGGLE = false;
 // control whether to show the privacy toggle button on the map (top-right)
 const SHOW_PRIVACY_TOGGLE = false;
 // default theme for the application: 'dark' or 'light'
-const DEFAULT_THEME: 'dark' | 'light' = 'dark';
+const DEFAULT_THEME: 'dark' | 'light' = 'light';
 //set to `true` if you want to show the 'Elevation Gain' column
 const SHOW_ELEVATION_GAIN = true;
 // richer title for the activity types (like garmin style)
