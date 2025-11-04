@@ -51,7 +51,7 @@ const SHOW_ELEVATION_GAIN = true;
 const RICH_TITLE = true;
 
 // IF you are outside China please make sure IS_CHINESE = false
-const IS_CHINESE = true;
+const IS_CHINESE = false;
 const USE_ANIMATION_FOR_GRID = false;
 const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string =>
   `户外运动 ${yearLength} 年 ` +
