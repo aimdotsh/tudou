@@ -115,6 +115,21 @@ const RunMap = ({
         map.setBearing(currentBearing);
         map.setPitch(currentPitch);
 
+        // Remove street name labels in privacy mode
+        if (PRIVACY_MODE) {
+          const layers = map.getStyle().layers;
+          const labelLayerNames = layers
+            .filter(
+              (layer: any) =>
+                (layer.type === 'symbol' || layer.type === 'composite') &&
+                layer.layout && layer.layout.text_field !== null
+            )
+            .map((layer: any) => layer.id);
+          labelLayerNames.forEach((layerId) => {
+            map.removeLayer(layerId);
+          });
+        }
+
         // Reapply layer visibility settings
         switchLayerVisibility(map, lights);
       });
@@ -177,13 +192,13 @@ const RunMap = ({
           if (event.dataType !== 'style' || mapRef.current) {
             return;
           }
-          if (!ROAD_LABEL_DISPLAY) {
+          if (!ROAD_LABEL_DISPLAY || PRIVACY_MODE) {
             const layers = map.getStyle().layers;
             const labelLayerNames = layers
               .filter(
                 (layer: any) =>
                   (layer.type === 'symbol' || layer.type === 'composite') &&
-                  layer.layout.text_field !== null
+                  layer.layout && layer.layout.text_field !== null
               )
               .map((layer: any) => layer.id);
             labelLayerNames.forEach((layerId) => {
