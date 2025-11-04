@@ -52,9 +52,9 @@ const RunRow = ({
       <td>{distance}</td>
       {SHOW_ELEVATION_GAIN && <td>{elevation_gain ?? 0.0}</td>}
       <td>{paceParts}</td>
-      <td>{heartRate && heartRate.toFixed(0)}</td>
+
       <td>{runTime}</td>
-      <td className={styles.runDate}>{run.start_date_local}</td>
+      <td className={styles.runDate}>{run.start_date_local.slice(0, 11)} </td>
     </tr>
   );
 };

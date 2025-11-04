@@ -29,6 +29,45 @@ const RunTable = ({
   setRunIndex,
 }: IRunTableProperties) => {
   const [sortFuncInfo, setSortFuncInfo] = useState('');
+  // TODO refactor?
+  const sortTypeFunc: SortFunc = (a, b) =>
+    sortFuncInfo === 'Type' ? a.type > b.type ? 1:-1 : b.type < a.type ? -1:1;
+  const sortKMFunc: SortFunc = (a, b) =>
+    sortFuncInfo === 'KM' ? a.distance - b.distance : b.distance - a.distance;
+  const sortElevationGainFunc: SortFunc = (a, b) =>
+    sortFuncInfo === 'Elevation Gain'
+      ? (a.elevation_gain ?? 0) - (b.elevation_gain ?? 0)
+      : (b.elevation_gain ?? 0) - (a.elevation_gain ?? 0);
+  const sortPaceFunc: SortFunc = (a, b) =>
+    sortFuncInfo === 'Pace'
+      ? a.average_speed - b.average_speed
+      : b.average_speed - a.average_speed;
+  const sortBPMFunc: SortFunc = (a, b) => {
+    return sortFuncInfo === 'BPM'
+      ? (a.average_heartrate ?? 0) - (b.average_heartrate ?? 0)
+      : (b.average_heartrate ?? 0) - (a.average_heartrate ?? 0);
+  };
+  const sortRunTimeFunc: SortFunc = (a, b) => {
+    const aTotalSeconds = convertMovingTime2Sec(a.moving_time);
+    const bTotalSeconds = convertMovingTime2Sec(b.moving_time);
+    return sortFuncInfo === 'Time'
+      ? aTotalSeconds - bTotalSeconds
+      : bTotalSeconds - aTotalSeconds;
+  };
+  const sortDateFuncClick =
+    sortFuncInfo === 'Date' ? sortDateFunc : sortDateFuncReverse;
+  const sortFuncMap = new Map([
+    ['Type', sortTypeFunc],
+    ['KM', sortKMFunc],
+    ['Elevation Gain', sortElevationGainFunc],
+    ['Pace', sortPaceFunc],
+    ['Time', sortRunTimeFunc],
+    ['Date', sortDateFuncClick],
+  ]);
+  if (!SHOW_ELEVATION_GAIN){
+    sortFuncMap.delete('Elevation Gain')
+  }
+
 
   // Memoize sort functions to prevent recreating them on every render
   const sortFunctions = useMemo(() => {
