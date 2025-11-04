@@ -29,6 +29,7 @@ import {
   MAP_TILE_VENDOR,
   MAP_TILE_ACCESS_TOKEN,
   getRuntimeSingleColor,
+  SHOW_LIGHTS_TOGGLE,
 } from '@/utils/const';
 import {
   Coordinate,
@@ -436,7 +437,9 @@ const RunMap = ({
       )}
       <span className={styles.runTitle}>{title}</span>
       <FullscreenControl style={fullscreenButton} />
-      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
+      {!PRIVACY_MODE && SHOW_LIGHTS_TOGGLE && (
+        <LightsControl setLights={setLights} lights={lights} />
+      )}
       <NavigationControl
         showCompass={false}
         position={'bottom-right'}

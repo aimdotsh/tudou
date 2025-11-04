@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MAP_TILE_STYLE_LIGHT, MAP_TILE_STYLE_DARK } from '@/utils/const';
+import { MAP_TILE_STYLE_LIGHT, MAP_TILE_STYLE_DARK, DEFAULT_THEME } from '@/utils/const';
 
 export type Theme = 'light' | 'dark';
 
@@ -35,8 +35,8 @@ export const useMapTheme = () => {
     if (savedTheme === 'dark') return MAP_TILE_STYLE_DARK;
     if (savedTheme === 'light') return MAP_TILE_STYLE_LIGHT;
 
-    // Default to dark theme
-    return MAP_TILE_STYLE_DARK;
+    // Default to configured theme
+    return DEFAULT_THEME === 'dark' ? MAP_TILE_STYLE_DARK : MAP_TILE_STYLE_LIGHT;
   });
 
   /**
@@ -63,8 +63,8 @@ export const useMapTheme = () => {
     } else if (!dataTheme && savedTheme === 'light') {
       newTheme = MAP_TILE_STYLE_LIGHT;
     } else {
-      // Default to dark theme
-      newTheme = MAP_TILE_STYLE_DARK;
+      // Default to configured theme
+      newTheme = DEFAULT_THEME === 'dark' ? MAP_TILE_STYLE_DARK : MAP_TILE_STYLE_LIGHT;
     }
 
     // Only update if theme has changed
@@ -122,10 +122,10 @@ export const useMapTheme = () => {
  * @returns Object with current theme and function to change theme
  */
 export const useTheme = () => {
-  // Initialize theme from localStorage or default to dark
+  // Initialize theme from localStorage or configured default
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return (localStorage.getItem('theme') as Theme) || 'dark';
+    if (typeof window === 'undefined') return DEFAULT_THEME;
+    return (localStorage.getItem('theme') as Theme) || DEFAULT_THEME;
   });
 
   /**

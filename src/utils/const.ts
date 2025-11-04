@@ -45,6 +45,12 @@ const PRIVACY_MODE = false;
 // updated on 2024/11/17: lights are turned off by default
 //set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
 const LIGHTS_ON = false;
+// control whether to show the lights toggle button on the map (top-right)
+const SHOW_LIGHTS_TOGGLE = false;
+// control whether to show the privacy toggle button on the map (top-right)
+const SHOW_PRIVACY_TOGGLE = false;
+// default theme for the application: 'dark' or 'light'
+const DEFAULT_THEME: 'dark' | 'light' = 'dark';
 //set to `true` if you want to show the 'Elevation Gain' column
 const SHOW_ELEVATION_GAIN = true;
 // richer title for the activity types (like garmin style)
@@ -174,6 +180,9 @@ export {
   MAP_HEIGHT,
   PRIVACY_MODE,
   LIGHTS_ON,
+  SHOW_LIGHTS_TOGGLE,
+  SHOW_PRIVACY_TOGGLE,
+  DEFAULT_THEME,
   SHOW_ELEVATION_GAIN,
   RICH_TITLE,
   ACTIVITY_TOTAL,
