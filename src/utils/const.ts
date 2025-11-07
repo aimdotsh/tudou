@@ -45,7 +45,7 @@ const PRIVACY_MODE = false;
 // 设为 false 则默认关灯（仅在 PRIVACY_MODE = false 时生效）
 const LIGHTS_ON = true;
 // 是否在地图右上角显示“开关灯”按钮
-const SHOW_LIGHTS_TOGGLE = true;
+const SHOW_LIGHTS_TOGGLE = false;
 // 是否在地图右上角显示“隐私模式”按钮
 const SHOW_PRIVACY_TOGGLE = true;
 // 应用默认主题：'dark'（深色）或 'light'（浅色）
