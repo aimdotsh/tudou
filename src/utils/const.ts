@@ -48,8 +48,12 @@ const LIGHTS_ON = true;
 const SHOW_LIGHTS_TOGGLE = false;
 // 是否在地图右上角显示“隐私模式”按钮
 const SHOW_PRIVACY_TOGGLE = true;
+// 是否显示网页右上角主题切换按钮
+const SHOW_THEME_TOGGLE = false;
 // 应用默认主题：'dark'（深色）或 'light'（浅色）
 const DEFAULT_THEME: 'dark' | 'light' = 'light';
+// 强制主题（'dark' 或 'light'，设为 null 则不强制）
+const FORCE_THEME: 'dark' | 'light' | null = 'light';
 // 设为 true 显示“海拔爬升”列
 const SHOW_ELEVATION_GAIN = true;
 // 是否使用更丰富的活动类型标题（类似 Garmin 风格）
@@ -182,6 +186,8 @@ export {
   SHOW_LIGHTS_TOGGLE,
   SHOW_PRIVACY_TOGGLE,
   DEFAULT_THEME,
+  FORCE_THEME,
+  SHOW_THEME_TOGGLE,
   SHOW_ELEVATION_GAIN,
   RICH_TITLE,
   ACTIVITY_TOTAL,

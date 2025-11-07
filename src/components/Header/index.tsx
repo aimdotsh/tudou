@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
 import { useTheme, Theme } from '@/hooks/useTheme';
+import { SHOW_THEME_TOGGLE } from '@/utils/const';
 import styles from './style.module.css';
 
 const Header = () => {
@@ -80,17 +81,19 @@ const Header = () => {
               {n.name}
             </a>
           ))}
-          <div className="ml-4 flex items-center space-x-2">
-            <button
-              type="button"
-              onClick={handleToggle}
-              className={`${styles.themeButton} ${styles.themeButtonActive}`}
-              aria-label={`Switch to ${currentIcon.id} theme`}
-              title={`Switch to ${currentIcon.id} theme`}
-            >
-              <div className={styles.iconWrapper}>{currentIcon.svg}</div>
-            </button>
-          </div>
+          {SHOW_THEME_TOGGLE && (
+            <div className="ml-4 flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={handleToggle}
+                className={`${styles.themeButton} ${styles.themeButtonActive}`}
+                aria-label={`Switch to ${currentIcon.id} theme`}
+                title={`Switch to ${currentIcon.id} theme`}
+              >
+                <div className={styles.iconWrapper}>{currentIcon.svg}</div>
+              </button>
+            </div>
+          )}
         </div>
       </nav>
     </>

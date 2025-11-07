@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MAP_TILE_STYLE_LIGHT, MAP_TILE_STYLE_DARK, DEFAULT_THEME } from '@/utils/const';
+import { MAP_TILE_STYLE_LIGHT, MAP_TILE_STYLE_DARK, DEFAULT_THEME, FORCE_THEME } from '@/utils/const';
 
 export type Theme = 'light' | 'dark';
 
@@ -35,8 +35,9 @@ export const useMapTheme = () => {
     if (savedTheme === 'dark') return MAP_TILE_STYLE_DARK;
     if (savedTheme === 'light') return MAP_TILE_STYLE_LIGHT;
 
-    // Default to configured theme
-    return DEFAULT_THEME === 'dark' ? MAP_TILE_STYLE_DARK : MAP_TILE_STYLE_LIGHT;
+    // Default to configured/forced theme
+    const base = (FORCE_THEME ?? DEFAULT_THEME) === 'dark' ? MAP_TILE_STYLE_DARK : MAP_TILE_STYLE_LIGHT;
+    return base;
   });
 
   /**
@@ -63,8 +64,8 @@ export const useMapTheme = () => {
     } else if (!dataTheme && savedTheme === 'light') {
       newTheme = MAP_TILE_STYLE_LIGHT;
     } else {
-      // Default to configured theme
-      newTheme = DEFAULT_THEME === 'dark' ? MAP_TILE_STYLE_DARK : MAP_TILE_STYLE_LIGHT;
+      // Default to configured/forced theme
+      newTheme = (FORCE_THEME ?? DEFAULT_THEME) === 'dark' ? MAP_TILE_STYLE_DARK : MAP_TILE_STYLE_LIGHT;
     }
 
     // Only update if theme has changed
@@ -122,19 +123,22 @@ export const useMapTheme = () => {
  * @returns Object with current theme and function to change theme
  */
 export const useTheme = () => {
-  // Initialize theme from localStorage or configured default
+  // Initialize theme from localStorage or configured/forced default
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return DEFAULT_THEME;
-    return (localStorage.getItem('theme') as Theme) || DEFAULT_THEME;
+    if (typeof window === 'undefined') return (FORCE_THEME ?? DEFAULT_THEME) as Theme;
+    return ((localStorage.getItem('theme') as Theme) || (FORCE_THEME ?? DEFAULT_THEME)) as Theme;
   });
 
   /**
    * Set theme and dispatch event to notify other components
    */
   const setTheme = useCallback((newTheme: Theme) => {
+    if (FORCE_THEME) {
+      // ignore external changes when forcing theme
+      return;
+    }
     setThemeState(newTheme);
 
-    // Dispatch custom event for theme change
     const event = new CustomEvent(THEME_CHANGE_EVENT, {
       detail: { theme: newTheme },
     });
@@ -145,9 +149,10 @@ export const useTheme = () => {
   useEffect(() => {
     const root = window.document.documentElement;
 
-    // Set attribute and save to localStorage for both themes
-    root.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    // Set attribute and save to localStorage
+    const applied = (FORCE_THEME ?? theme) as Theme;
+    root.setAttribute('data-theme', applied);
+    localStorage.setItem('theme', applied);
   }, [theme]);
 
   return {
@@ -198,9 +203,4 @@ export const useThemeChangeCounter = () => {
     return () => {
       observer.disconnect();
       window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
-      window.removeEventListener('storage', handleThemeChange);
-    };
-  }, []);
-
-  return counter;
-};
+      window.removeEventListener('storage', handleThem
