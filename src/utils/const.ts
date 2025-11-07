@@ -30,30 +30,29 @@ const MAP_LAYER_LIST = [
 const USE_GOOGLE_ANALYTICS = false;
 const GOOGLE_ANALYTICS_TRACKING_ID = '';
 
-// styling: set to `true` if you want dash-line route
+// 样式：使用虚线轨迹（true 为启用虚线）
 const USE_DASH_LINE = false;
-// styling: route line opacity: [0, 1]
+// 样式：轨迹线不透明度，范围 [0, 1]
 const LINE_OPACITY = 0.6;
-// styling: map height - responsive design
-// Use smaller height on mobile devices for better user experience
+// 样式：地图高度（响应式）；移动端使用较小高度以提升体验
 const MAP_HEIGHT = window.innerWidth <= 768 ? 250 : 600;
-//set to `false` if you want to hide the road label characters
+// 设为 false 可隐藏道路文字标签
 const ROAD_LABEL_DISPLAY = false;
-// updated on 2024/11/17: privacy mode is set to true by default
-//set to `true` if you want to display only the routes without showing the map.
+// 2024/11/17 更新：隐私模式默认说明
+// 设为 true 仅显示轨迹，不显示底图
 const PRIVACY_MODE = false;
-// updated on 2024/11/17: lights are turned off by default
-//set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
-const LIGHTS_ON = false;
-// control whether to show the lights toggle button on the map (top-right)
+// 2024/11/17 更新：默认关灯
+// 设为 false 则默认关灯（仅在 PRIVACY_MODE = false 时生效）
+const LIGHTS_ON = true;
+// 是否在地图右上角显示“开关灯”按钮
 const SHOW_LIGHTS_TOGGLE = true;
-// control whether to show the privacy toggle button on the map (top-right)
+// 是否在地图右上角显示“隐私模式”按钮
 const SHOW_PRIVACY_TOGGLE = true;
-// default theme for the application: 'dark' or 'light'
+// 应用默认主题：'dark'（深色）或 'light'（浅色）
 const DEFAULT_THEME: 'dark' | 'light' = 'light';
-//set to `true` if you want to show the 'Elevation Gain' column
+// 设为 true 显示“海拔爬升”列
 const SHOW_ELEVATION_GAIN = true;
-// richer title for the activity types (like garmin style)
+// 是否使用更丰富的活动类型标题（类似 Garmin 风格）
 const RICH_TITLE = true;
 
 // IF you are outside China please make sure IS_CHINESE = false
