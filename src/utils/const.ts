@@ -38,17 +38,17 @@ const LINE_OPACITY = 0.6;
 // Use smaller height on mobile devices for better user experience
 const MAP_HEIGHT = window.innerWidth <= 768 ? 250 : 600;
 //set to `false` if you want to hide the road label characters
-const ROAD_LABEL_DISPLAY = true;
+const ROAD_LABEL_DISPLAY = false;
 // updated on 2024/11/17: privacy mode is set to true by default
 //set to `true` if you want to display only the routes without showing the map.
-const PRIVACY_MODE = false;
+const PRIVACY_MODE = true;
 // updated on 2024/11/17: lights are turned off by default
 //set to `false` if you want to make light off as default, only effect when `PRIVACY_MODE` = false
 const LIGHTS_ON = false;
 // control whether to show the lights toggle button on the map (top-right)
-const SHOW_LIGHTS_TOGGLE = false;
+const SHOW_LIGHTS_TOGGLE = true;
 // control whether to show the privacy toggle button on the map (top-right)
-const SHOW_PRIVACY_TOGGLE = false;
+const SHOW_PRIVACY_TOGGLE = true;
 // default theme for the application: 'dark' or 'light'
 const DEFAULT_THEME: 'dark' | 'light' = 'light';
 //set to `true` if you want to show the 'Elevation Gain' column
