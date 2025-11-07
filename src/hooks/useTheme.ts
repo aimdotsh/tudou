@@ -113,6 +113,11 @@ export const useMapTheme = () => {
       window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
       window.removeEventListener('storage', handleThemeChange);
     };
+  }, []);
+
+  return counter;
+};eChange);
+    };
   }, [ensureThemeConsistency]);
 
   return mapTheme;
@@ -203,4 +208,9 @@ export const useThemeChangeCounter = () => {
     return () => {
       observer.disconnect();
       window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
-      window.removeEventListener('storage', handleThem
+      window.removeEventListener('storage', handleThemeChange);
+    };
+  }, []);
+
+  return counter;
+};
