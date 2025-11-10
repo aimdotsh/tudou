@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表空间增长趋势分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 5px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .subtitle a {
+            color: #667eea;
+            text-decoration: underline;
+            transition: all 0.3s;
+        }
+
+        .subtitle a:hover {
+            color: #764ba2;
+            text-decoration: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+            min-width: 160px;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c53030;
+            font-size: 13px;
+        }
+
+        .info-panel {
+            background: #edf2f7;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        .legend-custom {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #4a5568;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .time-shortcuts {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .time-shortcut-btn {
+            padding: 6px 12px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            color: #667eea;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-shortcut-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .time-shortcut-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            h1 {
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+
+            .subtitle {
+                font-size: 11px;
+                margin-bottom: 10px;
+            }
+
+            .controls {
+                padding: 8px;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+
+            select {
+                min-width: 100%;
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            label {
+                font-size: 11px;
+            }
+
+            .chart-container {
+                height: 300px;
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .stat-card {
+                padding: 10px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+                margin-bottom: 3px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+
+            .time-shortcuts {
+                padding: 8px;
+                gap: 4px;
+                margin-top: 8px;
+            }
+
+            .time-shortcut-btn {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .legend-custom {
+                padding: 8px;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .legend-item {
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .legend-color {
+                width: 14px;
+                height: 8px;
+            }
+
+            .info-panel {
+                padding: 8px 10px;
+                font-size: 11px;
+                margin-bottom: 10px;
+            }
+
+            .error {
+                padding: 8px 10px;
+                font-size: 11px;
+                margin-bottom: 10px;
+            }
+
+            .loading {
+                padding: 20px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 表空间增长趋势分析</h1>
+        <div class="subtitle">展示各主机表空间使用情况随时间变化趋势 | <a href="index.html">📊 返回监控系统</a></div>
+
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        
+        <div class="info-panel" id="urlHint">
+            💡 <strong>URL 参数提示：</strong>当前查询范围：<span id="currentHost" style="font-weight: bold; color: #667eea;">所有主机</span>
+            <span style="margin-left: 15px; color: #718096;">
+                可通过 URL 参数筛选主机，例如：<code style="background: white; padding: 2px 6px; border-radius: 3px;">?host=192.168.1.1</code>
+            </span>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="hostFilter">🖥️ 选择主机</label>
+                <select id="hostFilter">
+                    <option value="all">所有主机</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="tablespaceFilter">💾 选择表空间</label>
+                <select id="tablespaceFilter">
+                    <option value="all">所有表空间</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="metricType">📊 指标类型</label>
+                <select id="metricType">
+                    <option value="used_mb">已使用空间 (MB)</option>
+                    <option value="pct_used">使用率 (%)</option>
+                    <option value="free_mb">剩余空间 (MB)</option>
+                    <option value="tablespace_size_mb">总空间 (MB)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="startTime">📅 开始时间</label>
+                <input type="datetime-local" id="startTime" style="padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; min-width: 200px;">
+            </div>
+            
+            <div class="control-group">
+                <label for="endTime">📅 结束时间</label>
+                <input type="datetime-local" id="endTime" style="padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; min-width: 200px;">
+            </div>
+            
+            <div class="control-group">
+                <label>&nbsp;</label>
+                <button onclick="clearTimeFilter()" style="padding: 10px 20px; border: 2px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; transition: all 0.3s;">
+                    🗑️ 清除时间
+                </button>
+            </div>
+        </div>
+
+        <div class="stats" id="statsContainer"></div>
+
+        <div class="time-shortcuts">
+            <span style="font-size: 13px; color: #4a5568; font-weight: 600; align-self: center;">⚡ 时间快捷选择：</span>
+            <button class="time-shortcut-btn" onclick="setTimeRange(1)">最近1天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(3)">最近3天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(7)">最近7天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(10)">最近10天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(15)">最近15天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(30)">最近30天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(60)">最近60天</button>
+            <button class="time-shortcut-btn" onclick="setTimeRange(90)">最近90天</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+        </div>
+
+        <div class="info-panel">
+            💡 <strong>使用提示：</strong>选择主机和表空间来查看特定的增长趋势。图表会显示所选指标随时间的变化情况。鼠标悬停在曲线上可查看详细数据。
+        </div>
+    </div>
+
+    <script>
+        // 本地数据文件配置
+        const DATA_FILE_URL = './data/tablespace_data.json';
+
+        let allData = [];
+        let chart = null;
+        
+        // 从 URL 获取 host 参数
+        function getHostFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('host') || '%'; // 默认 % 表示查询所有主机
+        }
+
+        // 颜色方案
+        const colorSchemes = [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 206, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(153, 102, 255)',
+            'rgb(255, 159, 64)',
+            'rgb(199, 199, 199)',
+            'rgb(83, 102, 255)',
+            'rgb(255, 99, 255)',
+            'rgb(50, 205, 50)'
+        ];
+
+        // 获取数据
+        async function fetchData() {
+            try {
+                // 从本地JSON文件读取数据
+                const response = await fetch(DATA_FILE_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // 从本地文件读取的数据结构不同，需要调整
+                if (result.data) {
+                    allData = result.data;
+                    // 按时间排序
+                    allData.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                    
+                    initializeFilters();
+                    updateChart();
+                    updateStats();
+                } else {
+                    throw new Error('数据格式错误');
+                }
+            } catch (error) {
+                showError('数据加载失败: ' + error.message);
+                console.error('Error:', error);
+            }
+        }
+
+        // 初始化筛选器
+        function initializeFilters() {
+            const hostFilter = document.getElementById('hostFilter');
+            const tablespaceFilter = document.getElementById('tablespaceFilter');
+
+            // 获取唯一主机
+            const hosts = [...new Set(allData.map(item => item.host_ip))].sort();
+            hosts.forEach(host => {
+                const option = document.createElement('option');
+                option.value = host;
+                option.textContent = host;
+                hostFilter.appendChild(option);
+            });
+            
+            // 根据 URL 参数设置默认选中的主机
+            const urlHost = getHostFromUrl();
+            if (urlHost !== '%') {
+                // 如果 URL 中指定了主机，选中该主机
+                if (hosts.includes(urlHost)) {
+                    hostFilter.value = urlHost;
+                }
+            }
+            
+            // 更新主机显示
+            updateHostDisplay();
+
+            // 获取唯一表空间
+            const tablespaces = [...new Set(allData.map(item => item.tablespace_name))].sort();
+            tablespaces.forEach(ts => {
+                const option = document.createElement('option');
+                option.value = ts;
+                option.textContent = ts;
+                tablespaceFilter.appendChild(option);
+            });
+
+            // 添加事件监听
+            hostFilter.addEventListener('change', () => {
+                updateHostDisplay();
+                updateTablespaceFilter();
+                updateChart();
+                updateStats();
+            });
+            tablespaceFilter.addEventListener('change', () => {
+                updateChart();
+                updateStats();
+            });
+            document.getElementById('metricType').addEventListener('change', () => {
+                updateChart();
+                updateStats();
+            });
+            document.getElementById('startTime').addEventListener('change', () => {
+                updateChart();
+                updateStats();
+            });
+            document.getElementById('endTime').addEventListener('change', () => {
+                updateChart();
+                updateStats();
+            });
+        }
+        
+        // 清除时间筛选
+        function clearTimeFilter() {
+            document.getElementById('startTime').value = '';
+            document.getElementById('endTime').value = '';
+            // 移除所有快捷按钮的激活状态
+            document.querySelectorAll('.time-shortcut-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            updateChart();
+            updateStats();
+        }
+        
+        // 设置时间范围快捷方式
+        function setTimeRange(days) {
+            const now = new Date();
+            const start = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+            
+            // 格式化为 datetime-local 格式 (YYYY-MM-DDTHH:mm)
+            const formatDateTime = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            };
+            
+            document.getElementById('startTime').value = formatDateTime(start);
+            document.getElementById('endTime').value = formatDateTime(now);
+            
+            // 更新快捷按钮的激活状态
+            document.querySelectorAll('.time-shortcut-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateChart();
+            updateStats();
+        }
+
+        // 更新主机显示
+        function updateHostDisplay() {
+            const hostFilter = document.getElementById('hostFilter').value;
+            const currentHostSpan = document.getElementById('currentHost');
+            
+            if (hostFilter === 'all') {
+                currentHostSpan.textContent = '所有主机';
+                currentHostSpan.style.color = '#667eea';
+            } else {
+                currentHostSpan.textContent = hostFilter;
+                currentHostSpan.style.color = '#f5576c';
+            }
+        }
+
+        // 更新表空间筛选器（根据选择的主机）
+        function updateTablespaceFilter() {
+            const hostFilter = document.getElementById('hostFilter').value;
+            const tablespaceFilter = document.getElementById('tablespaceFilter');
+            const currentValue = tablespaceFilter.value;
+
+            // 清空现有选项
+            tablespaceFilter.innerHTML = '<option value="all">所有表空间</option>';
+
+            // 获取筛选后的表空间
+            const filteredData = hostFilter === 'all' 
+                ? allData 
+                : allData.filter(item => item.host_ip === hostFilter);
+
+            const tablespaces = [...new Set(filteredData.map(item => item.tablespace_name))].sort();
+            tablespaces.forEach(ts => {
+                const option = document.createElement('option');
+                option.value = ts;
+                option.textContent = ts;
+                tablespaceFilter.appendChild(option);
+            });
+
+            // 尝试恢复之前的选择
+            if (tablespaces.includes(currentValue)) {
+                tablespaceFilter.value = currentValue;
+            }
+        }
+
+        // 更新图表
+        function updateChart() {
+            const hostFilter = document.getElementById('hostFilter').value;
+            const tablespaceFilter = document.getElementById('tablespaceFilter').value;
+            const metricType = document.getElementById('metricType').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            // 筛选数据
+            let filteredData = allData;
+            if (hostFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.host_ip === hostFilter);
+            }
+            if (tablespaceFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.tablespace_name === tablespaceFilter);
+            }
+            
+            // 时间范围筛选
+            if (startTime || endTime) {
+                filteredData = filteredData.filter(item => {
+                    if (!item.created_at) return false;
+                    const itemTime = new Date(item.created_at);
+                    let matches = true;
+                    if (startTime) {
+                        matches = matches && itemTime >= new Date(startTime);
+                    }
+                    if (endTime) {
+                        matches = matches && itemTime <= new Date(endTime);
+                    }
+                    return matches;
+                });
+            }
+
+            // 按主机和表空间分组
+            const groups = {};
+            filteredData.forEach(item => {
+                const key = `${item.host_ip}:${item.tablespace_name}`;
+                if (!groups[key]) {
+                    groups[key] = [];
+                }
+                groups[key].push({
+                    time: new Date(item.created_at),
+                    value: parseFloat(item[metricType]) || 0,
+                    host: item.host_ip,
+                    tablespace: item.tablespace_name
+                });
+            });
+
+            // 准备图表数据集
+            const datasets = [];
+            let colorIndex = 0;
+
+            Object.keys(groups).sort().forEach(key => {
+                const [host, tablespace] = key.split(':');
+                const color = colorSchemes[colorIndex % colorSchemes.length];
+                
+                datasets.push({
+                    label: `${host} - ${tablespace}`,
+                    data: groups[key].map(item => ({
+                        x: item.time,
+                        y: item.value
+                    })),
+                    borderColor: color,
+                    backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                    tension: 0.4,
+                    fill: false,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                });
+                
+                colorIndex++;
+            });
+
+            // 获取Y轴标签
+            const metricLabels = {
+                'used_mb': '已使用空间 (MB)',
+                'pct_used': '使用率 (%)',
+                'free_mb': '剩余空间 (MB)',
+                'tablespace_size_mb': '总空间 (MB)'
+            };
+
+            // 销毁旧图表
+            if (chart) {
+                chart.destroy();
+            }
+
+            // 创建新图表
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                title: function(context) {
+                                    const date = new Date(context[0].parsed.x);
+                                    return date.toLocaleString('zh-CN');
+                                },
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y.toFixed(2);
+                                    if (metricType === 'pct_used') {
+                                        label += '%';
+                                    } else {
+                                        label += ' MB';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'MM-dd',
+                                    hour: 'MM-dd HH:mm'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '时间',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: metricLabels[metricType],
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            const hostFilter = document.getElementById('hostFilter').value;
+            const tablespaceFilter = document.getElementById('tablespaceFilter').value;
+            const metricType = document.getElementById('metricType').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            // 筛选数据
+            let filteredData = allData;
+            if (hostFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.host_ip === hostFilter);
+            }
+            if (tablespaceFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.tablespace_name === tablespaceFilter);
+            }
+            
+            // 时间范围筛选
+            if (startTime || endTime) {
+                filteredData = filteredData.filter(item => {
+                    if (!item.created_at) return false;
+                    const itemTime = new Date(item.created_at);
+                    let matches = true;
+                    if (startTime) {
+                        matches = matches && itemTime >= new Date(startTime);
+                    }
+                    if (endTime) {
+                        matches = matches && itemTime <= new Date(endTime);
+                    }
+                    return matches;
+                });
+            }
+
+            if (filteredData.length === 0) {
+                document.getElementById('statsContainer').innerHTML = '<div class="stat-card"><div class="stat-label">暂无数据</div></div>';
+                return;
+            }
+
+            // 计算统计数据
+            const latestData = {};
+            filteredData.forEach(item => {
+                const key = `${item.host_ip}:${item.tablespace_name}`;
+                if (!latestData[key] || new Date(item.created_at) > new Date(latestData[key].created_at)) {
+                    latestData[key] = item;
+                }
+            });
+
+            const latestItems = Object.values(latestData);
+            const totalUsed = latestItems.reduce((sum, item) => sum + parseFloat(item.used_mb || 0), 0);
+            const totalSize = latestItems.reduce((sum, item) => sum + parseFloat(item.tablespace_size_mb || 0), 0);
+            const avgPctUsed = latestItems.reduce((sum, item) => sum + parseFloat(item.pct_used || 0), 0) / latestItems.length;
+            const dataPoints = filteredData.length;
+            const uniqueTablespaces = new Set(filteredData.map(item => item.tablespace_name)).size;
+
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">表空间数量</div>
+                    <div class="stat-value">${uniqueTablespaces}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">总使用空间</div>
+                    <div class="stat-value">${(totalUsed / 1024).toFixed(2)} GB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">总空间大小</div>
+                    <div class="stat-value">${(totalSize / 1024).toFixed(2)} GB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">平均使用率</div>
+                    <div class="stat-value">${avgPctUsed.toFixed(2)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">数据点数量</div>
+                    <div class="stat-value">${dataPoints}</div>
+                </div>
+            `;
+
+            document.getElementById('statsContainer').innerHTML = statsHTML;
+        }
+
+        // 显示错误
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.19">
+    <title>表空间监控系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .header p a {
+            color: white;
+            text-decoration: underline;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .header p a:hover {
+            opacity: 1;
+            text-decoration: none;
+        }
+
+        .controls {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .stats {
+            padding: 15px;
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 15px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .stat-card.warning {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .table-container {
+            padding: 15px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background: #e9ecef;
+        }
+
+        th.sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 8px;
+            opacity: 0.3;
+        }
+
+        th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #667eea;
+        }
+
+        th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #667eea;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        td {
+            padding: 12px 8px;
+            font-size: 12px;
+            color: #495057;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .pagination {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .pagination-info {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            padding: 6px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: white;
+            color: #495057;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #667eea;
+            color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .page-size-select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .time-shortcut-btn {
+            padding: 4px 8px;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            background: white;
+            color: #667eea;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .time-shortcut-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .time-shortcut-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 10px 15px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+
+            .header p {
+                font-size: 11px;
+            }
+
+            .controls {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .search-box {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .filter-select {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 10px;
+            }
+
+            .stat-card h3 {
+                font-size: 11px;
+                margin-bottom: 4px;
+            }
+
+            .stat-card .value {
+                font-size: 18px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            th, td {
+                padding: 8px 4px;
+            }
+
+            .pagination {
+                padding: 10px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .pagination-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 4px;
+            }
+
+            .pagination-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .page-numbers {
+                display: none;
+            }
+
+            .time-shortcut-btn {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 表空间监控系统</h1>
+            <p>监控数据库表空间使用情况 | <a href="trend.html">📈 查看趋势分析</a></p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索表空间名称、主机IP...">
+                <span class="search-icon">🔍</span>
+            </div>
+            <select id="hostFilter" class="filter-select">
+                <option value="">所有主机</option>
+            </select>
+            <select id="statusFilter" class="filter-select">
+                <option value="">所有状态</option>
+                <option value="ONLINE">在线</option>
+                <option value="OFFLINE">离线</option>
+            </select>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex: 1; min-width: 100%;">
+                <label style="font-size: 13px; color: #6c757d; white-space: nowrap;">📅 日期:</label>
+                <input type="date" id="startTime" class="filter-select" style="min-width: 150px; max-width: 150px;">
+                <span style="color: #6c757d;">~</span>
+                <input type="date" id="endTime" class="filter-select" style="min-width: 150px; max-width: 150px;">
+                <button class="btn btn-secondary" onclick="clearTimeFilter()" style="padding: 6px 12px; font-size: 12px;">清除</button>
+                <span style="font-size: 12px; color: #6c757d; margin-left: 10px;">快捷:</span>
+                <button class="time-shortcut-btn" onclick="setTimeRange(1)">1天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(3)">3天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(7)">7天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(10)">10天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(15)">15天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(30)">30天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(60)">60天</button>
+                <button class="time-shortcut-btn" onclick="setTimeRange(90)">90天</button>
+                <span style="margin-left: auto;"></span>
+                <button class="btn btn-primary" onclick="loadData(true)" style="padding: 8px 16px; font-size: 13px;">🔄 刷新</button>
+                <button class="btn btn-secondary" onclick="clearCache()" style="padding: 8px 16px; font-size: 13px;">🗑️ 清缓存</button>
+                <button class="btn btn-secondary" onclick="exportData()" style="padding: 8px 16px; font-size: 13px;">📥 导出</button>
+            </div>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <h3>总表空间数</h3>
+                <div class="value" id="totalCount">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>在线表空间</h3>
+                <div class="value" id="onlineCount">-</div>
+            </div>
+            <div class="stat-card warning">
+                <h3>平均使用率</h3>
+                <div class="value" id="avgUsage">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>总空间 (GB)</h3>
+                <div class="value" id="totalSpace">-</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div id="loadingIndicator" class="loading">
+                <div class="spinner"></div>
+                <p>正在加载数据...</p>
+            </div>
+            <table id="dataTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="created_at">采集时间</th>
+                        <th class="sortable" data-column="host_ip">主机IP</th>
+                        <th class="sortable" data-column="tablespace_name">表空间名称</th>
+                        <th class="sortable" data-column="status">状态</th>
+                        <th class="sortable" data-column="ts_type">类型</th>
+                        <th class="sortable" data-column="tablespace_size_mb">大小(MB)</th>
+                        <th class="sortable" data-column="used_mb">已用(MB)</th>
+                        <th class="sortable" data-column="free_mb">可用(MB)</th>
+                        <th class="sortable" data-column="pct_used">使用率</th>
+                        <th class="sortable" data-column="pct_free">空闲率</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+            <div id="noDataIndicator" class="no-data" style="display: none;">
+                <p>📭 暂无数据</p>
+            </div>
+        </div>
+
+        <div class="pagination" id="paginationContainer" style="display: none;">
+            <div class="pagination-info">
+                显示第 <strong id="pageStart">1</strong> - <strong id="pageEnd">50</strong> 条，
+                共 <strong id="totalRecords">0</strong> 条记录
+            </div>
+            <div class="pagination-controls">
+                <button class="pagination-btn" id="firstPageBtn" onclick="goToPage(1)">首页</button>
+                <button class="pagination-btn" id="prevPageBtn" onclick="goToPage(currentPage - 1)">上一页</button>
+                
+                <div class="page-numbers" id="pageNumbers"></div>
+                
+                <button class="pagination-btn" id="nextPageBtn" onclick="goToPage(currentPage + 1)">下一页</button>
+                <button class="pagination-btn" id="lastPageBtn" onclick="goToPage(totalPages)">末页</button>
+                
+                <select class="page-size-select" id="pageSizeSelect" onchange="changePageSize()">
+                    <option value="20">每页 20 条</option>
+                    <option value="50" selected>每页 50 条</option>
+                    <option value="100">每页 100 条</option>
+                    <option value="200">每页 200 条</option>
+                    <option value="500">每页 500 条</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 修改API配置为本地数据文件
+        const DATA_FILE_URL = './data/tablespace_data.json';
+        
+        // 缓存配置
+        const CACHE_KEY = 'tablespace_data_cache';
+        const CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
+        
+        let allData = [];
+        let filteredData = [];
+        let currentSort = { column: 'created_at', direction: 'desc' };  // 默认按时间倒序
+        let currentPage = 1;
+        let pageSize = 50;
+        let totalPages = 1;
+
+        // 从 URL 获取 host 参数
+        function getHostFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('host') || '%'; // 默认 % 表示查询所有主机
+        }
+
+        // 缓存管理函数
+        function getCachedData() {
+            try {
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (!cached) return null;
+                
+                const { data, timestamp } = JSON.parse(cached);
+                const now = Date.now();
+                
+                // 检查缓存是否过期
+                if (now - timestamp > CACHE_DURATION) {
+                    localStorage.removeItem(CACHE_KEY);
+                    return null;
+                }
+                
+                console.log('✅ 使用缓存数据，缓存时间:', new Date(timestamp).toLocaleString());
+                return data;
+            } catch (e) {
+                console.error('读取缓存失败:', e);
+                return null;
+            }
+        }
+        
+        function setCachedData(data) {
+            try {
+                const cacheObj = {
+                    data: data,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(cacheObj));
+                console.log('💾 数据已缓存');
+            } catch (e) {
+                console.error('保存缓存失败:', e);
+            }
+        }
+
+        // 页面加载时获取数据
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            
+            // 设置自动刷新（5分钟后台刷新一次）
+            setInterval(() => {
+                console.log('🔄 自动后台刷新数据...');
+                fetchDataFromFile(true);
+            }, 5 * 60 * 1000);
+        });
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', filterData);
+        document.getElementById('hostFilter').addEventListener('change', filterData);
+        document.getElementById('statusFilter').addEventListener('change', filterData);
+        document.getElementById('startTime').addEventListener('change', filterData);
+        document.getElementById('endTime').addEventListener('change', filterData);
+
+        // 排序功能
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => sortTable(th.dataset.column));
+            
+            // 设置默认排序标识（时间倒序）
+            if (th.dataset.column === 'created_at') {
+                th.classList.add('sort-desc');
+            }
+        });
+
+        async function loadData(forceRefresh = false) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const dataTable = document.getElementById('dataTable');
+            const noDataIndicator = document.getElementById('noDataIndicator');
+
+            // 如果不是强制刷新，先尝试使用缓存
+            if (!forceRefresh) {
+                const cachedData = getCachedData();
+                if (cachedData && cachedData.length > 0) {
+                    console.log('⚡ 使用缓存数据，立即显示');
+                    allData = cachedData;
+                    
+                    // 按照时间倒序排列（最新的在前）
+                    allData.sort((a, b) => {
+                        const timeA = new Date(a.created_at || 0);
+                        const timeB = new Date(b.created_at || 0);
+                        return timeB - timeA;
+                    });
+                    
+                    filteredData = [...allData];
+                    updateStats();
+                    updateHostFilter();
+                    renderTable();
+
+                    loadingIndicator.style.display = 'none';
+                    dataTable.style.display = 'table';
+                    
+                    // 后台异步刷新数据
+                    setTimeout(() => {
+                        console.log('🔄 后台刷新数据...');
+                        fetchDataFromFile(true);
+                    }, 100);
+                    
+                    return;
+                }
+            }
+
+            // 没有缓存或强制刷新，显示加载动画
+            loadingIndicator.style.display = 'block';
+            dataTable.style.display = 'none';
+            noDataIndicator.style.display = 'none';
+
+            await fetchDataFromFile(false);
+        }
+
+        async function fetchDataFromFile(isBackgroundRefresh = false) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const dataTable = document.getElementById('dataTable');
+            const noDataIndicator = document.getElementById('noDataIndicator');
+
+            try {
+                if (!isBackgroundRefresh) {
+                    console.log('🚀 开始加载本地数据文件...');
+                    console.log('📍 数据文件 URL:', DATA_FILE_URL);
+                }
+                
+                const response = await fetch(DATA_FILE_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                // 从本地JSON文件中提取数据
+                allData = result.data || [];
+                
+                // 保存到缓存
+                setCachedData(allData);
+                
+                if (!isBackgroundRefresh) {
+                    console.log('✅ 成功加载数据:', allData.length, '条记录');
+                    console.log('🕒 数据更新时间:', result.last_update);
+                }
+                
+                // 按照时间倒序排列（最新的在前）
+                allData.sort((a, b) => {
+                    const timeA = new Date(a.created_at || 0);
+                    const timeB = new Date(b.created_at || 0);
+                    return timeB - timeA;
+                });
+                
+                filteredData = [...allData];
+
+                updateStats();
+                updateHostFilter();
+                renderTable();
+
+                if (!isBackgroundRefresh) {
+                    loadingIndicator.style.display = 'none';
+                    if (allData.length > 0) {
+                        dataTable.style.display = 'table';
+                    } else {
+                        noDataIndicator.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                if (!isBackgroundRefresh) {
+                    console.error('❌ 数据加载失败:', error);
+                    loadingIndicator.style.display = 'none';
+                    
+                    // 显示友好的错误信息
+                    noDataIndicator.innerHTML = `
+                    <div style="max-width: 600px; margin: 0 auto; text-align: left;">
+                        <h2 style="color: #dc3545; margin-bottom: 20px;">❌ 数据加载失败</h2>
+                        <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <strong>错误信息：</strong><br>
+                            <code style="color: #721c24;">${error.message}</code>
+                        </div>
+                        <div style="background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <strong>💡 可能的原因：</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <li>数据文件不存在或无法访问</li>
+                                <li>本地服务器未运行</li>
+                                <li>浏览器跨域限制</li>
+                            </ul>
+                        </div>
+                        <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 15px;">
+                            <strong>🔧 解决方案：</strong>
+                            <ol style="margin: 10px 0; padding-left: 20px;">
+                                <li>确保已运行数据采集脚本</li>
+                                <li>使用本地服务器运行：
+                                    <pre style="background: #2d3748; color: #f8f9fa; padding: 10px; border-radius: 4px; margin-top: 5px; overflow-x: auto;">python3 -m http.server 8000</pre>
+                                </li>
+                                <li>打开浏览器控制台 (F12) 查看详细错误</li>
+                            </ol>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button class="btn btn-primary" onclick="loadData(true)" style="margin-top: 10px;">🔄 重试</button>
+                        </div>
+                    </div>
+                    `;
+                    noDataIndicator.style.display = 'block';
+                } else {
+                    console.warn('⚠️ 后台刷新失败，继续使用缓存数据');
+                }
+            }
+        }
+
+        function parseApiResponse(result) {
+            console.log('API 原始响应:', result);
+            
+            // 处理不同的响应格式
+            if (Array.isArray(result)) {
+                return result;
+            } else if (result.data && Array.isArray(result.data.rows)) {
+                return result.data.rows;
+            } else if (result.data && Array.isArray(result.data)) {
+                return result.data;
+            } else if (result.rows && Array.isArray(result.rows)) {
+                return result.rows;
+            } else {
+                console.warn('未知的数据格式，尝试解析:', result);
+                return [];
+            }
+        }
+
+        function updateStats() {
+            const total = allData.length;
+            const online = allData.filter(item => item.status === 'ONLINE').length;
+            const totalSpaceMB = allData.reduce((sum, item) => sum + parseFloat(item.tablespace_size_mb || 0), 0);
+            const avgUsage = total > 0 
+                ? (allData.reduce((sum, item) => sum + parseFloat(item.pct_used || 0), 0) / total).toFixed(1)
+                : 0;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('onlineCount').textContent = online;
+            document.getElementById('avgUsage').textContent = avgUsage + '%';
+            document.getElementById('totalSpace').textContent = (totalSpaceMB / 1024).toFixed(2);
+        }
+
+        function updateHostFilter() {
+            const hosts = [...new Set(allData.map(item => item.host_ip))];
+            const hostFilter = document.getElementById('hostFilter');
+            const currentValue = hostFilter.value;
+
+            hostFilter.innerHTML = '<option value="">所有主机</option>';
+            hosts.forEach(host => {
+                const option = document.createElement('option');
+                option.value = host;
+                option.textContent = host;
+                hostFilter.appendChild(option);
+            });
+
+            hostFilter.value = currentValue;
+        }
+
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const hostFilter = document.getElementById('hostFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            filteredData = allData.filter(item => {
+                const matchesSearch = !searchTerm || 
+                    (item.tablespace_name && item.tablespace_name.toLowerCase().includes(searchTerm)) ||
+                    (item.host_ip && item.host_ip.toLowerCase().includes(searchTerm));
+                
+                const matchesHost = !hostFilter || item.host_ip === hostFilter;
+                const matchesStatus = !statusFilter || item.status === statusFilter;
+                
+                // 日期范围筛选（只比较日期部分，不含时间）
+                let matchesTime = true;
+                if (item.created_at) {
+                    const itemDate = new Date(item.created_at);
+                    // 只取日期部分，忽略时间
+                    const itemDateOnly = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
+                    
+                    if (startTime) {
+                        const start = new Date(startTime);
+                        const startDateOnly = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+                        matchesTime = matchesTime && itemDateOnly >= startDateOnly;
+                    }
+                    if (endTime) {
+                        const end = new Date(endTime);
+                        // 结束日期包含当天的23:59:59
+                        const endDateOnly = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
+                        matchesTime = matchesTime && itemDate <= endDateOnly;
+                    }
+                }
+
+                return matchesSearch && matchesHost && matchesStatus && matchesTime;
+            });
+
+            // 重置到第一页
+            currentPage = 1;
+            renderTable();
+        }
+        
+        function clearTimeFilter() {
+            document.getElementById('startTime').value = '';
+            document.getElementById('endTime').value = '';
+            // 移除所有快捷按钮的激活状态
+            document.querySelectorAll('.time-shortcut-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            filterData();
+        }
+        
+        function setTimeRange(days) {
+            const now = new Date();
+            const start = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+            
+            // 格式化为日期格式 (YYYY-MM-DD)
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+            
+            document.getElementById('startTime').value = formatDate(start);
+            document.getElementById('endTime').value = formatDate(now);
+            
+            // 更新快捷按钮的激活状态
+            document.querySelectorAll('.time-shortcut-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            filterData();
+        }
+
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            // 更新表头样式
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (th.dataset.column === column) {
+                    th.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const paginationContainer = document.getElementById('paginationContainer');
+
+            // 排序数据
+            let sortedData = [...filteredData];
+            if (currentSort.column) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[currentSort.column];
+                    let bVal = b[currentSort.column];
+
+                    // 时间类型排序
+                    if (currentSort.column === 'created_at') {
+                        aVal = new Date(aVal || 0);
+                        bVal = new Date(bVal || 0);
+                    }
+                    // 数字类型排序
+                    else if (['tablespace_size_mb', 'used_mb', 'free_mb', 'pct_used', 'pct_free', 'max_mb'].includes(currentSort.column)) {
+                        aVal = parseFloat(aVal) || 0;
+                        bVal = parseFloat(bVal) || 0;
+                    }
+
+                    if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            // 计算分页
+            totalPages = Math.ceil(sortedData.length / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, sortedData.length);
+            const pageData = sortedData.slice(startIndex, endIndex);
+
+            // 渲染表格
+            tbody.innerHTML = '';
+            pageData.forEach(item => {
+                const row = document.createElement('tr');
+                const pctUsed = parseFloat(item.pct_used) || 0;
+                const createdAt = item.created_at ? formatDateTime(item.created_at) : '-';
+
+                row.innerHTML = `
+                    <td style="font-size: 12px; color: #6c757d;">${createdAt}</td>
+                    <td>${item.host_ip || '-'}</td>
+                    <td><strong>${item.tablespace_name || '-'}</strong></td>
+                    <td><span class="status-badge ${item.status === 'ONLINE' ? 'status-online' : 'status-offline'}">${item.status || '-'}</span></td>
+                    <td>${item.ts_type || '-'}</td>
+                    <td>${formatNumber(item.tablespace_size_mb)}</td>
+                    <td>${formatNumber(item.used_mb)}</td>
+                    <td>${formatNumber(item.free_mb)}</td>
+                    <td>
+                        <div>${pctUsed.toFixed(2)}%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill ${pctUsed > 80 ? 'warning' : ''}" style="width: ${pctUsed}%"></div>
+                        </div>
+                    </td>
+                    <td>${parseFloat(item.pct_free).toFixed(2)}%</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 更新分页信息
+            updatePagination(sortedData.length, startIndex, endIndex);
+
+            // 显示/隐藏分页控件
+            if (sortedData.length > pageSize) {
+                paginationContainer.style.display = 'flex';
+            } else {
+                paginationContainer.style.display = sortedData.length > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function updatePagination(total, start, end) {
+            document.getElementById('totalRecords').textContent = total;
+            document.getElementById('pageStart').textContent = total > 0 ? start + 1 : 0;
+            document.getElementById('pageEnd').textContent = end;
+
+            // 更新按钮状态
+            document.getElementById('firstPageBtn').disabled = currentPage === 1;
+            document.getElementById('prevPageBtn').disabled = currentPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+            document.getElementById('lastPageBtn').disabled = currentPage === totalPages;
+
+            // 渲染页码
+            renderPageNumbers();
+        }
+
+        function renderPageNumbers() {
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // 计算要显示的页码范围
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            // 如果页数较少，显示所有页码
+            if (totalPages <= 7) {
+                startPage = 1;
+                endPage = totalPages;
+            }
+
+            // 添加页码按钮
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                pageNumbers.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+        }
+
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSizeSelect').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        function formatNumber(num) {
+            const n = parseFloat(num);
+            return isNaN(n) ? '-' : n.toLocaleString('zh-CN', { maximumFractionDigits: 2 });
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        }
+
+        function exportData() {
+            if (filteredData.length === 0) {
+                alert('没有数据可导出');
+                return;
+            }
+
+            // 生成 CSV
+            const headers = ['采集时间', '主机IP', '表空间名称', '状态', '类型', '大小(MB)', '已用(MB)', '可用(MB)', '使用率', '空闲率'];
+            const csvContent = [
+                headers.join(','),
+                ...filteredData.map(item => [
+                    item.created_at || '',
+                    item.host_ip,
+                    item.tablespace_name,
+                    item.status,
+                    item.ts_type,
+                    item.tablespace_size_mb,
+                    item.used_mb,
+                    item.free_mb,
+                    item.pct_used,
+                    item.pct_free
+                ].join(','))
+            ].join('\n');
+
+            // 下载文件
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `表空间数据_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function clearCache() {
+            if (confirm('确定要清除缓存吗？清除后下次访问将重新加载数据。')) {
+                try {
+                    localStorage.removeItem(CACHE_KEY);
+                    console.log('✅ 缓存已清除');
+                    alert('缓存已清除成功！');
+                    
+                    // 清除缓存后重新加载数据
+                    loadData(true);
+                } catch (e) {
+                    console.error('清除缓存失败:', e);
+                    alert('清除缓存失败：' + e.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
