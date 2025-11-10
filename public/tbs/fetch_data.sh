@@ -6,8 +6,8 @@
 
 # 配置区域
 API_BASE_URL="https://c001.6ps.org/api/v1beta/app/dataapp-tiTAMIaa/endpoint/tbsinfo"
-PUBLIC_KEY="C1TN7NQ0"
-PRIVATE_KEY="358e8056-c853-434d-a2d3-548a208c6934"
+PUBLIC_KEY="82M1SRP0"
+PRIVATE_KEY="9ee40df8-9bef-4423-a8f5-4e1c51f8aec3"
 
 # 文件路径配置
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
