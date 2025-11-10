@@ -295,3 +295,35 @@ jobs:
       data_cache_prefix: ${{needs.sync.outputs.DATA_CACHE_PREFIX}}
     needs:
       - sync
+
+  fetch_tbs_data:
+    name: Fetch TBS Data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Make script executable
+        run: |
+          chmod +x public/tbs/fetch_data.sh
+
+      - name: Run TBS data fetch script
+        run: |
+          ./public/tbs/fetch_data.sh
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "${{ env.GITHUB_EMAIL }}"
+          git config --local user.name "${{ env.GITHUB_NAME }}"
+          git add .
+          git commit -m "$(TZ=Asia/Shanghai date +"%Y-%m-%d %H:%M:%S") auto Fetch TBS data" || echo "nothing to commit"
+          git push || echo "nothing to push"
