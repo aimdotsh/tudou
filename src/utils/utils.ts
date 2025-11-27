@@ -44,30 +44,68 @@ export interface Activity {
   average_speed: number;
   streak: number;
 }
-interface Offset {
-  lat: number;
-  lng: number;
-}
+const R2D = 180 / Math.PI;
+const D2R = Math.PI / 180;
 
-const getOffset = (): Offset => {
+// Mercator projection helpers
+const mercatorY = (lat: number): number => {
+  if (lat > 89.9) lat = 89.9;
+  if (lat < -89.9) lat = -89.9;
+  return Math.log(Math.tan(Math.PI / 4 + (lat * D2R) / 2));
+};
+
+const inverseMercatorY = (y: number): number => {
+  return (2 * Math.atan(Math.exp(y)) - Math.PI / 2) * R2D;
+};
+
+const mercatorX = (lon: number): number => {
+  return lon * D2R;
+};
+
+const inverseMercatorX = (x: number): number => {
+  return x * R2D;
+};
+
+const getMercatorOffset = (
+  centerLat: number
+): { dx: number; dy: number } => {
   const { distance, bearing } = siteMetadata.mapOffset;
-  
-  // 将方位角转换为弧度
-  const bearingRad = (bearing * Math.PI) / 180;
-  
-  // 计算南北和东西方向的距离分量
-  const northDistance = distance * Math.cos(bearingRad); // 正值向北，负值向南
-  const eastDistance = distance * Math.sin(bearingRad);  // 正值向东，负值向西
-  
-  // 转换为度数偏移
-  // 1度纬度 ≈ 111 公里
-  // 1度经度 ≈ 111 * cos(纬度) 公里，在中国大陆约为 89 公里
-  const latOffset = northDistance / 111;
-  const lngOffset = eastDistance / 89;
-  
+
+  // Calculate target point based on distance and bearing from centerLat (approximation for shift)
+  // We want to find the shift in Mercator space that corresponds to moving 'distance' km at 'bearing'
+  // at the given latitude.
+
+  // 1. Calculate target lat/lon using geodesic formula (simplified for short distances)
+  // Earth radius
+  const R = 6371;
+  const d = distance; // km
+  const brng = bearing * D2R;
+  const lat1 = centerLat * D2R;
+  const lon1 = 0; // relative longitude
+
+  const lat2 = Math.asin(
+    Math.sin(lat1) * Math.cos(d / R) +
+    Math.cos(lat1) * Math.sin(d / R) * Math.cos(brng)
+  );
+  const lon2 =
+    lon1 +
+    Math.atan2(
+      Math.sin(brng) * Math.sin(d / R) * Math.cos(lat1),
+      Math.cos(d / R) - Math.sin(lat1) * Math.sin(lat2)
+    );
+
+  const lat2Deg = lat2 * R2D;
+  const lon2Deg = lon2 * R2D;
+
+  // 2. Calculate Mercator shift
+  const mx1 = mercatorX(0);
+  const my1 = mercatorY(centerLat);
+  const mx2 = mercatorX(lon2Deg);
+  const my2 = mercatorY(lat2Deg);
+
   return {
-    lat: latOffset,
-    lng: lngOffset,
+    dx: mx2 - mx1,
+    dy: my2 - my1,
   };
 };
 const titleForShow = (run: Activity): string => {
@@ -84,18 +122,18 @@ const titleForShow = (run: Activity): string => {
 
 const formatPace = (seconds: number, distance?: number): string => {
   if (Number.isNaN(seconds) || seconds <= 0) return '--:--';
-  
+
   // 如果提供了距离，计算配速（分钟/公里）
   if (distance) {
     const distanceKm = distance / 1000; // 转换为公里
     const paceSeconds = seconds / distanceKm; // 每公里秒数
-    
+
     const paceMinutes = Math.floor(paceSeconds / 60);
     const paceRemainingSeconds = Math.floor(paceSeconds % 60);
-    
+
     return `${paceMinutes}'${paceRemainingSeconds.toString().padStart(2, '0')}"`;
   }
-  
+
   // 如果没有提供距离，直接格式化时间
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -245,12 +283,19 @@ const intComma = (x = '') => {
 
 
 // 应用偏移到坐标点
+// Apply offset to points in Mercator space to preserve shape
 const applyOffset = (points: Coordinate[]): Coordinate[] => {
-  const offset = getOffset();
-  return points.map(coord => [
-    coord[0] + offset.lng,
-    coord[1] + offset.lat
-  ]);
+  if (points.length === 0) return [];
+
+  // Use the first point as reference for calculating the shift
+  const centerLat = points[0][1];
+  const { dx, dy } = getMercatorOffset(centerLat);
+
+  return points.map((coord) => {
+    const mx = mercatorX(coord[0]);
+    const my = mercatorY(coord[1]);
+    return [inverseMercatorX(mx + dx), inverseMercatorY(my + dy)];
+  });
 };
 
 const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordinate[] => {
@@ -383,14 +428,14 @@ const titleForRun = (run: Activity): string => {
     }
   }
   // 3. use time+length if location or type is not available
-  if (type == 'Run' || type == 'Trail Run'){
-      const runDistance = run.distance / 1000;
-      if (runDistance >= 40) {
-        return RUN_TITLES.FULL_MARATHON_RUN_TITLE;
-      }
-      else if (runDistance > 20) {
-        return RUN_TITLES.HALF_MARATHON_RUN_TITLE;
-      }
+  if (type == 'Run' || type == 'Trail Run') {
+    const runDistance = run.distance / 1000;
+    if (runDistance >= 40) {
+      return RUN_TITLES.FULL_MARATHON_RUN_TITLE;
+    }
+    else if (runDistance > 20) {
+      return RUN_TITLES.HALF_MARATHON_RUN_TITLE;
+    }
   }
   return titleForType(type);
 };
@@ -485,7 +530,7 @@ const filterTitleRuns = (run: Activity, title: string) =>
   titleForRun(run) === title;
 
 const filterTypeRuns = (run: Activity, type: string) => {
-  switch (type){
+  switch (type) {
     case 'Full Marathon':
       return (run.type === 'Run' || run.type === 'Trail Run') && run.distance > 40000
     case 'Half Marathon':
@@ -507,7 +552,7 @@ const filterAndSortRuns = (
   if (item !== 'Total') {
     s = activities.filter((run) => filterFunc(run, item));
   }
-  if(filterFunc2 != null && item2 != null){
+  if (filterFunc2 != null && item2 != null) {
     s = s.filter((run) => filterFunc2(run, item2));
   }
   return s.sort(sortFunc);
@@ -523,41 +568,41 @@ const sortDateFuncReverse = (a: Activity, b: Activity) => sortDateFunc(b, a);
 
 // 计算两点之间的距离（单位：公里）
 const calculateDistance = (
-  lat1: number, 
-  lon1: number, 
-  lat2: number, 
+  lat1: number,
+  lon1: number,
+  lat2: number,
   lon2: number
 ): number => {
   const R = 6371; // 地球半径，单位为公里
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
   return distance;
 };
 
 // 计算两点之间的角度（方位角，单位：度）
 const calculateBearing = (
-  lat1: number, 
-  lon1: number, 
-  lat2: number, 
+  lat1: number,
+  lon1: number,
+  lat2: number,
   lon2: number
 ): number => {
   const lat1Rad = lat1 * Math.PI / 180;
   const lat2Rad = lat2 * Math.PI / 180;
   const lonDiff = (lon2 - lon1) * Math.PI / 180;
-  
+
   const y = Math.sin(lonDiff) * Math.cos(lat2Rad);
   const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
-            Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(lonDiff);
-  
+    Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(lonDiff);
+
   let bearing = Math.atan2(y, x) * 180 / Math.PI;
   bearing = (bearing + 360) % 360; // 转换为0-360度
-  
+
   return bearing;
 };
 
@@ -584,7 +629,7 @@ export {
   colorFromType,
   formatRunTime,
   convertMovingTime2Sec,
-  getOffset,
+
   calculateDistance,
   calculateBearing,
 };
