@@ -287,9 +287,12 @@ const intComma = (x = '') => {
 const applyOffset = (points: Coordinate[]): Coordinate[] => {
   if (points.length === 0) return [];
 
-  // Use the first point as reference for calculating the shift
-  const centerLat = points[0][1];
-  const { dx, dy } = getMercatorOffset(centerLat);
+  // Use a fixed reference latitude for calculating the shift to ensure
+  // that all trajectories are shifted by the exact same vector.
+  // Using the centerLat of each run would cause slight variations in the
+  // shift vector because the Mercator scale factor depends on latitude.
+  const FIXED_OFFSET_LAT = 35.0;
+  const { dx, dy } = getMercatorOffset(FIXED_OFFSET_LAT);
 
   return points.map((coord) => {
     const mx = mercatorX(coord[0]);
