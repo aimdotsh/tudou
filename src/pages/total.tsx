@@ -15,21 +15,22 @@ import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
 import Nav from '@/components/Nav';
-import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat,luckStat} from '@assets/index';
+import { totalStat, recentStat, halfmarathonStat, newyearStat, yueyeStat, luckStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import locationStats from '@/static/location_stats.json';
+import useWindowSize from '@/hooks/useWindowSize';
 
 // 每日一言显示组件
-const DailyQuoteCard: React.FC<{ 
-  date: string, 
-  dailyQuotes: {[key: string]: {text: string, author: string}},
-  styles: any 
+const DailyQuoteCard: React.FC<{
+  date: string,
+  dailyQuotes: { [key: string]: { text: string, author: string } },
+  styles: any
 }> = ({ date, dailyQuotes, styles }) => {
   // 添加调试信息
   console.log('DailyQuoteCard - date:', date);
   console.log('DailyQuoteCard - dailyQuotes:', dailyQuotes);
   console.log('DailyQuoteCard - quote for date:', dailyQuotes[date]);
-  
+
   return (
     <div className={styles.dateCard}>
       <div className={styles.dateText}>{date}</div>
@@ -51,11 +52,11 @@ const DailyQuoteCard: React.FC<{
 };
 
 // 自定义错误边界组件
-class ErrorBoundary extends Component<{ 
+class ErrorBoundary extends Component<{
   date: string,
-  dailyQuotes: {[key: string]: {text: string, author: string}},
+  dailyQuotes: { [key: string]: { text: string, author: string } },
   styles: any,
-  children: ReactNode 
+  children: ReactNode
 }, { hasError: boolean }> {
   state = { hasError: false };
 
@@ -86,10 +87,10 @@ const getBeijingDate = (offset = 0) => {
   const now = new Date();
   // 获取当前时间的 UTC 时间戳
   const utcTimestamp = now.getTime() + (now.getTimezoneOffset() * 60000);
-  
+
   // 计算北京时间，北京时间为 UTC+8（加上偏移天数）
   const beijingDate = new Date(utcTimestamp + (3600000 * 8) + (offset * 86400000));
-  
+
   const year = beijingDate.getFullYear();
   const month = String(beijingDate.getMonth() + 1).padStart(2, '0');
   const day = String(beijingDate.getDate()).padStart(2, '0');
@@ -141,13 +142,13 @@ const useFileList = (jsonPath: string) => {
 const useHalfmarathonFiles = () => useFileList('/wonderful.json');
 
 // 特定halfmarathon类型的 SVG 创建函数
-const createHalfmarathonSvgs = (files: string[]) => 
+const createHalfmarathonSvgs = (files: string[]) =>
   createSvgComponents(files, recentStat, './yyyymmdd', './yyyymmdd');
 
 // Lazy svg yueye 和 newyear
 //const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
 const Newyear01Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2025-01-01.svg`));
-const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-02-04.svg`));  
+const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-02-04.svg`));
 
 // Lazy load both github.svg and grid.svg
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
@@ -159,10 +160,10 @@ const useLuckFiles = () => useFileList('/luck.json');
 
 // SVG 加载失败时的备用组件
 const FailedLoadSvg = ({ filename }: { filename: string }) => (
-  <div style={{ 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     height: '100%',
     color: '#999',
     fontSize: '14px'
@@ -173,8 +174,8 @@ const FailedLoadSvg = ({ filename }: { filename: string }) => (
 
 // 统一的 SVG 创建函数
 const createSvgComponents = (
-  files: string[], 
-  statModule: any, 
+  files: string[],
+  statModule: any,
   svgBasePath: string,
   imageBasePath: string,
   imageExtension: string = '.jpg'
@@ -183,81 +184,81 @@ const createSvgComponents = (
     const baseName = filename.replace('.svg', '');
     const svgPath = `${svgBasePath}/${filename}`;
     const imagePath = `${imageBasePath}/${baseName}${imageExtension}`;
-    
+
     const LazySvgComponent = lazy(() => loadSvgComponent(statModule, svgPath)
       .catch((error) => {
         console.error('Failed to load SVG:', svgPath, error);
-        return { 
+        return {
           default: () => <FailedLoadSvg filename={filename} />
         };
       }));
-    
+
     return { LazySvgComponent, baseName, imagePath };
   });
 };
 
 // 特定luck类型的 SVG 创建函数
-const createLuckSvgs = (files: string[]) => 
+const createLuckSvgs = (files: string[]) =>
   createSvgComponents(files, luckStat, './luck', '/luck');
 
 
 
-  // 计算当年最长连续运动天数
-  const calculateMaxStreak = (activities: Activity[]) => {
-    const currentYear = new Date().getFullYear();
-    // 过滤出当前年份的活动
-    const currentYearActivities = activities.filter(activity => 
-      new Date(activity.start_date_local).getFullYear() === currentYear
-    );
-    
-    // 按日期排序所有活动
-    const sortedActivities = currentYearActivities
-      .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
+// 计算当年最长连续运动天数
+const calculateMaxStreak = (activities: Activity[]) => {
+  const currentYear = new Date().getFullYear();
+  // 过滤出当前年份的活动
+  const currentYearActivities = activities.filter(activity =>
+    new Date(activity.start_date_local).getFullYear() === currentYear
+  );
 
-    if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
+  // 按日期排序所有活动
+  const sortedActivities = currentYearActivities
+    .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
 
-    // 获取所有不重复的运动日期
-    const uniqueDates = Array.from(new Set(
-      sortedActivities.map(activity => {
-        const date = new Date(activity.start_date_local);
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-      })
-    )).sort((a, b) => a - b);
+  if (sortedActivities.length === 0) return { streak: 0, startDate: null, endDate: null };
 
-    let maxStreak = 1;
-    let currentStreak = 1;
-    let maxStartDate = uniqueDates[0];
-    let maxEndDate = uniqueDates[0];
+  // 获取所有不重复的运动日期
+  const uniqueDates = Array.from(new Set(
+    sortedActivities.map(activity => {
+      const date = new Date(activity.start_date_local);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    })
+  )).sort((a, b) => a - b);
 
-    for (let i = 1; i < uniqueDates.length; i++) {
-      const prevDate = uniqueDates[i - 1];
-      const currDate = uniqueDates[i];
-      const diffDays = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays <= 1) {
-        currentStreak += diffDays;
-        if (currentStreak > maxStreak) {
-          maxStreak = currentStreak;
-          maxStartDate = uniqueDates[i - currentStreak + 1];
-          maxEndDate = currDate;
-        }
-      } else {
-        currentStreak = 1;
+  let maxStreak = 1;
+  let currentStreak = 1;
+  let maxStartDate = uniqueDates[0];
+  let maxEndDate = uniqueDates[0];
+
+  for (let i = 1; i < uniqueDates.length; i++) {
+    const prevDate = uniqueDates[i - 1];
+    const currDate = uniqueDates[i];
+    const diffDays = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 1) {
+      currentStreak += diffDays;
+      if (currentStreak > maxStreak) {
+        maxStreak = currentStreak;
+        maxStartDate = uniqueDates[i - currentStreak + 1];
+        maxEndDate = currDate;
       }
+    } else {
+      currentStreak = 1;
     }
+  }
 
-    const formatDate = (timestamp: number) => {
-      const date = new Date(timestamp);
-      // 只返回月份和日期
-      return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    };
-
-    return {
-      streak: maxStreak,
-      startDate: maxStreak > 1 ? formatDate(maxStartDate) : null,
-      endDate: maxStreak > 1 ? formatDate(maxEndDate) : null
-    };
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    // 只返回月份和日期
+    return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   };
+
+  return {
+    streak: maxStreak,
+    startDate: maxStreak > 1 ? formatDate(maxStartDate) : null,
+    endDate: maxStreak > 1 ? formatDate(maxEndDate) : null
+  };
+};
 
 
 
@@ -267,7 +268,7 @@ const convertMovingTime2Sec = (movingTime: string | number): number => {
   if (typeof movingTime === 'number') {
     return movingTime;
   }
-  
+
   if (movingTime.includes(':')) {
     const parts = movingTime.split(':').map(Number);
     if (parts.length === 3) {
@@ -280,7 +281,7 @@ const convertMovingTime2Sec = (movingTime: string | number): number => {
       return minutes * 60 + seconds;
     }
   }
-  
+
   // 尝试直接解析为数字
   return parseInt(movingTime, 10) || 0;
 };
@@ -297,14 +298,17 @@ const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('all');
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
-  const [dailyQuotes, setDailyQuotes] = useState<{[key: string]: {text: string, author: string}}>({});
+  const [dailyQuotes, setDailyQuotes] = useState<{ [key: string]: { text: string, author: string } }>({});
+  const { width } = useWindowSize();
+  const isMobile = width <= 480;
+  const isTablet = width <= 768;
 
   // 获取指定日期的每日一言
   const fetchDailyQuoteForDate = async (dateStr: string) => {
     console.log('fetchDailyQuoteForDate called for:', dateStr);
     const cacheKey = `dailyQuote_${dateStr}`;
     const cached = localStorage.getItem(cacheKey);
-    
+
     if (cached) {
       try {
         const quote = JSON.parse(cached);
@@ -315,7 +319,7 @@ const Total: React.FC = () => {
         localStorage.removeItem(cacheKey);
       }
     }
-    
+
     try {
       console.log('Fetching new quote for', dateStr);
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -323,7 +327,7 @@ const Total: React.FC = () => {
       const data = await response.json();
       console.log('API response for', dateStr, ':', data);
       const quote = { text: data.hitokoto || "今天没有运动", author: data.from || "佚名" };
-      
+
       localStorage.setItem(cacheKey, JSON.stringify(quote));
       console.log('Setting quote for', dateStr, ':', quote);
       setDailyQuotes(prev => {
@@ -331,12 +335,12 @@ const Total: React.FC = () => {
         console.log('New dailyQuotes state:', newState);
         return newState;
       });
-      
+
       // 清理7天前的缓存
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const cutoffKey = `dailyQuote_${sevenDaysAgo.toISOString().split('T')[0]}`;
-      
+
       Object.keys(localStorage).forEach(key => {
         if (key.startsWith('dailyQuote_') && key < cutoffKey) {
           localStorage.removeItem(key);
@@ -344,8 +348,8 @@ const Total: React.FC = () => {
       });
     } catch (error) {
       console.error('获取每日一言失败:', error);
-      setDailyQuotes(prev => ({ 
-        ...prev, 
+      setDailyQuotes(prev => ({
+        ...prev,
         [dateStr]: { text: '今天没有运动', author: '' }
       }));
     }
@@ -445,14 +449,14 @@ const Total: React.FC = () => {
   const monthlyData = React.useMemo(() => {
     const allMonths: { month: string; year: string; fullDate: string; distance: number }[] = [];
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
+
     yearlyData.forEach(({ year, months }) => {
       months.forEach((distance, month) => {
         if (distance > 0) {  // 只添加有数据的月份
           allMonths.push({
             month: monthNames[month],
-            year: year.toString(), 
-            fullDate: `${year}-${(month+1).toString().padStart(2, '0')}`,
+            year: year.toString(),
+            fullDate: `${year}-${(month + 1).toString().padStart(2, '0')}`,
             distance
           });
         }
@@ -495,518 +499,521 @@ const Total: React.FC = () => {
         </div>
       </div>
       <div className={styles.container}>
-      {/* 照片查看模态框 */}
-      {currentPhoto && (
-        <div className={styles.photoModal} onClick={closePhotoViewer}>
-          <div className={styles.photoContainer}>
-            <img 
-              src={currentPhoto} 
-              alt="Activity Photo" 
-              className={styles.photoImage}
-              onClick={(e) => e.stopPropagation()}
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.png';
-              }}
-            />
-            <button 
-              className={styles.closeButton}
-              onClick={closePhotoViewer}
-            >
-              ×
+        {/* 照片查看模态框 */}
+        {currentPhoto && (
+          <div className={styles.photoModal} onClick={closePhotoViewer}>
+            <div className={styles.photoContainer}>
+              <img
+                src={currentPhoto}
+                alt="Activity Photo"
+                className={styles.photoImage}
+                onClick={(e) => e.stopPropagation()}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = './placeholder.png';
+                }}
+              />
+              <button
+                className={styles.closeButton}
+                onClick={closePhotoViewer}
+              >
+                ×
 
-            </button>
+              </button>
+            </div>
+          </div>
+        )}
+
+
+
+
+
+        {/* 统计卡片 */}
+        <div className={styles.statsCards}>
+          <div className={styles.statCard}>
+            <h4>{locationStats.years}年里走过</h4>
+            <p>{locationStats.countries} 国 {locationStats.provinces} 省 {locationStats.cities} 城</p>
+          </div>
+          <div className={styles.statCard}>
+            <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
+            <p>{stats.totalActivities}</p>
+          </div>
+          <div className={styles.statCard}>
+            <h4>{ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h4>
+            <p>{stats.totalDistance} km</p>
+          </div>
+          <div className={styles.statCard}>
+            <h4>{ACTIVITY_TOTAL.TOTAL_TIME_TITLE}</h4>
+            <p>{stats.totalTime}</p>
+          </div>
+          <div className={styles.statCard}>
+            <h4>{ACTIVITY_TOTAL.AVERAGE_SPEED_TITLE}</h4>
+            <p>{stats.avgPace} /km</p>
+          </div>
+          <div className={styles.statCard}>
+            <h4>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}</h4>
+            <p>{stats.maxDistance} km</p>
           </div>
         </div>
-      )}
+
+        <div className={styles.charts}>
+          {/* 年度活动次数统计图 - 40%宽度 */}
+          <div className={styles.chartContainer}>
+            <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
+            <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
+              <BarChart
+                data={yearlyData}
+                margin={{ top: 5, right: 0, left: isMobile ? -20 : -15, bottom: 5 }}
+                className={styles.barChart}>
+
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e1f5fe" />
+
+                <XAxis
+                  dataKey="year"
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: 12
+                  }}
+                  interval={1}
+                />
+
+                <YAxis
+                  width={isMobile ? 30 : 40}
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: isMobile ? 10 : 12
+                  }}
+                />
+
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #20B2AA',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
+                  }}
+                  labelStyle={{
+                    color: '#20B2AA',
+                    fontWeight: 600
+                  }}
+                />
+
+                <Legend
+                  wrapperStyle={{
+                    paddingTop: '20px'  // 增加图例上边距
+                  }}
+                />
+
+                <Bar
+                  dataKey="count"
+                  name="Workouts"
+                  fill="#20B2AA"        // 柔和的蓝绿色(CadetBlue)
+                  radius={[4, 4, 0, 0]} // 顶部圆角
+                />
+              </BarChart>
+
+            </ResponsiveContainer>
+          </div>
+
+          {/* 年度总距离统计图 - 60%宽度 */}
+          <div className={styles.chartContainer}>
+            <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
+            <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
+              <BarChart
+                data={yearlyData}
+                margin={{ top: 5, right: 20, left: isMobile ? -20 : -15, bottom: 5 }}>
+
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e1f5fe" />
+
+                <XAxis
+                  dataKey="year"
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: 12
+                  }}
+                  interval={1}
+                />
+
+                <YAxis
+                  width={isMobile ? 30 : 40}
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: isMobile ? 10 : 12
+                  }}
+                />
+
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #20B2AA',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
+                  }}
+                  labelStyle={{
+                    color: '#20B2AA',
+                    fontWeight: 600
+                  }}
+                  formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
+                />
+
+                <Legend
+                  wrapperStyle={{
+                    paddingTop: '20px'  // 增加上边距
+                  }}
+                />
+
+                <Bar
+                  dataKey="distance"
+                  name="Distance (km)"
+                  fill="#66CDAA"        // 柔和的蓝绿色(MediumAquamarine)
+                  radius={[4, 4, 0, 0]}  // 顶部圆角
+                />
+              </BarChart>
 
 
+            </ResponsiveContainer>
+          </div>
 
+          {/* 月度总距离统计图 - 整行宽度 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
+            <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
+              <BarChart
+                data={monthlyData}
+                margin={{ top: 5, right: 20, left: isMobile ? -20 : -15, bottom: 5 }}>
 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e1f5fe" />
 
-      {/* 统计卡片 */}
-      <div className={styles.statsCards}>
-        <div className={styles.statCard}>
-          <h4>{locationStats.years}年里走过</h4>
-          <p>{locationStats.countries} 国 {locationStats.provinces} 省 {locationStats.cities} 城</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h4>
-          <p>{stats.totalActivities}</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h4>
-          <p>{stats.totalDistance} km</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.TOTAL_TIME_TITLE}</h4>
-          <p>{stats.totalTime}</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.AVERAGE_SPEED_TITLE}</h4>
-          <p>{stats.avgPace} /km</p>
-        </div>
-        <div className={styles.statCard}>
-          <h4>{ACTIVITY_TOTAL.MAX_DISTANCE_TITLE}</h4>
-          <p>{stats.maxDistance} km</p>
-        </div>
-      </div>
+                <XAxis
+                  dataKey="fullDate"
+                  tick={{
+                    fill: '#5A5A5A',  // 深灰色文字
+                    fontSize: 14      // 保持字体大小
+                  }}
+                  ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
+                  tickFormatter={(value) => value.split('-')[0]} // 只显示年份
+                  interval={0}
+                  angle={0}
+                  textAnchor="middle"
+                  height={40}
+                  padding={{ left: 2, right: 2 }}
+                />
 
-      <div className={styles.charts}>
-        {/* 年度活动次数统计图 - 40%宽度 */}
-        <div className={styles.chartContainer}>
-          <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
-            <BarChart
-              data={yearlyData}
-              margin={{ top: 0, right: 0, left: window.innerWidth <= 480 ? 10 : -15, bottom: 5 }}
-              className={styles.barChart}>
+                <YAxis
+                  width={isMobile ? 30 : 40}
+                  tick={{
+                    fill: '#5A5A5A',  // 深灰色文字
+                    fontSize: isMobile ? 10 : 12       // 统一字体大小
+                  }}
+                />
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#e1f5fe" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #20B2AA',
+                    borderRadius: '6px',         // 圆角
+                    padding: '8px 12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // 柔和阴影
+                  }}
+                  labelStyle={{
+                    color: '#89CFF0',  // 柔和蓝色标签
+                    fontWeight: 500    // 中等字重
+                  }}
+                  labelFormatter={(value) => '月度跑量'}
+                  formatter={(value: number, name: string, props: any) => {
+                    const month = props.payload.month;
+                    const year = props.payload.year;
+                    const monthNum = props.payload.fullDate.split('-')[1];
+                    return [
+                      `${value.toFixed(2)} km`,
+                      `${year}-${monthNum}`
+                    ];
+                  }}
+                />
 
-              <XAxis
-                dataKey="year"
-                tick={{
-                  fill: '#5a6c7d',
-                  fontSize: 12
-                }}
-                interval={1}
-              />
+                <Legend
+                  wrapperStyle={{
+                    paddingTop: '20px'  // 增加上边距
+                  }}
+                />
 
-              <YAxis
-                tick={{
-                  fill: '#5a6c7d',
-                  fontSize: 12
-                }}
-              />
+                <Bar
+                  dataKey="distance"
+                  name="Distance (km)"
+                  fill="#20B2AA"        // 柔和的蓝绿色(LightSeaGreen)
+                  radius={[4, 4, 0, 0]}  // 顶部圆角
+                />
+              </BarChart>
 
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#ffffff',
-                  border: '2px solid #20B2AA',
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
-                }}
-                labelStyle={{
-                  color: '#20B2AA',
-                  fontWeight: 600
-                }}
-              />
+            </ResponsiveContainer>
+          </div>
 
-              <Legend
-                wrapperStyle={{
-                  paddingTop: '20px'  // 增加图例上边距
-                }}
-              />
-
-              <Bar
-                dataKey="count"
-                name="Workouts"
-                fill="#20B2AA"        // 柔和的蓝绿色(CadetBlue)
-                radius={[4, 4, 0, 0]} // 顶部圆角
-              />
-            </BarChart>
-
-          </ResponsiveContainer>
-        </div>
-
-        {/* 年度总距离统计图 - 60%宽度 */}
-        <div className={styles.chartContainer}>
-          <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
-            <BarChart
-              data={yearlyData}
-              margin={{ top: 0, right: 20, left: window.innerWidth <= 480 ? 10 : -15, bottom: 5 }}>
-
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#e1f5fe" />
-
-              <XAxis
-                dataKey="year"
-                tick={{
-                  fill: '#5a6c7d',
-                  fontSize: 12
-                }}
-                interval={1}
-              />
-
-              <YAxis
-                tick={{
-                  fill: '#5a6c7d',
-                  fontSize: 12
-                }}
-              />
-
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#ffffff',
-                  border: '2px solid #20B2AA',
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
-                }}
-                labelStyle={{
-                  color: '#20B2AA',
-                  fontWeight: 600
-                }}
-                formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
-              />
-
-              <Legend
-                wrapperStyle={{
-                  paddingTop: '20px'  // 增加上边距
-                }}
-              />
-
-              <Bar
-                dataKey="distance"
-                name="Distance (km)"
-                fill="#66CDAA"        // 柔和的蓝绿色(MediumAquamarine)
-                radius={[4, 4, 0, 0]}  // 顶部圆角
-              />
-            </BarChart>
-
-
-          </ResponsiveContainer>
-        </div>
-
-        {/* 月度总距离统计图 - 整行宽度 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-          <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
-            <BarChart
-              data={monthlyData}
-              margin={{ top: 0, right: 20, left: -15, bottom: 5 }}>
-
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#e1f5fe" />
-
-              <XAxis
-                dataKey="fullDate"
-                tick={{
-                  fill: '#5A5A5A',  // 深灰色文字
-                  fontSize: 14      // 保持字体大小
-                }}
-                ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
-                tickFormatter={(value) => value.split('-')[0]} // 只显示年份
-                interval={0}
-                angle={0}
-                textAnchor="middle"
-                height={40}
-                padding={{ left: 2, right: 2 }}
-              />
-
-              <YAxis
-                tick={{
-                  fill: '#5A5A5A',  // 深灰色文字
-                  fontSize: 12       // 统一字体大小
-                }}
-              />
-
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#ffffff',
-                  border: '2px solid #20B2AA',
-                  borderRadius: '6px',         // 圆角
-                  padding: '8px 12px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // 柔和阴影
-                }}
-                labelStyle={{
-                  color: '#89CFF0',  // 柔和蓝色标签
-                  fontWeight: 500    // 中等字重
-                }}
-                labelFormatter={(value) => '月度跑量'}
-                formatter={(value: number, name: string, props: any) => {
-                  const month = props.payload.month;
-                  const year = props.payload.year;
-                  const monthNum = props.payload.fullDate.split('-')[1];
-                  return [
-                    `${value.toFixed(2)} km`,
-                    `${year}-${monthNum}`
-                  ];
-                }}
-              />
-
-              <Legend
-                wrapperStyle={{
-                  paddingTop: '20px'  // 增加上边距
-                }}
-              />
-
-              <Bar
-                dataKey="distance"
-                name="Distance (km)"
-                fill="#20B2AA"        // 柔和的蓝绿色(LightSeaGreen)
-                radius={[4, 4, 0, 0]}  // 顶部圆角
-              />
-            </BarChart>
-
-          </ResponsiveContainer>
-        </div>
-
-        {/* 活动热力图 - 整行宽度 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Workouts Heatmap</h3>
-          <div className={styles.heatmapContainer}>
-            {yearlyData.length > 0 && (
-              <div className={styles.heatmap}>
-                <div className={styles.heatmapHeader}>
-                  <div className={styles.heatmapYear}>Year</div>
-                  <div className={styles.heatmapMonths}>
-                    {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => (
-                      <div
-                        key={month}
-                        className={styles.heatmapMonth}
-                        style={{ color: 'var(--text-primary)' }}  // 深灰色月份文字
-                      >
-                        {month}
+          {/* 活动热力图 - 整行宽度 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3>Workouts Heatmap</h3>
+            <div className={styles.heatmapContainer}>
+              {yearlyData.length > 0 && (
+                <div className={styles.heatmap}>
+                  <div className={styles.heatmapHeader}>
+                    <div className={styles.heatmapYear}>Year</div>
+                    <div className={styles.heatmapMonths}>
+                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => (
+                        <div
+                          key={month}
+                          className={styles.heatmapMonth}
+                          style={{ color: 'var(--text-primary)' }}  // 深灰色月份文字
+                        >
+                          {month}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={styles.heatmapBody}>
+                    {yearlyData.map(({ year, months }) => (
+                      <div key={year} className={styles.heatmapRow}>
+                        <div
+                          className={styles.heatmapYear}
+                        >
+                          {year}
+                        </div>
+                        <div className={styles.heatmapCells}>
+                          {months.map((distance, i) => (
+                            <div
+                              key={i}
+                              className={styles.heatmapCell}
+                              style={{
+                                backgroundColor: distance > 0
+                                  ? `rgba(102, 205, 170, ${Math.min(0.2 + distance / 50, 1)})`  // MediumAquamarine
+                                  : 'transparent',
+                                border: distance > 0
+                                  ? '1px solid rgba(32, 178, 170, 0.5)'  // LightSeaGreen
+                                  : '1px solid #E0E0E0'  // 更浅的边框
+                              }}
+                              title={`${year}-${i + 1}: ${distance.toFixed(2)} km`}
+                            />
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className={styles.heatmapBody}>
-                  {yearlyData.map(({ year, months }) => (
-                    <div key={year} className={styles.heatmapRow}>
+              )}
+            </div>
+          </div>
+
+
+
+          {/* 添加recent SVG图表 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3><Link to="../daily" className="hover:underline">Recent Workouts </Link>
+              <p> <span className={styles.streakDates}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
+                {stats.streakStartDate && stats.streakEndDate && (
+                  <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#5A5A5A' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+                )}
+              </p>
+            </h3>
+
+
+
+            <div className={styles.gridContainer}>
+              {/* 今天 */}
+              <ErrorBoundary
+                date={today}
+                dailyQuotes={dailyQuotes}
+                styles={styles}
+              >
+                <Suspense fallback={
+                  <div className={styles.loadingCard}>
+                    <div>Loading...</div>
+                  </div>
+                }>
+                  <div className={styles.svgCard}>
+                    <TodaySvg className="h-auto w-full" />
+                  </div>
+                </Suspense>
+              </ErrorBoundary>
+
+              {/* 昨天 */}
+              <ErrorBoundary
+                date={yesterday}
+                dailyQuotes={dailyQuotes}
+                styles={styles}
+              >
+                <Suspense fallback={
+                  <div className={styles.loadingCard}>
+                    <div>Loading...</div>
+                  </div>
+                }>
+                  <div className={styles.svgCard}>
+                    <YesterdaySvg className="h-auto w-full" />
+                  </div>
+                </Suspense>
+              </ErrorBoundary>
+
+              {/* 前天 */}
+              <ErrorBoundary
+                date={dayBeforeYesterday}
+                dailyQuotes={dailyQuotes}
+                styles={styles}
+              >
+                <Suspense fallback={
+                  <div className={styles.loadingCard}>
+                    <div>Loading...</div>
+                  </div>
+                }>
+                  <div className={styles.svgCard}>
+                    <DayBeforeYesterdaySvg className="h-auto w-full" />
+                  </div>
+                </Suspense>
+              </ErrorBoundary>
+
+              {/* 大前天 */}
+              <ErrorBoundary
+                date={threeDaysAgo}
+                dailyQuotes={dailyQuotes}
+                styles={styles}
+              >
+                <Suspense fallback={
+                  <div className={styles.loadingCard}>
+                    <div>Loading...</div>
+                  </div>
+                }>
+                  <div className={styles.svgCard}>
+                    <ThreeDaysAgoSvg className="h-auto w-full" />
+                  </div>
+                </Suspense>
+              </ErrorBoundary>
+            </div>
+          </div>
+
+
+
+          {/* 吉象同行 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3><Link to="./luck" className="hover:underline">吉象同行</Link> <span className={styles.clickHint}>(点击卡片会翻转噢)</span> </h3>
+
+            {!luckLoading && luckSvgs.length > 0 ? (
+              <div className={styles.gridContainer}>
+                {luckSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
+                  const cardId = `luck-${index}`;
+                  return (
+                    <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
                       <div
-                        className={styles.heatmapYear}
+                        className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                        onClick={() => toggleFlip(cardId)}
                       >
-                        {year}
+                        <div className={styles.flipCardInner}>
+                          <div className={styles.flipCardFront}>
+                            <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                          </div>
+                          <div className={styles.flipCardBack}>
+                            <img
+                              src={imagePath}
+                              alt={`Luck ${baseName}`}
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.onerror = null;
+                                target.src = './placeholder.png';
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className={styles.heatmapCells}>
-                        {months.map((distance, i) => (
-                          <div
-                            key={i}
-                            className={styles.heatmapCell}
-                            style={{
-                              backgroundColor: distance > 0
-                                ? `rgba(102, 205, 170, ${Math.min(0.2 + distance / 50, 1)})`  // MediumAquamarine
-                                : 'transparent',
-                              border: distance > 0
-                                ? '1px solid rgba(32, 178, 170, 0.5)'  // LightSeaGreen
-                                : '1px solid #E0E0E0'  // 更浅的边框
-                            }}
-                            title={`${year}-${i + 1}: ${distance.toFixed(2)} km`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    </Suspense>
+                  );
+                })}
+              </div>
+            ) : !luckLoading && luckSvgs.length === 0 ? (
+              <div className={styles.emptyContainer}>
+                <div>暂无吉象同行数据</div>
+              </div>
+            ) : (
+              <div className={styles.loadingContainer}>
+                <div>加载中...</div>
               </div>
             )}
           </div>
-        </div>
 
 
 
-        {/* 添加recent SVG图表 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3><Link to="../daily" className="hover:underline">Recent Workouts </Link> 
-          <p> <span className={styles.streakDates}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
-                      {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#5A5A5A' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+          {/* halfmarathon */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3>Wonderful Workouts <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
+
+            {!halfmarathonLoading && halfmarathonSvgs.length > 0 ? (
+              <div className={styles.gridContainer}>
+                {halfmarathonSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
+                  const cardId = `halfmarathon-${index}`;
+
+                  return (
+                    <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
+                      <div
+                        className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                        onClick={() => toggleFlip(cardId)}
+                      >
+                        <div className={styles.flipCardInner}>
+                          <div className={styles.flipCardFront}>
+                            <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                          </div>
+                          <div className={styles.flipCardBack}>
+                            <img
+                              src={imagePath}
+                              alt={`yyyymmdd ${baseName}`}
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.onerror = null;
+                                target.src = './placeholder.png';
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </Suspense>
+                  );
+                })}
+              </div>
+            ) : !halfmarathonLoading && halfmarathonSvgs.length === 0 ? (
+              <div className={styles.emptyContainer}>
+                <div>暂无Wonderful Workouts数据</div>
+              </div>
+            ) : (
+              <div className={styles.loadingContainer}>
+                <div>加载中...</div>
+              </div>
             )}
-          </p>
-          </h3>
-
-
-
-          <div className={styles.gridContainer}>
-            {/* 今天 */}
-            <ErrorBoundary
-              date={today}
-              dailyQuotes={dailyQuotes}
-              styles={styles}
-            >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <TodaySvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
-
-            {/* 昨天 */}
-            <ErrorBoundary
-              date={yesterday}
-              dailyQuotes={dailyQuotes}
-              styles={styles}
-            >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <YesterdaySvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
-
-            {/* 前天 */}
-            <ErrorBoundary
-              date={dayBeforeYesterday}
-              dailyQuotes={dailyQuotes}
-              styles={styles}
-            >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <DayBeforeYesterdaySvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
-
-            {/* 大前天 */}
-            <ErrorBoundary
-              date={threeDaysAgo}
-              dailyQuotes={dailyQuotes}
-              styles={styles}
-            >
-              <Suspense fallback={
-                <div className={styles.loadingCard}>
-                  <div>Loading...</div>
-                </div>
-              }>
-                <div className={styles.svgCard}>
-                  <ThreeDaysAgoSvg className="h-auto w-full" />
-                </div>
-              </Suspense>
-            </ErrorBoundary>
           </div>
+
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <Suspense fallback={<div className="text-center">Loading...</div>}>
+              <GithubSvg className="mt-2 h-auto w-full" />
+            </Suspense>
+          </div>
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <Suspense fallback={<div className="text-center">Loading...</div>}>
+              <GridSvg className="mt-2 h-auto w-full" />
+            </Suspense>
+          </div>
+
         </div>
 
-
-
-        {/* 吉象同行 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3><Link to="./luck" className="hover:underline">吉象同行</Link> <span className={styles.clickHint}>(点击卡片会翻转噢)</span> </h3>
-          
-          {!luckLoading && luckSvgs.length > 0 ? (
-            <div className={styles.gridContainer}>
-              {luckSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
-                const cardId = `luck-${index}`;
-                return (
-                  <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip(cardId)}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <LazySvgComponent style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src={imagePath}
-                            alt={`Luck ${baseName}`}
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.png';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                );
-              })}
-            </div>
-          ) : !luckLoading && luckSvgs.length === 0 ? (
-            <div className={styles.emptyContainer}>
-              <div>暂无吉象同行数据</div>
-            </div>
-          ) : (
-            <div className={styles.loadingContainer}>
-              <div>加载中...</div>
-            </div>
-          )}
-        </div>
-
-
-
-        {/* halfmarathon */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Wonderful Workouts <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
-          
-          {!halfmarathonLoading && halfmarathonSvgs.length > 0 ? (
-            <div className={styles.gridContainer}>
-              {halfmarathonSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
-                const cardId = `halfmarathon-${index}`;
-                
-                return (
-                  <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip(cardId)}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <LazySvgComponent style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <img 
-                            src={imagePath}
-                            alt={`yyyymmdd ${baseName}`}
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              target.src = './placeholder.png';
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </Suspense>
-                );
-              })}
-            </div>
-          ) : !halfmarathonLoading && halfmarathonSvgs.length === 0 ? (
-            <div className={styles.emptyContainer}>
-              <div>暂无Wonderful Workouts数据</div>
-            </div>
-          ) : (
-            <div className={styles.loadingContainer}>
-              <div>加载中...</div>
-            </div>
-          )}
-        </div>
-
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <GithubSvg className="mt-2 h-auto w-full" />
-          </Suspense>
-        </div>
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <Suspense fallback={<div className="text-center">Loading...</div>}>
-            <GridSvg className="mt-2 h-auto w-full" />
-          </Suspense>
+        <div className={styles.footer}>
+          ©2016 - 2025 Liups.com thanks{' '}
+          <a
+            href="https://github.com/yihong0618/running_page/blob/master/README-CN.md"
+            target="_blank"
+            rel="noopener noreferrer">
+            running_page
+          </a>
         </div>
 
       </div>
-
-      <div className={styles.footer}>
-        ©2016 - 2025 Liups.com thanks{' '}
-        <a 
-          href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
-          target="_blank" 
-          rel="noopener noreferrer">
-          running_page
-        </a>
-      </div>
-
-    </div>
     </>
   );
 };
