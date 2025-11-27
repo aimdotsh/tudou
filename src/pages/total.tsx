@@ -560,7 +560,6 @@ const Total: React.FC = () => {
         <div className={styles.charts}>
           {/* 年度活动次数统计图 - 40%宽度 */}
           <div className={styles.chartContainer}>
-            <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
             <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
@@ -616,11 +615,11 @@ const Total: React.FC = () => {
               </BarChart>
 
             </ResponsiveContainer>
+            <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
           </div>
 
           {/* 年度总距离统计图 - 60%宽度 */}
           <div className={styles.chartContainer}>
-            <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
             <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
@@ -670,18 +669,18 @@ const Total: React.FC = () => {
                 <Bar
                   dataKey="distance"
                   name="Distance (km)"
-                  fill="#66CDAA"        // 柔和的蓝绿色(MediumAquamarine)
+                  fill="#4682B4"        // 钢蓝色(SteelBlue)
                   radius={[4, 4, 0, 0]}  // 顶部圆角
                 />
               </BarChart>
 
 
             </ResponsiveContainer>
+            <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
           </div>
 
           {/* 月度总距离统计图 - 整行宽度 */}
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
             <ResponsiveContainer width="100%" height={300} className={styles.responsiveChart}>
               <BarChart
                 data={monthlyData}
