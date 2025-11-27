@@ -367,8 +367,8 @@
 }
 
 .chartContainer h3 {
-  margin-top: 0;
-  margin-bottom: 1rem; /* 减小标题下边距 */
+  margin-top: 1rem;
+  margin-bottom: 0;
   color: var(--primary-color);
   font-size: 1.3rem;
   text-align: center;
@@ -390,7 +390,8 @@
   }
   .chartContainer h3 {
     font-size: 1.4rem;
-    margin-bottom: 2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
   }
 }
 
@@ -409,7 +410,8 @@
   }
   .chartContainer h3 {
     font-size: 1.3rem;
-    margin-bottom: 1rem; /* 减小标题下边距 */
+    margin-top: 1rem;
+    margin-bottom: 0;
   }
 }
 
@@ -429,7 +431,8 @@
   }
   .chartContainer h3 {
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
   }
   .chartContainer p {
     font-size: 0.85rem;
