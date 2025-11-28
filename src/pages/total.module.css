@@ -355,7 +355,7 @@
 .chartContainer {
   background: var(--bg-card);
   border-radius: 10px;
-  padding: 1rem;
+  padding: 10px;
   box-shadow: 0 8px 25px var(--shadow-light);
   border: 2px solid var(--border-light);
   transition: all 0.3s ease;
@@ -367,8 +367,8 @@
 }
 
 .chartContainer h3 {
-  margin-top: 1rem;
-  margin-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 1rem;
   color: var(--primary-color);
   font-size: 1.3rem;
   text-align: center;
@@ -386,12 +386,12 @@
 /* 响应式布局 */
 @media (min-width: 640px) {
   .chartContainer {
-    padding: 2rem;
+    padding: 10px;
   }
   .chartContainer h3 {
     font-size: 1.4rem;
-    margin-top: 1.5rem;
-    margin-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -406,12 +406,12 @@
   }
   
   .chartContainer {
-    padding: 1.5rem;
+    padding: 10px;
   }
   .chartContainer h3 {
     font-size: 1.3rem;
-    margin-top: 1rem;
-    margin-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 1rem;
   }
 }
 
@@ -427,12 +427,12 @@
     gap: 1.5rem;
   }
   .chartContainer {
-    padding: 1rem;
+    padding: 10px;
   }
   .chartContainer h3 {
     font-size: 1rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
   }
   .chartContainer p {
     font-size: 0.85rem;
