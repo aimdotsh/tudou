@@ -560,10 +560,10 @@ const Total: React.FC = () => {
         <div className={styles.charts}>
           {/* 年度活动次数统计图 - 40%宽度 */}
           <div className={styles.chartContainer}>
-            <ResponsiveContainer width="100%" height={400} className={styles.responsiveChart}>
+            <ResponsiveContainer width="100%" height={320} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 5, right: 0, left: isMobile ? 0 : -15, bottom: isMobile ? 60 : 40 }}
+                margin={{ top: 30, right: 0, left: isMobile ? 0 : -15, bottom: isMobile ? 40 : 30 }}
                 className={styles.barChart}>
 
                 <CartesianGrid
@@ -601,9 +601,9 @@ const Total: React.FC = () => {
                 />
 
                 <Legend
-                  verticalAlign="bottom"
-                  align="center"
-                  height={36}
+                  verticalAlign="top"
+                  align="right"
+                  height={30}
                 />
 
                 <Bar
@@ -620,10 +620,10 @@ const Total: React.FC = () => {
 
           {/* 年度总距离统计图 - 60%宽度 */}
           <div className={styles.chartContainer}>
-            <ResponsiveContainer width="100%" height={400} className={styles.responsiveChart}>
+            <ResponsiveContainer width="100%" height={320} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 5, right: 20, left: isMobile ? 0 : -15, bottom: isMobile ? 60 : 40 }}>
+                margin={{ top: 30, right: 20, left: isMobile ? 0 : -15, bottom: isMobile ? 40 : 30 }}>
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -661,9 +661,9 @@ const Total: React.FC = () => {
                 />
 
                 <Legend
-                  verticalAlign="bottom"
-                  align="center"
-                  height={36}
+                  verticalAlign="top"
+                  align="right"
+                  height={30}
                 />
 
                 <Bar
@@ -681,10 +681,10 @@ const Total: React.FC = () => {
 
           {/* 月度总距离统计图 - 整行宽度 */}
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <ResponsiveContainer width="100%" height={400} className={styles.responsiveChart}>
+            <ResponsiveContainer width="100%" height={320} className={styles.responsiveChart}>
               <BarChart
                 data={monthlyData}
-                margin={{ top: 5, right: 20, left: isMobile ? 0 : -15, bottom: isMobile ? 60 : 40 }}>
+                margin={{ top: 30, right: 20, left: isMobile ? 0 : -15, bottom: isMobile ? 40 : 30 }}>
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -738,9 +738,9 @@ const Total: React.FC = () => {
                 />
 
                 <Legend
-                  verticalAlign="bottom"
-                  align="center"
-                  height={36}
+                  verticalAlign="top"
+                  align="right"
+                  height={30}
                 />
 
                 <Bar
