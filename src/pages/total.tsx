@@ -561,7 +561,7 @@ const Total: React.FC = () => {
           {/* 年度活动次数统计图 - 40%宽度 */}
           <div className={styles.chartContainer}>
             <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
-            <ResponsiveContainer width="100%" height={320} className={styles.responsiveChart}>
+            <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
                 margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}
@@ -612,6 +612,7 @@ const Total: React.FC = () => {
                   name="Workouts"
                   fill="#20B2AA"        // 柔和的蓝绿色(CadetBlue)
                   radius={[4, 4, 0, 0]} // 顶部圆角
+                  maxBarSize={50}
                 />
               </BarChart>
 
@@ -621,7 +622,7 @@ const Total: React.FC = () => {
           {/* 年度总距离统计图 - 60%宽度 */}
           <div className={styles.chartContainer}>
             <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-            <ResponsiveContainer width="100%" height={320} className={styles.responsiveChart}>
+            <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
                 margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}>
@@ -672,6 +673,7 @@ const Total: React.FC = () => {
                   name="Distance (km)"
                   fill="#4682B4"        // 钢蓝色(SteelBlue)
                   radius={[4, 4, 0, 0]}  // 顶部圆角
+                  maxBarSize={50}
                 />
               </BarChart>
 
@@ -682,7 +684,7 @@ const Total: React.FC = () => {
           {/* 月度总距离统计图 - 整行宽度 */}
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
             <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-            <ResponsiveContainer width="100%" height={320} className={styles.responsiveChart}>
+            <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={monthlyData}
                 margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}>
@@ -749,6 +751,7 @@ const Total: React.FC = () => {
                   name="Distance (km)"
                   fill="#20B2AA"        // 柔和的蓝绿色(LightSeaGreen)
                   radius={[4, 4, 0, 0]}  // 顶部圆角
+                  maxBarSize={50}
                 />
               </BarChart>
 
