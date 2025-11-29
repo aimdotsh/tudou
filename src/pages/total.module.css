@@ -1,27 +1,41 @@
 :root {
   /* 主色调 */
-  --primary-color: #20B2AA;   /* 绿色 */
-  --secondary-color: #f99206; /* 橙色 */
-  --accent-color: #89CFF0;    /* 蓝色 */
-  
+  --primary-color: #20B2AA;
+  /* 绿色 */
+  --secondary-color: #f99206;
+  /* 橙色 */
+  --accent-color: #89CFF0;
+  /* 蓝色 */
+
   /* 文字颜色 */
-  --text-primary: #2c3e50;    /* 深灰色 */
-  --text-secondary: #5a6c7d;  /* 中灰色 */
-  --text-light: #FFFFFF;      /* 白色 */
-  --text-muted: #8a9ba8;      /* 浅灰色 */
-  
-  
+  --text-primary: #2c3e50;
+  /* 深灰色 */
+  --text-secondary: #5a6c7d;
+  /* 中灰色 */
+  --text-light: #FFFFFF;
+  /* 白色 */
+  --text-muted: #8a9ba8;
+  /* 浅灰色 */
+
+
   /* 背景色 */
-  --bg-primary: #FAF9F5;      /* 浅色背景 */
-  --bg-secondary: #FAF9F5;    /* 白色背景 */
-  --bg-card: #FAF9F5;         /* 卡片白色背景 */
-  
-  
+  --bg-primary: #FAF9F5;
+  /* 浅色背景 */
+  --bg-secondary: #FAF9F5;
+  /* 白色背景 */
+  --bg-card: #FAF9F5;
+  /* 卡片白色背景 */
+
+
   /* 边框颜色 */
-  --border-light: #e1f5fe;    /* 浅色边框 */
-  --border-accent: #20B2AA;   /* 绿色边框 */
-  --shadow-light: rgba(32, 178, 170, 0.1); /* 浅色阴影 */
-  --shadow-medium: rgba(32, 178, 170, 0.15); /* 中等阴影 */
+  --border-light: #e1f5fe;
+  /* 浅色边框 */
+  --border-accent: #20B2AA;
+  /* 绿色边框 */
+  --shadow-light: rgba(32, 178, 170, 0.1);
+  /* 浅色阴影 */
+  --shadow-medium: rgba(32, 178, 170, 0.15);
+  /* 中等阴影 */
 }
 
 .container {
@@ -31,7 +45,8 @@
   padding: 1rem;
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden; /* 防止水平滚动 */
+  overflow-x: hidden;
+  /* 防止水平滚动 */
 }
 
 
@@ -61,18 +76,21 @@
   justify-content: space-between;
   padding: 0;
   transition: all 0.3s ease;
-  overflow-x: hidden; /* 防止水平溢出 */
+  overflow-x: hidden;
+  /* 防止水平溢出 */
 }
 
 @media (max-width: 768px) {
   .stickyHeader {
-    flex-wrap: wrap; /* 允许在需要时换行 */
+    flex-wrap: wrap;
+    /* 允许在需要时换行 */
   }
 }
 
 @media (max-width: 480px) {
   .stickyHeader {
-    flex-direction: column; /* 在非常小的屏幕上改为垂直布局 */
+    flex-direction: column;
+    /* 在非常小的屏幕上改为垂直布局 */
     align-items: stretch;
   }
 }
@@ -86,7 +104,8 @@
 
 .selectContainer {
   display: flex;
-  justify-content: flex-end; /* 改为靠右对齐 */
+  justify-content: flex-end;
+  /* 改为靠右对齐 */
   padding: 0.4rem 2rem;
   background: #FAF9F5;
   transition: all 0.3s ease;
@@ -104,7 +123,8 @@
   .selectContainer {
     padding: 0.25rem 1rem;
     width: 100%;
-    justify-content: center; /* 在小屏幕上居中显示 */
+    justify-content: center;
+    /* 在小屏幕上居中显示 */
   }
 }
 
@@ -147,7 +167,8 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(249, 146, 6, 0.3);
   display: block;
-  margin: 0; /* 移除自动居中的margin */
+  margin: 0;
+  /* 移除自动居中的margin */
   min-width: 120px;
 }
 
@@ -164,7 +185,8 @@
     padding: 8px 12px;
     font-size: 0.8rem;
     min-width: 90px;
-    width: 100%; /* 在小屏幕上占满容器宽度 */
+    width: 100%;
+    /* 在小屏幕上占满容器宽度 */
   }
 }
 
@@ -173,23 +195,23 @@
     padding: 6px 10px;
     font-size: 0.7rem;
   }
-  
+
   .title {
     font-size: 1.1rem;
   }
-  
+
   .statCard h4 {
     font-size: 0.75rem;
   }
-  
+
   .statCard p {
     font-size: 0.9rem;
   }
-  
+
   .chartContainer h3 {
     font-size: 0.9rem;
   }
-  
+
   .chartContainer p {
     font-size: 0.8rem;
   }
@@ -227,10 +249,12 @@
     margin-bottom: 2.5rem;
     flex-wrap: nowrap;
   }
+
   .title {
     font-size: 2rem;
     margin: 0;
   }
+
   .tohome,
   .select {
     font-size: 1rem;
@@ -248,11 +272,13 @@
     margin-bottom: 1.5rem;
     padding: 1rem;
   }
+
   .title {
     font-size: 1.2rem;
     order: -1;
     flex-basis: 100%;
   }
+
   .tohome,
   .select {
     padding: 10px 16px;
@@ -337,9 +363,11 @@
   .statCard {
     padding: 1rem;
   }
+
   .statCard h4 {
     font-size: 0.8rem;
   }
+
   .statCard p {
     font-size: 1rem;
   }
@@ -349,7 +377,8 @@
 .charts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem; /* 进一步减小网格间距 */
+  gap: 0.75rem;
+  /* 进一步减小网格间距 */
 }
 
 .chartContainer {
@@ -362,7 +391,7 @@
 }
 
 .chartContainer:hover {
-  box-shadow: 0 12px 35px var(--shadow-medium);
+  box-shadow: 0 15px 30px var(--shadow-medium);
   border-color: var(--accent-color);
 }
 
@@ -386,8 +415,9 @@
 /* 响应式布局 */
 @media (min-width: 640px) {
   .chartContainer {
-    padding: 10px;
+    padding: 4px;
   }
+
   .chartContainer h3 {
     font-size: 1.4rem;
     margin-top: 0;
@@ -398,16 +428,18 @@
 @media (min-width: 768px) {
   .charts {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem; /* 进一步减小网格间距 */
+    gap: 0.75rem;
+    /* 进一步减小网格间距 */
   }
-  
+
   .fullWidth {
     grid-column: 1 / -1;
   }
-  
+
   .chartContainer {
-    padding: 10px;
+    padding: 4px;
   }
+
   .chartContainer h3 {
     font-size: 1.3rem;
     margin-top: 0;
@@ -426,14 +458,17 @@
   .charts {
     gap: 1.5rem;
   }
+
   .chartContainer {
-    padding: 10px;
+    padding: 4px;
   }
+
   .chartContainer h3 {
     font-size: 1rem;
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
+
   .chartContainer p {
     font-size: 0.85rem;
   }
@@ -455,26 +490,26 @@
   .responsiveChart {
     height: 200px !important;
   }
-  
+
   /* 防止图表在小屏幕上自动放大 */
   .chartContainer {
     overflow: hidden;
     max-width: 100%;
     position: relative;
   }
-  
+
   /* 确保图表容器不会超出屏幕 */
-  .chartContainer > div {
+  .chartContainer>div {
     max-width: 100% !important;
     overflow: hidden;
   }
-  
+
   /* 防止 Recharts 组件在移动端自动缩放 */
   .chartContainer :global(.recharts-wrapper) {
     max-width: 100% !important;
     overflow: hidden;
   }
-  
+
   /* 确保图表内容不会溢出 */
   .chartContainer :global(.recharts-surface) {
     max-width: 100% !important;
@@ -489,41 +524,43 @@
 
 /* 额外的移动端图表优化 */
 @media (max-width: 480px) {
+
   /* 强制限制所有图表相关元素的最大宽度 */
   .chartContainer * {
     max-width: 100% !important;
     box-sizing: border-box;
   }
-  
+
   /* 防止 SVG 元素超出容器 */
   .chartContainer svg {
     max-width: 100% !important;
     height: auto !important;
   }
-  
+
   /* 确保工具提示不会导致布局问题 */
   .chartContainer :global(.recharts-tooltip-wrapper) {
     max-width: 90vw !important;
   }
-  
+
   /* 移动端容器优化 */
   .container {
     padding: 0.5rem;
     overflow-x: hidden;
   }
-  
+
   /* 防止图表容器在移动端产生水平滚动 */
   .charts {
     width: 100%;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   /* 确保所有图表容器都不会超出视口 */
   .chartContainer {
     width: 100%;
     max-width: 100%;
-    min-width: 0; /* 允许收缩 */
+    min-width: 0;
+    /* 允许收缩 */
   }
 }
 
@@ -533,7 +570,7 @@
     /* 为触摸设备优化交互 */
     touch-action: pan-y pinch-zoom;
   }
-  
+
   .chartContainer :global(.recharts-tooltip-wrapper) {
     /* 触摸设备上的工具提示优化 */
     pointer-events: none;
@@ -542,21 +579,22 @@
 
 /* 修复移动端图表 X 轴坐标错位问题 */
 @media (max-width: 480px) {
+
   /* 重写图表的 margin 设置 */
   .chartContainer :global(.recharts-wrapper .recharts-surface) {
     overflow: visible !important;
   }
-  
+
   /* 调整 X 轴标签位置 */
   .chartContainer :global(.recharts-cartesian-axis-tick-value) {
     font-size: 10px !important;
   }
-  
+
   /* 确保 X 轴标签不被裁剪 */
   .chartContainer :global(.recharts-xAxis .recharts-cartesian-axis-tick) {
     transform: translateX(0) !important;
   }
-  
+
   /* 调整图表内边距以适应移动端 */
   .chartContainer :global(.recharts-wrapper) {
     padding-left: 10px !important;
@@ -565,11 +603,12 @@
 }
 
 @media (max-width: 360px) {
+
   /* 超小屏幕进一步优化 */
   .chartContainer :global(.recharts-cartesian-axis-tick-value) {
     font-size: 9px !important;
   }
-  
+
   .chartContainer :global(.recharts-wrapper) {
     padding-left: 5px !important;
     padding-right: 5px !important;
@@ -600,7 +639,7 @@
 }
 
 /* 强制覆盖所有热图年份样式 */
-.heatmap .heatmap-year, 
+.heatmap .heatmap-year,
 .heatmap .heatmapYear,
 .heatmap-header .heatmap-year,
 .heatmap-header .heatmapYear,
@@ -615,6 +654,7 @@
 
 /* 响应式调整 */
 @media (max-width: 768px) {
+
   .heatmap .heatmap-year,
   .heatmap .heatmapYear,
   .heatmap-header .heatmap-year,
@@ -626,6 +666,7 @@
 }
 
 @media (max-width: 480px) {
+
   .heatmap .heatmap-year,
   .heatmap .heatmapYear,
   .heatmap-header .heatmap-year,
@@ -691,6 +732,7 @@
   .heatmapYear {
     width: 2.5rem;
   }
+
   .heatmapMonth {
     font-size: 0.6rem;
   }
@@ -790,7 +832,8 @@
   justify-content: center;
   padding: 0;
   border-radius: 10px;
-  overflow: hidden; /* This will clip the SVG's corners */
+  overflow: hidden;
+  /* This will clip the SVG's corners */
 }
 
 .svgCard svg {
@@ -909,7 +952,7 @@
   .dateText {
     font-size: 1rem;
   }
-  
+
   .poemText {
     font-size: 0.9rem;
   }
@@ -1026,12 +1069,12 @@
     /* 确保在网格中保持稳定 */
     contain: layout;
   }
-  
+
   .flipCardInner {
     border-width: 1px;
     box-shadow: 0 4px 15px var(--shadow-light);
   }
-  
+
   .flipCardFront,
   .flipCardBack {
     padding: 0.25rem;
@@ -1043,28 +1086,28 @@
     justify-content: center;
     box-sizing: border-box;
   }
-  
+
   /* 只对正面应用overflow hidden */
   .flipCardFront {
     overflow: hidden;
   }
-  
+
   /* 确保SVG不会覆盖边框 - 使用padding而不是直接修改SVG尺寸 */
   .flipCardFront {
     padding: 1px;
   }
-  
+
   .flipCardFront svg {
     width: 100%;
     height: 100%;
     object-fit: contain;
   }
-  
+
   /* 确保背面在中等屏幕下有正确的初始旋转 */
   .flipCardBack {
     transform: rotateY(180deg);
   }
-  
+
   /* DynamicTrackMap组件在中等屏幕下的特殊处理 */
   .flipCardBack .dynamic-track-map-container {
     width: 95% !important;
@@ -1073,27 +1116,27 @@
     overflow: visible;
     margin: auto;
   }
-  
+
   /* 确保网格容器在中等屏幕下稳定 */
   .gridContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   /* 中等屏幕下适当调整文字大小 */
   .dateText {
     font-size: 0.85rem;
   }
-  
+
   .poemText {
     font-size: 0.75rem;
     line-height: 1.35;
   }
-  
+
   .sourceText {
     font-size: 0.6rem;
   }
-  
+
   .descriptionText {
     font-size: 0.65rem;
     line-height: 1.25;
@@ -1109,7 +1152,7 @@
     contain: layout style;
     isolation: isolate;
   }
-  
+
   .flipCardInner {
     border-width: 1px;
     box-shadow: 0 2px 10px var(--shadow-light);
@@ -1118,7 +1161,7 @@
     /* 防止翻转时的布局偏移 */
     will-change: transform;
   }
-  
+
   .flipCardFront,
   .flipCardBack {
     padding: 0.125rem;
@@ -1136,29 +1179,29 @@
     /* 确保边框可见 */
     box-sizing: border-box;
   }
-  
+
   /* 只对正面应用overflow hidden，背面需要让地图正常显示 */
   .flipCardFront {
     overflow: hidden;
   }
-  
+
   /* 确保SVG不会覆盖边框 - 使用padding而不是直接修改SVG尺寸 */
   .flipCardFront {
     padding: 1px;
   }
-  
+
   .flipCardFront svg {
     width: 100%;
     height: 100%;
     object-fit: contain;
     display: block;
   }
-  
+
   /* 确保背面在小屏幕下有正确的初始旋转 */
   .flipCardBack {
     transform: rotateY(180deg);
   }
-  
+
   /* DynamicTrackMap组件需要特殊处理 */
   .flipCardBack .dynamic-track-map-container {
     width: 90% !important;
@@ -1167,39 +1210,39 @@
     overflow: visible;
     margin: auto;
   }
-  
-  .flipCardBack > * {
+
+  .flipCardBack>* {
     width: 100%;
     height: 100%;
   }
-  
+
   /* 小屏幕下使用单列布局 */
   .gridContainer {
     grid-template-columns: 1fr;
     gap: 0.75rem;
   }
-  
+
   /* 小屏幕下调整卡片内文字大小和间距，保持卡片比例 */
   .dateCard {
     padding: 0.5rem;
   }
-  
+
   .dateText {
     font-size: 0.75rem;
     margin-bottom: 0.25rem;
   }
-  
+
   .poemText {
     font-size: 0.65rem;
     line-height: 1.2;
     padding: 0.15rem 0;
   }
-  
+
   .sourceText {
     font-size: 0.55rem;
     margin-top: 0.15rem;
   }
-  
+
   .descriptionText {
     font-size: 0.6rem;
     margin-bottom: 0.15rem;
@@ -1214,11 +1257,11 @@
     /* 进一步优化性能 */
     contain: strict;
   }
-  
+
   .flipCardInner {
     border-radius: 8px;
   }
-  
+
   .flipCardFront,
   .flipCardBack {
     border-radius: 8px;
@@ -1231,12 +1274,12 @@
     justify-content: center;
     box-sizing: border-box;
   }
-  
+
   /* 只对正面应用overflow hidden */
   .flipCardFront {
     overflow: hidden;
   }
-  
+
   /* 确保SVG不会覆盖边框 */
   .flipCardFront svg {
     width: 98%;
@@ -1244,12 +1287,12 @@
     max-width: 98%;
     max-height: 98%;
   }
-  
+
   /* 确保背面在超小屏幕下有正确的初始旋转 */
   .flipCardBack {
     transform: rotateY(180deg);
   }
-  
+
   /* DynamicTrackMap组件在超小屏幕下的特殊处理 */
   .flipCardBack .dynamic-track-map-container {
     width: 85% !important;
@@ -1258,32 +1301,32 @@
     overflow: visible;
     margin: auto;
   }
-  
+
   .gridContainer {
     gap: 0.5rem;
   }
-  
+
   /* 超小屏幕下进一步缩小文字和间距，确保卡片比例 */
   .dateCard {
     padding: 0.3rem;
   }
-  
+
   .dateText {
     font-size: 0.7rem;
     margin-bottom: 0.1rem;
   }
-  
+
   .poemText {
     font-size: 0.6rem;
     line-height: 1.1;
     padding: 0.1rem 0;
   }
-  
+
   .sourceText {
     font-size: 0.5rem;
     margin-top: 0.1rem;
   }
-  
+
   .descriptionText {
     font-size: 0.55rem;
     margin-bottom: 0.1rem;
@@ -1329,6 +1372,7 @@
 
 /* 响应式调整 */
 @media (max-width: 768px) {
+
   .heatmap-year,
   .heatmapYear,
   [class*='heatmap'] [class*='year'],
@@ -1338,6 +1382,7 @@
 }
 
 @media (max-width: 480px) {
+
   .heatmap-year,
   .heatmapYear,
   [class*='heatmap'] [class*='year'],
@@ -1345,6 +1390,7 @@
     font-size: 0.7rem !important;
     width: 2.5rem !important;
   }
+
   [class*='heatmap'] [class*='year'],
   [class*='heatmap'] [class*='Year'] {
     font-size: 0.7rem !important;
@@ -1355,6 +1401,7 @@
 
 /* 响应式调整 */
 @media (max-width: 768px) {
+
   .heatmap-year,
   .heatmapYear,
   [class*='heatmap'] [class*='year'],
@@ -1364,6 +1411,7 @@
 }
 
 @media (max-width: 480px) {
+
   .heatmap-year,
   .heatmapYear,
   [class*='heatmap'] [class*='year'],
@@ -1371,13 +1419,14 @@
     font-size: 0.7rem !important;
     width: 2.5rem !important;
   }
-  
+
   [class*='Year'] {
     font-size: 0.8rem !important;
   }
 }
 
 @media (max-width: 480px) {
+
   .heatmap-year,
   .heatmapYear,
   [class*='heatmap'] [class*='year'],
@@ -1386,4 +1435,3 @@
     width: 2.5rem !important;
   }
 }
-
