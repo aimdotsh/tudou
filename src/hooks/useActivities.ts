@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { locationForRun, typeForRun } from '@/utils/utils';
-import activities from '@/static/activities.json';
+import activities from '@/static/activities_encrypted.json';
+import CryptoJS from 'crypto-js';
 
 // standardize country names for consistency between mapbox and activities data
 const standardizeCountryName = (country: string): string => {
@@ -46,7 +47,33 @@ const useActivities = () => {
     const countries: Set<string> = new Set();
     const years: Set<string> = new Set();
 
-    activities.forEach((run) => {
+    // Decrypt data
+    const secretKey =
+      import.meta.env.VITE_ENCRYPT_KEY || 'tudou_default_secret_key';
+    const decryptedActivities = activities.map((activity) => {
+      const newActivity = { ...activity };
+      try {
+        if (newActivity.summary_polyline) {
+          const bytes = CryptoJS.AES.decrypt(
+            newActivity.summary_polyline,
+            secretKey
+          );
+          newActivity.summary_polyline = bytes.toString(CryptoJS.enc.Utf8);
+        }
+        if (newActivity.location_country) {
+          const bytes = CryptoJS.AES.decrypt(
+            newActivity.location_country,
+            secretKey
+          );
+          newActivity.location_country = bytes.toString(CryptoJS.enc.Utf8);
+        }
+      } catch (e) {
+        console.error('Failed to decrypt activity data', e);
+      }
+      return newActivity;
+    });
+
+    decryptedActivities.forEach((run) => {
       const location = locationForRun(run);
 
       const periodName = typeForRun(run);
@@ -73,7 +100,7 @@ const useActivities = () => {
     const thisYear = yearsArray[0] || '';
 
     return {
-      activities,
+      activities: decryptedActivities,
       years: yearsArray,
       countries: [...countries],
       provinces: [...provinces],
