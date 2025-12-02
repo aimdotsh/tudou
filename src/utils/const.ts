@@ -213,7 +213,8 @@ const red = 'rgb(255,0,0)'; //大红色
 // If your map has an offset please change this line
 // issues #92 and #198
 export const NEED_FIX_MAP = false;
-export const MAIN_COLOR = green;
+const fresh_teal = 'rgb(6, 182, 212)'; // fresh blue-green
+export const MAIN_COLOR = fresh_teal;
 export const MAIN_COLOR_LIGHT = dark_vanilla;
 
 // Static color constants

@@ -29,7 +29,7 @@
 /* 1. System Theme (Base) */
 @media (prefers-color-scheme: light) {
   :root {
-    --color-brand: var(--color-violet-600);
+    --color-brand: #06b6d4;
     --color-secondary: var(--color-violet-600);
     --color-bg: var(--color-neutral-100);
     --color-tx: var(--color-violet-500);
@@ -50,7 +50,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* const nike = 'rgb(224,237,94)'; */
-    --color-brand: #00ed5e;
+    --color-brand: #06b6d4;
     --color-secondary: #00ff00;
     --color-bg: var(--color-neutral-900);
     --color-tx: var(--color-brand);
@@ -70,7 +70,7 @@
 
 /* 2. Manual Override (Higher Priority) */
 [data-theme='light'] {
-  --color-brand: var(--color-violet-600);
+  --color-brand: #06b6d4;
   --color-secondary: var(--color-violet-500);
   --color-bg: var(--color-neutral-100);
   --color-tx: var(--color-violet-500);
@@ -90,7 +90,7 @@
 
 [data-theme='dark'] {
   /* const nike = 'rgb(224,237,94)'; */
-  --color-brand: #00ed5e;
+  --color-brand: #06b6d4;
   --color-secondary: #00ff00;
   --color-bg: var(--color-neutral-900);
   --color-tx: var(--color-brand);
