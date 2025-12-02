@@ -215,7 +215,7 @@ const red = 'rgb(255,0,0)'; //大红色
 export const NEED_FIX_MAP = false;
 const fresh_teal = 'rgb(6, 182, 212)'; // fresh blue-green
 export const MAIN_COLOR = fresh_teal;
-export const MAIN_COLOR_LIGHT = dark_vanilla;
+export const MAIN_COLOR_LIGHT = fresh_teal;
 
 // Static color constants
 export const RUN_COLOR_LIGHT = '#47b8e0';
@@ -244,7 +244,7 @@ export const getRuntimeSingleColor = (
 };
 
 // Legacy export for backwards compatibility
-export const RUN_COLOR = [yellow, yellow_compl];
+export const RUN_COLOR = [yellow, dark_vanilla];
 export const RIDE_COLOR = [green, green];
 export const VIRTUAL_RIDE_COLOR = [veryPeri, veryPeri];
 export const HIKE_COLOR = [pink, pink];
