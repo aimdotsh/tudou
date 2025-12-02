@@ -214,7 +214,7 @@ const red = 'rgb(255,0,0)'; //大红色
 // issues #92 and #198
 export const NEED_FIX_MAP = false;
 export const MAIN_COLOR = green;
-export const MAIN_COLOR_LIGHT = purple2;
+export const MAIN_COLOR_LIGHT = dark_vanilla;
 
 // Static color constants
 export const RUN_COLOR_LIGHT = '#47b8e0';
