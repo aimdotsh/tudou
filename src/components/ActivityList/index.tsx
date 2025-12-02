@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import activities from '@/static/activities.json';
+import useActivities from '@/hooks/useActivities';
 import styles from './style.module.css';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from '@/utils/const';
 import { totalStat } from '@assets/index';
@@ -267,6 +267,7 @@ const ActivityList: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('run');
   const [sportType, setSportType] = useState<string>('all');
   const [sportTypeOptions, setSportTypeOptions] = useState<string[]>([]);
+  const { activities } = useActivities();
 
   useEffect(() => {
     const playTypes = new Set(
@@ -275,7 +276,7 @@ const ActivityList: React.FC = () => {
     const uniqueSportTypes = [...playTypes];
     uniqueSportTypes.unshift('all');
     setSportTypeOptions(uniqueSportTypes);
-  }, []);
+  }, [activities]);
 
   const navigate = useNavigate();
 
