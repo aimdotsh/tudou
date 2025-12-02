@@ -244,7 +244,7 @@ export const getRuntimeSingleColor = (
 };
 
 // Legacy export for backwards compatibility
-export const RUN_COLOR = [yellow, dark_vanilla];
+export const RUN_COLOR = [yellow, IKB];
 export const RIDE_COLOR = [green, green];
 export const VIRTUAL_RIDE_COLOR = [veryPeri, veryPeri];
 export const HIKE_COLOR = [pink, pink];
