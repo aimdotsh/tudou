@@ -347,11 +347,14 @@ const Index = () => {
 
   // Update bounds when geoData changes
   useEffect(() => {
+    if (year === 'Total' && IS_CHINESE) {
+      return;
+    }
     setViewState((prev) => ({
       ...prev,
       ...bounds,
     }));
-  }, [bounds]);
+  }, [bounds, year]);
 
   // Animate geoData when runs change
   useEffect(() => {
