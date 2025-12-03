@@ -212,7 +212,13 @@ const Index = () => {
       // default year
       setYear(y);
 
-      if ((viewState.zoom ?? 0) > 3 && bounds) {
+      if (y === 'Total' && IS_CHINESE) {
+        setViewState({
+          longitude: 105,
+          latitude: 38,
+          zoom: 3,
+        });
+      } else if ((viewState.zoom ?? 0) > 3 && bounds) {
         setViewState({
           ...bounds,
         });
