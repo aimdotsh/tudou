@@ -214,8 +214,8 @@ const Index = () => {
 
       if (y === 'Total' && IS_CHINESE) {
         setViewState({
-          longitude: 105,
-          latitude: 38,
+          longitude: 104,
+          latitude: 36,
           zoom: 3,
         });
       } else if ((viewState.zoom ?? 0) > 3 && bounds) {
