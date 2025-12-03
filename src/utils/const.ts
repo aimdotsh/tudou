@@ -35,7 +35,7 @@ const USE_DASH_LINE = false;
 // 样式：轨迹线不透明度，范围 [0, 1]
 const LINE_OPACITY = 0.6;
 // 样式：地图高度（响应式）；移动端使用较小高度以提升体验
-const MAP_HEIGHT = window.innerWidth <= 768 ? 250 : 600;
+const MAP_HEIGHT = window.innerWidth <= 768 ? 400 : 600;
 // 设为 false 可隐藏道路文字标签
 const ROAD_LABEL_DISPLAY = false;
 // 2024/11/17 更新：隐私模式默认说明
