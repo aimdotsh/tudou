@@ -29,12 +29,15 @@ const getDynamicMapOffset = () => {
   const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
   
   // 基础值
-  const baseDistance = 0; // 基础距离（公里）
-  const baseBearing = 0;     // 基础角度（度）
+  const baseDistance = 11; // 基础距离（公里）
+  const baseBearing = 13;     // 基础角度（度）
   
   // 每天增加10公里，角度每天增加1度
-  const distance = baseDistance + (daysDiff * 10);
-  const bearing = (baseBearing + daysDiff) % 360; // 使用模运算确保角度在0-359度范围内
+  // const distance = baseDistance + (daysDiff * 10);
+  // const bearing = (baseBearing + daysDiff) % 360; // 使用模运算确保角度在0-359度范围内
+  // pianyi 00
+  const distance = 0;
+  const bearing = 0; 
   
   return {
     distance,
