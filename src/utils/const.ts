@@ -38,7 +38,7 @@ const LINE_OPACITY = 0.6;
 const MAP_HEIGHT = 456; // 桌面版高度
 const MOBILE_MAP_HEIGHT = 350; // 移动设备高度
 //set to `false` if you want to hide the road label characters
-const ROAD_LABEL_DISPLAY = true;
+const ROAD_LABEL_DISPLAY = false;
 // update for now 2024/11/17 the privacy mode is true
 //set to `true` if you want to display only the routes without showing the map.
 const PRIVACY_MODE = false;
@@ -54,10 +54,10 @@ const RICH_TITLE = true;
 const IS_CHINESE = true;
 const USE_ANIMATION_FOR_GRID = false;
 const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string =>
-  `户外运动 ${yearLength} 年 ` + ( year === 'Total' ? '' : `，这里展示的是 ${year} 年的运动轨迹。`);
+  `户外运动 ${yearLength} 年 ` + (year === 'Total' ? '' : `，这里展示的是 ${year} 年的运动轨迹。`);
 
 const ENGLISH_INFO_MESSAGE = (yearLength: number, year: string): string =>
-  `Logged ${yearLength} Years of Outdoor Journey` +  ( year === 'Total' ? '' : `, the page show routes in ${year}`);
+  `Logged ${yearLength} Years of Outdoor Journey` + (year === 'Total' ? '' : `, the page show routes in ${year}`);
 
 // not support English for now
 const CHINESE_LOCATION_INFO_MESSAGE_FIRST =
@@ -129,17 +129,17 @@ const TYPES_MAPPING = {
 }
 
 const ACTIVITY_TOTAL = {
-    ACTIVITY_COUNT_TITLE,
-    MAX_DISTANCE_TITLE,
-    MAX_SPEED_TITLE,
-    TOTAL_TIME_TITLE,
-    AVERAGE_SPEED_TITLE,
-    TOTAL_DISTANCE_TITLE,
-    YEARLY_TITLE,
-    MONTHLY_TITLE,
-    WEEKLY_TITLE,
-    DAILY_TITLE,
-    LOCATION_TITLE
+  ACTIVITY_COUNT_TITLE,
+  MAX_DISTANCE_TITLE,
+  MAX_SPEED_TITLE,
+  TOTAL_TIME_TITLE,
+  AVERAGE_SPEED_TITLE,
+  TOTAL_DISTANCE_TITLE,
+  YEARLY_TITLE,
+  MONTHLY_TITLE,
+  WEEKLY_TITLE,
+  DAILY_TITLE,
+  LOCATION_TITLE
 };
 
 export {
