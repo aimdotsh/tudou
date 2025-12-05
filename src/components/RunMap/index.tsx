@@ -126,7 +126,8 @@ const RunMap = ({
   }, [geoData]);
 
   // --------- 其余逻辑基本保持不变 ---------
-  const keepWhenLightsOff = ['runs2', 'admin-0-boundary', 'admin-1-boundary', 'water'];
+  // layers that should remain visible when lights are off
+  const keepWhenLightsOff = ['runs2', 'animated-run'];
   function switchLayerVisibility(map: MapInstance, lights: boolean) {
     const styleJson = map.getStyle();
     styleJson.layers.forEach((it: { id: string; }) => {
@@ -147,9 +148,24 @@ const RunMap = ({
         if (map && IS_CHINESE) {
           map.addControl(new MapboxLanguage({ defaultLanguage: 'zh-Hans' }));
         }
-        map.on('style.load', () => {
-          if (!ROAD_LABEL_DISPLAY) {
-            MAP_LAYER_LIST.forEach((layerId) => {
+        // all style resources have been downloaded
+        // and the first visually complete rendering of the base style has occurred.
+        // it's odd. when use style other than mapbox, the style.load event is not triggered.Add commentMore actions
+        // so I use data event instead of style.load event and make sure we handle it only once.
+        map.on('data', (event) => {
+          if (event.dataType !== 'style' || mapRef.current) {
+            return;
+          }
+          if (!ROAD_LABEL_DISPLAY || PRIVACY_MODE) {
+            const layers = map.getStyle().layers;
+            const labelLayerNames = layers
+              .filter(
+                (layer: any) =>
+                  (layer.type === 'symbol' || layer.type === 'composite') &&
+                  layer.layout && layer.layout.text_field !== null
+              )
+              .map((layer: any) => layer.id);
+            labelLayerNames.forEach((layerId) => {
               map.removeLayer(layerId);
             });
           }
