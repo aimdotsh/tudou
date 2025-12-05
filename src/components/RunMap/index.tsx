@@ -1,7 +1,7 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
-import React, {useRef, useCallback, useState, useEffect} from 'react';
-import Map, {Layer, Source, FullscreenControl, NavigationControl, MapRef} from 'react-map-gl';
-import {MapInstance} from "react-map-gl/src/types/lib";
+import React, { useRef, useCallback, useState, useEffect } from 'react';
+import Map, { Layer, Source, FullscreenControl, NavigationControl, MapRef } from 'react-map-gl';
+import { MapInstance } from "react-map-gl/src/types/lib";
 import useActivities from '@/hooks/useActivities';
 import {
   MAP_LAYER_LIST,
@@ -60,13 +60,13 @@ const RunMap = ({
   useEffect(() => {
     let tmpGeo = propGeoData;
     const isBigMap = (viewState.zoom ?? 0) <= 3 || thisYear === 'Total';
-    
+
     if (isBigMap && IS_CHINESE) {
       const chinaGeoData = geoJsonForMap();
       if (chinaGeoData && chinaGeoData.features) {
         tmpGeo = {
-            "type": "FeatureCollection",
-            "features": propGeoData.features.concat(chinaGeoData.features)
+          "type": "FeatureCollection",
+          "features": propGeoData.features.concat(chinaGeoData.features)
         };
       }
     }
@@ -102,7 +102,7 @@ const RunMap = ({
       }
       const progress = Math.round((current / points.length) * 100);
       setAnimationProgress(progress);
-      
+
       const animFeature: Feature<LineString> = {
         ...geoData.features[0],
         geometry: {
@@ -126,7 +126,7 @@ const RunMap = ({
   }, [geoData]);
 
   // --------- 其余逻辑基本保持不变 ---------
-  const keepWhenLightsOff = ['runs2'];
+  const keepWhenLightsOff = ['runs2', 'admin-0-boundary', 'admin-1-boundary', 'water'];
   function switchLayerVisibility(map: MapInstance, lights: boolean) {
     const styleJson = map.getStyle();
     styleJson.layers.forEach((it: { id: string; }) => {
@@ -145,7 +145,7 @@ const RunMap = ({
       if (ref !== null) {
         const map = ref.getMap();
         if (map && IS_CHINESE) {
-            map.addControl(new MapboxLanguage({defaultLanguage: 'zh-Hans'}));
+          map.addControl(new MapboxLanguage({ defaultLanguage: 'zh-Hans' }));
         }
         map.on('style.load', () => {
           if (!ROAD_LABEL_DISPLAY) {
@@ -173,7 +173,7 @@ const RunMap = ({
   // 创建访问过的城市和省份过滤器（仅在 Total 年份时显示）
   const visitedCities = thisYear === 'Total' ? locationStats.citiesList : [];
   const visitedProvinces = thisYear === 'Total' ? locationStats.provincesList : [];
-  
+
   // 合并直辖市和省份进行高亮
   const highlightAreas = [...visitedCities, ...visitedProvinces];
   const filterHighlightAreas = highlightAreas.slice();
@@ -244,7 +244,7 @@ const RunMap = ({
           />
         </Source>
       )}
-      
+
       {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
       <Source id="data" type="geojson" data={animatedGeo || geoData}>
         <Layer
@@ -309,9 +309,9 @@ const RunMap = ({
           </span>
         )}
       </span>
-      <FullscreenControl style={fullscreenButton}/>
-      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights}/>}
-      <NavigationControl showCompass={false} position={'bottom-right'} style={{opacity: 0.3}}/>
+      <FullscreenControl style={fullscreenButton} />
+      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
+      <NavigationControl showCompass={false} position={'bottom-right'} style={{ opacity: 0.3 }} />
     </Map>
   );
 };
