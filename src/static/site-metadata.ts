@@ -35,6 +35,9 @@ const getDynamicMapOffset = () => {
   // 每天增加10公里，角度每天增加1度
   const distance = baseDistance + (daysDiff * 10);
   const bearing = (baseBearing + daysDiff) % 360; // 使用模运算确保角度在0-359度范围内
+  // pianyi 00
+  // const distance = 0;
+  // const bearing = 0; 
   
   return {
     distance,
