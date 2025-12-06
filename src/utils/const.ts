@@ -213,7 +213,7 @@ export const MAP_TILE_VENDOR = 'maptiler';
 export const USE_MAPBOX_RASTER = true;
 
 // map tiles style name, see MAP_TILE_STYLES for more details
-export const MAP_TILE_STYLE_LIGHT = 'streets-v2'; // changed to colorful style
+export const MAP_TILE_STYLE_LIGHT = 'dataviz-light'; // changed to colorful style
 export const MAP_TILE_STYLE_DARK = 'dark-v10';
 
 // access token. you can apply a new one, it's free.
