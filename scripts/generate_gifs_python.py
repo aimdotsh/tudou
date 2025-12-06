@@ -2,6 +2,8 @@
 """
 轨迹GIF生成脚本 - Python版本
 自动生成所有单轨迹日期的GIF动画文件
+使用 CartoDB Positron No Labels 瓦片背景 (无路名)
+尺寸固定为 300x390 (10:13 比例)
 """
 
 import json
@@ -15,6 +17,7 @@ import math
 import base64
 import io
 from collections import defaultdict
+import requests
 
 try:
     import imageio
@@ -51,52 +54,27 @@ class GifGenerator:
             self.project_root = Path(project_root)
         
         self.activities_file = self.project_root / "src" / "static" / "activities_py4567.json"
+        
+        # Determine actual activities file location
+        if not self.activities_file.exists():
+             self.activities_file = self.project_root / "src" / "static" / "activities.json"
+
         self.output_dir = self.project_root / "assets" / "gif"
         
-        # GIF参数 - 7:9宽高比，宽度200，总时长约4秒
-        self.width = 200
-        self.height = int(200 * 9 / 7)  # 约257，保持7:9宽高比
-        self.animation_frames = 50  # 动画帧数
-        self.static_frames = 20     # 静止帧数（显示完整图案）
-        self.frames = self.animation_frames + self.static_frames  # 总帧数70
-        self.animation_duration = 0.06  # 动画帧每帧60ms
-        self.static_duration = 0.05     # 静止帧每帧50ms
+        # Fixed dimensions 10:13 ratio (SVGs are 100x130, so 300x390 is 3x scale)
+        self.width = 300
+        self.height = 390
+        
+        self.animation_frames = 40  # Frames
+        self.static_frames = 15     # Static frames at the end
+        self.frames = self.animation_frames + self.static_frames
+        self.animation_duration = 0.06
+        self.static_duration = 0.1
         
         print(f"📁 项目根目录: {self.project_root}")
         print(f"📊 活动数据文件: {self.activities_file}")
         print(f"📁 输出目录: {self.output_dir}")
-        
-        # 加载起点和终点图标
-        self.start_icon = self.load_svg_icon("start.svg")
-        self.end_icon = self.load_svg_icon("end.svg")
-    
-    def load_svg_icon(self, filename):
-        """加载SVG图标并转换为PIL Image"""
-        svg_path = self.project_root / "assets" / filename
-        try:
-            # 尝试使用cairosvg转换SVG
-            try:
-                import cairosvg
-                png_data = cairosvg.svg2png(url=str(svg_path))
-                return Image.open(io.BytesIO(png_data)).convert("RGBA")
-            except ImportError:
-                # 如果cairosvg不可用，从SVG中提取base64 PNG数据
-                with open(svg_path, 'r', encoding='utf-8') as f:
-                    svg_content = f.read()
-                
-                # 查找base64数据
-                import re
-                base64_match = re.search(r'data:image/png;base64,([^"]+)', svg_content)
-                if base64_match:
-                    base64_data = base64_match.group(1)
-                    png_data = base64.b64decode(base64_data)
-                    return Image.open(io.BytesIO(png_data)).convert("RGBA")
-                else:
-                    print(f"⚠️ 无法从 {filename} 中提取图标数据")
-                    return None
-        except Exception as e:
-            print(f"⚠️ 加载图标 {filename} 失败: {e}")
-            return None
+        self.output_dir.mkdir(parents=True, exist_ok=True)
     
     def load_activities(self):
         """加载活动数据"""
@@ -117,8 +95,9 @@ class GifGenerator:
         date_tracks = defaultdict(list)
         
         for activity in activities:
-            date = activity['start_date_local'].split(' ')[0]
-            date_tracks[date].append(activity)
+            if 'start_date_local' in activity:
+                date = activity['start_date_local'].split(' ')[0]
+                date_tracks[date].append(activity)
         
         single_track_dates = []
         for date, tracks in date_tracks.items():
@@ -143,373 +122,357 @@ class GifGenerator:
         except Exception as e:
             print(f"❌ polyline解码失败: {e}")
             return []
-    
-    def normalize_coordinates(self, coordinates):
-        """将地理坐标标准化到画布坐标"""
-        if not coordinates:
-            return []
+
+    def get_bounds(self, coordinates):
+        """Get bounding box of coordinates"""
+        lats = [c[0] for c in coordinates]
+        lngs = [c[1] for c in coordinates]
+        return min(lngs), min(lats), max(lngs), max(lats)
+
+    # --- Tile Utility Functions ---
+    def deg2num(self, lat_deg, lon_deg, zoom):
+        """Convert lat/lon to tile numbers"""
+        lat_rad = math.radians(lat_deg)
+        n = 2.0 ** zoom
+        xtile = int((lon_deg + 180.0) / 360.0 * n)
+        ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
+        return (xtile, ytile)
+
+    def num2deg(self, xtile, ytile, zoom):
+        """Convert tile numbers to lat/lon of NW corner"""
+        n = 2.0 ** zoom
+        lon_deg = xtile / n * 360.0 - 180.0
+        lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+        lat_deg = math.degrees(lat_rad)
+        return (lat_deg, lon_deg)
+
+    def fetch_tile(self, z, x, y):
+        """Fetch a single tile from CartoDB"""
+        # Subdomains: a, b, c, d
+        s = 'abc'[ (x+y) % 3 ]
+        url = f"https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.status_code == 200:
+                return Image.open(io.BytesIO(response.content)).convert("RGBA")
+        except Exception as e:
+            print(f"⚠️ Tile fetch error {z}/{x}/{y}: {e}")
+        return None
+
+    def fetch_static_map_tiles_fixed_ratio(self, min_lng, min_lat, max_lng, max_lat):
+        """
+        Fetch background map tiles enforcing safe padding and fixed aspect ratio.
+        The target image size is self.width x self.height (300x390).
+        We calculate the geographic bounds that fit this ratio, centered on the track.
+        """
         
-        lats = [coord[0] for coord in coordinates]
-        lngs = [coord[1] for coord in coordinates]
+        # 1. Calculate Track Bounds and Center
+        track_width_lng = max_lng - min_lng
+        if track_width_lng == 0: track_width_lng = 0.0001
         
-        min_lat, max_lat = min(lats), max(lats)
-        min_lng, max_lng = min(lngs), max(lngs)
+        track_height_lat = max_lat - min_lat
+        if track_height_lat == 0: track_height_lat = 0.0001 # Approximation
         
-        # 添加边距 - 适应7:9宽高比画布
-        margin = 20
-        canvas_width = self.width - 2 * margin
-        canvas_height = self.height - 50  # 为标题留空间，适应更高的画布
+        # Center in Mercator
+        def merc_x(lng): return (lng + 180.0) / 360.0
+        def merc_y(lat): 
+             lat_rad = math.radians(lat)
+             return (1.0 - math.log(math.tan(lat_rad) + 1.0 / math.cos(lat_rad)) / math.pi) / 2.0
         
-        normalized = []
-        for lat, lng in coordinates:
-            if max_lat != min_lat:
-                y = margin + 35 + (max_lat - lat) / (max_lat - min_lat) * canvas_height  # 适应更高的画布
-            else:
-                y = self.height // 2
+        def inv_merc_x(mx): return mx * 360.0 - 180.0
+        def inv_merc_y(my): return math.degrees(math.atan(math.sinh(math.pi * (1.0 - 2.0 * my))))
+
+        track_min_mx = merc_x(min_lng)
+        track_max_mx = merc_x(max_lng)
+        track_min_my = merc_y(max_lat) # Top (smaller Y in mercator projection usually? Wait. mercator Y goes 0 at top) 
+                                     # My formula: (1 - ...) / 2.  Lat 85 => small y (approx 0). Lat -85 => large y (approx 1).
+                                     # So max_lat corresponds to min_my. Correct.
+        track_max_my = merc_y(min_lat) # Bottom
+        
+        center_mx = (track_min_mx + track_max_mx) / 2
+        center_my = (track_min_my + track_max_my) / 2
+        
+        track_merc_w = track_max_mx - track_min_mx
+        track_merc_h = track_max_my - track_min_my
+        
+        # 2. Determine View Bounds matching Image Aspect Ratio
+        image_ratio = self.width / self.height # 300 / 390 = 0.769
+        
+        # We need to find a view width/height in Mercator units that:
+        # 1. Contains the track w/ padding (e.g. 10%)
+        # 2. Has width/height = image_ratio
+        
+        # Add 20% padding to track
+        req_merc_w = track_merc_w * 1.2
+        req_merc_h = track_merc_h * 1.2
+        
+        if req_merc_w / req_merc_h > image_ratio:
+            # Track is wider than target ratio -> Limit by width
+            view_merc_w = req_merc_w
+            view_merc_h = view_merc_w / image_ratio
+        else:
+            # Track is taller than target ratio -> Limit by height
+            view_merc_h = req_merc_h
+            view_merc_w = view_merc_h * image_ratio
             
-            if max_lng != min_lng:
-                x = margin + (lng - min_lng) / (max_lng - min_lng) * canvas_width
-            else:
-                x = self.width // 2
-            
-            normalized.append((x, y))
+        view_min_mx = center_mx - view_merc_w / 2
+        view_max_mx = center_mx + view_merc_w / 2
+        view_min_my = center_my - view_merc_h / 2
+        view_max_my = center_my + view_merc_h / 2
         
-        return normalized
-    
-    def create_frame(self, coordinates, progress, date, frame_num):
+        # Convert back to lat/lon for tile fetching (approximate is fine for fetching, accurate for cropping)
+        view_min_lng_deg = inv_merc_x(view_min_mx)
+        view_max_lng_deg = inv_merc_x(view_max_mx)
+        view_max_lat_deg = inv_merc_y(view_min_my) # Top Lat
+        view_min_lat_deg = inv_merc_y(view_max_my) # Bottom Lat
+        
+        # 3. Determine Zoom
+        # 256 * 2^z / 360  is pixels per degree (longitude) at Equator... 
+        # Actually simpler: World size in pixels = 256 * 2^z
+        # view_merc_w is fraction of world width (0..1)
+        # We want view_merc_w * (256 * 2^z) = self.width
+        # 2^z = self.width / (view_merc_w * 256)
+        
+        zoom = int(math.log2(self.width / (view_merc_w * 256)))
+        zoom = max(1, min(zoom, 18))
+        
+        # 4. Fetch Tiles
+        x1, y1 = self.deg2num(view_max_lat_deg, view_min_lng_deg, zoom)
+        x2, y2 = self.deg2num(view_min_lat_deg, view_max_lng_deg, zoom)
+        
+        min_xt, max_xt = min(x1, x2), max(x1, x2)
+        min_yt, max_yt = min(y1, y2), max(y1, y2)
+        
+        # Guard against huge areas
+        if (max_xt - min_xt + 1) * (max_yt - min_yt + 1) > 25:
+             zoom -= 1
+             x1, y1 = self.deg2num(view_max_lat_deg, view_min_lng_deg, zoom)
+             x2, y2 = self.deg2num(view_min_lat_deg, view_max_lng_deg, zoom)
+             min_xt, max_xt = min(x1, x2), max(x1, x2)
+             min_yt, max_yt = min(y1, y2), max(y1, y2)
+             
+        # Stitch
+        tile_w, tile_h = 256, 256
+        total_w = (max_xt - min_xt + 1) * tile_w
+        total_h = (max_yt - min_yt + 1) * tile_h
+        
+        full_img = Image.new('RGBA', (total_w, total_h), (240, 240, 240, 255))
+        
+        for x in range(min_xt, max_xt + 1):
+            for y in range(min_yt, max_yt + 1):
+                tile_img = self.fetch_tile(zoom, x, y)
+                if tile_img:
+                    pos_x = (x - min_xt) * tile_w
+                    pos_y = (y - min_yt) * tile_h
+                    full_img.paste(tile_img, (pos_x, pos_y))
+        
+        # 5. Precise Crop
+        # Get lat/lon of the stitched image corners
+        tl_lat, tl_lng = self.num2deg(min_xt, min_yt, zoom)
+        br_lat, br_lng = self.num2deg(max_xt + 1, max_yt + 1, zoom)
+        
+        img_min_mx = merc_x(tl_lng)
+        img_min_my = merc_y(tl_lat)
+        img_max_mx = merc_x(br_lng)
+        img_max_my = merc_y(br_lat)
+        
+        # Pixels coordinates of view bounds in the full image
+        # x = (mx - img_min_mx) / (img_max_mx - img_min_mx) * total_w
+        
+        crop_x1 = (view_min_mx - img_min_mx) / (img_max_mx - img_min_mx) * total_w
+        crop_y1 = (view_min_my - img_min_my) / (img_max_my - img_min_my) * total_h
+        crop_x2 = (view_max_mx - img_min_mx) / (img_max_mx - img_min_mx) * total_w
+        crop_y2 = (view_max_my - img_min_my) / (img_max_my - img_min_my) * total_h
+        
+        crop_box = (int(crop_x1), int(crop_y1), int(crop_x2), int(crop_y2))
+        
+        # Validate crop
+        if crop_box[2] <= crop_box[0] or crop_box[3] <= crop_box[1]:
+             return full_img, (tl_lng, br_lat, br_lng, tl_lat)
+
+        cropped_img = full_img.crop(crop_box)
+        cropped_img = cropped_img.resize((self.width, self.height), Image.LANCZOS)
+        
+        print(f"🗺️ Map prepared for view: {view_min_lng_deg:.4f},{view_max_lat_deg:.4f} to {view_max_lng_deg:.4f},{view_min_lat_deg:.4f}")
+        
+        return cropped_img, (view_min_lng_deg, view_max_lat_deg, view_max_lng_deg, view_min_lat_deg) # MinLng, TopLat, MaxLng, BotLat
+
+    def create_frame(self, coordinates, progress, date, frame_num, bg_image, bounds, width, height):
         """创建单帧图像"""
-        # 创建白色背景
-        img = Image.new('RGB', (self.width, self.height), 'white')
+        if bg_image:
+            img = bg_image.copy()
+        else:
+            img = Image.new('RGB', (width, height), 'white')
+            
         draw = ImageDraw.Draw(img)
         
-        # 绘制标题 - 使用支持中文的字体
-        try:
-            # 尝试使用系统中文字体
-            font = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 12)
-        except:
-            try:
-                # 尝试使用其他中文字体
-                font = ImageFont.truetype("/System/Library/Fonts/STHeiti Light.ttc", 12)
-            except:
-                try:
-                    # 使用Arial Unicode字体
-                    font = ImageFont.truetype("/System/Library/Fonts/Arial Unicode.ttf", 12)
-                except:
-                    # 如果都不行，使用英文标题和默认字体
-                    font = ImageFont.load_default()
+        # Bounds: (min_lng, max_lat, max_lng, min_lat) -> (Left, Top, Right, Bottom)
+        map_min_lng, map_max_lat, map_max_lng, map_min_lat = bounds
         
-        # 根据字体选择标题语言
-        try:
-            # 测试是否支持中文
-            test_bbox = draw.textbbox((0, 0), "测试", font=font)
-            title = f"轨迹动画 - {date}"
-        except:
-            # 如果不支持中文，使用英文标题
-            title = f"Track - {date}"
+        def merc_x(lng): return (lng + 180.0) / 360.0    
+        def merc_y(lat):
+             lat_rad = math.radians(lat)
+             return (1.0 - math.log(math.tan(lat_rad) + 1.0 / math.cos(lat_rad)) / math.pi) / 2.0
         
+        min_mx, min_my = merc_x(map_min_lng), merc_y(map_max_lat) # Top-Left
+        max_mx, max_my = merc_x(map_max_lng), merc_y(map_min_lat) # Bottom-Right
+        
+        def to_pixel(lat, lng):
+            mx, my = merc_x(lng), merc_y(lat)
+            denom_x = max_mx - min_mx if max_mx != min_mx else 1
+            denom_y = max_my - min_my if max_my != min_my else 1
+            
+            x = (mx - min_mx) / denom_x * width
+            y = (my - min_my) / denom_y * height
+            return x, y
+
+        pixels = [to_pixel(lat, lng) for lat, lng in coordinates]
+        
+        # Title
+        try:
+            # Scale font nicely for 300px width
+            font_size = 14 
+            font = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", font_size)
+        except:
+            font = ImageFont.load_default()
+            
+        title = f"{date}"
         bbox = draw.textbbox((0, 0), title, font=font)
         text_width = bbox[2] - bbox[0]
-        text_x = (self.width - text_width) // 2
-        draw.text((text_x, 8), title, fill='black', font=font)  # 减少顶部间距
+        text_height = bbox[3] - bbox[1]
+        
+        text_bg_margin = 4
+        text_x = 10
+        text_y = 10
+        draw.rectangle(
+            [text_x - text_bg_margin, text_y - text_bg_margin, 
+             text_x + text_width + text_bg_margin, text_y + text_height + text_bg_margin],
+            fill=(255, 255, 255, 200)
+        )
+        draw.text((text_x, text_y), title, fill='black', font=font)
         
         if not coordinates:
-            # 如果没有坐标数据，绘制示例轨迹
-            self.draw_sample_track(draw, progress, date)
-        else:
-            # 绘制真实轨迹
-            self.draw_real_track(draw, coordinates, progress)
-        
+            return img
+            
+        self.draw_real_track(draw, pixels, progress)
         return img
     
-    def draw_real_track(self, draw, coordinates, progress):
+    def draw_real_track(self, draw, pixels, progress):
         """绘制真实轨迹"""
-        if len(coordinates) < 2:
+        if len(pixels) < 2:
             return
         
-        points_to_show = max(1, int(len(coordinates) * progress))
+        points_to_show = max(1, int(len(pixels) * progress))
         
-        # 绘制轨迹线
         if points_to_show > 1:
-            track_points = coordinates[:points_to_show]
-            for i in range(len(track_points) - 1):
-                x1, y1 = track_points[i]
-                x2, y2 = track_points[i + 1]
-                draw.line([(x1, y1), (x2, y2)], fill='red', width=3)
+            track_points = pixels[:points_to_show]
+            draw.line(track_points, fill=(255, 69, 0), width=3) 
         
-        # 绘制起点
-        if coordinates:
-            start_x, start_y = coordinates[0]
-            draw.ellipse([start_x-6, start_y-6, start_x+6, start_y+6], 
-                        fill='green', outline='darkgreen', width=2)
+        if pixels:
+            start_x, start_y = pixels[0]
+            draw.ellipse([start_x-3, start_y-3, start_x+3, start_y+3], 
+                        fill=(0, 200, 0), outline='white', width=1)
         
-        # 绘制当前位置
-        if points_to_show > 0 and points_to_show <= len(coordinates):
-            current_x, current_y = coordinates[points_to_show - 1]
-            draw.ellipse([current_x-5, current_y-5, current_x+5, current_y+5], 
-                        fill='blue', outline='darkblue', width=2)
-    
-    def draw_sample_track(self, draw, progress, date):
-        """绘制示例轨迹（当没有真实数据时）"""
-        # 使用日期作为种子生成伪随机轨迹
-        seed = sum(int(x) for x in date.split('-'))
-        np.random.seed(seed)
-        
-        points = 60
-        points_to_show = max(1, int(points * progress))
-        
-        # 生成轨迹点 - 适应7:9宽高比画布
-        track_points = []
-        for i in range(points_to_show):
-            t = i / (points - 1) if points > 1 else 0
-            x = 20 + 160 * t  # 适应200px宽度
-            y = 130 + (  # 适应257px高度，居中显示
-                np.sin(t * 2 * np.pi + seed * 0.1) * 30 +
-                np.sin(t * 4 * np.pi + seed * 0.2) * 15 +
-                np.sin(t * 8 * np.pi + seed * 0.3) * 8
-            )
-            track_points.append((x, y))
-        
-        # 绘制轨迹线
-        if len(track_points) > 1:
-            for i in range(len(track_points) - 1):
-                x1, y1 = track_points[i]
-                x2, y2 = track_points[i + 1]
-                draw.line([(x1, y1), (x2, y2)], fill='red', width=3)
-        
-        # 绘制起点
-        if track_points:
-            start_x, start_y = track_points[0]
-            draw.ellipse([start_x-6, start_y-6, start_x+6, start_y+6], 
-                        fill='green', outline='darkgreen', width=2)
-            
-            # 只在动画进行中显示当前位置点，完成后不显示（让轨迹更清晰）
-            if progress < 1.0 and len(track_points) > 1:
-                current_x, current_y = track_points[-1]
-                draw.ellipse([current_x-5, current_y-5, current_x+5, current_y+5], 
-                            fill='blue', outline='darkblue', width=2)
+        if points_to_show > 0 and points_to_show <= len(pixels):
+            current_x, current_y = pixels[points_to_show - 1]
+            draw.ellipse([current_x-4, current_y-4, current_x+4, current_y+4], 
+                        fill=(30, 144, 255), outline='white', width=2)
     
     def generate_single_gif(self, date_info, index, total):
         """生成单个GIF文件"""
         date = date_info['date']
         activity = date_info['activity']
         
-        print(f"[{index + 1}/{total}] 🎬 生成 {date} 的GIF...")
-        
-        # 解码轨迹数据
         coordinates = []
         if activity.get('summary_polyline'):
             coordinates = self.decode_polyline(activity['summary_polyline'])
-            coordinates = self.normalize_coordinates(coordinates)
         
-        # 生成所有帧
+        if not coordinates:
+            print(f"❌ [{index + 1}/{total}] {date} 失败: 无轨迹数据")
+            return False
+            
+        min_lng, min_lat, max_lng, max_lat = self.get_bounds(coordinates)
+        
+        print(f"[{index + 1}/{total}] 🎬 生成 {date} ... 固定尺寸: {self.width}x{self.height}")
+        
+        # Fetch Map Tiles with Fixed Ratio Logic
+        bg_image, map_bounds = self.fetch_static_map_tiles_fixed_ratio(min_lng, min_lat, max_lng, max_lat)
+        
         frames = []
         for frame_num in range(self.frames):
             if frame_num < self.animation_frames:
-                # 动画帧：逐步显示轨迹
-                progress = frame_num / (self.animation_frames - 1) if self.animation_frames > 1 else 1
+                t = frame_num / (self.animation_frames - 1) if self.animation_frames > 1 else 1
+                progress = 1 - (1 - t) * (1 - t) 
             else:
-                # 静止帧：显示完整轨迹
                 progress = 1.0
             
-            frame = self.create_frame(coordinates, progress, date, frame_num)
+            frame = self.create_frame(coordinates, progress, date, frame_num, bg_image, map_bounds, self.width, self.height)
             frames.append(frame)
         
-        # 保存GIF - 为不同帧设置不同持续时间
         output_path = self.output_dir / f"track_{date}.gif"
         try:
-            # 创建持续时间列表：动画帧快一些，静止帧慢一些
             durations = []
             for frame_num in range(self.frames):
                 if frame_num < self.animation_frames:
-                    durations.append(int(self.animation_duration * 1000))  # 动画帧60ms
+                    durations.append(int(self.animation_duration * 1000))
                 else:
-                    durations.append(int(self.static_duration * 1000))     # 静止帧50ms
+                    durations.append(int(self.static_duration * 1000))
             
             frames[0].save(
                 output_path,
                 save_all=True,
                 append_images=frames[1:],
-                duration=durations,  # 使用不同的持续时间
+                duration=durations,
                 loop=0,
                 optimize=True
             )
             
             file_size = output_path.stat().st_size
-            print(f"✅ [{index + 1}/{total}] {date} 完成 ({file_size // 1024}KB)")
+            print(f"✅ 完成 ({file_size // 1024}KB)")
             return True
             
         except Exception as e:
-            print(f"❌ [{index + 1}/{total}] {date} 失败: {e}")
+            print(f"❌ 失败: {e}")
             return False
     
     def generate_all_gifs(self, limit=None):
         """生成所有GIF文件"""
-        print("🚀 开始批量生成轨迹GIF...")
-        
-        # 确保输出目录存在
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # 加载活动数据
         activities = self.load_activities()
-        if not activities:
-            print("❌ 没有活动数据，无法生成GIF")
-            return
-        
-        # 分析单轨迹日期
         single_track_dates = self.analyze_single_track_dates(activities)
-        if not single_track_dates:
-            print("❌ 没有找到单轨迹日期")
-            return
         
-        # 限制生成数量（用于测试）
         if limit:
             single_track_dates = single_track_dates[:limit]
-            print(f"🎯 限制生成前 {limit} 个GIF进行测试")
-        
-        # 批量生成
+            
         success_count = 0
-        fail_count = 0
-        
         for i, date_info in enumerate(single_track_dates):
-            try:
-                if self.generate_single_gif(date_info, i, len(single_track_dates)):
-                    success_count += 1
-                else:
-                    fail_count += 1
-            except Exception as e:
-                print(f"❌ 生成失败: {e}")
-                fail_count += 1
-        
-        print(f"\n🎉 批量生成完成!")
-        print(f"✅ 成功: {success_count} 个")
-        print(f"❌ 失败: {fail_count} 个")
-        print(f"📁 输出目录: {self.output_dir}")
-
-    def generate_specific_date(self):
-        """生成指定日期的GIF"""
-        print("🎯 指定日期GIF生成")
-        print("-" * 30)
-        
-        # 加载活动数据
-        activities = self.load_activities()
-        if not activities:
-            return
-        
-        # 获取所有可用日期
-        single_track_dates = self.analyze_single_track_dates(activities)
-        available_dates = [item['date'] for item in single_track_dates]
-        
-        print(f"📊 共有 {len(available_dates)} 个可用日期")
-        print("💡 日期格式示例: 2018-04-14, 2019-02-06, 2021-05-23")
-        
-        while True:
-            try:
-                target_date = input("\n请输入要生成GIF的日期 (YYYY-MM-DD格式，输入 'q' 退出): ").strip()
+            if self.generate_single_gif(date_info, i, len(single_track_dates)):
+                success_count += 1
                 
-                if target_date.lower() == 'q':
-                    print("已退出指定日期生成")
-                    return
-                
-                # 验证日期格式
-                if not target_date or len(target_date) != 10 or target_date.count('-') != 2:
-                    print("❌ 日期格式错误，请使用 YYYY-MM-DD 格式")
-                    continue
-                
-                # 检查日期是否存在
-                if target_date not in available_dates:
-                    print(f"❌ 日期 {target_date} 不存在或没有轨迹数据")
-                    
-                    # 显示最近的几个日期作为建议
-                    suggestions = []
-                    for date in available_dates:
-                        if abs(self._date_distance(target_date, date)) <= 30:  # 30天内的日期
-                            suggestions.append(date)
-                    
-                    if suggestions:
-                        suggestions.sort()
-                        print(f"💡 建议的相近日期: {', '.join(suggestions[:5])}")
-                    else:
-                        print(f"💡 可用日期范围: {available_dates[0]} 到 {available_dates[-1]}")
-                    continue
-                
-                # 找到对应的日期信息
-                target_info = None
-                for item in single_track_dates:
-                    if item['date'] == target_date:
-                        target_info = item
-                        break
-                
-                if target_info:
-                    print(f"🎬 开始生成 {target_date} 的GIF...")
-                    success = self.generate_single_gif(target_info, 0, 1)
-                    
-                    if success:
-                        print(f"✅ 成功生成 {target_date} 的GIF!")
-                        print(f"📁 文件位置: {self.output_dir}/track_{target_date}.gif")
-                        
-                        # 询问是否继续生成其他日期
-                        continue_choice = input("\n是否继续生成其他日期的GIF? (y/N): ").strip().lower()
-                        if continue_choice not in ['y', 'yes']:
-                            break
-                    else:
-                        print(f"❌ 生成 {target_date} 的GIF失败")
-                else:
-                    print(f"❌ 无法找到日期 {target_date} 的数据")
-                    
-            except KeyboardInterrupt:
-                print("\n⚠️ 用户中断操作")
-                break
-            except Exception as e:
-                print(f"❌ 处理过程出错: {e}")
-
-    def _date_distance(self, date1, date2):
-        """计算两个日期之间的天数差距"""
-        try:
-            from datetime import datetime
-            d1 = datetime.strptime(date1, '%Y-%m-%d')
-            d2 = datetime.strptime(date2, '%Y-%m-%d')
-            return abs((d1 - d2).days)
-        except:
-            return 999  # 如果日期格式错误，返回大数值
-
+        print(f"🎉 完成! 成功: {success_count}")
 
 def main():
-    """主函数"""
-    print("🎯 轨迹GIF生成器 - Python版本")
-    print("=" * 50)
-    
-    # 创建生成器实例
     generator = GifGenerator()
-    
-    # 检查依赖
-    if not generator.activities_file.exists():
-        print(f"❌ 活动数据文件不存在: {generator.activities_file}")
-        print("请确保文件路径正确")
-        return
-    
-    # 询问生成模式
-    try:
-        choice = input("\n选择生成模式:\n1. 测试模式 (前10个)\n2. 全部生成 (745个)\n3. 指定日期生成\n请输入选择 (1/2/3): ").strip()
-        
-        if choice == "1":
-            generator.generate_all_gifs(limit=10)
-        elif choice == "2":
-            confirm = input("确认生成全部745个GIF文件? 这可能需要较长时间 (y/N): ").strip().lower()
-            if confirm in ['y', 'yes']:
-                generator.generate_all_gifs()
-            else:
-                print("已取消生成")
-        elif choice == "3":
-            generator.generate_specific_date()
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        if arg == 'all':
+             generator.generate_all_gifs()
+        elif arg == 'test':
+             generator.generate_all_gifs(limit=5)
+        elif len(arg.split('-')) == 3: # Simple check for YYYY-MM-DD
+             target_date = arg
+             activities = generator.load_activities()
+             single_track_dates = generator.analyze_single_track_dates(activities)
+             date_info = next((item for item in single_track_dates if item['date'] == target_date), None)
+             if date_info:
+                 generator.generate_single_gif(date_info, 0, 1)
+             else:
+                 print(f"❌ 未找到日期 {target_date} 的单轨迹数据")
         else:
-            print("无效选择，默认生成前10个进行测试")
-            generator.generate_all_gifs(limit=10)
-            
-    except KeyboardInterrupt:
-        print("\n\n⚠️ 用户中断生成过程")
-    except Exception as e:
-        print(f"\n❌ 生成过程出错: {e}")
-
+             print("Usage: python generate_gifs_python.py [all|test|YYYY-MM-DD]")
+    else:
+         print("Usage: python generate_gifs_python.py [all|test|YYYY-MM-DD]")
 
 if __name__ == "__main__":
     main()
