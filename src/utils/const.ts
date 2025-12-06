@@ -203,3 +203,50 @@ export const VISITED_CITY_FILL_COLOR = '#90EE90'; // 访问过的城市高亮颜
 export const KAYAKING_COLOR = 'rgb(220, 20, 60)'; // Crimson
 export const SNOWBOARD_COLOR = 'rgb(128, 0, 0)'; // Maroon
 export const TRAIL_RUN_COLOR = 'rgb(199, 21, 133)'; // MediumVioletRed
+
+// map tiles vendor, maptiler or mapbox or stadiamaps
+// if you want to use maptiler, set the access token in MAP_TILE_ACCESS_TOKEN
+export const MAP_TILE_VENDOR = 'maptiler';
+
+// map tiles style name, see MAP_TILE_STYLES for more details
+export const MAP_TILE_STYLE_LIGHT = 'streets-v2'; // changed to colorful style
+export const MAP_TILE_STYLE_DARK = 'dark-v10';
+
+// access token. you can apply a new one, it's free.
+// maptiler: Gt5R0jT8tuIYxW6sNrAg | sign up at https://cloud.maptiler.com/auth/widget
+export const MAP_TILE_ACCESS_TOKEN = 'Gt5R0jT8tuIYxW6sNrAg';
+
+export const MAP_TILE_STYLES = {
+  maptiler: {
+    'dataviz-light': 'https://api.maptiler.com/maps/dataviz/style.json?key=',
+    'dataviz-dark':
+      'https://api.maptiler.com/maps/dataviz-dark/style.json?key=',
+    'basic-light': 'https://api.maptiler.com/maps/basic-v2/style.json?key=',
+    'basic-dark': 'https://api.maptiler.com/maps/basic-v2-dark/style.json?key=',
+    'streets-light': 'https://api.maptiler.com/maps/streets-v2/style.json?key=',
+    'streets-dark':
+      'https://api.maptiler.com/maps/streets-v2-dark/style.json?key=',
+    'outdoor-light': 'https://api.maptiler.com/maps/outdoor-v2/style.json?key=',
+    'outdoor-dark':
+      'https://api.maptiler.com/maps/outdoor-v2-dark/style.json?key=',
+    'bright-light': 'https://api.maptiler.com/maps/bright-v2/style.json?key=',
+    'bright-dark':
+      'https://api.maptiler.com/maps/bright-v2-dark/style.json?key=',
+    'topo-light': 'https://api.maptiler.com/maps/topo-v2/style.json?key=',
+    'topo-dark': 'https://api.maptiler.com/maps/topo-v2-dark/style.json?key=',
+    'winter-light': 'https://api.maptiler.com/maps/winter-v2/style.json?key=',
+    'winter-dark':
+      'https://api.maptiler.com/maps/winter-v2-dark/style.json?key=',
+    hybrid: 'https://api.maptiler.com/maps/hybrid/style.json?key=',
+    'streets-v2': 'https://api.maptiler.com/maps/streets-v2/style.json?key=',
+  },
+  mapbox: {
+    'dark-v10': 'mapbox://styles/mapbox/dark-v10',
+    'dark-v11': 'mapbox://styles/mapbox/dark-v11',
+    'light-v10': 'mapbox://styles/mapbox/light-v10',
+    'light-v11': 'mapbox://styles/mapbox/light-v11',
+    'navigation-night': 'mapbox://styles/mapbox/navigation-night-v1',
+    'satellite-streets-v12': 'mapbox://styles/mapbox/satellite-streets-v12',
+    'streets-v12': 'mapbox://styles/mapbox/streets-v12',
+  },
+};

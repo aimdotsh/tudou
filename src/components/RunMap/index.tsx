@@ -16,8 +16,11 @@ import {
   MAP_HEIGHT,
   PRIVACY_MODE,
   LIGHTS_ON,
+  MAP_TILE_VENDOR,
+  MAP_TILE_ACCESS_TOKEN,
+  MAP_TILE_STYLE_LIGHT,
 } from '@/utils/const';
-import { Coordinate, IViewState, geoJsonForMap } from '@/utils/utils';
+import { Coordinate, IViewState, geoJsonForMap, getMapStyle } from '@/utils/utils';
 import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
 import styles from './style.module.css';
@@ -235,7 +238,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       style={style}
-      mapStyle="mapbox://styles/mapbox/streets-v12"
+      mapStyle={getMapStyle(MAP_TILE_VENDOR, MAP_TILE_STYLE_LIGHT, MAP_TILE_ACCESS_TOKEN)}
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
       scrollZoom={false}

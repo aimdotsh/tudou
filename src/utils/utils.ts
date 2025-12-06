@@ -22,6 +22,7 @@ import {
   SNOWBOARD_COLOR,
   TRAIL_RUN_COLOR,
   RICH_TITLE,
+  MAP_TILE_STYLES,
 } from './const';
 import { FeatureCollection, LineString } from 'geojson';
 
@@ -351,7 +352,7 @@ const geoJsonForRuns = (runs: Activity[]): FeatureCollection<LineString> => {
 
 const geoJsonForMap = (): FeatureCollection<RPGeometry> => ({
   type: 'FeatureCollection',
-  features: worldGeoJson.features.concat(chinaGeojson.features),
+  features: worldGeoJson.features.concat(chinaGeojson.features) as any,
 })
 
 const titleForType = (type: string): string => {
@@ -635,4 +636,25 @@ export {
 
   calculateDistance,
   calculateBearing,
+  getMapStyle,
+};
+
+const getMapStyle = (
+  vendor: string,
+  style: string,
+  accessToken: string
+): string => {
+  if (vendor === 'maptiler') {
+    // @ts-ignore
+    const styleUrl = MAP_TILE_STYLES.maptiler[style];
+    if (styleUrl) {
+      return `${styleUrl}${accessToken}`;
+    }
+    // fallback or default
+    return `https://api.maptiler.com/maps/streets-v2/style.json?key=${accessToken}`;
+  }
+  // mapbox
+  // @ts-ignore
+  const mapboxStyle = MAP_TILE_STYLES.mapbox[style] || 'mapbox://styles/mapbox/dark-v10';
+  return mapboxStyle;
 };
