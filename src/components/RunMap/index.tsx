@@ -238,6 +238,12 @@ const RunMap = ({
       mapStyle="mapbox://styles/mapbox/streets-v12"
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
+      scrollZoom={false}
+      doubleClickZoom={false}
+      touchZoom={false}
+      boxZoom={false}
+      keyboard={false}
+      dragRotate={false}
     >
       <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
       {/* 背景轨迹层 - 在动画时显示浅色完整轨迹 */}
@@ -327,7 +333,7 @@ const RunMap = ({
       </span>
       <FullscreenControl style={fullscreenButton} />
       {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
-      <NavigationControl showCompass={false} position={'bottom-right'} style={{ opacity: 0.3 }} />
+
     </Map>
   );
 };
