@@ -208,12 +208,8 @@ export const TRAIL_RUN_COLOR = 'rgb(199, 21, 133)'; // MediumVioletRed
 // if you want to use maptiler, set the access token in MAP_TILE_ACCESS_TOKEN
 export const MAP_TILE_VENDOR = 'maptiler';
 
-// set to `true` if you want to use raster map (images) instead of vector map
-// this prevents F12 inspection of map data but may be slower and less interactive
-export const USE_MAPBOX_RASTER = true;
-
 // map tiles style name, see MAP_TILE_STYLES for more details
-export const MAP_TILE_STYLE_LIGHT = 'dataviz-light'; // changed to colorful style
+export const MAP_TILE_STYLE_LIGHT = 'streets-v2'; // changed to colorful style
 export const MAP_TILE_STYLE_DARK = 'dark-v10';
 
 // access token. you can apply a new one, it's free.

@@ -642,41 +642,8 @@ export {
 const getMapStyle = (
   vendor: string,
   style: string,
-  accessToken: string,
-  useRaster: boolean = false
-): string | object => {
-  if (useRaster) {
-    // Return a complete Mapbox Style Specification object for raster tiles
-    return {
-      version: 8,
-      sources: {
-        'raster-tiles': {
-          type: 'raster',
-          tiles: [
-            // Use Stamen Watercolor as an example of a raster tile source, or use a Mapbox/MapTiler raster URL
-            // For Mapbox: `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`
-            // For MapTiler: `https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${accessToken}`
-            vendor === 'maptiler'
-              ? `https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=${accessToken}`
-              : `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`
-          ],
-          tileSize: 256,
-          attribution:
-            'Map tiles by <a target="_top" rel="noopener" href="http://stamen.com">Stamen Design</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" rel="noopener" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>',
-        },
-      },
-      layers: [
-        {
-          id: 'simple-tiles',
-          type: 'raster',
-          source: 'raster-tiles',
-          minzoom: 0,
-          maxzoom: 22,
-        },
-      ],
-    };
-  }
-
+  accessToken: string
+): string => {
   if (vendor === 'maptiler') {
     // @ts-ignore
     const styleUrl = MAP_TILE_STYLES.maptiler[style];

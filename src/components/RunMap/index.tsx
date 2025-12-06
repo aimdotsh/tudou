@@ -19,7 +19,6 @@ import {
   MAP_TILE_VENDOR,
   MAP_TILE_ACCESS_TOKEN,
   MAP_TILE_STYLE_LIGHT,
-  USE_MAPBOX_RASTER,
 } from '@/utils/const';
 import { Coordinate, IViewState, geoJsonForMap, getMapStyle } from '@/utils/utils';
 import RunMarker from './RunMarker';
@@ -239,7 +238,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       style={style}
-      mapStyle={getMapStyle(MAP_TILE_VENDOR, MAP_TILE_STYLE_LIGHT, MAP_TILE_ACCESS_TOKEN, USE_MAPBOX_RASTER) as any}
+      mapStyle={getMapStyle(MAP_TILE_VENDOR, MAP_TILE_STYLE_LIGHT, MAP_TILE_ACCESS_TOKEN)}
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
       scrollZoom={false}
