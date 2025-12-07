@@ -672,7 +672,7 @@ const Total: React.FC = () => {
                 <Bar
                   dataKey="distance"
                   name="Distance (km)"
-                  fill="#4682B4"        // 钢蓝色(SteelBlue)
+                  fill="#f99206"        // 橙色(Deep Orange)
                   radius={[4, 4, 0, 0]}  // 顶部圆角
                   maxBarSize={50}
                 />
@@ -794,11 +794,11 @@ const Total: React.FC = () => {
                               className={styles.heatmapCell}
                               style={{
                                 backgroundColor: distance > 0
-                                  ? `rgba(102, 205, 170, ${Math.min(0.2 + distance / 50, 1)})`  // MediumAquamarine
+                                  ? `rgba(32, 178, 170, ${Math.min(0.2 + distance / 20, 1)})`  // Primary Teal with opacity base
                                   : 'transparent',
                                 border: distance > 0
-                                  ? '1px solid rgba(32, 178, 170, 0.5)'  // LightSeaGreen
-                                  : '1px solid #E0E0E0'  // 更浅的边框
+                                  ? '1px solid rgba(32, 178, 170, 0.3)'
+                                  : '1px solid #E0E0E0'
                               }}
                               title={`${year}-${i + 1}: ${distance.toFixed(2)} km`}
                             />
