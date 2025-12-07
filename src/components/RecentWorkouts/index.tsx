@@ -64,15 +64,10 @@ interface Activity {
 
 const RecentWorkouts: React.FC = () => {
     const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
-    const [currentPage, setCurrentPage] = useState<number>(1);
     const [dailyQuotes, setDailyQuotes] = useState<Record<string, { text: string, author: string }>>({});
 
-    const itemsPerPage = 12;
-    const totalPages = Math.ceil(RecentSvgs.length / itemsPerPage);
-    const currentItems = RecentSvgs.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    // 只显示最近6个数据
+    const currentItems = RecentSvgs.slice(0, 6);
 
     // 为特定日期获取每日一言
     const fetchQuoteForDate = async (date: string) => {
@@ -110,9 +105,9 @@ const RecentWorkouts: React.FC = () => {
         }
     };
 
-    // 获取当前页面所有日期的每日一言
+    // 获取页面所有日期的每日一言
     useEffect(() => {
-        const loadQuotesForCurrentPage = async () => {
+        const loadQuotesForCurrentItems = async () => {
             const quotes: Record<string, { text: string, author: string }> = {};
 
             for (const { date } of currentItems) {
@@ -129,8 +124,8 @@ const RecentWorkouts: React.FC = () => {
             }
         };
 
-        loadQuotesForCurrentPage();
-    }, [currentPage]);
+        loadQuotesForCurrentItems();
+    }, []);
 
     const toggleFlip = (id: string) => {
         setFlippedCards(prev => ({
@@ -207,10 +202,17 @@ const RecentWorkouts: React.FC = () => {
 
     return (
         <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天 <span className={styles.clickHint}>(点击卡片会翻转噢)</span>
-                {stats.streakStartDate && stats.streakEndDate && (
-                    <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
-                )}
+            <h3>
+                <a href="/daily" className="hover:underline hover:text-[#20B2AA] transition-colors">
+                    Recent Workouts
+                </a>
+                <span className="text-sm font-normal text-gray-500 ml-2">
+                    当年最长连续运动 {stats.maxStreak2025} 天
+                    {stats.streakStartDate && stats.streakEndDate && (
+                        <span style={{ fontSize: '0.9em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+                    )}
+                </span>
+                <span className={styles.clickHint}>(点击卡片会翻转噢)</span>
             </h3>
 
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
@@ -255,24 +257,23 @@ const RecentWorkouts: React.FC = () => {
                     );
                 })}
             </div>
-            <div className="flex justify-center items-center mt-8 gap-4">
-                <button
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
+
+            {/* 底部查看更多链接 */}
+            <div className="flex justify-center mt-6">
+                <a
+                    href="/daily"
+                    className="group flex items-center gap-2 px-6 py-2 text-[#20B2AA] border border-[#20B2AA] rounded-full hover:bg-[#20B2AA] hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
                 >
-                    上一页
-                </button>
-                <span className="text-gray-700 transition-opacity duration-300">
-                    {currentPage} / {totalPages}
-                </span>
-                <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
-                >
-                    下一页
-                </button>
+                    <span>查看更多运动记录</span>
+                    <svg
+                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
             </div>
         </div>
     );
