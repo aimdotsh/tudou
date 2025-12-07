@@ -574,11 +574,12 @@ const Total: React.FC = () => {
 
                 <XAxis
                   dataKey="year"
+                  type="category"
                   tick={{
                     fill: '#5a6c7d',
                     fontSize: 12
                   }}
-                  interval={1}
+                  interval={0} // Ensure all ticks are shown since they are categories now
                 />
 
                 <YAxis
@@ -634,11 +635,12 @@ const Total: React.FC = () => {
 
                 <XAxis
                   dataKey="year"
+                  type="category"
                   tick={{
                     fill: '#5a6c7d',
                     fontSize: 12
                   }}
-                  interval={1}
+                  interval={0}
                 />
 
                 <YAxis
