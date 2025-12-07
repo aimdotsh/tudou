@@ -16,6 +16,7 @@ import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
 import Nav from '@/components/Nav';
 import { totalStat, recentStat, halfmarathonStat, newyearStat, yueyeStat, luckStat } from '@assets/index';
+import RecentWorkouts from '@/components/RecentWorkouts';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import locationStats from '@/static/location_stats.json';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -813,88 +814,9 @@ const Total: React.FC = () => {
 
 
 
+
           {/* 添加recent SVG图表 */}
-          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <h3><Link to="../daily" className="hover:underline">Recent Workouts </Link>
-              <p> <span className={styles.streakDates}>  当年最长连续运动 {stats.maxStreak2025} 天</span>
-                {stats.streakStartDate && stats.streakEndDate && (
-                  <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#5A5A5A' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
-                )}
-              </p>
-            </h3>
-
-
-
-            <div className={styles.gridContainer}>
-              {/* 今天 */}
-              <ErrorBoundary
-                date={today}
-                dailyQuotes={dailyQuotes}
-                styles={styles}
-              >
-                <Suspense fallback={
-                  <div className={styles.loadingCard}>
-                    <div>Loading...</div>
-                  </div>
-                }>
-                  <div className={styles.svgCard}>
-                    <TodaySvg className="h-auto w-full" />
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-
-              {/* 昨天 */}
-              <ErrorBoundary
-                date={yesterday}
-                dailyQuotes={dailyQuotes}
-                styles={styles}
-              >
-                <Suspense fallback={
-                  <div className={styles.loadingCard}>
-                    <div>Loading...</div>
-                  </div>
-                }>
-                  <div className={styles.svgCard}>
-                    <YesterdaySvg className="h-auto w-full" />
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-
-              {/* 前天 */}
-              <ErrorBoundary
-                date={dayBeforeYesterday}
-                dailyQuotes={dailyQuotes}
-                styles={styles}
-              >
-                <Suspense fallback={
-                  <div className={styles.loadingCard}>
-                    <div>Loading...</div>
-                  </div>
-                }>
-                  <div className={styles.svgCard}>
-                    <DayBeforeYesterdaySvg className="h-auto w-full" />
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-
-              {/* 大前天 */}
-              <ErrorBoundary
-                date={threeDaysAgo}
-                dailyQuotes={dailyQuotes}
-                styles={styles}
-              >
-                <Suspense fallback={
-                  <div className={styles.loadingCard}>
-                    <div>Loading...</div>
-                  </div>
-                }>
-                  <div className={styles.svgCard}>
-                    <ThreeDaysAgoSvg className="h-auto w-full" />
-                  </div>
-                </Suspense>
-              </ErrorBoundary>
-            </div>
-          </div>
+          <RecentWorkouts />
 
 
 

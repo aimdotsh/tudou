@@ -9,7 +9,6 @@ import RunTable from '@/components/RunTable';
 import SVGStat from '@/components/SVGStat';
 import YearsStat from '@/components/YearsStat';
 import BackToTop from '@/components/BackToTop';
-import RecentWorkouts from '@/components/RecentWorkouts';
 import locationStats from '@/static/location_stats.json';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
@@ -838,10 +837,7 @@ const Index = () => {
           {/* 可滚动内容区域 */}
           <div className="content-container" id="run-table-container">
             {year === 'Total' ? (
-              <>
-                <SVGStat />
-                <RecentWorkouts />
-              </>
+              <SVGStat />
             ) : (
               <RunTable
                 runs={filteredRuns}
