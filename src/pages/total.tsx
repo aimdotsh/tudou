@@ -416,7 +416,7 @@ const Total: React.FC = () => {
         acc[year].months[month] += distance;
         return acc;
       }, {} as Record<number, { year: number; distance: number; count: number; months: number[] }>);
-    return Object.values(data).sort((a, b) => b.year - a.year);
+    return Object.values(data).sort((a, b) => a.year - b.year);
   }, [activityType]);
 
   // 计算统计数据
@@ -463,19 +463,19 @@ const Total: React.FC = () => {
         }
       });
     });
-    // 按时间倒序排列：先按年份倒序，再按月份倒序
+    // 按时间正序排列：先按年份正序，再按月份正序
     return allMonths.sort((a, b) => {
       if (a.year !== b.year) {
-        return parseInt(b.year) - parseInt(a.year);
+        return parseInt(a.year) - parseInt(b.year);
       }
-      return parseInt(b.fullDate.split('-')[1]) - parseInt(a.fullDate.split('-')[1]);
+      return parseInt(a.fullDate.split('-')[1]) - parseInt(b.fullDate.split('-')[1]);
     });
   }, [yearlyData]);
 
   // 获取唯一的年份列表用于X轴标签
   const uniqueYears = Array.from(new Set(
     yearlyData.map(item => item.year.toString())
-  )).sort((a, b) => parseInt(b) - parseInt(a));
+  )).sort((a, b) => parseInt(a) - parseInt(b));
   // 关闭照片查看器
   const closePhotoViewer = () => {
     setCurrentPhoto(null);
