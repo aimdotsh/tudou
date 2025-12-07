@@ -273,6 +273,30 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
     }
   }, []);
 
+  // remove road labels
+  const onMapLoad = useCallback((event: any) => {
+    const map = event.target;
+    // check if style is loaded
+    if (!map.getStyle()) return;
+
+    const layers = map.getStyle().layers;
+    if (!layers) return;
+
+    const labelLayerNames = layers
+      .filter(
+        (layer: any) =>
+          (layer.type === 'symbol' || layer.type === 'composite') &&
+          layer.layout &&
+          layer.layout['text-field']
+      )
+      .map((layer: any) => layer.id);
+    labelLayerNames.forEach((layerId: string) => {
+      if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+      }
+    });
+  }, []);
+
   const onMove = useCallback(({ viewState }: { viewState: IViewState }) => {
     setViewState(viewState);
   }, []);
@@ -288,23 +312,6 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
       </div>
     );
   }
-
-  // remove road labels
-  const onMapLoad = useCallback((event: any) => {
-    const map = event.target;
-    const layers = map.getStyle().layers;
-    const labelLayerNames = layers
-      .filter(
-        (layer: any) =>
-          (layer.type === 'symbol' || layer.type === 'composite') &&
-          layer.layout &&
-          layer.layout['text-field']
-      )
-      .map((layer: any) => layer.id);
-    labelLayerNames.forEach((layerId: string) => {
-      map.removeLayer(layerId);
-    });
-  }, []);
 
   const isSingleRun = geoData.features.length === 1;
   const dash = USE_DASH_LINE && !isSingleRun ? [2, 2] : [2, 0];
