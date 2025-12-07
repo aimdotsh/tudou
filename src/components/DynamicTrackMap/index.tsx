@@ -58,17 +58,9 @@ const decodePolyline = (polyline: string): Coordinate[] => {
 
 // 根据日期获取活动数据并转换为GeoJSON
 const getGeoDataForDate = (date: string): FeatureCollection<LineString> => {
-  console.log(`[Debug] Looking for activities for date: ${date}`);
-  console.log(`[Debug] Total activities available: ${(activities as Activity[]).length}`);
-  if ((activities as Activity[]).length > 0) {
-    console.log(`[Debug] First activity date sample: ${(activities as Activity[])[0].start_date_local}`);
-  }
-
   const dayActivities = (activities as Activity[]).filter(activity =>
     activity.start_date_local.startsWith(date)
   );
-
-  console.log(`[Debug] Found ${dayActivities.length} activities for ${date}`);
 
   const features: Feature<LineString>[] = dayActivities
     .filter(activity => activity.summary_polyline)
