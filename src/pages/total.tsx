@@ -631,7 +631,7 @@ const Total: React.FC = () => {
                   {yearlyData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={entry.count > Math.max(...yearlyData.map(d => d.count)) * 0.8 ? "#f99206" : "#20B2AA"} 
+                      fill={entry.count > Math.max(...yearlyData.map(d => d.count)) * 0.8 ? "#FF6B35" : "#20B2AA"} 
                     />
                   ))}
                 </Bar>
@@ -821,14 +821,15 @@ const Total: React.FC = () => {
                   <div className={styles.heatmapHeader}>
                     <div className={styles.heatmapYear}>年份</div>
                     <div className={styles.heatmapMonths}>
-                      {['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'].map((month) => (
+                      {['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'].map((month, index) => (
                         <div
                           key={month}
                           className={styles.heatmapMonth}
                           style={{ 
                             color: '#2c3e50',
                             fontWeight: 600,
-                            fontSize: isMobile ? '0.7rem' : '0.85rem'
+                            fontSize: isMobile ? '0.7rem' : '0.85rem',
+                            opacity: 0.8
                           }}
                         >
                           {month}
@@ -844,7 +845,8 @@ const Total: React.FC = () => {
                           style={{
                             color: '#20B2AA',
                             fontWeight: 700,
-                            fontSize: isMobile ? '0.8rem' : '0.9rem'
+                            fontSize: isMobile ? '0.8rem' : '0.9rem',
+                            opacity: 0.9
                           }}
                         >
                           {year}
@@ -853,20 +855,22 @@ const Total: React.FC = () => {
                           {months.map((distance, i) => {
                             // 计算颜色强度，基于最大距离
                             const maxDistance = Math.max(...yearlyData.flatMap(y => y.months));
-                            const intensity = maxDistance > 0 ? Math.min(0.9, distance / maxDistance) : 0;
+                            const intensity = maxDistance > 0 ? Math.min(1, distance / maxDistance) : 0;
                             
                             // 根据强度确定颜色
                             let backgroundColor;
                             if (intensity === 0) {
                               backgroundColor = 'rgba(240, 240, 240, 0.3)';
-                            } else if (intensity < 0.25) {
-                              backgroundColor = `rgba(173, 216, 230, ${0.3 + intensity * 0.7})`; // 浅蓝
-                            } else if (intensity < 0.5) {
-                              backgroundColor = `rgba(135, 206, 250, ${0.4 + intensity * 0.6})`; // 天蓝
-                            } else if (intensity < 0.75) {
-                              backgroundColor = `rgba(32, 178, 170, ${0.5 + intensity * 0.5})`; // 蓝绿
+                            } else if (intensity < 0.2) {
+                              backgroundColor = `rgba(173, 216, 230, ${0.2 + intensity * 0.3})`; // 浅蓝
+                            } else if (intensity < 0.4) {
+                              backgroundColor = `rgba(135, 206, 250, ${0.3 + intensity * 0.3})`; // 天蓝
+                            } else if (intensity < 0.6) {
+                              backgroundColor = `rgba(32, 178, 170, ${0.4 + intensity * 0.2})`; // 蓝绿
+                            } else if (intensity < 0.8) {
+                              backgroundColor = `rgba(30, 144, 255, ${0.5 + intensity * 0.2})`; // 道奇蓝
                             } else {
-                              backgroundColor = `rgba(30, 144, 255, ${0.6 + intensity * 0.4})`; // 道奇蓝
+                              backgroundColor = `rgba(25, 120, 210, ${0.6 + intensity * 0.4})`; // 深蓝
                             }
                             
                             return (
@@ -875,14 +879,35 @@ const Total: React.FC = () => {
                                 className={styles.heatmapCell}
                                 style={{
                                   backgroundColor,
-                                  border: '1px solid rgba(255, 255, 255, 0.5)',
-                                  borderRadius: '3px',
-                                  transform: intensity > 0.7 ? 'scale(1.1)' : 'scale(1)',
-                                  transition: 'all 0.3s ease',
-                                  boxShadow: intensity > 0.5 ? `0 0 5px ${backgroundColor}` : 'none'
+                                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                                  borderRadius: '4px',
+                                  transform: intensity > 0.8 ? 'scale(1.1)' : 'scale(1)',
+                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                  boxShadow: intensity > 0.6 ? `0 0 8px ${backgroundColor}` : 'none',
+                                  position: 'relative',
+                                  overflow: 'hidden'
                                 }}
                                 title={`${year}年${i+1}月: ${distance.toFixed(2)} km`}
-                              />
+                              >
+                                {intensity > 0.7 && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    color: 'white',
+                                    fontSize: '0.6rem',
+                                    fontWeight: 'bold',
+                                    textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                    opacity: 0,
+                                    transition: 'opacity 0.3s ease',
+                                    pointerEvents: 'none',
+                                    zIndex: 2
+                                  }}>
+                                    {distance.toFixed(0)}
+                                  </div>
+                                )}
+                              </div>
                             );
                           })}
                         </div>
