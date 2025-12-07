@@ -615,115 +615,6 @@
   }
 }
 
-/* 图表组件样式 */
-:global(.recharts-tooltip-wrapper) {
-  outline: none;
-}
-
-:global(.recharts-default-tooltip) {
-  background-color: var(--bg-card) !important;
-  border: 2px solid var(--primary-color) !important;
-  border-radius: 10px !important;
-  padding: 0.75rem 1rem !important;
-  box-shadow: 0 4px 15px var(--shadow-light) !important;
-}
-
-:global(.recharts-tooltip-label) {
-  color: var(--primary-color) !important;
-  margin-bottom: 0.5rem !important;
-  font-weight: 600 !important;
-}
-
-:global(.recharts-tooltip-item) {
-  color: var(--secondary-color) !important;
-  font-weight: 500 !important;
-}
-
-:global(.recharts-legend-item) {
-  color: var(--secondary-color) !important;
-}
-
-:global(.recharts-cartesian-grid-horizontal line),
-:global(.recharts-cartesian-grid-vertical line) {
-  stroke: var(--border-light) !important;
-}
-
-/* 柱状图特殊样式 */
-:global(.recharts-bar-rectangle) {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  transition: all 0.3s ease;
-}
-
-:global(.recharts-bar-rectangle:hover) {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-  transform: scale(1.02);
-}
-
-/* 坐标轴标签样式 */
-:global(.recharts-x-axis .recharts-cartesian-axis-tick-value),
-:global(.recharts-y-axis .recharts-cartesian-axis-tick-value) {
-  font-weight: 500;
-  fill: #2c3e50 !important;
-}
-
-/* 图表容器悬停效果 */
-.chartContainer {
-  background: var(--bg-card);
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 8px 25px var(--shadow-light);
-  border: 2px solid var(--border-light);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.chartContainer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-  transform-origin: left;
-}
-
-.chartContainer:hover {
-  box-shadow: 0 15px 35px var(--shadow-medium);
-  border-color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-.chartContainer:hover::before {
-  transform: scaleX(1);
-}
-
-.chartContainer h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-  font-size: 1.3rem;
-  text-align: center;
-  font-weight: 700;
-  position: relative;
-  padding-bottom: 0.5rem;
-}
-
-.chartContainer h3::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  border-radius: 2px;
-}
-
 /* 热力图样式 */
 .heatmapContainer {
   width: 100%;
@@ -825,39 +716,16 @@
   aspect-ratio: 1;
   min-width: 0.75rem;
   border-radius: 4px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   border: 1px solid var(--border-light);
   background: linear-gradient(135deg, rgba(32, 178, 170, 0.2), rgba(137, 207, 240, 0.2));
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.heatmapCell::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-  z-index: 1;
-  transition: opacity 0.3s ease;
 }
 
 .heatmapCell:hover {
   transform: scale(1.15);
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.4), rgba(137, 207, 240, 0.4));
   box-shadow: 0 4px 12px rgba(32, 178, 170, 0.3);
   border-color: var(--primary-color);
-  z-index: 2;
-}
-
-.heatmapCell:hover::before {
-  opacity: 0.3;
-}
-
-.heatmapCell:hover > div {
-  opacity: 1 !important;
 }
 
 @media (max-width: 480px) {
