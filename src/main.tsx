@@ -15,6 +15,7 @@ import { withOptionalGAPageTracking } from './utils/trackRoute';
 import TotalPage from "@/pages/total";
 import SummaryPage from "@/pages/summary";
 import Daily from './pages/daily';
+import DailyD from './pages/daily-d';
 import Luck from './pages/luck';
 if (USE_GOOGLE_ANALYTICS) {
   ReactGA.initialize(GOOGLE_ANALYTICS_TRACKING_ID);
@@ -33,6 +34,10 @@ const routes = createBrowserRouter(
     {
       path: 'recent',
       element: withOptionalGAPageTracking(<Daily />),
+    },
+    {
+      path: 'daily-d',
+      element: withOptionalGAPageTracking(<DailyD />),
     },
     {
       path: 'summary',
