@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   Tooltip,
@@ -520,15 +521,10 @@ const Total: React.FC = () => {
                 onClick={closePhotoViewer}
               >
                 ×
-
               </button>
             </div>
           </div>
         )}
-
-
-
-
 
         {/* 统计卡片 */}
         <div className={styles.statsCards}>
@@ -565,59 +561,79 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}
+                margin={{ top: 30, right: 20, left: 20, bottom: isMobile ? 40 : 30 }}
                 className={styles.barChart}>
-
+                
                 <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#e1f5fe" />
+                  strokeDasharray="4 4"
+                  stroke="rgba(32, 178, 170, 0.2)" 
+                  vertical={false} />
 
                 <XAxis
                   dataKey="year"
                   type="category"
                   tick={{
-                    fill: '#5a6c7d',
-                    fontSize: 12
+                    fill: '#2c3e50',
+                    fontSize: isMobile ? 10 : 12,
+                    fontWeight: 500
                   }}
-                  interval={0} // Ensure all ticks are shown since they are categories now
+                  interval={0}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e1f5fe' }}
                 />
 
                 <YAxis
                   width={isMobile ? 30 : 40}
                   tick={{
-                    fill: '#5a6c7d',
-                    fontSize: isMobile ? 10 : 12
+                    fill: '#2c3e50',
+                    fontSize: isMobile ? 10 : 12,
+                    fontWeight: 500
                   }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e1f5fe' }}
+                  tickFormatter={(value) => value.toLocaleString()}
                 />
 
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     border: '2px solid #20B2AA',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
+                    borderRadius: '12px',
+                    boxShadow: '0 6px 20px rgba(32, 178, 170, 0.25)',
+                    backdropFilter: 'blur(10px)'
                   }}
                   labelStyle={{
                     color: '#20B2AA',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    fontSize: '14px'
                   }}
+                  formatter={(value) => [value, '活动次数']}
+                  cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
                 />
 
                 <Legend
                   verticalAlign="top"
                   align="right"
                   height={30}
+                  wrapperStyle={{ paddingBottom: '10px' }}
                 />
 
                 <Bar
                   dataKey="count"
-                  name="Workouts"
-                  fill="#20B2AA"        // 柔和的蓝绿色(CadetBlue)
-                  radius={[4, 4, 0, 0]} // 顶部圆角
-                  maxBarSize={50}
-                />
+                  name="活动次数"
+                  fill="#20B2AA"
+                  radius={[8, 8, 0, 0]}
+                  maxBarSize={isMobile ? 30 : 50}
+                  animationDuration={1000}
+                  animationEasing="ease-out">
+                  {yearlyData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.count > Math.max(...yearlyData.map(d => d.count)) * 0.8 ? "#f99206" : "#20B2AA"} 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
-
             </ResponsiveContainer>
           </div>
 
@@ -627,60 +643,78 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}>
-
+                margin={{ top: 30, right: 20, left: 20, bottom: isMobile ? 40 : 30 }}>
+                
                 <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#e1f5fe" />
+                  strokeDasharray="4 4"
+                  stroke="rgba(249, 146, 6, 0.2)"
+                  vertical={false} />
 
                 <XAxis
                   dataKey="year"
                   type="category"
                   tick={{
-                    fill: '#5a6c7d',
-                    fontSize: 12
+                    fill: '#2c3e50',
+                    fontSize: isMobile ? 10 : 12,
+                    fontWeight: 500
                   }}
                   interval={0}
+                  tickLine={false}
+                  axisLine={{ stroke: '#fff3e0' }}
                 />
 
                 <YAxis
-                  width={isMobile ? 30 : 40}
+                  width={isMobile ? 35 : 45}
                   tick={{
-                    fill: '#5a6c7d',
-                    fontSize: isMobile ? 10 : 12
+                    fill: '#2c3e50',
+                    fontSize: isMobile ? 10 : 12,
+                    fontWeight: 500
                   }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#fff3e0' }}
+                  tickFormatter={(value) => `${value} km`}
                 />
 
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '2px solid #20B2AA',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '2px solid #f99206',
+                    borderRadius: '12px',
+                    boxShadow: '0 6px 20px rgba(249, 146, 6, 0.25)',
+                    backdropFilter: 'blur(10px)'
                   }}
                   labelStyle={{
-                    color: '#20B2AA',
-                    fontWeight: 600
+                    color: '#f99206',
+                    fontWeight: 600,
+                    fontSize: '14px'
                   }}
-                  formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
+                  formatter={(value) => [`${Number(value).toFixed(2)} km`, '总距离']}
+                  cursor={{ fill: 'rgba(249, 146, 6, 0.1)' }}
                 />
 
                 <Legend
                   verticalAlign="top"
                   align="right"
                   height={30}
+                  wrapperStyle={{ paddingBottom: '10px' }}
                 />
 
                 <Bar
                   dataKey="distance"
-                  name="Distance (km)"
-                  fill="#f99206"        // 橙色(Deep Orange)
-                  radius={[4, 4, 0, 0]}  // 顶部圆角
-                  maxBarSize={50}
-                />
+                  name="总距离 (km)"
+                  fill="#f99206"
+                  radius={[8, 8, 0, 0]}
+                  maxBarSize={isMobile ? 30 : 50}
+                  animationDuration={1000}
+                  animationEasing="ease-out">
+                  {yearlyData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.distance > Math.max(...yearlyData.map(d => d.distance)) * 0.8 ? "#20B2AA" : "#f99206"} 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
-
-
             </ResponsiveContainer>
           </div>
 
@@ -690,74 +724,87 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={monthlyData}
-                margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}>
-
+                margin={{ top: 30, right: 20, left: 20, bottom: isMobile ? 50 : 40 }}>
+                
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#e1f5fe" />
+                  stroke="rgba(32, 178, 170, 0.15)"
+                  vertical={false} />
 
                 <XAxis
                   dataKey="fullDate"
                   tick={{
-                    fill: '#5A5A5A',  // 深灰色文字
-                    fontSize: 14      // 保持字体大小
+                    fill: '#2c3e50',
+                    fontSize: isMobile ? 10 : 11,
+                    fontWeight: 500
                   }}
-                  ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
-                  tickFormatter={(value) => value.split('-')[0]} // 只显示年份
+                  ticks={uniqueYears.map(year => `${year}-01`)}
+                  tickFormatter={(value) => value.split('-')[0]}
                   interval={0}
-                  angle={0}
-                  textAnchor="middle"
-                  height={40}
-                  padding={{ left: 2, right: 2 }}
+                  angle={isMobile ? -45 : 0}
+                  textAnchor={isMobile ? "end" : "middle"}
+                  height={isMobile ? 50 : 40}
+                  padding={{ left: 10, right: 10 }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e1f5fe' }}
                 />
 
                 <YAxis
-                  width={isMobile ? 30 : 40}
+                  width={isMobile ? 35 : 45}
                   tick={{
-                    fill: '#5A5A5A',  // 深灰色文字
-                    fontSize: isMobile ? 10 : 12       // 统一字体大小
+                    fill: '#2c3e50',
+                    fontSize: isMobile ? 9 : 11,
+                    fontWeight: 500
                   }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e1f5fe' }}
+                  tickFormatter={(value) => `${value} km`}
                 />
 
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     border: '2px solid #20B2AA',
-                    borderRadius: '6px',         // 圆角
-                    padding: '8px 12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // 柔和阴影
+                    borderRadius: '10px',
+                    padding: '10px 15px',
+                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.2)',
+                    backdropFilter: 'blur(8px)'
                   }}
                   labelStyle={{
-                    color: '#89CFF0',  // 柔和蓝色标签
-                    fontWeight: 500    // 中等字重
+                    color: '#20B2AA',
+                    fontWeight: 600,
+                    fontSize: '13px'
                   }}
-                  labelFormatter={(value) => '月度跑量'}
+                  labelFormatter={(value) => `月度跑量: ${value}`}
                   formatter={(value: number, name: string, props: any) => {
                     const month = props.payload.month;
                     const year = props.payload.year;
                     const monthNum = props.payload.fullDate.split('-')[1];
                     return [
                       `${value.toFixed(2)} km`,
-                      `${year}-${monthNum}`
+                      `${year}年${monthNum}月 (${month})`
                     ];
                   }}
+                  cursor={{ fill: 'rgba(32, 178, 170, 0.08)' }}
                 />
 
                 <Legend
                   verticalAlign="top"
                   align="right"
                   height={30}
+                  wrapperStyle={{ paddingBottom: '10px' }}
                 />
 
                 <Bar
                   dataKey="distance"
-                  name="Distance (km)"
-                  fill="#20B2AA"        // 柔和的蓝绿色(LightSeaGreen)
-                  radius={[4, 4, 0, 0]}  // 顶部圆角
-                  maxBarSize={50}
+                  name="距离 (km)"
+                  fill="#20B2AA"
+                  radius={[6, 6, 0, 0]}
+                  maxBarSize={isMobile ? 15 : 25}
+                  animationDuration={800}
+                  animationEasing="ease-out"
                 />
               </BarChart>
-
             </ResponsiveContainer>
           </div>
 
@@ -768,13 +815,17 @@ const Total: React.FC = () => {
               {yearlyData.length > 0 && (
                 <div className={styles.heatmap}>
                   <div className={styles.heatmapHeader}>
-                    <div className={styles.heatmapYear}>Year</div>
+                    <div className={styles.heatmapYear}>年份</div>
                     <div className={styles.heatmapMonths}>
-                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => (
+                      {['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'].map((month) => (
                         <div
                           key={month}
                           className={styles.heatmapMonth}
-                          style={{ color: 'var(--text-primary)' }}  // 深灰色月份文字
+                          style={{ 
+                            color: '#2c3e50',
+                            fontWeight: 600,
+                            fontSize: isMobile ? '0.7rem' : '0.85rem'
+                          }}
                         >
                           {month}
                         </div>
@@ -786,25 +837,50 @@ const Total: React.FC = () => {
                       <div key={year} className={styles.heatmapRow}>
                         <div
                           className={styles.heatmapYear}
+                          style={{
+                            color: '#20B2AA',
+                            fontWeight: 700,
+                            fontSize: isMobile ? '0.8rem' : '0.9rem'
+                          }}
                         >
                           {year}
                         </div>
                         <div className={styles.heatmapCells}>
-                          {months.map((distance, i) => (
-                            <div
-                              key={i}
-                              className={styles.heatmapCell}
-                              style={{
-                                backgroundColor: distance > 0
-                                  ? `rgba(32, 178, 170, ${Math.min(0.2 + distance / 20, 1)})`  // Primary Teal with opacity base
-                                  : 'transparent',
-                                border: distance > 0
-                                  ? '1px solid rgba(32, 178, 170, 0.3)'
-                                  : '1px solid #E0E0E0'
-                              }}
-                              title={`${year}-${i + 1}: ${distance.toFixed(2)} km`}
-                            />
-                          ))}
+                          {months.map((distance, i) => {
+                            // 计算颜色强度，基于最大距离
+                            const maxDistance = Math.max(...yearlyData.flatMap(y => y.months));
+                            const intensity = maxDistance > 0 ? Math.min(0.9, distance / maxDistance) : 0;
+                            
+                            // 根据强度确定颜色
+                            let backgroundColor;
+                            if (intensity === 0) {
+                              backgroundColor = 'rgba(240, 240, 240, 0.3)';
+                            } else if (intensity < 0.25) {
+                              backgroundColor = `rgba(173, 216, 230, ${0.3 + intensity * 0.7})`; // 浅蓝
+                            } else if (intensity < 0.5) {
+                              backgroundColor = `rgba(135, 206, 250, ${0.4 + intensity * 0.6})`; // 天蓝
+                            } else if (intensity < 0.75) {
+                              backgroundColor = `rgba(32, 178, 170, ${0.5 + intensity * 0.5})`; // 蓝绿
+                            } else {
+                              backgroundColor = `rgba(30, 144, 255, ${0.6 + intensity * 0.4})`; // 道奇蓝
+                            }
+                            
+                            return (
+                              <div
+                                key={i}
+                                className={styles.heatmapCell}
+                                style={{
+                                  backgroundColor,
+                                  border: '1px solid rgba(255, 255, 255, 0.5)',
+                                  borderRadius: '3px',
+                                  transform: intensity > 0.7 ? 'scale(1.1)' : 'scale(1)',
+                                  transition: 'all 0.3s ease',
+                                  boxShadow: intensity > 0.5 ? `0 0 5px ${backgroundColor}` : 'none'
+                                }}
+                                title={`${year}年${i+1}月: ${distance.toFixed(2)} km`}
+                              />
+                            );
+                          })}
                         </div>
                       </div>
                     ))}
@@ -813,9 +889,6 @@ const Total: React.FC = () => {
               )}
             </div>
           </div>
-
-
-
 
           {/* 添加recent SVG图表 */}
           <RecentWorkouts />
