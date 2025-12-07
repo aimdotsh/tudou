@@ -258,23 +258,7 @@ const RecentWorkouts: React.FC = () => {
                 })}
             </div>
 
-            {/* 底部查看更多链接 */}
-            <div className="flex justify-center mt-6">
-                <a
-                    href="/daily"
-                    className="group flex items-center gap-2 px-6 py-2 text-[#20B2AA] border border-[#20B2AA] rounded-full hover:bg-[#20B2AA] hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
-                >
-                    <span>查看更多运动记录</span>
-                    <svg
-                        className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-            </div>
+
         </div>
     );
 };
