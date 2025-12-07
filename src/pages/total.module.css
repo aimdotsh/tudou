@@ -991,6 +991,7 @@
 }
 
 /* 翻转状态 */
+.flipped {}
 .flipCard.flipped .flipCardInner {
   transform: rotateY(180deg);
 }
