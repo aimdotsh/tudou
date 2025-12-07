@@ -363,6 +363,23 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
         )}
       </Map>
 
+      {/* 日期标签 - 左上角 */}
+      <div className="track-date-label-top-left" style={{
+        position: 'absolute',
+        top: '10px',
+        left: '10px',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        zIndex: 10,
+        pointerEvents: 'none',
+        fontFamily: 'monospace' // Optional: for tabular look like 2025-12-07
+      }}>
+        {date}
+      </div>
+
       {/* 日期和标题标签 - 右下角 */}
       <div className="track-info-label" style={{
         position: 'absolute',
