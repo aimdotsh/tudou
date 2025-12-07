@@ -416,7 +416,7 @@ const Total: React.FC = () => {
         acc[year].months[month] += distance;
         return acc;
       }, {} as Record<number, { year: number; distance: number; count: number; months: number[] }>);
-    return Object.values(data).sort((a, b) => a.year - b.year);
+    return Object.values(data).sort((a, b) => b.year - a.year);
   }, [activityType]);
 
   // 计算统计数据
@@ -463,12 +463,12 @@ const Total: React.FC = () => {
         }
       });
     });
-    // 按时间正序排列：先按年份正序，再按月份正序
+    // 按时间倒序排列：先按年份倒序，再按月份倒序
     return allMonths.sort((a, b) => {
       if (a.year !== b.year) {
-        return parseInt(a.year) - parseInt(b.year);
+        return parseInt(b.year) - parseInt(a.year);
       }
-      return parseInt(a.fullDate.split('-')[1]) - parseInt(b.fullDate.split('-')[1]);
+      return parseInt(b.fullDate.split('-')[1]) - parseInt(a.fullDate.split('-')[1]);
     });
   }, [yearlyData]);
 
