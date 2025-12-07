@@ -39,7 +39,7 @@ interface IDynamicTrackMapProps {
 // 解码polyline的函数
 const decodePolyline = (polyline: string): Coordinate[] => {
   if (!polyline) return [];
-  
+
   try {
     const decoded = mapboxPolyline.decode(polyline);
     // reverse lat long for mapbox and convert to Coordinate type
@@ -58,7 +58,7 @@ const decodePolyline = (polyline: string): Coordinate[] => {
 
 // 根据日期获取活动数据并转换为GeoJSON
 const getGeoDataForDate = (date: string): FeatureCollection<LineString> => {
-  const dayActivities = (activities as Activity[]).filter(activity => 
+  const dayActivities = (activities as Activity[]).filter(activity =>
     activity.start_date_local.startsWith(date)
   );
 
@@ -66,7 +66,7 @@ const getGeoDataForDate = (date: string): FeatureCollection<LineString> => {
     .filter(activity => activity.summary_polyline)
     .map((activity, index) => {
       const coordinates = decodePolyline(activity.summary_polyline!);
-      
+
       if (coordinates.length === 0) return null;
 
       return {
@@ -96,7 +96,7 @@ const getGeoDataForDate = (date: string): FeatureCollection<LineString> => {
 const getBoundsForGeoData = (geoData: FeatureCollection<LineString>) => {
   const { features } = geoData;
   let points: Coordinate[] = [];
-  
+
   features.forEach(feature => {
     if (feature.geometry.type === 'LineString') {
       const coords = feature.geometry.coordinates.map(coord => [coord[0], coord[1]] as Coordinate);
@@ -114,7 +114,7 @@ const getBoundsForGeoData = (geoData: FeatureCollection<LineString>) => {
 
   const lngs = points.map(p => p[0]);
   const lats = points.map(p => p[1]);
-  
+
   const minLng = Math.min(...lngs);
   const maxLng = Math.max(...lngs);
   const minLat = Math.min(...lats);
@@ -123,16 +123,24 @@ const getBoundsForGeoData = (geoData: FeatureCollection<LineString>) => {
   const centerLng = (minLng + maxLng) / 2;
   const centerLat = (minLat + maxLat) / 2;
 
-  // 计算合适的缩放级别
-  const lngDiff = maxLng - minLng;
-  const latDiff = maxLat - minLat;
+  // Add padding (approximate)
+  const padding = 0.02; // ~2km padding roughly
+  const lngDiff = (maxLng - minLng) * (1 + padding);
+  const latDiff = (maxLat - minLat) * (1 + padding);
+
   const maxDiff = Math.max(lngDiff, latDiff);
-  
+
+  // More granular zoom levels
   let zoom = 10;
-  if (maxDiff > 1) zoom = 8;
-  else if (maxDiff > 0.1) zoom = 11;
+  if (maxDiff > 5) zoom = 6;
+  else if (maxDiff > 2) zoom = 7;
+  else if (maxDiff > 1) zoom = 8;
+  else if (maxDiff > 0.5) zoom = 9;
+  else if (maxDiff > 0.1) zoom = 10;
+  else if (maxDiff > 0.05) zoom = 11;
+  else if (maxDiff > 0.02) zoom = 12;
   else if (maxDiff > 0.01) zoom = 13;
-  else zoom = 15;
+  else zoom = 14;
 
   return {
     longitude: centerLng,
@@ -141,15 +149,15 @@ const getBoundsForGeoData = (geoData: FeatureCollection<LineString>) => {
   };
 };
 
-const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({ 
-  date, 
-  className = '', 
+const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
+  date,
+  className = '',
   isVisible = false
 }) => {
   const mapRef = useRef<MapRef>();
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
-  
+
   const [geoData, setGeoData] = useState<FeatureCollection<LineString>>();
   const [animatedGeo, setAnimatedGeo] = useState<FeatureCollection<LineString>>();
   const [animating, setAnimating] = useState(false);
@@ -163,7 +171,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
   useEffect(() => {
     const data = getGeoDataForDate(date);
     setGeoData(data);
-    
+
     if (data.features.length > 0) {
       const bounds = getBoundsForGeoData(data);
       setViewState(bounds);
@@ -178,7 +186,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
-    
+
     if (!geoData || geoData.features.length === 0) {
       setAnimating(false);
       setAnimatedGeo(geoData);
@@ -186,8 +194,8 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
     }
 
     // 只对单条轨迹进行动画
-    const isSingleRun = geoData.features.length === 1 && 
-                       geoData.features[0].geometry.coordinates.length > 1;
+    const isSingleRun = geoData.features.length === 1 &&
+      geoData.features[0].geometry.coordinates.length > 1;
 
     if (!isSingleRun) {
       setAnimating(false);
@@ -207,7 +215,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
       console.log(`Starting animation for date: ${date}`);
       setAnimating(true);
       setAnimatedGeo(undefined); // 重置为undefined，确保从头开始
-      
+
       const points = geoData.features[0].geometry.coordinates.map(coord => [coord[0], coord[1]] as Coordinate);
       let current = 2;
       const step = Math.max(2, Math.floor(points.length / 120));
@@ -219,7 +227,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
           setAnimatedGeo(geoData);
           return;
         }
-        
+
         const animFeature: Feature<LineString> = {
           ...geoData.features[0],
           geometry: {
@@ -227,16 +235,16 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
             coordinates: points.slice(0, current)
           }
         };
-        
+
         setAnimatedGeo({
           type: "FeatureCollection",
           features: [animFeature]
         });
-        
+
         current += step;
         animationRef.current = requestAnimationFrame(animate);
       }
-      
+
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -273,6 +281,23 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
     );
   }
 
+  // remove road labels
+  const onMapLoad = useCallback((event: any) => {
+    const map = event.target;
+    const layers = map.getStyle().layers;
+    const labelLayerNames = layers
+      .filter(
+        (layer: any) =>
+          (layer.type === 'symbol' || layer.type === 'composite') &&
+          layer.layout &&
+          layer.layout['text-field']
+      )
+      .map((layer: any) => layer.id);
+    labelLayerNames.forEach((layerId: string) => {
+      map.removeLayer(layerId);
+    });
+  }, []);
+
   const isSingleRun = geoData.features.length === 1;
   const dash = USE_DASH_LINE && !isSingleRun ? [2, 2] : [2, 0];
 
@@ -286,6 +311,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
         ref={mapRefCallback}
         mapboxAccessToken={MAPBOX_TOKEN}
         interactive={false} // 禁用交互，因为是在卡片中
+        onLoad={onMapLoad}
       >
         {/* 背景轨迹层 - 在动画时显示浅色完整轨迹 */}
         {animating && geoData && geoData.features.length > 0 && (
@@ -307,7 +333,7 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
             />
           </Source>
         )}
-        
+
         {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
         {(animatedGeo || geoData) && (
           <Source id="data" type="geojson" data={animatedGeo || geoData}>
@@ -329,10 +355,21 @@ const DynamicTrackMap: React.FC<IDynamicTrackMapProps> = ({
           </Source>
         )}
       </Map>
-      
-      {/* 日期标签 */}
-      <div className="track-date-label">
-        {date}
+
+      {/* 日期和标题标签 - 右下角 */}
+      <div className="track-info-label" style={{
+        position: 'absolute',
+        bottom: '10px',
+        right: '10px',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        zIndex: 10,
+        pointerEvents: 'none'
+      }}>
+        {geoData.features[0]?.properties?.name || date}
       </div>
     </div>
   );
