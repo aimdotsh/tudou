@@ -572,6 +572,8 @@ const Total: React.FC = () => {
                 <XAxis
                   dataKey="year"
                   type="category"
+                  scale="band"
+                  padding={{ left: 10, right: 10 }}
                   tick={{
                     fill: '#2c3e50',
                     fontSize: isMobile ? 10 : 12,
@@ -653,6 +655,8 @@ const Total: React.FC = () => {
                 <XAxis
                   dataKey="year"
                   type="category"
+                  scale="band"
+                  padding={{ left: 10, right: 10 }}
                   tick={{
                     fill: '#2c3e50',
                     fontSize: isMobile ? 10 : 12,
