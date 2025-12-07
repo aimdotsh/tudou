@@ -298,7 +298,7 @@ class GifGenerator:
         
         return cropped_img, (view_min_lng_deg, view_max_lat_deg, view_max_lng_deg, view_min_lat_deg) # MinLng, TopLat, MaxLng, BotLat
 
-    def create_frame(self, coordinates, progress, date, frame_num, bg_image, bounds, width, height):
+    def create_frame(self, coordinates, progress, date, frame_num, bg_image, bounds, width, height, activity=None):
         """创建单帧图像"""
         if bg_image:
             img = bg_image.copy()
@@ -337,14 +337,21 @@ class GifGenerator:
         except:
             font = ImageFont.load_default()
             
+        # Get activity name or use date
         title = f"{date}"
+        if activity and activity.get('name'):
+             title = activity['name']
         bbox = draw.textbbox((0, 0), title, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
         
         text_bg_margin = 4
-        text_x = 10
-        text_y = 10
+        margin = 10
+        
+        # Calculate bottom-right position
+        text_x = width - text_width - margin
+        text_y = height - text_height - margin
+        
         draw.rectangle(
             [text_x - text_bg_margin, text_y - text_bg_margin, 
              text_x + text_width + text_bg_margin, text_y + text_height + text_bg_margin],
@@ -407,7 +414,7 @@ class GifGenerator:
             else:
                 progress = 1.0
             
-            frame = self.create_frame(coordinates, progress, date, frame_num, bg_image, map_bounds, self.width, self.height)
+            frame = self.create_frame(coordinates, progress, date, frame_num, bg_image, map_bounds, self.width, self.height, activity)
             frames.append(frame)
         
         output_path = self.output_dir / f"track_{date}.gif"

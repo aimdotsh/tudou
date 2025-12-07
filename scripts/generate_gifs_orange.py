@@ -320,8 +320,14 @@ class GifGenerator:
         
         bbox = draw.textbbox((0, 0), title, font=font)
         text_width = bbox[2] - bbox[0]
-        text_x = (self.width - text_width) // 2
-        draw.text((text_x, 8), title, fill='black', font=font)  # 减少顶部间距
+        text_height = bbox[3] - bbox[1]
+        
+        # 右下角显示
+        margin = 10
+        text_x = self.width - text_width - margin
+        text_y = self.height - text_height - margin
+        
+        draw.text((text_x, text_y), title, fill='black', font=font)
         
         if not coordinates:
             # 如果没有坐标数据，绘制示例轨迹
