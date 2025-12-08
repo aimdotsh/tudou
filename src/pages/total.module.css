@@ -383,16 +383,17 @@
 
 .chartContainer {
   background: var(--bg-card);
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 8px 25px var(--shadow-light);
-  border: 2px solid var(--border-light);
-  transition: all 0.3s ease;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .chartContainer:hover {
-  box-shadow: 0 15px 30px var(--shadow-medium);
-  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(32, 178, 170, 0.15);
+  border-color: var(--primary-color);
 }
 
 .chartContainer h3 {
@@ -809,7 +810,11 @@
 
 /* 日期卡片样式 */
 .dateCard {
-  composes: cardBase;
+  border-radius: 10px;
+  min-height: 140px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 4px 10px var(--shadow-light);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -824,7 +829,11 @@
 
 /* SVG卡片样式 */
 .svgCard {
-  composes: cardBase;
+  border-radius: 10px;
+  min-height: 140px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 4px 10px var(--shadow-light);
   border: 2px solid var(--primary-color);
   background: linear-gradient(135deg, rgba(32, 178, 170, 0.05), rgba(137, 207, 240, 0.1));
   display: flex;
@@ -845,7 +854,11 @@
 
 /* 加载状态样式 */
 .loadingCard {
-  composes: cardBase;
+  border-radius: 10px;
+  min-height: 140px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 4px 10px var(--shadow-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -991,7 +1004,7 @@
 }
 
 /* 翻转状态 */
-.flipped {}
+
 
 .flipCard.flipped .flipCardInner {
   transform: rotateY(180deg);
@@ -1042,9 +1055,7 @@
 }
 
 /* 标题样式 */
-.chartContainer {
-  /* Spacing is now handled by the 'gap' property on the parent '.charts' grid container */
-}
+
 
 .chartContainer h3 {
   color: var(--primary-color);

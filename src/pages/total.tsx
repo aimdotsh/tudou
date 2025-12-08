@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  Legend
+  CartesianGrid
 } from 'recharts';
 import activities from '@/static/activities_export';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
@@ -565,58 +565,60 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}
+                margin={{ top: 20, right: 30, left: 10, bottom: 20 }}
                 className={styles.barChart}>
 
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#e1f5fe" />
+                  stroke="#e1f5fe"
+                  vertical={false}
+                />
 
                 <XAxis
                   dataKey="year"
-                  type="category"
-                  scale="band"
-                  padding={{ left: 10, right: 10 }}
+                  axisLine={false}
+                  tickLine={false}
                   tick={{
                     fill: '#5a6c7d',
-                    fontSize: 12
+                    fontSize: 12,
+                    fontWeight: 500
                   }}
-                  interval={0} // Ensure all ticks are shown since they are categories now
+                  dy={10}
                 />
 
                 <YAxis
-                  width={isMobile ? 30 : 40}
+                  axisLine={false}
+                  tickLine={false}
                   tick={{
                     fill: '#5a6c7d',
-                    fontSize: isMobile ? 10 : 12
+                    fontSize: 11
                   }}
+                  width={30}
                 />
 
                 <Tooltip
+                  cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
                   contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '2px solid #20B2AA',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '8px 12px'
                   }}
                   labelStyle={{
-                    color: '#20B2AA',
-                    fontWeight: 600
+                    color: '#2c3e50',
+                    fontWeight: 600,
+                    marginBottom: '4px'
                   }}
-                />
-
-                <Legend
-                  verticalAlign="top"
-                  align="right"
-                  height={30}
                 />
 
                 <Bar
                   dataKey="count"
                   name="Workouts"
-                  fill="#20B2AA"        // 柔和的蓝绿色(CadetBlue)
-                  radius={[4, 4, 0, 0]} // 顶部圆角
-                  maxBarSize={50}
+                  fill="#20B2AA"
+                  radius={[4, 4, 0, 0]}
+                  barSize={20}
+                  animationDuration={1500}
                 />
               </BarChart>
 
@@ -629,58 +631,60 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}>
+                margin={{ top: 20, right: 30, left: 10, bottom: 20 }}>
 
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#e1f5fe" />
+                  stroke="#e1f5fe"
+                  vertical={false}
+                />
 
                 <XAxis
                   dataKey="year"
-                  type="category"
-                  scale="band"
-                  padding={{ left: 10, right: 10 }}
+                  axisLine={false}
+                  tickLine={false}
                   tick={{
                     fill: '#5a6c7d',
-                    fontSize: 12
+                    fontSize: 12,
+                    fontWeight: 500
                   }}
-                  interval={0}
+                  dy={10}
                 />
 
                 <YAxis
-                  width={isMobile ? 30 : 40}
+                  axisLine={false}
+                  tickLine={false}
                   tick={{
                     fill: '#5a6c7d',
-                    fontSize: isMobile ? 10 : 12
+                    fontSize: 11
                   }}
+                  width={35}
                 />
 
                 <Tooltip
+                  cursor={{ fill: 'rgba(249, 146, 6, 0.1)' }}
                   contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '2px solid #20B2AA',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 15px rgba(32, 178, 170, 0.1)'
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '8px 12px'
                   }}
                   labelStyle={{
-                    color: '#20B2AA',
-                    fontWeight: 600
+                    color: '#2c3e50',
+                    fontWeight: 600,
+                    marginBottom: '4px'
                   }}
-                  formatter={(value: number) => [`${value.toFixed(2)} km`, 'Distance']}
-                />
-
-                <Legend
-                  verticalAlign="top"
-                  align="right"
-                  height={30}
+                  formatter={(value: number) => [`${value.toFixed(0)} km`, 'Distance']}
                 />
 
                 <Bar
                   dataKey="distance"
                   name="Distance (km)"
-                  fill="#f99206"        // 橙色(Deep Orange)
-                  radius={[4, 4, 0, 0]}  // 顶部圆角
-                  maxBarSize={50}
+                  fill="#f99206"
+                  radius={[4, 4, 0, 0]}
+                  barSize={20}
+                  animationDuration={1500}
                 />
               </BarChart>
 
@@ -694,71 +698,68 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={monthlyData}
-                margin={{ top: 30, right: 0, left: 0, bottom: isMobile ? 40 : 30 }}>
+                margin={{ top: 20, right: 10, left: 0, bottom: 20 }}
+                barGap={2}
+                barCategoryGap="20%">
 
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#e1f5fe" />
+                  stroke="#e1f5fe"
+                  vertical={false}
+                />
 
                 <XAxis
                   dataKey="fullDate"
+                  axisLine={false}
+                  tickLine={false}
                   tick={{
-                    fill: '#5A5A5A',  // 深灰色文字
-                    fontSize: 14      // 保持字体大小
+                    fill: '#5a6c7d',
+                    fontSize: 10
                   }}
-                  ticks={uniqueYears.map(year => `${year}-01`)} // 每年1月作为标记点
-                  tickFormatter={(value) => value.split('-')[0]} // 只显示年份
+                  ticks={uniqueYears.map(year => `${year}-01`)}
+                  tickFormatter={(value) => value.split('-')[0]} // Show year only for simplicity
                   interval={0}
-                  angle={0}
-                  textAnchor="middle"
-                  height={40}
-                  padding={{ left: 2, right: 2 }}
+                  dy={10}
                 />
 
                 <YAxis
-                  width={isMobile ? 30 : 40}
+                  axisLine={false}
+                  tickLine={false}
+                  width={40}
                   tick={{
-                    fill: '#5A5A5A',  // 深灰色文字
-                    fontSize: isMobile ? 10 : 12       // 统一字体大小
+                    fill: '#5a6c7d',
+                    fontSize: 11
                   }}
                 />
 
                 <Tooltip
+                  cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
                   contentStyle={{
-                    backgroundColor: '#ffffff',
-                    border: '2px solid #20B2AA',
-                    borderRadius: '6px',         // 圆角
-                    padding: '8px 12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)' // 柔和阴影
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '8px 12px'
                   }}
                   labelStyle={{
-                    color: '#89CFF0',  // 柔和蓝色标签
-                    fontWeight: 500    // 中等字重
+                    color: '#2c3e50',
+                    fontWeight: 600
                   }}
-                  labelFormatter={(value) => '月度跑量'}
                   formatter={(value: number, name: string, props: any) => {
                     const month = props.payload.month;
                     const year = props.payload.year;
-                    const monthNum = props.payload.fullDate.split('-')[1];
-                    return [
-                      `${value.toFixed(2)} km`,
-                      `${year}-${monthNum}`
-                    ];
+                    return [`${value.toFixed(1)} km`, `${year} ${month}`];
                   }}
-                />
-
-                <Legend
-                  verticalAlign="top"
-                  align="right"
-                  height={30}
                 />
 
                 <Bar
                   dataKey="distance"
-                  name="Distance (km)"
-                  fill="#20B2AA"        // 柔和的蓝绿色(LightSeaGreen)
-                  radius={[4, 4, 0, 0]}  // 顶部圆角
-                  maxBarSize={50}
+                  name="Distance"
+                  fill="#20B2AA"
+                  radius={[2, 2, 0, 0]}
+                  // Allow bar size to dynamic but cap it for aesthetics
+                  maxBarSize={40}
+                  animationDuration={1500}
                 />
               </BarChart>
 
