@@ -576,9 +576,11 @@ const Total: React.FC = () => {
                       borderRadius: '8px',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                       padding: '8px 12px',
-                      pointerEvents: 'none'
+                      pointerEvents: isTablet ? 'auto' : 'none'
                     }}
-                    wrapperStyle={{ zIndex: 1000, pointerEvents: 'none' }}
+                    wrapperStyle={{ zIndex: 1000, pointerEvents: isTablet ? 'auto' : 'none' }}
+                    allowEscapeViewBox={{ x: true, y: true }}
+                    isAnimationActive={!isTablet}
                   />
 
                   <CartesianGrid strokeDasharray="3 3" stroke="#e1f5fe" vertical={false} />
@@ -657,15 +659,17 @@ const Total: React.FC = () => {
                       borderRadius: '8px',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                       padding: '8px 12px',
-                      pointerEvents: 'none'
+                      pointerEvents: isTablet ? 'auto' : 'none'
                     }}
-                    wrapperStyle={{ zIndex: 1000, pointerEvents: 'none' }}
+                    wrapperStyle={{ zIndex: 1000, pointerEvents: isTablet ? 'auto' : 'none' }}
                     labelStyle={{
                       color: '#2c3e50',
                       fontWeight: 600,
                       marginBottom: '4px'
                     }}
                     formatter={(value: number) => [`${value.toFixed(0)} km`, 'Distance']}
+                    allowEscapeViewBox={{ x: true, y: true }}
+                    isAnimationActive={!isTablet}
                   />
 
                   <Bar
@@ -730,9 +734,9 @@ const Total: React.FC = () => {
                       borderRadius: '8px',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                       padding: '8px 12px',
-                      pointerEvents: 'none'
+                      pointerEvents: isTablet ? 'auto' : 'none'
                     }}
-                    wrapperStyle={{ zIndex: 1000, pointerEvents: 'none' }}
+                    wrapperStyle={{ zIndex: 1000, pointerEvents: isTablet ? 'auto' : 'none' }}
                     labelStyle={{
                       color: '#2c3e50',
                       fontWeight: 600
@@ -742,6 +746,8 @@ const Total: React.FC = () => {
                       const year = props.payload.year;
                       return [`${value.toFixed(1)} km`, `${year} ${month}`];
                     }}
+                    allowEscapeViewBox={{ x: true, y: true }}
+                    isAnimationActive={!isTablet}
                   />
 
                   <Bar
