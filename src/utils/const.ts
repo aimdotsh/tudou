@@ -4,6 +4,7 @@ const MAPBOX_TOKEN =
   // Instead, manually add a new token and apply URL restrictions.
   // (please refer to https://github.com/yihong0618/running_page/issues/643#issuecomment-2042668580)
   'pk.eyJ1IjoiYmVuLTI5IiwiYSI6ImNrZ3Q4Ym9mMDBqMGYyeXFvODV2dWl6YzQifQ.gSKoWF-fMjhzU67TuDezJQ';
+const CHINA_CENTER = [104.195397, 35.86166];
 const MUNICIPALITY_CITIES_ARR = [
   '北京市',
   '上海市',
@@ -165,6 +166,7 @@ export {
   RICH_TITLE,
   ACTIVITY_TOTAL,
   TYPES_MAPPING,
+  CHINA_CENTER,
 };
 
 const nike = 'rgb(224,237,94)';

@@ -12,7 +12,7 @@ import BackToTop from '@/components/BackToTop';
 import locationStats from '@/static/location_stats.json';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
-import { IS_CHINESE } from '@/utils/const';
+import { IS_CHINESE, CHINA_CENTER } from '@/utils/const';
 import '@/styles/stickyMap.css';
 import '@/styles/stickyHeader.css';
 import { initStickyHeader, destroyStickyHeader } from '@/utils/stickyHeader';
@@ -134,7 +134,9 @@ const Index = () => {
   }, [runs, searchTerm]);
 
   const [viewState, setViewState] = useState<IViewState>({
-    ...bounds,
+    longitude: CHINA_CENTER[0],
+    latitude: CHINA_CENTER[1],
+    zoom: 3,
   });
 
   // URL分享功能：更新URL中的运动记录ID
@@ -188,8 +190,8 @@ const Index = () => {
     // 当选择Total时，设置适合显示中国全貌的视图
     if (y === 'Total') {
       setViewState({
-        longitude: 104.195397,  // 中国中心经度
-        latitude: 35.86166,     // 中国中心纬度
+        longitude: CHINA_CENTER[0],  // 中国中心经度
+        latitude: CHINA_CENTER[1],     // 中国中心纬度
         zoom: 3,                // 适合显示中国全貌的缩放级别
       });
     } else if ((viewState.zoom ?? 0) > 3 && bounds) {
