@@ -212,6 +212,7 @@ const RunMap = ({
   const style: React.CSSProperties = {
     width: '100%',
     height: MAP_HEIGHT,
+    touchAction: 'pan-x pan-y',
   };
   const fullscreenButton: React.CSSProperties = {
     position: 'absolute',
