@@ -131,7 +131,7 @@ const RunMap = ({
   // --------- 其余逻辑基本保持不变 ---------
   // layers that should remain visible when lights are off
   const keepWhenLightsOff = ['runs2', 'animated-run'];
-  function switchLayerVisibility(map: MapInstance, lights: boolean) {
+  const switchLayerVisibility = useCallback((map: MapInstance, lights: boolean) => {
     const styleJson = map.getStyle();
     styleJson.layers.forEach((it: { id: string; type: string; layout?: any }) => {
       if (!keepWhenLightsOff.includes(it.id)) {
@@ -151,7 +151,7 @@ const RunMap = ({
           map.setLayoutProperty(it.id, 'visibility', 'none');
       }
     })
-  }
+  }, [thisYear]);
 
 
   const mapRefCallback = useCallback(
@@ -205,7 +205,7 @@ const RunMap = ({
         switchLayerVisibility(map, lights);
       }
     },
-    [mapRef, lights]
+    [mapRef, lights, switchLayerVisibility, thisYear]
   );
 
   useEffect(() => {
