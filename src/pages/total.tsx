@@ -565,7 +565,7 @@ const Total: React.FC = () => {
             <div style={{ width: '100%', height: '450px', position: 'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={yearlyData}
+                  data={[...yearlyData].reverse()}
                   margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 
                   <Tooltip
@@ -585,6 +585,7 @@ const Total: React.FC = () => {
 
                   <XAxis
                     dataKey="year"
+                    type="category"
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#5a6c7d', fontSize: 12, fontWeight: 500 }}
