@@ -397,6 +397,7 @@
   transform: translateY(-2px);
   box-shadow: 0 15px 35px rgba(32, 178, 170, 0.15);
   border-color: var(--primary-color);
+  z-index: 20;
 }
 
 .chartContainer h3 {
