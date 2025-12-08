@@ -152,12 +152,12 @@ const RunMap = ({
           map.addControl(new MapboxLanguage({ defaultLanguage: 'zh-Hans' }));
         }
         if (map) {
-          map.touchZoom.disable();
-          map.doubleClickZoom.disable();
-          map.scrollZoom.disable();
-          map.boxZoom.disable();
-          map.dragRotate.disable();
-          map.keyboard.disable();
+          map.touchZoom?.disable();
+          map.doubleClickZoom?.disable();
+          map.scrollZoom?.disable();
+          map.boxZoom?.disable();
+          map.dragRotate?.disable();
+          map.keyboard?.disable();
         }
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
