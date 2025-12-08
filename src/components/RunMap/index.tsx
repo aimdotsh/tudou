@@ -169,8 +169,18 @@ const RunMap = ({
             return;
           }
           if (!ROAD_LABEL_DISPLAY || PRIVACY_MODE) {
-            // Refacted to use MAP_LAYER_LIST for more robust hiding of street names etc.
-            MAP_LAYER_LIST.forEach((layerId) => {
+            const layers = map.getStyle().layers;
+            const labelLayerNames = layers
+              .filter(
+                (layer: any) =>
+                  (layer.type === 'symbol' || layer.type === 'composite') &&
+                  layer.layout &&
+                  layer.layout['text-field']
+              )
+              .map((layer: any) => layer.id);
+
+            labelLayerNames.forEach((layerId) => {
+              // map.removeLayer(layerId);
               if (map.getLayer(layerId)) {
                 map.setLayoutProperty(layerId, 'visibility', 'none');
               }
