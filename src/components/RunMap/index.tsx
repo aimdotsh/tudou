@@ -133,8 +133,13 @@ const RunMap = ({
   const keepWhenLightsOff = ['runs2', 'animated-run'];
   function switchLayerVisibility(map: MapInstance, lights: boolean) {
     const styleJson = map.getStyle();
-    styleJson.layers.forEach((it: { id: string; }) => {
+    styleJson.layers.forEach((it: { id: string; type: string; layout?: any }) => {
       if (!keepWhenLightsOff.includes(it.id)) {
+        const isLabelLayer = it.type === 'symbol' && it.layout && it.layout['text-field'];
+        if (isLabelLayer && (!ROAD_LABEL_DISPLAY || PRIVACY_MODE) && lights) {
+          return;
+        }
+
         if (lights)
           map.setLayoutProperty(it.id, 'visibility', 'visible');
         else
