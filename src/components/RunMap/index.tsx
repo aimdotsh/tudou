@@ -178,7 +178,8 @@ const RunMap = ({
               )
               .map((layer: any) => layer.id);
             labelLayerNames.forEach((layerId) => {
-              map.removeLayer(layerId);
+              // map.removeLayer(layerId);
+              map.setLayoutProperty(layerId, 'visibility', 'none');
             });
           }
           mapRef.current = ref;
@@ -192,6 +193,18 @@ const RunMap = ({
     },
     [mapRef, lights]
   );
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (map) {
+      const visibility = thisYear === 'Total' ? 'visible' : 'none';
+      ['state-label', 'settlement-label', 'settlement-subdivision-label'].forEach((layer) => {
+        if (map.getLayer(layer)) {
+          map.setLayoutProperty(layer, 'visibility', visibility);
+        }
+      });
+    }
+  }, [thisYear]);
 
   const filterProvinces = provinces.slice();
   const filterCountries = countries.slice();
