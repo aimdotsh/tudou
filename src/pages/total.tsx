@@ -611,148 +611,140 @@ const Total: React.FC = () => {
           </div>
 
           {/* 年度总距离统计图 - 60%宽度 */}
+
           <div className={styles.chartContainer}>
             <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-            <div style={{ width: '100%', height: '450px', position: 'relative' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={[...yearlyData].reverse()}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
+              <BarChart
+                data={yearlyData}  // 保持原有顺序
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="#e1f5fe"
-                    vertical={false}
-                  />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e1f5fe"
+                  vertical={false}
+                />
 
-                  <XAxis
-                    dataKey="year"
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fill: '#5a6c7d',
-                      fontSize: 12,
-                      fontWeight: 500
-                    }}
-                    dy={10}
-                  />
+                <XAxis
+                  dataKey="year"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: 12,
+                    fontWeight: 500
+                  }}
+                  dy={10}
+                />
 
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fill: '#5a6c7d',
-                      fontSize: 11
-                    }}
-                    width={45}
-                  />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: 11
+                  }}
+                  width={45}
+                />
 
-                  <Tooltip
-                    cursor={{ fill: 'rgba(249, 146, 6, 0.1)' }}
-                    contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      padding: '8px 12px',
-                      pointerEvents: 'none'
-                    }}
-                    wrapperStyle={{ zIndex: 1000, pointerEvents: 'none' }}
-                    labelStyle={{
-                      color: '#2c3e50',
-                      fontWeight: 600,
-                      marginBottom: '4px'
-                    }}
-                    formatter={(value: number) => [`${value.toFixed(0)} km`, 'Distance']}
-                  />
+                <Tooltip
+                  cursor={{ fill: 'rgba(249, 146, 6, 0.1)' }}
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '8px 12px'
+                  }}
+                  labelStyle={{
+                    color: '#2c3e50',
+                    fontWeight: 600,
+                    marginBottom: '4px'
+                  }}
+                  formatter={(value: number) => [`${value.toFixed(0)} km`, 'Distance']}
+                />
 
-                  <Bar
-                    dataKey="distance"
-                    name="Distance (km)"
-                    fill="#f99206"
-                    radius={[4, 4, 0, 0]}
-                    animationDuration={1500}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+                <Bar
+                  dataKey="distance"
+                  name="Distance (km)"
+                  fill="#f99206"
+                  radius={[4, 4, 0, 0]}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
           {/* 月度总距离统计图 - 整行宽度 */}
+
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
             <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
-            <div style={{ width: '100%', height: '450px', position: 'relative' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={[...monthlyData].reverse()}
-                  margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
-                  barGap={2}
-                  barCategoryGap="15%">
+            <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
+              <BarChart
+                data={monthlyData}  // 保持原有顺序
+                margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+                barGap={2}
+                barCategoryGap="15%">
 
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="#e1f5fe"
-                    vertical={false}
-                  />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e1f5fe"
+                  vertical={false}
+                />
 
-                  <XAxis
-                    dataKey="fullDate"
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fill: '#5a6c7d',
-                      fontSize: 10
-                    }}
-                    ticks={uniqueYears.map(year => `${year}-01`).reverse()}
-                    tickFormatter={(value) => value.split('-')[0]}
-                    interval={0}
-                    dy={10}
-                  />
+                <XAxis
+                  dataKey="fullDate"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: 10
+                  }}
+                  ticks={uniqueYears.map(year => `${year}-01`)}
+                  tickFormatter={(value) => value.split('-')[0]}
+                  interval={0}
+                  dy={10}
+                />
 
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    width={45}
-                    tick={{
-                      fill: '#5a6c7d',
-                      fontSize: 11
-                    }}
-                  />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  width={45}
+                  tick={{
+                    fill: '#5a6c7d',
+                    fontSize: 11
+                  }}
+                />
 
-                  <Tooltip
-                    cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
-                    contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                      padding: '8px 12px',
-                      pointerEvents: 'none'
-                    }}
-                    wrapperStyle={{ zIndex: 1000, pointerEvents: 'none' }}
-                    labelStyle={{
-                      color: '#2c3e50',
-                      fontWeight: 600
-                    }}
-                    formatter={(value: number, name: string, props: any) => {
-                      const month = props.payload.month;
-                      const year = props.payload.year;
-                      return [`${value.toFixed(1)} km`, `${year} ${month}`];
-                    }}
-                  />
+                <Tooltip
+                  cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    padding: '8px 12px'
+                  }}
+                  labelStyle={{
+                    color: '#2c3e50',
+                    fontWeight: 600
+                  }}
+                  formatter={(value: number, name: string, props: any) => {
+                    const month = props.payload.month;
+                    const year = props.payload.year;
+                    return [`${value.toFixed(1)} km`, `${year} ${month}`];
+                  }}
+                />
 
-                  <Bar
-                    dataKey="distance"
-                    name="Distance"
-                    fill="#20B2AA"
-                    radius={[2, 2, 0, 0]}
-                    animationDuration={1500}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+                <Bar
+                  dataKey="distance"
+                  name="Distance"
+                  fill="#20B2AA"
+                  radius={[2, 2, 0, 0]}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
           {/* 活动热力图 - 整行宽度 */}
