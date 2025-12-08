@@ -133,18 +133,34 @@ const RunMap = ({
   const keepWhenLightsOff = ['runs2', 'animated-run'];
   const switchLayerVisibility = useCallback((map: MapInstance, lights: boolean) => {
     const styleJson = map.getStyle();
+    // console.log('RunMap: switchLayerVisibility', { thisYear, lights, layersCount: styleJson.layers.length }); // Debug log
+
     styleJson.layers.forEach((it: { id: string; type: string; layout?: any }) => {
       if (!keepWhenLightsOff.includes(it.id)) {
         const isLabelLayer = it.type === 'symbol' && it.layout && it.layout['text-field'];
 
         // Define Admin layers we want to allow ONLY in Total view
-        const isAdminLabel = isLabelLayer && ['country', 'state', 'settlement', 'place', 'city'].some(keyword => it.id.includes(keyword));
+        // Broadened keywords to catch all potential admin boundaries
+        const adminKeywords = ['country', 'state', 'province', 'settlement', 'place', 'city', 'admin'];
+        const isAdminLabel = isLabelLayer && adminKeywords.some(keyword => it.id.toLowerCase().includes(keyword));
         const allowLabel = isAdminLabel && thisYear === 'Total';
 
-        if (isLabelLayer && !allowLabel && (!ROAD_LABEL_DISPLAY || PRIVACY_MODE) && lights) {
-          return;
+        // if (isAdminLabel) {
+        //      console.log(`RunMap: Layer ${it.id} (Admin=${isAdminLabel}) -> Allow=${allowLabel}`);
+        // }
+
+        // Special handling for labels:
+        // If it's a label layer, we strictly control it based on allowLabel
+        if (isLabelLayer && (!ROAD_LABEL_DISPLAY || PRIVACY_MODE)) {
+          if (allowLabel && lights) {
+            map.setLayoutProperty(it.id, 'visibility', 'visible');
+          } else {
+            map.setLayoutProperty(it.id, 'visibility', 'none');
+          }
+          return; // Handled label layer specifically
         }
 
+        // Standard handling for non-label layers (or if checking labels is disabled)
         if (lights)
           map.setLayoutProperty(it.id, 'visibility', 'visible');
         else
@@ -211,25 +227,9 @@ const RunMap = ({
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (map) {
-      const layers = map.getStyle().layers;
-      layers.forEach((layer) => {
-        if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
-          // Basic logic: Hide typically. Only show specific "Admin" layers if Total.
-
-          // Keywords that indicate a "Place/City/Admin" label
-          const isAdminLabel = ['country', 'state', 'settlement', 'place', 'city'].some(keyword => layer.id.includes(keyword));
-
-          if (thisYear === 'Total' && isAdminLabel) {
-            map.setLayoutProperty(layer.id, 'visibility', 'visible');
-          } else {
-            // For non-admin layers (roads, POIs), OR if not Total view, ensure hidden
-            // This reinforces the privacy/cleanliness
-            map.setLayoutProperty(layer.id, 'visibility', 'none');
-          }
-        }
-      });
+      switchLayerVisibility(map, lights);
     }
-  }, [thisYear]);
+  }, [thisYear, lights, switchLayerVisibility]);
 
   const filterProvinces = provinces.slice();
   const filterCountries = countries.slice();
