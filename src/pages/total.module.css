@@ -388,6 +388,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* 关键修复 - 确保图表容器不干扰坐标计算 */
+  position: relative;
+  overflow: visible !important;
 }
 
 .chartContainer:hover {
@@ -479,6 +482,8 @@
 .responsiveChart {
   width: 100% !important;
   height: 300px !important;
+  position: relative !important;
+  overflow: visible !important;
 }
 
 @media (max-width: 768px) {
@@ -507,13 +512,12 @@
 
   /* 防止 Recharts 组件在移动端自动缩放 */
   .chartContainer :global(.recharts-wrapper) {
-    max-width: 100% !important;
-    overflow: hidden;
+    position: relative !important;
+    overflow: visible !important;
   }
 
-  /* 确保图表内容不会溢出 */
   .chartContainer :global(.recharts-surface) {
-    max-width: 100% !important;
+    overflow: visible !important;
   }
 }
 
@@ -538,9 +542,19 @@
     height: auto !important;
   }
 
-  /* 确保工具提示不会导致布局问题 */
+  /* 确保 tooltip 不受影响 */
   .chartContainer :global(.recharts-tooltip-wrapper) {
-    max-width: 90vw !important;
+    pointer-events: none !important;
+    z-index: 1000 !important;
+  }
+
+  /* 确保柱状图区域可以正确响应鼠标事件 */
+  .chartContainer :global(.recharts-bar-rectangle) {
+    pointer-events: all !important;
+  }
+
+  .chartContainer :global(.recharts-layer.recharts-bar) {
+    pointer-events: all !important;
   }
 
   /* 移动端容器优化 */

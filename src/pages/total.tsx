@@ -562,65 +562,52 @@ const Total: React.FC = () => {
           {/* 年度活动次数统计图 - 40%宽度 */}
           <div className={styles.chartContainer}>
             <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
-            <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
-              <BarChart
-                data={[...yearlyData].reverse()}  // 关键：反转数据顺序，让年份从旧到新
-                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <div style={{ width: '100%', height: '450px', position: 'relative' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={yearlyData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#e1f5fe"
-                  vertical={false}
-                />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                      padding: '8px 12px',
+                      pointerEvents: 'none'
+                    }}
+                    wrapperStyle={{ zIndex: 1000, pointerEvents: 'none' }}
+                  />
 
-                <XAxis
-                  dataKey="year"
-                  type="category"  // 关键：明确设置为 category 类型
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fill: '#5a6c7d',
-                    fontSize: 12,
-                    fontWeight: 500
-                  }}
-                  dy={10}
-                />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e1f5fe" vertical={false} />
 
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fill: '#5a6c7d',
-                    fontSize: 11
-                  }}
-                  width={40}
-                />
+                  <XAxis
+                    dataKey="year"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#5a6c7d', fontSize: 12, fontWeight: 500 }}
+                    dy={10}
+                  />
 
-                <Tooltip
-                  cursor={{ fill: 'rgba(32, 178, 170, 0.1)' }}
-                  contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    padding: '8px 12px'
-                  }}
-                  labelStyle={{
-                    color: '#2c3e50',
-                    fontWeight: 600,
-                    marginBottom: '4px'
-                  }}
-                />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#5a6c7d', fontSize: 11 }}
+                    width={40}
+                  />
 
-                <Bar
-                  dataKey="count"
-                  name="Workouts"
-                  fill="#20B2AA"
-                  radius={[4, 4, 0, 0]}
-                  animationDuration={1500}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+                  <Bar
+                    dataKey="count"
+                    name="Workouts"
+                    fill="#20B2AA"
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {/* 年度总距离统计图 - 60%宽度 */}
