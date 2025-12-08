@@ -158,6 +158,7 @@ const RunMap = ({
           map.boxZoom?.disable();
           map.dragRotate?.disable();
           map.keyboard?.disable();
+          map.dragPan?.disable();
         }
         // all style resources have been downloaded
         // and the first visually complete rendering of the base style has occurred.
@@ -258,6 +259,7 @@ const RunMap = ({
       boxZoom={false}
       keyboard={false}
       dragRotate={false}
+      dragPan={false}
     >
       <RunMapButtons changeYear={changeYear} thisYear={thisYear} />
       {/* 背景轨迹层 - 在动画时显示浅色完整轨迹 */}
