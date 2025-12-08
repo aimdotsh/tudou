@@ -564,9 +564,8 @@ const Total: React.FC = () => {
             <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.ACTIVITY_COUNT_TITLE}</h3>
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
-                data={yearlyData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                className={styles.barChart}>
+                data={[...yearlyData].reverse()}  // 关键：反转数据顺序，让年份从旧到新
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -576,6 +575,7 @@ const Total: React.FC = () => {
 
                 <XAxis
                   dataKey="year"
+                  type="category"  // 关键：明确设置为 category 类型
                   axisLine={false}
                   tickLine={false}
                   tick={{
@@ -584,7 +584,6 @@ const Total: React.FC = () => {
                     fontWeight: 500
                   }}
                   dy={10}
-                  scale="band"
                 />
 
                 <YAxis
@@ -618,11 +617,9 @@ const Total: React.FC = () => {
                   name="Workouts"
                   fill="#20B2AA"
                   radius={[4, 4, 0, 0]}
-                  maxBarSize={60}
                   animationDuration={1500}
                 />
               </BarChart>
-
             </ResponsiveContainer>
           </div>
 
@@ -631,7 +628,7 @@ const Total: React.FC = () => {
             <h3>{ACTIVITY_TOTAL.YEARLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
-                data={yearlyData}
+                data={[...yearlyData].reverse()}  // 关键：反转数据顺序
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 
                 <CartesianGrid
@@ -642,6 +639,7 @@ const Total: React.FC = () => {
 
                 <XAxis
                   dataKey="year"
+                  type="category"  // 关键：明确设置为 category 类型
                   axisLine={false}
                   tickLine={false}
                   tick={{
@@ -650,7 +648,6 @@ const Total: React.FC = () => {
                     fontWeight: 500
                   }}
                   dy={10}
-                  scale="band"  // 新增这一行
                 />
 
                 <YAxis
@@ -685,12 +682,9 @@ const Total: React.FC = () => {
                   name="Distance (km)"
                   fill="#f99206"
                   radius={[4, 4, 0, 0]}
-                  barSize={60}
                   animationDuration={1500}
                 />
               </BarChart>
-
-
             </ResponsiveContainer>
           </div>
 
@@ -699,10 +693,10 @@ const Total: React.FC = () => {
             <h3>{ACTIVITY_TOTAL.MONTHLY_TITLE} {ACTIVITY_TOTAL.TOTAL_DISTANCE_TITLE}</h3>
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
-                data={monthlyData}
+                data={[...monthlyData].reverse()}  // 关键：反转数据顺序，让时间从旧到新
                 margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
                 barGap={2}
-                barCategoryGap="20%">
+                barCategoryGap="15%">
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -712,17 +706,17 @@ const Total: React.FC = () => {
 
                 <XAxis
                   dataKey="fullDate"
+                  type="category"  // 关键：明确设置为 category 类型
                   axisLine={false}
                   tickLine={false}
                   tick={{
                     fill: '#5a6c7d',
                     fontSize: 10
                   }}
-                  ticks={uniqueYears.map(year => `${year}-01`)}
-                  tickFormatter={(value) => value.split('-')[0]} // Show year only for simplicity
+                  ticks={uniqueYears.map(year => `${year}-01`).reverse()}  // 也要反转 ticks
+                  tickFormatter={(value) => value.split('-')[0]}
                   interval={0}
                   dy={10}
-                  scale="band"  // 新增这一行
                 />
 
                 <YAxis
@@ -760,12 +754,9 @@ const Total: React.FC = () => {
                   name="Distance"
                   fill="#20B2AA"
                   radius={[2, 2, 0, 0]}
-                  // Allow bar size to dynamic but cap it for aesthetics
-                  maxBarSize={40}
                   animationDuration={1500}
                 />
               </BarChart>
-
             </ResponsiveContainer>
           </div>
 
