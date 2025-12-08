@@ -565,7 +565,7 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 20, right: 30, left: 10, bottom: 20 }}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                 className={styles.barChart}>
 
                 <CartesianGrid
@@ -584,6 +584,7 @@ const Total: React.FC = () => {
                     fontWeight: 500
                   }}
                   dy={10}
+                  scale="band"
                 />
 
                 <YAxis
@@ -593,7 +594,7 @@ const Total: React.FC = () => {
                     fill: '#5a6c7d',
                     fontSize: 11
                   }}
-                  width={30}
+                  width={40}
                 />
 
                 <Tooltip
@@ -617,7 +618,7 @@ const Total: React.FC = () => {
                   name="Workouts"
                   fill="#20B2AA"
                   radius={[4, 4, 0, 0]}
-                  barSize={20}
+                  maxBarSize={60}
                   animationDuration={1500}
                 />
               </BarChart>
@@ -631,7 +632,7 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={yearlyData}
-                margin={{ top: 20, right: 30, left: 10, bottom: 20 }}>
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
 
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -649,6 +650,7 @@ const Total: React.FC = () => {
                     fontWeight: 500
                   }}
                   dy={10}
+                  scale="band"  // 新增这一行
                 />
 
                 <YAxis
@@ -658,7 +660,7 @@ const Total: React.FC = () => {
                     fill: '#5a6c7d',
                     fontSize: 11
                   }}
-                  width={35}
+                  width={45}
                 />
 
                 <Tooltip
@@ -683,7 +685,7 @@ const Total: React.FC = () => {
                   name="Distance (km)"
                   fill="#f99206"
                   radius={[4, 4, 0, 0]}
-                  barSize={20}
+                  barSize={60}
                   animationDuration={1500}
                 />
               </BarChart>
@@ -698,7 +700,7 @@ const Total: React.FC = () => {
             <ResponsiveContainer width="100%" height={450} className={styles.responsiveChart}>
               <BarChart
                 data={monthlyData}
-                margin={{ top: 20, right: 10, left: 0, bottom: 20 }}
+                margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
                 barGap={2}
                 barCategoryGap="20%">
 
@@ -720,12 +722,13 @@ const Total: React.FC = () => {
                   tickFormatter={(value) => value.split('-')[0]} // Show year only for simplicity
                   interval={0}
                   dy={10}
+                  scale="band"  // 新增这一行
                 />
 
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  width={40}
+                  width={45}
                   tick={{
                     fill: '#5a6c7d',
                     fontSize: 11
