@@ -133,34 +133,49 @@ const RunMap = ({
   const keepWhenLightsOff = ['runs2', 'animated-run'];
   const switchLayerVisibility = useCallback((map: MapInstance, lights: boolean) => {
     const styleJson = map.getStyle();
-    // console.log('RunMap: switchLayerVisibility', { thisYear, lights, layersCount: styleJson.layers.length }); // Debug log
+    const currentYear = new Date().getFullYear();
+    const isRecentYear = !isNaN(Number(thisYear)) && Number(thisYear) >= currentYear - 1;
 
     styleJson.layers.forEach((it: { id: string; type: string; layout?: any }) => {
       if (!keepWhenLightsOff.includes(it.id)) {
         const isLabelLayer = it.type === 'symbol' && it.layout && it.layout['text-field'];
 
-        // Define Admin layers we want to allow ONLY in Total view
-        // Broadened keywords to catch all potential admin boundaries
-        const adminKeywords = ['country', 'state', 'province', 'settlement', 'place', 'city', 'admin'];
-        const isAdminLabel = isLabelLayer && adminKeywords.some(keyword => it.id.toLowerCase().includes(keyword));
-        const allowLabel = isAdminLabel && thisYear === 'Total';
+        // Special logic for labels based on year
+        if (isLabelLayer) {
+          // 1. If Privacy Mode is ON, always hide labels (safety first)
+          if (PRIVACY_MODE) {
+            map.setLayoutProperty(it.id, 'visibility', 'none');
+            return;
+          }
 
-        // if (isAdminLabel) {
-        //      console.log(`RunMap: Layer ${it.id} (Admin=${isAdminLabel}) -> Allow=${allowLabel}`);
-        // }
+          // 2. Total Year: Show ONLY Admin labels, Hide Streets
+          if (thisYear === 'Total') {
+            const adminKeywords = ['country', 'state', 'province', 'settlement', 'place', 'city', 'admin'];
+            const isAdminLabel = adminKeywords.some(keyword => it.id.toLowerCase().includes(keyword));
+            if (isAdminLabel && lights) {
+              map.setLayoutProperty(it.id, 'visibility', 'visible');
+            } else {
+              map.setLayoutProperty(it.id, 'visibility', 'none');
+            }
+            return;
+          }
 
-        // Special handling for labels:
-        // If it's a label layer, we strictly control it based on allowLabel
-        if (isLabelLayer && (!ROAD_LABEL_DISPLAY || PRIVACY_MODE)) {
-          if (allowLabel && lights) {
+          // 3. Recent Years (Current & Last Year): Hide ALL labels (Cleaner look)
+          if (isRecentYear) {
+            map.setLayoutProperty(it.id, 'visibility', 'none');
+            return;
+          }
+
+          // 4. Older Years: Show ALL labels (Streets, etc.) - Overrides ROAD_LABEL_DISPLAY = false
+          if (lights) {
             map.setLayoutProperty(it.id, 'visibility', 'visible');
           } else {
             map.setLayoutProperty(it.id, 'visibility', 'none');
           }
-          return; // Handled label layer specifically
+          return;
         }
 
-        // Standard handling for non-label layers (or if checking labels is disabled)
+        // Standard handling for non-label layers
         if (lights)
           map.setLayoutProperty(it.id, 'visibility', 'visible');
         else
