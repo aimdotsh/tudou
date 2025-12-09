@@ -651,7 +651,7 @@ const getMapStyle = (
       return `${styleUrl}${accessToken}&language=zh`;
     }
     // fallback or default
-    return `https://api.maptiler.com/maps/019b00d4-97df-70a4-9d67-ada38b577b91/style.json?key=${accessToken}`;
+    return `https://api.maptiler.com/maps/019b026a-0d90-7381-b30b-b9d14155889c/style.json?key=${accessToken}`;
   }
   // mapbox
   // @ts-ignore

@@ -240,7 +240,7 @@ export const MAP_TILE_STYLES = {
     'winter-dark':
       'https://api.maptiler.com/maps/winter-v2-dark/style.json?key=',
     hybrid: 'https://api.maptiler.com/maps/hybrid/style.json?key=',
-    'streets-v2': 'https://api.maptiler.com/maps/019b00d4-97df-70a4-9d67-ada38b577b91/style.json?key=',
+    'streets-v2': 'https://api.maptiler.com/maps/019b026a-0d90-7381-b30b-b9d14155889c/style.json?key=',
   },
   mapbox: {
     'dark-v10': 'mapbox://styles/mapbox/dark-v10',
