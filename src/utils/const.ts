@@ -215,8 +215,8 @@ export const MAP_TILE_STYLE_LIGHT = 'streets-v2'; // changed to colorful style
 export const MAP_TILE_STYLE_DARK = 'dark-v10';
 
 // access token. you can apply a new one, it's free.
-// maptiler: Gt5R0jT8tuIYxW6sNrAg | sign up at https://cloud.maptiler.com/auth/widget
-export const MAP_TILE_ACCESS_TOKEN = 'Gt5R0jT8tuIYxW6sNrAg';
+// maptiler: VOiXPTJcQ8I0pgldbImf | sign up at https://cloud.maptiler.com/auth/widget
+export const MAP_TILE_ACCESS_TOKEN = 'VOiXPTJcQ8I0pgldbImf';
 
 export const MAP_TILE_STYLES = {
   maptiler: {
@@ -240,7 +240,7 @@ export const MAP_TILE_STYLES = {
     'winter-dark':
       'https://api.maptiler.com/maps/winter-v2-dark/style.json?key=',
     hybrid: 'https://api.maptiler.com/maps/hybrid/style.json?key=',
-    'streets-v2': 'https://api.maptiler.com/maps/streets-v2/style.json?key=',
+    'streets-v2': 'https://api.maptiler.com/maps/019b026a-0d90-7381-b30b-b9d14155889c/style.json?key=',
   },
   mapbox: {
     'dark-v10': 'mapbox://styles/mapbox/dark-v10',

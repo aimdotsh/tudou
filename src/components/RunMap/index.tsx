@@ -66,12 +66,11 @@ const RunMap = ({
     fetch(styleUrl)
       .then(res => res.json())
       .then(styleJson => {
-        // Sanitize style: remove invalid properties
+        // Sanitize style: remove invalid 'text-overlap' property
         if (styleJson.layers) {
           styleJson.layers.forEach((layer: any) => {
-            if (layer.layout) {
-              if (layer.layout['text-overlap']) delete layer.layout['text-overlap'];
-              if (layer.layout['icon-overlap']) delete layer.layout['icon-overlap'];
+            if (layer.layout && layer.layout['text-overlap']) {
+              delete layer.layout['text-overlap'];
             }
           });
         }
@@ -212,7 +211,7 @@ const RunMap = ({
       if (ref !== null) {
         const map = ref.getMap();
         if (map && IS_CHINESE) {
-          map.addControl(new MapboxLanguage({ defaultLanguage: 'zh' }));
+          // map.addControl(new MapboxLanguage({ defaultLanguage: 'zh' }));
         }
         if (map) {
           map.touchZoom?.disable();
