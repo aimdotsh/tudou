@@ -72,6 +72,9 @@ const RunMap = ({
             if (layer.layout && layer.layout['text-overlap']) {
               delete layer.layout['text-overlap'];
             }
+            if (layer.layout && layer.layout['icon-overlap']) {
+              delete layer.layout['icon-overlap'];
+            }
           });
         }
         setMapStyle(styleJson);
