@@ -648,10 +648,10 @@ const getMapStyle = (
     // @ts-ignore
     const styleUrl = MAP_TILE_STYLES.maptiler[style];
     if (styleUrl) {
-      return `${styleUrl}${accessToken}`;
+      return `${styleUrl}${accessToken}&language=zh`;
     }
     // fallback or default
-    return `https://api.maptiler.com/maps/streets-v2/style.json?key=${accessToken}`;
+    return `https://api.maptiler.com/maps/streets-v2/style.json?key=${accessToken}&language=zh`;
   }
   // mapbox
   // @ts-ignore
