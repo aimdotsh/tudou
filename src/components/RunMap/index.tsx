@@ -59,6 +59,28 @@ const RunMap = ({
 
   // --- 保证 geoData 只在必要时合并（避免闪烁） ---
   const [geoData, setGeoData] = useState<FeatureCollection<RPGeometry>>(propGeoData);
+  const [mapStyle, setMapStyle] = useState<any>(null);
+
+  useEffect(() => {
+    const styleUrl = getMapStyle(MAP_TILE_VENDOR, MAP_TILE_STYLE_LIGHT, MAP_TILE_ACCESS_TOKEN);
+    fetch(styleUrl)
+      .then(res => res.json())
+      .then(styleJson => {
+        // Sanitize style: remove invalid properties
+        if (styleJson.layers) {
+          styleJson.layers.forEach((layer: any) => {
+            if (layer.layout) {
+              if (layer.layout['text-overlap']) delete layer.layout['text-overlap'];
+              if (layer.layout['icon-overlap']) delete layer.layout['icon-overlap'];
+            }
+          });
+        }
+        setMapStyle(styleJson);
+      })
+      .catch(err => {
+        console.error("Failed to load map style:", err);
+      });
+  }, []);
 
   useEffect(() => {
     let tmpGeo = propGeoData;
@@ -301,7 +323,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       style={style}
-      mapStyle={getMapStyle(MAP_TILE_VENDOR, MAP_TILE_STYLE_LIGHT, MAP_TILE_ACCESS_TOKEN)}
+      mapStyle={mapStyle}
       ref={mapRefCallback}
       mapboxAccessToken={MAPBOX_TOKEN}
       scrollZoom={false}
