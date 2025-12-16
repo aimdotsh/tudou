@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  CartesianGrid
+
 } from 'recharts';
 import activities from '@/static/activities_export';
 import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";

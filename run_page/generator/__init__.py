@@ -77,7 +77,14 @@ class Generator:
             #  strava use total_elevation_gain as elevation_gain
             activity.elevation_gain = activity.total_elevation_gain
             activity.subtype = activity.type
-            activity.description = activity.description
+            # description not in summary activity, need to fetch detail
+            if getattr(activity, "description", None) is None:
+                try:
+                    detail = self.client.get_activity(activity.id)
+                    activity.description = detail.description
+                except Exception as e:
+                    print("Failed to fetch description for {}: {}".format(activity.id, e))
+                    pass
             created = update_or_create_activity(self.session, activity)
             if created:
                 sys.stdout.write("+")
@@ -91,7 +98,7 @@ class Generator:
         tracks = loader.load_tracks(
             data_dir, file_suffix=file_suffix, activity_title_dict=activity_title_dict
         )
-        print(f"load {len(tracks)} tracks")
+        print("load {} tracks".format(len(tracks)))
         if not tracks:
             print("No tracks found.")
             return
@@ -211,7 +218,7 @@ class Generator:
             return [str(a.run_id) for a in activities]
         except Exception as e:
             # pass the error
-            print(f"something wrong with {str(e)}")
+            print("something wrong with {}".format(str(e)))
             return []
 
     def get_old_tracks_dates(self):
@@ -224,5 +231,5 @@ class Generator:
             return [str(a.start_date_local) for a in activities]
         except Exception as e:
             # pass the error
-            print(f"something wrong with {str(e)}")
+            print("something wrong with {}".format(str(e)))
             return []
