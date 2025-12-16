@@ -40,17 +40,17 @@ try {
 function calculateOffset(distance, bearing) {
   // 将方位角转换为弧度
   const bearingRad = (bearing * Math.PI) / 180;
-  
+
   // 计算南北和东西方向的距离分量
   const northDistance = distance * Math.cos(bearingRad); // 正值向北，负值向南
   const eastDistance = distance * Math.sin(bearingRad);  // 正值向东，负值向西
-  
+
   // 转换为度数偏移
   // 1度纬度 ≈ 111 公里
   // 1度经度 ≈ 111 * cos(纬度) 公里，在中国大陆约为 89 公里
   const latOffset = northDistance / 111;
   const lngOffset = eastDistance / 89;
-  
+
   return {
     lat: latOffset,
     lng: lngOffset,
@@ -85,26 +85,34 @@ let skippedCount = 0;
 activities = activities.map(activity => {
   // 创建活动的副本，避免修改原始对象
   const newActivity = { ...activity };
-  
+
+  // Clean description
+  if (newActivity.description) {
+    newActivity.description = newActivity.description
+      .replace(/Powered By www\.gearaut\.com/gi, "")
+      .replace(/训练负荷：\d+[；;]?/g, "")
+      .trim();
+  }
+
   if (!newActivity.summary_polyline) {
     skippedCount++;
     return newActivity;
   }
-  
+
   try {
     // 解码 polyline
     const points = polyline.decode(newActivity.summary_polyline);
-    
+
     // 应用偏移
     const offsetPoints = points.map(point => [
       point[0] + OFFSET.lat,
       point[1] + OFFSET.lng
     ]);
-    
+
     // 重新编码 polyline
     newActivity.summary_polyline = polyline.encode(offsetPoints);
     processedCount++;
-    
+
     return newActivity;
   } catch (error) {
     console.error(`处理活动 ID ${newActivity.run_id} 失败:`, error);
