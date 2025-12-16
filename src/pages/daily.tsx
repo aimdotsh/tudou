@@ -15,14 +15,14 @@ import { ACTIVITY_TOTAL, TYPES_MAPPING } from "@/utils/const";
 import { formatPace } from '@/utils/utils';
 import styles from './total.module.css';
 import Nav from '@/components/Nav';
-import { totalStat ,recentStat ,halfmarathonStat ,newyearStat ,yueyeStat} from '@assets/index';
+import { totalStat, recentStat, halfmarathonStat, newyearStat, yueyeStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import PreGeneratedGif from '@/components/PreGeneratedGif';
 
 // 自定义错误边界组件
-class ErrorBoundary extends Component<{ 
+class ErrorBoundary extends Component<{
   fallback: ReactNode,
-  children: ReactNode 
+  children: ReactNode
 }, { hasError: boolean }> {
   state = { hasError: false };
 
@@ -54,10 +54,10 @@ const getBeijingDate = (offset = 0) => {
   const now = new Date();
   // 获取当前时间的 UTC 时间戳
   const utcTimestamp = now.getTime() + (now.getTimezoneOffset() * 60000);
-  
+
   // 计算北京时间，北京时间为 UTC+8（加上偏移天数）
   const beijingDate = new Date(utcTimestamp + (3600000 * 8) + (offset * 86400000));
-  
+
   const year = beijingDate.getFullYear();
   const month = String(beijingDate.getMonth() + 1).padStart(2, '0');
   const day = String(beijingDate.getDate()).padStart(2, '0');
@@ -82,7 +82,7 @@ const convertMovingTime2Sec = (movingTime: string | number): number => {
   if (typeof movingTime === 'number') {
     return movingTime;
   }
-  
+
   if (movingTime.includes(':')) {
     const parts = movingTime.split(':').map(Number);
     if (parts.length === 3) {
@@ -95,7 +95,7 @@ const convertMovingTime2Sec = (movingTime: string | number): number => {
       return minutes * 60 + seconds;
     }
   }
-  
+
   // 尝试直接解析为数字
   return parseInt(movingTime, 10) || 0;
 };
@@ -113,12 +113,12 @@ const Total: React.FC = () => {
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [dailyQuotes, setDailyQuotes] = useState<Record<string, {text: string, author: string}>>({});
+  const [dailyQuotes, setDailyQuotes] = useState<Record<string, { text: string, author: string }>>({});
 
   // 为特定日期获取每日一言
   const fetchQuoteForDate = async (date: string) => {
     const storageKey = `dailyQuote_${date}`;
-    
+
     // 先检查本地存储中是否有该日期的每日一言
     const cachedQuote = localStorage.getItem(storageKey);
     if (cachedQuote) {
@@ -129,7 +129,7 @@ const Total: React.FC = () => {
         console.error('解析缓存的每日一言失败:', error);
       }
     }
-    
+
     // 如果没有缓存，则获取新的每日一言
     try {
       const response = await fetch('https://v1.hitokoto.cn/?c=d&c=i&c=k');
@@ -138,7 +138,7 @@ const Total: React.FC = () => {
         text: data.hitokoto || "今天没有运动",
         author: data.from || "蓝皮书"
       };
-      
+
       // 保存到本地存储
       localStorage.setItem(storageKey, JSON.stringify(quote));
       return quote;
@@ -154,8 +154,8 @@ const Total: React.FC = () => {
   // 获取当前页面所有日期的每日一言
   useEffect(() => {
     const loadQuotesForCurrentPage = async () => {
-      const quotes: Record<string, {text: string, author: string}> = {};
-      
+      const quotes: Record<string, { text: string, author: string }> = {};
+
       for (const { date } of currentItems) {
         if (!dailyQuotes[date]) {
           const quote = await fetchQuoteForDate(date);
@@ -164,7 +164,7 @@ const Total: React.FC = () => {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
-      
+
       if (Object.keys(quotes).length > 0) {
         setDailyQuotes(prev => ({ ...prev, ...quotes }));
       }
@@ -218,10 +218,10 @@ const Total: React.FC = () => {
   const calculateMaxStreak = (activities: Activity[]) => {
     const currentYear = new Date().getFullYear();
     // 过滤出当前年份的活动
-    const currentYearActivities = activities.filter(activity => 
+    const currentYearActivities = activities.filter(activity =>
       new Date(activity.start_date_local).getFullYear() === currentYear
     );
-    
+
     // 按日期排序所有活动
     const sortedActivities = currentYearActivities
       .sort((a, b) => new Date(a.start_date_local).getTime() - new Date(b.start_date_local).getTime());
@@ -245,7 +245,7 @@ const Total: React.FC = () => {
       const prevDate = uniqueDates[i - 1];
       const currDate = uniqueDates[i];
       const diffDays = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
-      
+
       if (diffDays <= 1) {
         currentStreak += diffDays;
         if (currentStreak > maxStreak) {
@@ -311,89 +311,89 @@ const Total: React.FC = () => {
 
           </div>
         </div>
-      
-      <div className={styles.charts}>
-        {/* 添加recent SVG图表 */}
-        <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-          <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天 <span className={styles.clickHint}>(点击卡片会翻转噢)</span>
-            {stats.streakStartDate && stats.streakEndDate && (
-              <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
-            )}
-          </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
-            {currentItems.map(({ date, Component }) => {
-              const cardId = `daily-${date}`;
-              return (
-                <ErrorBoundary
-                  key={date}
-                  fallback={
-                    <div className={styles.dateCard}>
-                      <div className={styles.dateText}>{date}</div>
-                      <div className={styles.descriptionText}>今日没有运动，跟你分享每日一言养养眼：</div>
-                      <div className={styles.poemText}>"{dailyQuotes[date]?.text || '加载中...'}"</div>
-                      <div className={styles.sourceText}>--{dailyQuotes[date]?.author || '蓝皮书'}</div>
-                    </div>
-                  }
-                >
-                  <Suspense fallback={
-                    <div className={styles.loadingCard}>
-                      <div>Loading {date}...</div>
-                    </div>
-                  }>
-                    <div 
-                      className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                      onClick={() => toggleFlip(cardId)}
-                    >
-                      <div className={styles.flipCardInner}>
-                        <div className={styles.flipCardFront}>
-                          <Component className="h-auto w-full" />
-                        </div>
-                        <div className={styles.flipCardBack}>
-                          <PreGeneratedGif 
-                            date={date} 
-                            className="w-full h-full" 
-                            isVisible={flippedCards[cardId] || false}
-                          />
+        <div className={styles.charts}>
+          {/* 添加recent SVG图表 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3>Recent Workouts 当年最长连续运动 {stats.maxStreak2025} 天
+              {stats.streakStartDate && stats.streakEndDate && (
+                <span className={styles.streakDates} style={{ fontSize: '0.7em', color: '#999' }}> ({stats.streakStartDate} 至 {stats.streakEndDate})</span>
+              )}<span className={styles.clickHint}>(点击卡片会翻转噢)</span>
+            </h3>
+
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
+              {currentItems.map(({ date, Component }) => {
+                const cardId = `daily-${date}`;
+                return (
+                  <ErrorBoundary
+                    key={date}
+                    fallback={
+                      <div className={styles.dateCard}>
+                        <div className={styles.dateText}>{date}</div>
+                        <div className={styles.descriptionText}>今日没有运动，跟你分享每日一言养养眼：</div>
+                        <div className={styles.poemText}>"{dailyQuotes[date]?.text || '加载中...'}"</div>
+                        <div className={styles.sourceText}>--{dailyQuotes[date]?.author || '蓝皮书'}</div>
+                      </div>
+                    }
+                  >
+                    <Suspense fallback={
+                      <div className={styles.loadingCard}>
+                        <div>Loading {date}...</div>
+                      </div>
+                    }>
+                      <div
+                        className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
+                        onClick={() => toggleFlip(cardId)}
+                      >
+                        <div className={styles.flipCardInner}>
+                          <div className={styles.flipCardFront}>
+                            <Component className="h-auto w-full" />
+                          </div>
+                          <div className={styles.flipCardBack}>
+                            <PreGeneratedGif
+                              date={date}
+                              className="w-full h-full"
+                              isVisible={flippedCards[cardId] || false}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Suspense>
-                </ErrorBoundary>
-              );
-            })}
-          </div>
-          <div className="flex justify-center items-center mt-8 gap-4">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
-            >
-              上一页
-            </button>
-            <span className="text-gray-700 transition-opacity duration-300">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
-            >
-              下一页
-            </button>
+                    </Suspense>
+                  </ErrorBoundary>
+                );
+              })}
+            </div>
+            <div className="flex justify-center items-center mt-8 gap-4">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
+              >
+                上一页
+              </button>
+              <span className="text-gray-700 transition-opacity duration-300">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-[#20B2AA] text-white rounded disabled:opacity-50 transition-all duration-300 hover:bg-[#20B2AA] hover:scale-105"
+              >
+                下一页
+              </button>
+            </div>
           </div>
         </div>
+        <div className={styles.footer}>
+          ©2016 - 2025 Liups.com thanks{' '}
+          <a
+            href="https://github.com/yihong0618/running_page/blob/master/README-CN.md"
+            target="_blank"
+            rel="noopener noreferrer">
+            running_page
+          </a>
+        </div>
       </div>
-      <div className={styles.footer}>
-        ©2016 - 2025 Liups.com thanks{' '}
-        <a 
-          href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
-          target="_blank" 
-          rel="noopener noreferrer">
-          running_page
-        </a>
-      </div>
-    </div>
     </>
   );
 };
