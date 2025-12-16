@@ -265,6 +265,11 @@ jobs:
           npm install @mapbox/polyline --save
           node scripts/apply_offset_to_activities.js
 
+      - name: Clean DB descriptions
+        if: env.RUN_TYPE != 'pass'
+        run: |
+          python scripts/clean_db_descriptions.py
+
       - name: Generate location statistics
         if: env.RUN_TYPE != 'pass'
         run: |
