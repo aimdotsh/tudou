@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 # Define file paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,10 +21,19 @@ def merge_descriptions():
 
     # Create a map of run_id -> description
     description_map = {}
+
     for activity in source_data:
         run_id = activity.get('run_id')
         description = activity.get('description')
         if run_id and description:
+            # Clean description
+            # Remove "Powered By www.gearaut.com" (case insensitive just in case, though user specified exact)
+            description = description.replace("Powered By www.gearaut.com", "")
+            # Remove "训练负荷：XX；" pattern
+            description = re.sub(r"训练负荷：\d+[；;]?", "", description)
+            # Strip whitespace
+            description = description.strip()
+            
             description_map[run_id] = description
 
     print(f"Found {len(description_map)} activities with descriptions.")
