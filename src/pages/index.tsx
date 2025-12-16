@@ -257,12 +257,9 @@ const Index = () => {
   const locateActivity = (runIds: RunIds, updateUrl: boolean = true) => {
     const ids = new Set(runIds);
 
-    const selectedRuns = !runIds.length
-      ? filteredRuns
-      : filteredRuns.filter((r: any) => ids.has(r.run_id));
-
-    if (!selectedRuns.length) {
-      // 清除选中状态和URL
+    // Case 1: Deselect / Reset (Empty inputs)
+    if (!runIds.length) {
+      setGeoData(geoJsonForRuns(filteredRuns));
       setSelectedRunId(null);
       setTitle(`${year} Year Heatmap`);
       setDescription('');
@@ -272,13 +269,22 @@ const Index = () => {
       return;
     }
 
+    // Case 2: Filter specific runs
+    const selectedRuns = filteredRuns.filter((r: any) => ids.has(r.run_id));
+
+    if (!selectedRuns.length) {
+      // If filtering yielded nothing, effectively a reset or no-op?
+      // For now, let's treat it as no-op or keep things as is.
+      return;
+    }
+
     const lastRun = selectedRuns.sort(sortDateFunc)[0];
 
     if (!lastRun) {
       return;
     }
 
-    // 更新选中的运动记录ID和URL
+    // Update state for selected run
     setSelectedRunId(lastRun.run_id);
     if (updateUrl) {
       updateUrlWithRunId(lastRun.run_id);
