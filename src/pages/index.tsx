@@ -264,6 +264,8 @@ const Index = () => {
     if (!selectedRuns.length) {
       // 清除选中状态和URL
       setSelectedRunId(null);
+      setTitle(`${year} Year Heatmap`);
+      setDescription('');
       if (updateUrl) {
         updateUrlWithRunId(null);
       }
