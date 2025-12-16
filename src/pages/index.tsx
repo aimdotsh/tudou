@@ -414,8 +414,9 @@ const Index = () => {
   // 确保标题与当前选中的年份同步，但不覆盖URL中指定的运动记录标题
   useEffect(() => {
     const runIdFromUrl = getRunIdFromUrl();
-    if (!runIdFromUrl && !title.includes(year) && !title.includes('Run:')) {
+    if (!runIdFromUrl && !title.includes(year)) {
       setTitle(`${year} Year Heatmap`);
+      setDescription('');
     }
   }, [year, title]);
 
