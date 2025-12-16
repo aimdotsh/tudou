@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import sys
 
 import arrow
@@ -81,7 +82,11 @@ class Generator:
             if getattr(activity, "description", None) is None:
                 try:
                     detail = self.client.get_activity(activity.id)
-                    activity.description = detail.description
+                    description = detail.description
+                    if description:
+                        description = description.replace("Powered By www.gearaut.com", "")
+                        description = re.sub(r"训练负荷：\d+[；;]?", "", description)
+                        activity.description = description.strip()
                 except Exception as e:
                     print("Failed to fetch description for {}: {}".format(activity.id, e))
                     pass
