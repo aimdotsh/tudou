@@ -9,9 +9,12 @@ const __dirname = path.dirname(__filename);
 
 // 默认偏移配置
 const DEFAULT_OFFSET_CONFIG = {
-  distance: 456.78,  // 直线距离偏移: 456.78 公里
   bearing: 114.45    // 偏移的方位角: 114.45° (东南方向)
 };
+
+// Encryption Key
+import CryptoJS from 'crypto-js';
+const PRIVACY_KEY = 'tudou_run_map_privacy_key';
 
 // 尝试读取 site-metadata 配置
 let distance = DEFAULT_OFFSET_CONFIG.distance;
@@ -110,7 +113,10 @@ activities = activities.map(activity => {
     ]);
 
     // 重新编码 polyline
-    newActivity.summary_polyline = polyline.encode(offsetPoints);
+    const encodedPolyline = polyline.encode(offsetPoints);
+
+    // Encrypt the polyline
+    newActivity.summary_polyline = CryptoJS.AES.encrypt(encodedPolyline, PRIVACY_KEY).toString();
     processedCount++;
 
     return newActivity;

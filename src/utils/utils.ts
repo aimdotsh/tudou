@@ -303,12 +303,30 @@ const applyOffset = (points: Coordinate[]): Coordinate[] => {
   });
 };
 
+const PRIVACY_KEY = 'tudou_run_map_privacy_key';
+import CryptoJS from 'crypto-js';
+
 const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordinate[] => {
   try {
     if (!run.summary_polyline) {
       return [];
     }
-    const c = mapboxPolyline.decode(run.summary_polyline);
+
+    // Attempt to decrypt the polyline
+    let decodedPolyline = run.summary_polyline;
+    try {
+      const bytes = CryptoJS.AES.decrypt(run.summary_polyline, PRIVACY_KEY);
+      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      if (decrypted) {
+        decodedPolyline = decrypted;
+      }
+    } catch (e) {
+      // If decryption fails, assume it's a plain polyline (backward compatibility)
+      // console.warn('Decryption failed, using original polyline', e);
+    }
+
+    // Continue with decoding
+    const c = mapboxPolyline.decode(decodedPolyline);
     // reverse lat long for mapbox
     c.forEach((arr) => {
       [arr[0], arr[1]] = !NEED_FIX_MAP
