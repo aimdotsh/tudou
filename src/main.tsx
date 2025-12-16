@@ -33,7 +33,7 @@ const routes = createBrowserRouter(
     },
     {
       path: 'recent',
-      element: withOptionalGAPageTracking(<Daily />),
+      element: withOptionalGAPageTracking(<DailyD />),
     },
     {
       path: 'daily-d',
