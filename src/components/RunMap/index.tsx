@@ -36,7 +36,6 @@ interface IRunMapProps {
   setViewState: (_viewState: IViewState) => void;
   changeYear: (_year: string) => void;
   geoData: FeatureCollection<RPGeometry>;
-  geoData: FeatureCollection<RPGeometry>;
   thisYear: string;
   description?: string;
 }
@@ -46,7 +45,6 @@ const RunMap = ({
   viewState,
   setViewState,
   changeYear,
-  geoData: propGeoData,
   geoData: propGeoData,
   thisYear,
   description,

@@ -177,7 +177,6 @@ const Index = () => {
 
     // 清除搜索状态
     setSearchTerm('');
-    setSearchTerm('');
     setFilteredRuns(newRuns);
     setDescription('');
   };
@@ -188,7 +187,6 @@ const Index = () => {
 
     // 清除选中的运动状态和URL参数
     setSelectedRunId(null);
-    setRunIndex(-1);
     setRunIndex(-1);
     updateUrlWithRunId(null);
     setDescription('');
@@ -286,7 +284,6 @@ const Index = () => {
 
     setGeoData(geoJsonForRuns(selectedRuns));
     setTitle(titleForShow(lastRun));
-    setTitle(titleForShow(lastRun));
     setDescription(lastRun.description || '');
     clearInterval(intervalId);
     scrollToMap();
@@ -318,7 +315,6 @@ const Index = () => {
           setActivity(yearRuns);
         }
 
-        // 直接设置运动记录的标题，避免被年份标题覆盖
         // 直接设置运动记录的标题，避免被年份标题覆盖
         setTitle(titleForShow(targetRun));
         setDescription(targetRun.description || '');
@@ -386,7 +382,6 @@ const Index = () => {
           const selectedRuns = filteredRuns.filter((r: any) => r.run_id === runIdFromUrl);
           if (selectedRuns.length > 0) {
             const targetRun = selectedRuns[0];
-            setGeoData(geoJsonForRuns(selectedRuns));
             setGeoData(geoJsonForRuns(selectedRuns));
             setTitle(titleForShow(targetRun));
             setDescription(targetRun.description || '');
