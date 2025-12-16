@@ -43,7 +43,9 @@ export interface Activity {
   average_heartrate?: number | null;
   elevation_gain: number | null;
   average_speed: number;
+  average_speed: number;
   streak: number;
+  description?: string;
 }
 const R2D = 180 / Math.PI;
 const D2R = Math.PI / 180;

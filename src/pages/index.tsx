@@ -77,6 +77,7 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRuns, setFilteredRuns] = useState(runs);
   const [title, setTitle] = useState(`${thisYear} Year Heatmap`);
+  const [description, setDescription] = useState<string>('');
   const [geoData, setGeoData] = useState(geoJsonForRuns(filteredRuns));
   // for auto zoom
   const bounds = getBoundsForGeoData(geoData);
@@ -99,6 +100,7 @@ const Index = () => {
       // 恢复原始标题
       if (!selectedRunId) {
         setTitle(`${year} Year Heatmap`);
+        setDescription('');
       }
     } else {
       // 根据name进行模糊搜索
@@ -175,7 +177,9 @@ const Index = () => {
 
     // 清除搜索状态
     setSearchTerm('');
+    setSearchTerm('');
     setFilteredRuns(newRuns);
+    setDescription('');
   };
 
   const changeYear = (y: string) => {
@@ -185,7 +189,9 @@ const Index = () => {
     // 清除选中的运动状态和URL参数
     setSelectedRunId(null);
     setRunIndex(-1);
+    setRunIndex(-1);
     updateUrlWithRunId(null);
+    setDescription('');
 
     // 当选择Total时，设置适合显示中国全貌的视图
     if (y === 'Total') {
@@ -280,6 +286,8 @@ const Index = () => {
 
     setGeoData(geoJsonForRuns(selectedRuns));
     setTitle(titleForShow(lastRun));
+    setTitle(titleForShow(lastRun));
+    setDescription(lastRun.description || '');
     clearInterval(intervalId);
     scrollToMap();
   };
@@ -311,7 +319,9 @@ const Index = () => {
         }
 
         // 直接设置运动记录的标题，避免被年份标题覆盖
+        // 直接设置运动记录的标题，避免被年份标题覆盖
         setTitle(titleForShow(targetRun));
+        setDescription(targetRun.description || '');
       }
     }
   }, [activities]);
@@ -377,7 +387,9 @@ const Index = () => {
           if (selectedRuns.length > 0) {
             const targetRun = selectedRuns[0];
             setGeoData(geoJsonForRuns(selectedRuns));
+            setGeoData(geoJsonForRuns(selectedRuns));
             setTitle(titleForShow(targetRun));
+            setDescription(targetRun.description || '');
             clearInterval(intervalId);
             scrollToMap();
           }
@@ -833,6 +845,7 @@ const Index = () => {
               setViewState={setViewState}
               changeYear={changeYear}
               thisYear={year}
+              description={description}
             />
           </div>
 

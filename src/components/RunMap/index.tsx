@@ -36,7 +36,9 @@ interface IRunMapProps {
   setViewState: (_viewState: IViewState) => void;
   changeYear: (_year: string) => void;
   geoData: FeatureCollection<RPGeometry>;
+  geoData: FeatureCollection<RPGeometry>;
   thisYear: string;
+  description?: string;
 }
 
 const RunMap = ({
@@ -45,7 +47,9 @@ const RunMap = ({
   setViewState,
   changeYear,
   geoData: propGeoData,
+  geoData: propGeoData,
   thisYear,
+  description,
 }: IRunMapProps) => {
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
@@ -424,6 +428,21 @@ const RunMap = ({
           </span>
         )}
       </span>
+      {description && (
+        <span className={styles.runDescription} style={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '10px',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          padding: '5px',
+          borderRadius: '5px',
+          maxWidth: '300px',
+          fontSize: '12px',
+          pointerEvents: 'none',
+        }}>
+          {description}
+        </span>
+      )}
       <FullscreenControl style={fullscreenButton} />
       {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
 

@@ -46,6 +46,7 @@ ACTIVITY_KEYS = [
     "average_speed",
     "elevation_gain",
     "source",
+    "description",
 ]
 
 
@@ -67,6 +68,7 @@ class Activity(Base):
     elevation_gain = Column(Float)
     streak = None
     source = Column(String)
+    description = Column(String)
 
     def to_dict(self):
         out = {}
@@ -141,6 +143,7 @@ def update_or_create_activity(session, run_activity):
                     run_activity.map and run_activity.map.summary_polyline or ""
                 ),
                 source=source,
+                description=run_activity.description,
             )
             session.add(activity)
             created = True
@@ -161,6 +164,7 @@ def update_or_create_activity(session, run_activity):
                 run_activity.map and run_activity.map.summary_polyline or ""
             )
             activity.source = source
+            activity.description = run_activity.description
     except Exception as e:
         print(f"something wrong with {run_activity.id}")
         print(str(e))
