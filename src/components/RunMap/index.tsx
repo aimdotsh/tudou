@@ -408,7 +408,7 @@ const RunMap = ({
           id="runs2"
           type="line"
           paint={{
-            'line-color': 'red', // DEBUG: Force visible color
+            'line-color': animating ? '#FF8C00' : ['get', 'color'],
             'line-width': animating ? 3 : (((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2),
             'line-dasharray': dash,
             'line-opacity': isSingleRun || ((viewState.zoom ?? 0) <= 3) || !lights ? 1 : LINE_OPACITY,
