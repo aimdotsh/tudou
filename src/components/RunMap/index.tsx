@@ -350,6 +350,7 @@ const RunMap = ({
       style={style}
       mapStyle={mapStyle}
       ref={mapRefCallback}
+      mapboxAccessToken={MAPBOX_TOKEN}
       scrollZoom={false}
       doubleClickZoom={false}
       touchZoom={false}
