@@ -342,6 +342,9 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
 
       if (decrypted) {
         decodedPolyline = decrypted;
+        if (run.run_id === 14533893580) { // Log for a known valid run (latest one)
+          console.log(`[Tracer ${run.run_id}] Decrypt success. Polyline len: ${decrypted.length}`);
+        }
       }
       else {
         console.warn('Decryption result empty for run:', run.run_id);
