@@ -366,13 +366,21 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
     }
 
     // reverse lat long for mapbox
-    c.forEach((arr) => {
-      [arr[0], arr[1]] = !NEED_FIX_MAP
-        ? [arr[1], arr[0]]
-        : gcoord.transform([arr[1], arr[0]], gcoord.GCJ02, gcoord.WGS84);
-    });
+    let result = c.map((point) => [point[1], point[0]] as Coordinate);
+
+    // Apply gcoord transformation if NEED_FIX_MAP is true
+    if (NEED_FIX_MAP) {
+      result = result.map((point) => gcoord.transform([point[1], point[0]], gcoord.GCJ02, gcoord.WGS84) as Coordinate);
+    }
+
+    // Validate if the result is just [0,0] (Null Island) which indicates bad decoding
+    if (result.length > 0 && Math.abs(result[0][0]) < 0.0001 && Math.abs(result[0][1]) < 0.0001) {
+      console.warn(`[Tracer ${run.run_id}] Decoded to 0,0 (Null Island) - treating as invalid.`);
+      return []; // Return empty to trigger city fallback
+    }
+
     // try to use location city coordinate instead , if runpath is incomplete
-    if (c.length === 2 && String(c[0]) === String(c[1])) {
+    if (result.length === 2 && String(result[0]) === String(result[1])) {
       const { coordinate } = locationForRun(run);
       if (coordinate?.[0] && coordinate?.[1]) {
         return applyOffsetToPath ? applyOffset([coordinate, coordinate]) : [coordinate, coordinate];
