@@ -312,7 +312,12 @@ const PRIVACY_KEY = 'tudou_run_map_privacy_key';
 const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordinate[] => {
   try {
     if (!run.summary_polyline) {
-      console.log(`Run ${run.run_id} has no polyline`);
+      console.log(`Run ${run.run_id} has no polyline, trying city location`);
+      const { coordinate } = locationForRun(run);
+      if (coordinate && coordinate[0] && coordinate[1]) {
+        console.log(`Fallback to city coordinate: ${coordinate}`);
+        return [coordinate, coordinate];
+      }
       return [];
     }
 
