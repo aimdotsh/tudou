@@ -72,15 +72,26 @@ const RunMap = ({
     fetch(styleUrl)
       .then(res => res.json())
       .then(styleJson => {
-        // Sanitize style: remove invalid 'text-overlap' property
+        // Sanitize style: remove invalid properties AND enforce label hiding
         if (styleJson.layers) {
-          styleJson.layers.forEach((layer: any) => {
-            if (layer.layout && layer.layout['text-overlap']) {
-              delete layer.layout['text-overlap'];
+          styleJson.layers = styleJson.layers.filter((layer: any) => {
+            // 1. Clean up known Mapbox/MapTiler compatibility issues
+            if (layer.layout) {
+              if (layer.layout['text-overlap']) delete layer.layout['text-overlap'];
+              if (layer.layout['icon-overlap']) delete layer.layout['icon-overlap'];
             }
-            if (layer.layout && layer.layout['icon-overlap']) {
-              delete layer.layout['icon-overlap'];
+
+            // 2. STRICTLY REMOVE labels if configured to do so
+            // This prevents them from EVER loading, regardless of network speed or JS lag
+            if (PRIVACY_MODE || !ROAD_LABEL_DISPLAY) {
+              const isLabelLayer = layer.type === 'symbol' && layer.layout && layer.layout['text-field'];
+              // Keep admin/country labels if needed, but for "Strict" mode usually we want to nuke detailed street labels
+              // If it's a sensitive label layer, filter it out (return false)
+              if (isLabelLayer) {
+                return false; // Remove this layer entirely from the style
+              }
             }
+            return true; // Keep other layers
           });
         }
         setMapStyle(styleJson);
