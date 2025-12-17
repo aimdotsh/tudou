@@ -325,7 +325,7 @@ const RunMap = ({
   };
   const fullscreenButton: React.CSSProperties = {
     position: 'absolute',
-    marginTop: '29.2px',
+    marginTop: '28.2px',
     right: '0px',
     opacity: 0.3,
   };
@@ -463,7 +463,6 @@ const RunMap = ({
         </span>
       )}
       <FullscreenControl style={fullscreenButton} />
-      {!PRIVACY_MODE && <LightsControl setLights={setLights} lights={lights} />}
 
     </Map>
   );
