@@ -61,7 +61,11 @@ const RunMap = ({
 
   // --- 保证 geoData 只在必要时合并（避免闪烁） ---
   const [geoData, setGeoData] = useState<FeatureCollection<RPGeometry>>(propGeoData);
-  const [mapStyle, setMapStyle] = useState<any>(null);
+  const [mapStyle, setMapStyle] = useState<any>({
+    version: 8,
+    sources: {},
+    layers: []
+  });
 
   useEffect(() => {
     const styleUrl = getMapStyle(MAP_TILE_VENDOR, MAP_TILE_STYLE_LIGHT, MAP_TILE_ACCESS_TOKEN);
