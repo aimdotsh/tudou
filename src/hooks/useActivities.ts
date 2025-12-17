@@ -1,5 +1,5 @@
-import {locationForRun, typeForRun} from '@/utils/utils';
-import activities from '@/static/activities.json';
+import { locationForRun, typeForRun } from '@/utils/utils';
+import activities from '@/static/activities_export';
 
 const useActivities = () => {
   const cities: Record<string, number> = {};
