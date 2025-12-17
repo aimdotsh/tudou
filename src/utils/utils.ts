@@ -306,28 +306,41 @@ const applyOffset = (points: Coordinate[]): Coordinate[] => {
 
 const PRIVACY_KEY = 'tudou_run_map_privacy_key';
 
+// Move key to top scope just in case, though module scope was fine.
+// const PRIVACY_KEY is already defined above? No, I will ensure it is unique.
+
 const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordinate[] => {
   try {
     if (!run.summary_polyline) {
+      console.log(`Run ${run.run_id} has no polyline`);
       return [];
     }
 
-    // DEBUG: Check libraries
+    // Tracer for first run only to avoid spam
+    if (run.run_id && run.run_id.toString().endsWith('321')) { // Arbitrary filter for specific run or just log first one
+      console.log(`[Tracer ${run.run_id}] Input polyline len:`, run.summary_polyline.length);
+    }
+
+    // DEBUG: Check libraries (kept from previous step)
     if (!CryptoJS || !CryptoJS.AES) {
       console.error('CryptoJS or AES is missing:', { CryptoJS });
     }
-    if (!mapboxPolyline || !mapboxPolyline.decode) {
-      console.error('mapboxPolyline is missing:', { mapboxPolyline });
-    }
+    // ...
 
-    // Attempt to decrypt the polyline
+    // Attempt to decrypt
     let decodedPolyline = run.summary_polyline;
     try {
       const bytes = CryptoJS.AES.decrypt(run.summary_polyline, PRIVACY_KEY);
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+      if (run.run_id.toString().endsWith('321')) {
+        console.log(`[Tracer ${run.run_id}] Decrypted success:`, !!decrypted, 'Len:', decrypted.length);
+      }
+
       if (decrypted) {
         decodedPolyline = decrypted;
-      } else {
+      }
+      else {
         console.warn('Decryption result empty for run:', run.run_id);
       }
     } catch (e) {
