@@ -374,7 +374,6 @@ const RunMap = ({
 
       {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
       <Source id="data" type="geojson" data={animatedGeo || geoData}>
-        {console.log('RunMap viewState:', viewState)}
         <Layer
           id="province"
           type="fill"
