@@ -372,7 +372,7 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
         return applyOffsetToPath ? applyOffset([coordinate, coordinate]) : [coordinate, coordinate];
       }
     }
-    return applyOffsetToPath ? applyOffset(c) : c;
+    return applyOffsetToPath ? applyOffset(result) : result;
   } catch (err) {
     console.error('pathForRun failed:', err);
     return [];
