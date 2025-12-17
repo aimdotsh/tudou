@@ -342,19 +342,28 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
 
       if (decrypted) {
         decodedPolyline = decrypted;
-        if (run.run_id === 14533893580) { // Log for a known valid run (latest one)
-          console.log(`[Tracer ${run.run_id}] Decrypt success. Polyline len: ${decrypted.length}`);
+        if (run.run_id === 14533893580) {
+          console.log(`[Tracer ${run.run_id}] Decrypt success. Len: ${decrypted.length}. Content: ${decrypted.substring(0, 20)}...`);
         }
-      }
-      else {
-        console.warn('Decryption result empty for run:', run.run_id);
+      } else {
+        console.warn(`[Tracer] Decrypt yielded empty string for ${run.run_id}`);
       }
     } catch (e) {
-      console.error('Decryption threw error:', e);
+      console.error(`[Tracer] Decrypt error for ${run.run_id}:`, e);
     }
 
     // Continue with decoding
-    const c = mapboxPolyline.decode(decodedPolyline);
+    let c: Coordinate[] = [];
+    try {
+      c = mapboxPolyline.decode(decodedPolyline);
+      if (run.run_id === 14533893580) {
+        console.log(`[Tracer ${run.run_id}] Decode success. Points: ${c.length}. Start: ${c[0]}`);
+      }
+    } catch (err) {
+      console.error(`[Tracer ${run.run_id}] Polyline DECODE failed:`, err);
+      // Fallback to empty array to prevent map crash
+      return [];
+    }
 
     // reverse lat long for mapbox
     c.forEach((arr) => {
