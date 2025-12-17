@@ -336,31 +336,18 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
       const bytes = CryptoJS.AES.decrypt(run.summary_polyline, PRIVACY_KEY);
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-      if (run.run_id.toString().endsWith('321')) {
-        console.log(`[Tracer ${run.run_id}] Decrypted success:`, !!decrypted, 'Len:', decrypted.length);
-      }
-
       if (decrypted) {
         decodedPolyline = decrypted;
-        if (run.run_id === 14533893580) {
-          console.log(`[Tracer ${run.run_id}] Decrypt success. Len: ${decrypted.length}. Content: ${decrypted.substring(0, 20)}...`);
-        }
-      } else {
-        console.warn(`[Tracer] Decrypt yielded empty string for ${run.run_id}`);
       }
     } catch (e) {
-      console.error(`[Tracer] Decrypt error for ${run.run_id}:`, e);
+      // Decryption failed, use original polyline
     }
 
     // Continue with decoding
     let c: Coordinate[] = [];
     try {
       c = mapboxPolyline.decode(decodedPolyline);
-      if (run.run_id === 14533893580) {
-        console.log(`[Tracer ${run.run_id}] Decode success. Points: ${c.length}. Start: ${c[0]}`);
-      }
     } catch (err) {
-      console.error(`[Tracer ${run.run_id}] Polyline DECODE failed:`, err);
       // Fallback to empty array to prevent map crash
       return [];
     }
@@ -375,7 +362,6 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
 
     // Validate if the result is just [0,0] (Null Island) which indicates bad decoding
     if (result.length > 0 && Math.abs(result[0][0]) < 0.0001 && Math.abs(result[0][1]) < 0.0001) {
-      console.warn(`[Tracer ${run.run_id}] Decoded to 0,0 (Null Island) - treating as invalid.`);
       return []; // Return empty to trigger city fallback
     }
 

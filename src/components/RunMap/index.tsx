@@ -374,6 +374,7 @@ const RunMap = ({
 
       {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
       <Source id="data" type="geojson" data={animatedGeo || geoData}>
+        {console.log('RunMap viewState:', viewState)}
         <Layer
           id="province"
           type="fill"
@@ -408,11 +409,11 @@ const RunMap = ({
           id="runs2"
           type="line"
           paint={{
-            'line-color': animating ? '#FF8C00' : ['get', 'color'],
-            'line-width': animating ? 3 : (((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2),
+            'line-color': 'purple', // Force visible color
+            'line-width': 5,        // Force visible width
             'line-dasharray': dash,
-            'line-opacity': isSingleRun || ((viewState.zoom ?? 0) <= 3) || !lights ? 1 : LINE_OPACITY,
-            'line-blur': animating ? 0.5 : 1,
+            'line-opacity': 1,      // Force opaque
+            'line-blur': 0,
           }}
           layout={{
             'line-join': 'round',
