@@ -312,6 +312,14 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
       return [];
     }
 
+    // DEBUG: Check libraries
+    if (!CryptoJS || !CryptoJS.AES) {
+      console.error('CryptoJS or AES is missing:', { CryptoJS });
+    }
+    if (!mapboxPolyline || !mapboxPolyline.decode) {
+      console.error('mapboxPolyline is missing:', { mapboxPolyline });
+    }
+
     // Attempt to decrypt the polyline
     let decodedPolyline = run.summary_polyline;
     try {
@@ -319,14 +327,16 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
       const decrypted = bytes.toString(CryptoJS.enc.Utf8);
       if (decrypted) {
         decodedPolyline = decrypted;
+      } else {
+        console.warn('Decryption result empty for run:', run.run_id);
       }
     } catch (e) {
-      // If decryption fails, assume it's a plain polyline (backward compatibility)
-      // console.warn('Decryption failed, using original polyline', e);
+      console.error('Decryption threw error:', e);
     }
 
     // Continue with decoding
     const c = mapboxPolyline.decode(decodedPolyline);
+
     // reverse lat long for mapbox
     c.forEach((arr) => {
       [arr[0], arr[1]] = !NEED_FIX_MAP
