@@ -1,4 +1,5 @@
 import * as mapboxPolyline from '@mapbox/polyline';
+import CryptoJS from 'crypto-js';
 import gcoord from 'gcoord';
 import { WebMercatorViewport } from 'viewport-mercator-project';
 import { chinaGeojson, RPGeometry } from '@/static/run_countries';
@@ -304,7 +305,6 @@ const applyOffset = (points: Coordinate[]): Coordinate[] => {
 };
 
 const PRIVACY_KEY = 'tudou_run_map_privacy_key';
-import CryptoJS from 'crypto-js';
 
 const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordinate[] => {
   try {
