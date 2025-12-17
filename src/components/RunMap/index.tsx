@@ -83,6 +83,12 @@ const RunMap = ({
       })
       .catch(err => {
         console.error("Failed to load map style:", err);
+        // Fallback to empty style to ensure map renders tracks
+        setMapStyle({
+          version: 8,
+          sources: {},
+          layers: []
+        });
       });
   }, []);
 
