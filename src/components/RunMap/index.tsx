@@ -178,8 +178,8 @@ const RunMap = ({
 
         // Special logic for labels based on year
         if (isLabelLayer) {
-          // 1. If Privacy Mode is ON, always hide labels (safety first)
-          if (PRIVACY_MODE) {
+          // 1. If Privacy Mode is ON OR Road Label Display is OFF, always hide labels
+          if (PRIVACY_MODE || !ROAD_LABEL_DISPLAY) {
             map.setLayoutProperty(it.id, 'visibility', 'none');
             return;
           }
@@ -409,11 +409,11 @@ const RunMap = ({
           id="runs2"
           type="line"
           paint={{
-            'line-color': 'purple', // Force visible color
-            'line-width': 5,        // Force visible width
+            'line-color': animating ? '#FF8C00' : ['get', 'color'],
+            'line-width': animating ? 3 : (((viewState.zoom ?? 0) <= 3) && lights ? 1 : 2),
             'line-dasharray': dash,
-            'line-opacity': 1,      // Force opaque
-            'line-blur': 0,
+            'line-opacity': isSingleRun || ((viewState.zoom ?? 0) <= 3) || !lights ? 1 : LINE_OPACITY,
+            'line-blur': animating ? 0.5 : 1,
           }}
           layout={{
             'line-join': 'round',
