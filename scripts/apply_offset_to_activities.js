@@ -95,6 +95,7 @@ activities = activities.map(activity => {
     newActivity.description = newActivity.description
       .replace(/Powered By www\.gearaut\.com/gi, "")
       .replace(/训练负荷：\d+[；;]?/g, "")
+      .replace(/--\s*来自\s*COROS/gi, "")
       .trim();
   }
 
