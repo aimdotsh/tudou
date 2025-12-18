@@ -450,12 +450,12 @@ const RunMap = ({
       {description && (
         <span className={styles.runDescription} style={{
           position: 'absolute',
-          top: '2px',
-          right: '2px',
+          top: '6px',
+          right: '5px',
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
           padding: '4px 8px',
           borderRadius: '4px',
-          maxWidth: '80%',
+          maxWidth: '60%',
           fontSize: '12px',
           lineHeight: '1.4',
           color: '#333',
