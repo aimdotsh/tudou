@@ -448,17 +448,7 @@ const RunMap = ({
         )}
       </span>
       {description && (
-        <span className={styles.runDescription} style={{
-          position: 'absolute',
-          top: '8px',
-          right: '5px',
-          backgroundColor: 'rgba(255, 255, 255, 0.7)',
-          padding: '5px',
-          borderRadius: '5px',
-          maxWidth: '300px',
-          fontSize: '12px',
-          pointerEvents: 'none',
-        }}>
+        <span className={styles.runDescription}>
           {description}
         </span>
       )}

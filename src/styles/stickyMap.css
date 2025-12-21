@@ -1,7 +1,8 @@
 /* 固定地图样式 */
 .sticky-map-container {
   position: sticky;
-  top: 3em; /* 紧贴导航栏底部，不留间距 */
+  top: var(--nav-height, 3.5rem);
+  /* 使用变量同步导航栏高度 */
   z-index: 10;
   background-color: #FAF9F5;
   margin-bottom: 1rem;
@@ -12,7 +13,8 @@
 
 /* 非悬浮地图样式 - 用于Total年份 */
 .map-container {
-  position: relative; /* 不悬浮 */
+  position: relative;
+  /* 不悬浮 */
   background-color: #FAF9F5;
   margin-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -23,21 +25,24 @@
 /* 确保内容区域有足够的空间 */
 .content-container {
   padding-top: 0;
-  min-height: 300px; /* 确保有足够的滚动空间 */
-  position: relative; /* 为固定表头提供定位上下文 */
-  margin-top: 0.5rem; /* 与地图之间的间距 */
+  min-height: 300px;
+  /* 确保有足够的滚动空间 */
+  position: relative;
+  /* 为固定表头提供定位上下文 */
+  margin-top: 0.5rem;
+  /* 与地图之间的间距 */
 }
 
 /* 移动设备适配 */
 @media (max-width: 768px) {
   .sticky-map-container {
-    top: 2.5em; /* 紧贴导航栏底部，不留间距 */
+    top: var(--nav-height, 2.8rem);
   }
 }
 
 /* 小屏幕设备适配 */
 @media (max-width: 480px) {
   .sticky-map-container {
-    top: 1.8em; /* 紧贴导航栏底部，不留间距 */
+    top: var(--nav-height, 2rem);
   }
 }
