@@ -69,7 +69,7 @@ const data: ISiteMetadataResult = {
       url: `${getBasePath()}/luck`,
     },
     {
-      name: 'GPX 工具',
+      name: 'GPX tool',
       url: `${getBasePath()}/gpx-to-polyline`,
     },
     {
