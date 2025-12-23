@@ -17,6 +17,7 @@ import SummaryPage from "@/pages/summary";
 import Daily from './pages/daily';
 import DailyD from './pages/daily-d';
 import Luck from './pages/luck';
+import GPXToPolyline from './pages/gpx-to-polyline';
 if (USE_GOOGLE_ANALYTICS) {
   ReactGA.initialize(GOOGLE_ANALYTICS_TRACKING_ID);
 }
@@ -46,6 +47,10 @@ const routes = createBrowserRouter(
     {
       path: 'luck',
       element: withOptionalGAPageTracking(<Luck />),
+    },
+    {
+      path: 'gpx-to-polyline',
+      element: withOptionalGAPageTracking(<GPXToPolyline />),
     },
     {
       path: '*',

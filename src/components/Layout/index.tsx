@@ -16,7 +16,7 @@ const Layout = ({ children, onSearch, showSearch = false }: LayoutProps) => {
   return (
     <>
       <Helmet bodyAttributes={{ class: styles.body }}>
-        <html lang="en" />
+        <html lang="zh-CN" />
         <title>{siteTitle}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
@@ -37,9 +37,9 @@ const Layout = ({ children, onSearch, showSearch = false }: LayoutProps) => {
         color: '#666'
       }}>
         ©2016 - 2025 Liups.com thanks{' '}
-        <a 
-          href="https://github.com/yihong0618/running_page/blob/master/README-CN.md" 
-          target="_blank" 
+        <a
+          href="https://github.com/yihong0618/running_page/blob/master/README-CN.md"
+          target="_blank"
           rel="noopener noreferrer"
           style={{ color: '#20B2AA', textDecoration: 'none' }}
         >
