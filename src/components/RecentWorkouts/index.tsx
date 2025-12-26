@@ -241,7 +241,7 @@ const RecentWorkouts: React.FC = () => {
                                 >
                                     <div className={styles.flipCardInner}>
                                         <div className={styles.flipCardFront}>
-                                            <Component className="h-auto w-full" />
+                                            <Component className="w-full h-full" />
                                         </div>
                                         <div className={styles.flipCardBack}>
                                             <PreGeneratedGif

@@ -1000,8 +1000,8 @@
   cursor: pointer;
   /* 确保在网格中保持位置 */
   position: relative;
-  overflow: hidden;
-  /* 强制剪切动画溢出，防止浏览器因计算翻转边界而改变视口大小 */
+  /* 移除 overflow: hidden 以解决 Chrome 下 3D 转换错位和裁切问题 */
+  /* 设置 touch-action 保持原有防止缩放逻辑 */
   touch-action: manipulation;
 }
 
@@ -1069,7 +1069,7 @@
 .flipCardFront svg,
 .flipCardBack img {
   width: 100%;
-  height: auto;
+  height: 100%;
   min-width: 0;
   min-height: 0;
   object-fit: contain;
