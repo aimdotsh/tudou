@@ -12,48 +12,48 @@ import { loadSvgComponent } from '@/utils/svgUtils';
 
 // Define interfaces for our data structures
 interface Activity {
-  start_date_local: string;
-  distance: number;
-  moving_time: string;
-  type: string;
-  location_country?: string;
+    start_date_local: string;
+    distance: number;
+    moving_time: string;
+    type: string;
+    location_country?: string;
 }
 
 interface ActivitySummary {
-  totalDistance: number;
-  totalTime: number;
-  count: number;
-  dailyDistances: number[];
-  maxDistance: number;
-  maxSpeed: number;
-  location: string;
+    totalDistance: number;
+    totalTime: number;
+    count: number;
+    dailyDistances: number[];
+    maxDistance: number;
+    maxSpeed: number;
+    location: string;
 }
 
 interface DisplaySummary {
-  totalDistance: number;
-  averageSpeed: number;
-  totalTime: number;
-  count: number;
-  maxDistance: number;
-  maxSpeed: number;
-  location: string;
+    totalDistance: number;
+    averageSpeed: number;
+    totalTime: number;
+    count: number;
+    maxDistance: number;
+    maxSpeed: number;
+    location: string;
 }
 
 interface ChartData {
-  day: number;
-  distance: string;
+    day: number;
+    distance: string;
 }
 
 interface ActivityCardProps {
-  period: string;
-  summary: DisplaySummary;
-  dailyDistances: number[];
-  interval: string;
-  activityType: string;
+    period: string;
+    summary: DisplaySummary;
+    dailyDistances: number[];
+    interval: string;
+    activityType: string;
 }
 
 interface ActivityGroups {
-  [key: string]: ActivitySummary;
+    [key: string]: ActivitySummary;
 }
 
 type IntervalType = 'year' | 'month' | 'week' | 'day' | 'life';
@@ -111,12 +111,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
 
     const isFastType = (activityType: string): boolean => {
         switch (activityType) {
-          case 'virtualride':
-          case 'ride':
-          case 'roadtrip':
-            return true;
-          default:
-            return false;
+            case 'virtualride':
+            case 'ride':
+            case 'roadtrip':
+                return true;
+            default:
+                return false;
         }
     };
 
@@ -154,6 +154,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ period, summary, dailyDista
                                     tick={{ fill: '#5a6c7d', fontSize: 14 }} // 调整 Y 轴数字大小
                                 />
                                 <Tooltip
+                                    position={{ y: 0 }}
                                     formatter={(value) => `${value} km`}
                                     contentStyle={{ backgroundColor: '#ffffff', border: '2px solid #20B2AA', color: '#2c3e50', borderRadius: '10px' }}
                                     labelStyle={{ color: '#20B2AA' }}
@@ -174,21 +175,21 @@ interface ActivityListProps {
     hideFilters?: boolean;
 }
 
-const ActivityList: React.FC<ActivityListProps> = ({ 
-    activityType: propActivityType, 
-    interval: propInterval, 
-    hideFilters = false 
+const ActivityList: React.FC<ActivityListProps> = ({
+    activityType: propActivityType,
+    interval: propInterval,
+    hideFilters = false
 }) => {
     const [interval, setInterval] = useState<IntervalType>(propInterval || 'month');
     const [activityType, setActivityType] = useState<string>(propActivityType || 'all');
-    
+
     // Update state when props change
     React.useEffect(() => {
         if (propActivityType !== undefined) {
             setActivityType(propActivityType);
         }
     }, [propActivityType]);
-    
+
     React.useEffect(() => {
         if (propInterval !== undefined) {
             setInterval(propInterval);
@@ -231,21 +232,21 @@ const ActivityList: React.FC<ActivityListProps> = ({
                     currentDate.setDate(currentDate.getDate() + 4 - (currentDate.getDay() || 7)); // Set to nearest Thursday (ISO weeks defined by Thursday)
                     const yearStart = new Date(currentDate.getFullYear(), 0, 1);
                     const weekNum = Math.ceil((((currentDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-                    
+
                     // 计算周的开始日期（周一）
                     const weekStart = new Date(date.valueOf());
                     const dayOfWeek = weekStart.getDay();
                     const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 周日为0，需要调整
                     weekStart.setDate(weekStart.getDate() - daysToMonday);
-                    
+
                     // 计算周的结束日期（周日）
                     const weekEnd = new Date(weekStart.valueOf());
                     weekEnd.setDate(weekEnd.getDate() + 6);
-                    
+
                     // 格式化日期为 MM/DD - MM/DD
                     const formatDate = (d: Date) => `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
                     const dateRange = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
-                    
+
                     // 组合格式：周数 + 日期范围
                     key = `${currentDate.getFullYear()}-W${weekNum.toString().padStart(2, '0')}|${dateRange}`;
                     index = (date.getDay() + 6) % 7; // Return current day (0-6, Monday-Sunday)
@@ -296,10 +297,10 @@ const ActivityList: React.FC<ActivityListProps> = ({
             {!hideFilters && (
                 <div className={styles.filterContainer}>
                     <select onChange={(e) => setActivityType(e.target.value)} value={activityType}>
-                        { showTypes.map((type) => (
-                          <option key={type} value={type}>
-                            {type === 'all' ? '所有' : (TYPES_MAPPING as any)[type]}
-                          </option>
+                        {showTypes.map((type) => (
+                            <option key={type} value={type}>
+                                {type === 'all' ? '所有' : (TYPES_MAPPING as any)[type]}
+                            </option>
                         ))}
                     </select>
                     <select
@@ -320,8 +321,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
                     <div className={styles.chart} style={{ height: '500px', width: '60%' }}>
                         <ResponsiveContainer>
                             <BarChart
-                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({ 
-                                    period, 
+                                data={Object.entries(activitiesByInterval).map(([period, summary]) => ({
+                                    period,
                                     totalDistance: parseFloat(summary.totalDistance.toFixed(2))
                                 }))}
                                 margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
@@ -341,6 +342,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
                                     domain={[0, (dataMax: number) => Math.ceil(dataMax / 100) * 100]}
                                 />
                                 <Tooltip
+                                    position={{ y: 0 }}
                                     formatter={(value) => `${value} km`}
                                     contentStyle={{ backgroundColor: '#ffffff', border: '2px solid #20B2AA', color: '#2c3e50', borderRadius: '10px' }}
                                     labelStyle={{ color: '#20B2AA' }}
