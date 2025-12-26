@@ -579,7 +579,7 @@ const Total: React.FC = () => {
                       pointerEvents: isTablet ? 'auto' : 'none'
                     }}
                     wrapperStyle={{ zIndex: 1000, pointerEvents: isTablet ? 'auto' : 'none' }}
-                    allowEscapeViewBox={{ x: true, y: true }}
+                    position={{ y: 0 }}
                     isAnimationActive={!isTablet}
                   />
 
@@ -668,7 +668,7 @@ const Total: React.FC = () => {
                       marginBottom: '4px'
                     }}
                     formatter={(value: number) => [`${value.toFixed(0)} km`, 'Distance']}
-                    allowEscapeViewBox={{ x: true, y: true }}
+                    position={{ y: 0 }}
                     isAnimationActive={!isTablet}
                   />
 
@@ -746,7 +746,7 @@ const Total: React.FC = () => {
                       const year = props.payload.year;
                       return [`${value.toFixed(1)} km`, `${year} ${month}`];
                     }}
-                    allowEscapeViewBox={{ x: true, y: true }}
+                    position={{ y: 0 }}
                     isAnimationActive={!isTablet}
                   />
 
