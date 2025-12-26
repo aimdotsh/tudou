@@ -388,9 +388,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  /* 关键修复 - 确保图表容器不干扰坐标计算 */
+  /* 关键修复 - 防止 3D 翻转撑开布局导致页面放大/伸展 */
   position: relative;
-  overflow: visible !important;
+  overflow: hidden;
 }
 
 .chartContainer:hover {
@@ -484,6 +484,7 @@
   width: 100% !important;
   height: 300px !important;
   position: relative !important;
+  /* 允许 Recharts 的 Tooltip 溢出组件本身，但不溢出父容器 .chartContainer */
   overflow: visible !important;
 }
 
@@ -503,6 +504,8 @@
     overflow: hidden;
     max-width: 100%;
     position: relative;
+    /* 强力锁定宽度 */
+    overflow: hidden !important;
   }
 
   /* 确保图表容器不会超出屏幕 */
@@ -1182,6 +1185,8 @@
     contain: layout style;
     isolation: isolate;
     touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .flipCardInner {
