@@ -995,6 +995,7 @@
   /* 确保在网格中保持位置 */
   position: relative;
   overflow: visible;
+  touch-action: manipulation;
 }
 
 /* 翻转卡片内部 */
@@ -1016,6 +1017,7 @@
   background: linear-gradient(135deg, rgba(137, 207, 240, 0.1), rgba(32, 178, 170, 0.05));
   /* 防止翻转时影响布局 */
   transform-origin: center center;
+  touch-action: manipulation;
 }
 
 /* 翻转状态 */
@@ -1179,6 +1181,7 @@
     /* 防止翻转时影响其他元素 */
     contain: layout style;
     isolation: isolate;
+    touch-action: manipulation;
   }
 
   .flipCardInner {
@@ -1188,6 +1191,7 @@
     position: relative;
     /* 防止翻转时的布局偏移 */
     will-change: transform;
+    touch-action: manipulation;
   }
 
   .flipCardFront,
