@@ -285,7 +285,7 @@ const intComma = (x = '') => {
 // 应用偏移到坐标点
 // Apply offset to points in Mercator space to preserve shape
 const applyOffset = (points: Coordinate[]): Coordinate[] => {
-  if (points.length === 0) return [];
+  if (points.length === 0 || !siteMetadata.useMapOffset) return points;
 
   // Use a fixed reference latitude for calculating the shift to ensure
   // that all trajectories are shifted by the exact same vector.
