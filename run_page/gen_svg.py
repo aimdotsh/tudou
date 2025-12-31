@@ -276,6 +276,8 @@ def main():
     p.drawer_type = "plain" if is_circular else "title"
     if is_mol:
         p.drawer_type = "monthoflife"
+    if is_ayeartotal:
+        p.drawer_type = "ayeartotal"
     if args.type == "github":
         p.height = 55 + p.years.real_year * 43
     p.github_style = args.github_style

@@ -143,6 +143,8 @@ class Poster:
             self.__draw_footer(d)
             self.__draw_tracks(d, g, XY(width - 20, height - 30 - 30), XY(10, 30))
         elif self.drawer_type == "ayeartotal":
+            self.__draw_header(d)
+            self.__draw_footer(d)
             self.__draw_tracks(d, g, XY(width, height), XY(0, 0))
         else:
             self.__draw_tracks(d, g, XY(width - 20, height), XY(10, 0))

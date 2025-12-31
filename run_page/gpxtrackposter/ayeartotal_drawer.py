@@ -26,13 +26,15 @@ class AyeartotalDrawer(TracksDrawer):
         days_lifetime = len(set(t.start_time_local.date() for t in self.poster.tracks))
 
         # 2. Draw Header
-        header_offset = offset + XY(10, 15)
+        # Content starts at offset.x + 10 to match title, and Y starts after title (20 + 10)
+        header_offset = offset + XY(10, 30)
         self._draw_header(dr, g, header_offset, year, days_this_year, days_lifetime)
 
         # 3. Draw Months Grid
-        # Reduced spacing from header to grid and margins
-        grid_offset = offset + XY(10, 85)
-        grid_size = size - XY(20, 95)
+        # Grid starts at Y=100 and ends before the footer (footer starts at height-20)
+        grid_offset = offset + XY(10, 100)
+        # Compacted vertical size to leave enough space for the footer
+        grid_size = size - XY(20, 130)
         self._draw_months_grid(dr, g, grid_size, grid_offset, year)
 
     def _draw_header(self, dr, g, offset, year, days_year, days_lifetime):
@@ -49,9 +51,9 @@ class AyeartotalDrawer(TracksDrawer):
         g.add(dr.text("天", insert=(offset.x + 80, offset.y + 60), fill=text_color, 
                       style="font-size:12px; font-family:Arial;"))
 
-        # Right side: Labels
-        # Moved right_x slightly inward (+185 instead of +190) to ensure it stays within canvas
-        right_x = offset.x + 185
+        # Right side: Labels (Right-aligned with a safe margin)
+        # Positioned at 190 (with text-anchor="end") to leave 10px margin
+        right_x = offset.x + 190
         g.add(dr.text("跑者年历", insert=(right_x, offset.y + 10), fill=text_color, text_anchor="end",
                       style="font-size:8px; font-family:Arial; font-weight:bold;"))
         g.add(dr.text(f"{year} DIGRUN", insert=(right_x, offset.y + 18), fill=text_color, text_anchor="end",
@@ -59,7 +61,7 @@ class AyeartotalDrawer(TracksDrawer):
         g.add(dr.text("Annual Running Report", insert=(right_x, offset.y + 24), fill=text_color, text_anchor="end",
                       style="font-size:5px; font-family:Arial;"))
 
-        # Separating these two with more vertical space (45 and 58 instead of 45 and 55)
+        # Separating these two with more vertical space
         g.add(dr.text(f"今年跑步 {days_year} 天", insert=(right_x, offset.y + 45), fill=text_color, text_anchor="end",
                       style="font-size:7px; font-family:Arial;"))
         g.add(dr.text(f"生涯累计跑步 {days_lifetime} 天", insert=(right_x, offset.y + 58), fill=text_color, text_anchor="end",
