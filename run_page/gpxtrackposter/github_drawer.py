@@ -17,7 +17,7 @@ class GithubDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY):
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw")
         year_size = 200 * 4.0 / 80.0
