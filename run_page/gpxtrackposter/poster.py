@@ -55,6 +55,7 @@ class Poster:
         self.special_distance = {"special_distance": 10, "special_distance2": 20}
         self.width = 200
         self.height = 300
+        self.year = None
         self.years = YearRange()
         self.drawer_type = "title"
         self.trans = None
@@ -185,13 +186,21 @@ class Poster:
         special_distance1 = self.special_distance["special_distance"]
         special_distance2 = self.special_distance["special_distance2"]
 
+        tracks = self.tracks
+        if self.drawer_type == "ayeartotal" and self.year:
+            try:
+                target_year = int(self.year)
+                tracks = [t for t in self.tracks if t.start_time_local.year == target_year]
+            except ValueError:
+                pass
+
         (
             total_length,
             average_length,
             min_length,
             max_length,
             weeks,
-        ) = self.__compute_track_statistics()
+        ) = self.__compute_track_statistics(tracks)
 
         d.add(
             d.text(
@@ -213,66 +222,83 @@ class Poster:
             d.add(
                 d.text(
                     self.trans("SPECIAL TRACKS"),
-                    insert=(65, self.height - 20),
+                    insert=(50, self.height - 20),
                     fill=text_color,
                     style=header_style,
                 )
             )
 
             d.add(
-                d.rect((65, self.height - 17), (2.6, 2.6), fill=self.colors["special"])
+                d.rect((50, self.height - 17), (2.6, 2.6), fill=self.colors["special"])
             )
 
             d.add(
                 d.text(
                     f"Over {special_distance1:.1f} km",
-                    insert=(70, self.height - 14.5),
+                    insert=(55, self.height - 14.5),
                     fill=text_color,
                     style=small_value_style,
                 )
             )
 
             d.add(
-                d.rect((65, self.height - 13), (2.6, 2.6), fill=self.colors["special2"])
+                d.rect((50, self.height - 13), (2.6, 2.6), fill=self.colors["special2"])
             )
 
             d.add(
                 d.text(
                     f"Over {special_distance2:.1f} km",
-                    insert=(70, self.height - 10.5),
+                    insert=(55, self.height - 10.5),
                     fill=text_color,
                     style=small_value_style,
                 )
             )
 
+        # For ayeartotal, we also want lifetime stats for comparison
+        if self.drawer_type == "ayeartotal":
+            (
+                lt_total_length,
+                lt_average_length,
+                lt_min_length,
+                lt_max_length,
+                lt_weeks,
+            ) = self.__compute_track_statistics(self.tracks)
+
         d.add(
             d.text(
                 self.trans("STATISTICS"),
-                insert=(120, self.height - 20),
+                insert=(90, self.height - 20),
                 fill=text_color,
                 style=header_style,
             )
         )
+        
+        stat_num_text = f"{len(tracks)}"
+        stat_total_text = self.format_distance(total_length)
+        if self.drawer_type == "ayeartotal":
+            stat_num_text = f"{len(tracks)} / {len(self.tracks)}"
+            stat_total_text = f"{self.format_distance(total_length)} / {self.format_distance(lt_total_length)}"
+
         d.add(
             d.text(
-                self.trans("Number") + f": {len(self.tracks)}",
-                insert=(120, self.height - 15),
+                self.trans("Number") + f": {stat_num_text}",
+                insert=(90, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
         )
         d.add(
             d.text(
-                self.trans("Weekly") + ": " + format_float(len(self.tracks) / weeks),
-                insert=(120, self.height - 10),
+                self.trans("Weekly") + ": " + format_float(len(tracks) / weeks if weeks else 0),
+                insert=(90, self.height - 10),
                 fill=text_color,
                 style=small_value_style,
             )
         )
         d.add(
             d.text(
-                self.trans("Total") + ": " + self.format_distance(total_length),
-                insert=(141, self.height - 15),
+                self.trans("Total") + ": " + stat_total_text,
+                insert=(125, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -280,7 +306,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Avg") + ": " + self.format_distance(average_length),
-                insert=(141, self.height - 10),
+                insert=(125, self.height - 10),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -288,7 +314,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Min") + ": " + self.format_distance(min_length),
-                insert=(167, self.height - 15),
+                insert=(175, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -296,18 +322,20 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Max") + ": " + self.format_distance(max_length),
-                insert=(167, self.height - 10),
+                insert=(175, self.height - 10),
                 fill=text_color,
                 style=small_value_style,
             )
         )
 
-    def __compute_track_statistics(self):
+    def __compute_track_statistics(self, tracks=None):
+        if tracks is None:
+            tracks = self.tracks
         length_range = ValueRange()
         total_length = 0
         total_length_year_dict = defaultdict(int)
         weeks = {}
-        for t in self.tracks:
+        for t in tracks:
             total_length += t.length
             total_length_year_dict[t.start_time_local.year] += t.length
             length_range.extend(t.length)
@@ -316,7 +344,7 @@ class Poster:
         self.total_length_year_dict = total_length_year_dict
         return (
             total_length,
-            total_length / len(self.tracks),
+            total_length / len(tracks) if tracks else 0,
             length_range.lower(),
             length_range.upper(),
             len(weeks),

@@ -137,6 +137,20 @@ def main():
         help="Secondary color of special tracks (default: none).",
     )
     args_parser.add_argument(
+        "--width",
+        dest="width",
+        type=int,
+        default=200,
+        help="Poster width (default: 200).",
+    )
+    args_parser.add_argument(
+        "--height",
+        dest="height",
+        type=int,
+        default=300,
+        help="Poster height (default: 300).",
+    )
+    args_parser.add_argument(
         "--units",
         dest="units",
         metavar="UNITS",
@@ -271,6 +285,11 @@ def main():
         "text": args.text_color,
     }
     p.units = args.units
+    p.year = args.year
+    if args.width:
+        p.width = args.width
+    if args.height:
+        p.height = args.height
     p.set_tracks(tracks)
     # circular not add footer and header
     p.drawer_type = "plain" if is_circular else "title"

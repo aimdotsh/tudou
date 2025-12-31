@@ -23,12 +23,14 @@ class AyeartotalDrawer(TracksDrawer):
         year = self.year or self.poster.years.from_year
         tracks_this_year = [t for t in self.poster.tracks if t.start_time_local.year == year]
         days_this_year = len(set(t.start_time_local.date() for t in tracks_this_year))
+        count_this_year = len(tracks_this_year)
         days_lifetime = len(set(t.start_time_local.date() for t in self.poster.tracks))
+        count_lifetime = len(self.poster.tracks)
 
         # 2. Draw Header
         # Content starts at offset.x + 10 to match title, and Y starts after title (20 + 10)
         header_offset = offset + XY(10, 30)
-        self._draw_header(dr, g, header_offset, year, days_this_year, days_lifetime)
+        self._draw_header(dr, g, header_offset, size, year, days_this_year, count_this_year, days_lifetime, count_lifetime)
 
         # 3. Draw Months Grid
         # Grid starts at Y=100 and ends before the footer (footer starts at height-20)
@@ -37,7 +39,7 @@ class AyeartotalDrawer(TracksDrawer):
         grid_size = size - XY(20, 130)
         self._draw_months_grid(dr, g, grid_size, grid_offset, year)
 
-    def _draw_header(self, dr, g, offset, year, days_year, days_lifetime):
+    def _draw_header(self, dr, g, offset, size, year, days_year, count_year, days_lifetime, count_lifetime):
         text_color = self.poster.colors["text"]
         
         # Left side: RUNNER'S CALENDAR and Big Days
@@ -48,24 +50,43 @@ class AyeartotalDrawer(TracksDrawer):
         
         g.add(dr.text(str(days_year), insert=(offset.x, offset.y + 60), fill=text_color, 
                       style="font-size:36px; font-family:Arial; font-weight:bold;"))
-        g.add(dr.text("天", insert=(offset.x + 80, offset.y + 60), fill=text_color, 
+        # Reduced X offset from 80 to 65 to bring "天" closer to the number
+        g.add(dr.text("天", insert=(offset.x + 65, offset.y + 60), fill=text_color, 
                       style="font-size:12px; font-family:Arial;"))
 
         # Right side: Labels (Right-aligned with a safe margin)
-        # Positioned at 190 (with text-anchor="end") to leave 10px margin
-        right_x = offset.x + 190
+        # Positioned at width - 10 to match the left margin of the title
+        right_x = size.x - 10
         g.add(dr.text("跑者年历", insert=(right_x, offset.y + 10), fill=text_color, text_anchor="end",
                       style="font-size:8px; font-family:Arial; font-weight:bold;"))
-        g.add(dr.text(f"{year} DIGRUN", insert=(right_x, offset.y + 18), fill=text_color, text_anchor="end",
+        g.add(dr.text(f"{year} Year", insert=(right_x, offset.y + 18), fill=text_color, text_anchor="end",
                       style="font-size:5px; font-family:Arial;"))
         g.add(dr.text("Annual Running Report", insert=(right_x, offset.y + 24), fill=text_color, text_anchor="end",
                       style="font-size:5px; font-family:Arial;"))
 
+        # Highlight color for numbers (Blue-Green)
+        highlight_color = "#4DD2FF"
+
         # Separating these two with more vertical space
-        g.add(dr.text(f"今年跑步 {days_year} 天", insert=(right_x, offset.y + 45), fill=text_color, text_anchor="end",
-                      style="font-size:7px; font-family:Arial;"))
-        g.add(dr.text(f"生涯累计跑步 {days_lifetime} 天", insert=(right_x, offset.y + 58), fill=text_color, text_anchor="end",
-                      style="font-size:7px; font-family:Arial; opacity: 0.7;"))
+        # Row 1: 今年运动
+        text_this_year = dr.text("", insert=(right_x, offset.y + 45), fill=text_color, text_anchor="end",
+                                 style="font-size:7px; font-family:Arial;")
+        text_this_year.add(dr.tspan("今年运动 "))
+        text_this_year.add(dr.tspan(str(days_year), fill=highlight_color))
+        text_this_year.add(dr.tspan(" 天 "))
+        text_this_year.add(dr.tspan(str(count_year), fill=highlight_color))
+        text_this_year.add(dr.tspan(" 次"))
+        g.add(text_this_year)
+
+        # Row 2: 生涯累计运动
+        text_lifetime = dr.text("", insert=(right_x, offset.y + 58), fill=text_color, text_anchor="end",
+                                style="font-size:7px; font-family:Arial; opacity: 0.7;")
+        text_lifetime.add(dr.tspan("生涯累计运动 "))
+        text_lifetime.add(dr.tspan(str(days_lifetime), fill=highlight_color))
+        text_lifetime.add(dr.tspan(" 天 "))
+        text_lifetime.add(dr.tspan(str(count_lifetime), fill=highlight_color))
+        text_lifetime.add(dr.tspan(" 次"))
+        g.add(text_lifetime)
 
     def _draw_months_grid(self, dr, g, size, offset, year):
         month_width = size.x / 6

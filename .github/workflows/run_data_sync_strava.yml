@@ -219,6 +219,8 @@ jobs:
           python run_page/gen_svg.py --from-db --title "${{ env.TITLE_GRID }}" --type grid --athlete "${{ env.ATHLETE }}" --output assets/grid.svg --special-color yellow --special-color2 red --special-distance 10 --special-distance2 15 --use-localtime --min-distance "${{ env.MIN_GRID_DISTANCE }}"
           python run_page/gen_svg.py --from-db --type circular --use-localtime
           python run_page/gen_svg.py --from-db --year $(date +"%Y")  --language zh_CN --title "$(date +"%Y") Workouts" --type github --athlete "${{ env.ATHLETE }}" --special-distance 10 --special-distance2 15 --special-color yellow --special-color2 red --output assets/github_$(date +"%Y").svg --use-localtime --min-distance 0.5
+          python run_page/gen_svg.py --title "${{ env.TITLE }}" --athlete "${{ env.ATHLETE }}" --type calendar --use-localtime --output assets/calendar_$(date +"%Y").svg --from-db --year $(date +"%Y")  --special-distance 10 --special-distance2 15 --special-color yellow --special-color2 red --min-distance 0
+          python run_page/gen_svg.py --type ayeartotal --output assets/ayeartotal_$(date +"%Y").svg --from-db --year $(date +"%Y") --special-color yellow --special-color2 red --special-distance 5 --special-distance2 10 --min-distance 0 --title "年度跑步日历" --athlete "${{ env.TITLE }}" --width 200 --height 220
           python run_page/gen_svg_today.py --from-db --day $(date -d "+8 hours" +"%Y-%m-%d") --width 100 --height 130  --output assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg --athlete "${{ env.ATHLETE }}"   --use-localtime 
 
       - name: Update SVG colors
@@ -236,6 +238,15 @@ jobs:
           sed -i 's/fill="#FFFFFF"/fill="#5A5A5A"/g' assets/github_$(date +"%Y").svg
           sed -i 's/fill="#444444"/fill="#EEEEEE"/g' assets/github_$(date +"%Y").svg
           sed -i 's/stroke="#FFFF00"/stroke="#89CFF0"/g' assets/github_$(date +"%Y").svg
+          sed -i 's/fill="#222222"/fill="#FAF9F5"/g' assets/ayeartotal*.svg
+          sed -i 's/fill="#FFFFFF"/fill="#5A5A5A"/g' assets/ayeartotal*.svg
+          sed -i 's/fill="#444444"/fill="#EEEEEE"/g' assets/ayeartotal*.svg
+          sed -i 's/stroke="#FFFF00"/stroke="#89CFF0"/g' assets/ayeartotal*.svg
+
+          sed -i 's/fill="#222222"/fill="#FAF9F5"/g' assets/calendar*.svg
+          sed -i 's/fill="#FFFFFF"/fill="#5A5A5A"/g' assets/calendar*.svg
+          sed -i 's/fill="#444444"/fill="#EEEEEE"/g' assets/calendar*.svg
+          sed -i 's/stroke="#FFFF00"/stroke="#89CFF0"/g' assets/calendar*.svg
           if [ -f "assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg" ]; then
             sed -i 's/fill="#222222"/fill="#FAF9F5"/g' assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg
             sed -i 's/fill="#FFFFFF"/fill="#5A5A5A"/g' assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg
