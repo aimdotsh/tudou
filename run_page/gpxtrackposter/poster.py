@@ -41,10 +41,10 @@ class Poster:
     def __init__(self):
         self.athlete = None
         self.title = None
-        self.tracks_by_date = {}
+        self.tracks_by_date = defaultdict(list)
         self.tracks = []
-        self.length_range = None
-        self.length_range_by_date = None
+        self.length_range = ValueRange()
+        self.length_range_by_date = ValueRange()
         self.units = "metric"
         self.colors = {
             "background": "#222222",
@@ -55,8 +55,8 @@ class Poster:
         self.special_distance = {"special_distance": 10, "special_distance2": 20}
         self.width = 200
         self.height = 300
-        self.years = None
-        self.tracks_drawer = None
+        self.years = YearRange()
+        self.drawer_type = "title"
         self.trans = None
         self.set_language(None)
         self.tc_offset = datetime.now(pytz.timezone("Asia/Shanghai")).utcoffset()
@@ -66,9 +66,7 @@ class Poster:
         if language:
             try:
                 locale.setlocale(locale.LC_ALL, f"{language}.utf8")
-            except locale.Error as e:
-                print(f'Cannot set locale to "{language}": {e}')
-                language = None
+            except locale.Error:
                 pass
 
         # Fall-back to NullTranslations, if the specified language translation cannot be found.
@@ -80,6 +78,27 @@ class Poster:
             lang = gettext.NullTranslations()
         self.trans = lang.gettext
 
+    def translate(self, s: str) -> str:
+        return self.trans(s)
+
+    def month_name(self, month: int) -> str:
+        assert 1 <= month <= 12
+
+        return [
+            self.translate("January"),
+            self.translate("February"),
+            self.translate("March"),
+            self.translate("April"),
+            self.translate("May"),
+            self.translate("June"),
+            self.translate("July"),
+            self.translate("August"),
+            self.translate("September"),
+            self.translate("October"),
+            self.translate("November"),
+            self.translate("December"),
+        ][month - 1]
+
     def set_tracks(self, tracks):
         """Associate the set of tracks with this poster.
 
@@ -87,21 +106,20 @@ class Poster:
         based on this set of tracks.
         """
         self.tracks = tracks
-        self.tracks_by_date = {}
+        self.tracks_by_date.clear()
         self.length_range = ValueRange()
         self.length_range_by_date = ValueRange()
-        self.__compute_years(tracks)
+        self.years.clear()
+        for track in tracks:
+            self.years.add(track.start_time_local)
         for track in tracks:
             if not self.years.contains(track.start_time_local):
                 continue
             text_date = track.start_time_local.strftime("%Y-%m-%d")
-            if text_date in self.tracks_by_date:
-                self.tracks_by_date[text_date].append(track)
-            else:
-                self.tracks_by_date[text_date] = [track]
+            self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length)
-        for tracks in self.tracks_by_date.values():
-            length = sum([t.length for t in tracks])
+        for date_tracks in self.tracks_by_date.values():
+            length = sum(t.length for t in date_tracks)
             self.length_range_by_date.extend(length)
 
     def draw(self, drawer, output):
@@ -118,12 +136,16 @@ class Poster:
         d = svgwrite.Drawing(output, (f"{width}mm", f"{height}mm"))
         d.viewbox(0, 0, self.width, height)
         d.add(d.rect((0, 0), (width, height), fill=self.colors["background"]))
-        if not self.drawer_type == "plain":
+        g = d.g(id="tracks")
+        d.add(g)
+        if not self.drawer_type == "plain" and not self.drawer_type == "ayeartotal":
             self.__draw_header(d)
             self.__draw_footer(d)
-            self.__draw_tracks(d, XY(width - 20, height - 30 - 30), XY(10, 30))
+            self.__draw_tracks(d, g, XY(width - 20, height - 30 - 30), XY(10, 30))
+        elif self.drawer_type == "ayeartotal":
+            self.__draw_tracks(d, g, XY(width, height), XY(0, 0))
         else:
-            self.__draw_tracks(d, XY(width - 20, height), XY(10, 0))
+            self.__draw_tracks(d, g, XY(width - 20, height), XY(10, 0))
         d.save()
 
     def m2u(self, m):
@@ -142,8 +164,10 @@ class Poster:
         """Formats a distance using the locale specific float format and the selected unit."""
         return format_float(self.m2u(d)) + " " + self.u()
 
-    def __draw_tracks(self, d, size: XY, offset: XY):
-        self.tracks_drawer.draw(d, size, offset)
+    def __draw_tracks(self, d, g, size: XY, offset: XY):
+        assert self.tracks_drawer
+
+        self.tracks_drawer.draw(d, g, size, offset)
 
     def __draw_header(self, d):
         text_color = self.colors["text"]

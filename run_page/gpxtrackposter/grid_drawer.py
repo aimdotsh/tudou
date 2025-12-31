@@ -25,7 +25,7 @@ class GridDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY):
         """For each track, draw it on the poster."""
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw.")
@@ -47,12 +47,13 @@ class GridDrawer(TracksDrawer):
             )
             self._draw_track(
                 dr,
+                g,
                 tr,
                 0.9 * XY(cell_size, cell_size),
                 offset + 0.05 * XY(cell_size, cell_size) + p,
             )
 
-    def _draw_track(self, dr: svgwrite.Drawing, tr: Track, size: XY, offset: XY):
+    def _draw_track(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, tr: Track, size: XY, offset: XY):
         color = self.color(self.poster.length_range, tr.length, tr.special)
 
         str_length = format_float(self.poster.m2u(tr.length))
@@ -76,4 +77,4 @@ class GridDrawer(TracksDrawer):
                 stroke_linecap="round",
             )
             polyline.set_desc(title=date_title, desc=tr.run_id)
-            dr.add(polyline)
+            g.add(polyline)

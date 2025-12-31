@@ -30,6 +30,11 @@ class YearRange:
         self.to_year = None
         self.years_dict = dict()
 
+    def clear(self):
+        self.from_year = None
+        self.to_year = None
+        self.years_dict = dict()
+
     def parse(self, s: str) -> bool:
         """Parse a plaintext range of years into a pair of years
 
@@ -95,3 +100,8 @@ class YearRange:
 
     def all(self):
         return list(range(int(self.from_year), int(self.to_year) + 1))
+
+    def iter(self):
+        if self.from_year is None:
+            return iter([])
+        return iter(range(self.from_year, self.to_year + 1))

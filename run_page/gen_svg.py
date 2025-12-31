@@ -11,6 +11,9 @@ from gpxtrackposter import (
     poster,
     track_loader,
     month_of_life_drawer,
+    calendar_drawer,
+    heatmap_drawer,
+    ayeartotal_drawer,
 )
 from gpxtrackposter.exceptions import ParameterError, PosterError
 
@@ -28,6 +31,9 @@ def main():
         "circular": circular_drawer.CircularDrawer(p),
         "github": github_drawer.GithubDrawer(p),
         "monthoflife": month_of_life_drawer.MonthOfLifeDrawer(p),
+        "calendar": calendar_drawer.CalendarDrawer(p),
+        "heatmap": heatmap_drawer.HeatmapDrawer(p),
+        "ayeartotal": ayeartotal_drawer.AyeartotalDrawer(p),
     }
 
     args_parser = argparse.ArgumentParser()
@@ -207,7 +213,11 @@ def main():
     loader = track_loader.TrackLoader()
     if args.use_localtime:
         loader.use_local_time = True
-    if not loader.year_range.parse(args.year):
+    
+    # For ayeartotal, we need all tracks to calculate lifetime stats correctly
+    if args.type == "ayeartotal":
+        loader.year_range.parse("all")
+    elif not loader.year_range.parse(args.year):
         raise ParameterError(f"Bad year range: {args.year}.")
 
     loader.special_file_names = args.special
@@ -226,8 +236,17 @@ def main():
 
     is_circular = args.type == "circular"
     is_mol = args.type == "monthoflife"
+    is_calendar = args.type == "calendar"
+    is_heatmap = args.type == "heatmap"
+    is_ayeartotal = args.type == "ayeartotal"
 
-    if not is_circular and not is_mol:
+    if (
+        not is_circular
+        and not is_mol
+        and not is_calendar
+        and not is_heatmap
+        and not is_ayeartotal
+    ):
         print(
             f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}..."
         )

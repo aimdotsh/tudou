@@ -44,7 +44,7 @@ class MonthOfLifeDrawer(TracksDrawer):
             except Exception:
                 raise PosterError("Invalid birth date format, must be YYYY-MM")
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY):
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw")
         total_months = 1000
@@ -97,4 +97,4 @@ class MonthOfLifeDrawer(TracksDrawer):
                 title = f"{title} {val} {self.poster.u()}"
             circle = dr.circle(center=(cx, cy), r=radius, fill=color)
             circle.set_desc(title=title)
-            dr.add(circle)
+            g.add(circle)
