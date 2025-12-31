@@ -13,7 +13,11 @@ class AyeartotalDrawer(TracksDrawer):
         self.year = None
 
     def fetch_args(self, args):
-        self.year = int(args.year)
+        try:
+            self.year = int(args.year)
+        except (ValueError, TypeError):
+            import datetime
+            self.year = datetime.datetime.now().year
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY):
         if self.poster.tracks is None:
