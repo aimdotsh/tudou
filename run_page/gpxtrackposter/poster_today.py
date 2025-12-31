@@ -119,12 +119,14 @@ class Poster:
         d = svgwrite.Drawing(output, (f"{width}mm", f"{height}mm"))
         d.viewbox(0, 0, self.width, height)
         d.add(d.rect((0, 0), (width, height), fill=self.colors["background"]))
+        g = d.g(id="tracks")
+        d.add(g)
         if not self.drawer_type == "plain":
             self.__draw_header(d)
             self.__draw_footer(d)
-            self.__draw_tracks(d, XY(width - 10, height - 10 - 10), XY(5, 15))
+            self.__draw_tracks(d, g, XY(width - 10, height - 10 - 10), XY(5, 15))
         else:
-            self.__draw_tracks(d, XY(width - 10, height), XY(10, 0))
+            self.__draw_tracks(d, g, XY(width - 10, height), XY(10, 0))
         d.save()
 
     def m2u(self, m):
@@ -143,8 +145,8 @@ class Poster:
         """Formats a distance using the locale specific float format and the selected unit."""
         return format_float(self.m2u(d)) + " " + self.u()
 
-    def __draw_tracks(self, d, size: XY, offset: XY):
-        self.tracks_drawer.draw(d, size, offset)
+    def __draw_tracks(self, d, g, size: XY, offset: XY):
+        self.tracks_drawer.draw(d, g, size, offset)
 
     def __draw_header(self, d):
         text_color = self.colors["text"]
