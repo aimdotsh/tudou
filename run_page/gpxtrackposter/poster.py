@@ -56,7 +56,7 @@ class Poster:
         self.width = 200
         self.height = 300
         self.year = None
-        self.years = YearRange()
+        self.years = None
         self.drawer_type = "title"
         self.trans = None
         self.set_language(None)
