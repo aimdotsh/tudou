@@ -25,11 +25,14 @@ class AyeartotalDrawer(TracksDrawer):
 
         # 1. Statistics
         year = self.year or self.poster.years.from_year
-        tracks_this_year = [t for t in self.poster.tracks if t.start_time_local.year == year]
+        tracks_until_this_year = [t for t in self.poster.tracks if t.start_time_local.year <= year]
+        tracks_this_year = [t for t in tracks_until_this_year if t.start_time_local.year == year]
+        
         days_this_year = len(set(t.start_time_local.date() for t in tracks_this_year))
         count_this_year = len(tracks_this_year)
-        days_lifetime = len(set(t.start_time_local.date() for t in self.poster.tracks))
-        count_lifetime = len(self.poster.tracks)
+        
+        days_lifetime = len(set(t.start_time_local.date() for t in tracks_until_this_year))
+        count_lifetime = len(tracks_until_this_year)
 
         # 2. Draw Header
         # Content starts at offset.x + 10 to match title, and Y starts after title (20 + 10)
@@ -52,9 +55,29 @@ class AyeartotalDrawer(TracksDrawer):
         g.add(dr.text("CALENDAR", insert=(offset.x, offset.y + 22), fill=text_color, 
                       style="font-size:12px; font-family:Arial; font-weight:bold;"))
         
-        g.add(dr.text(str(days_year), insert=(offset.x, offset.y + 60), fill=text_color, 
-                      style="font-size:36px; font-family:Arial; font-weight:bold;"))
+        # Big number with zero padding (3 digits)
+        days_str = f"{days_year:03d}"
+        big_text = dr.text("", insert=(offset.x, offset.y + 60), fill=text_color, 
+                           style="font-size:36px; font-family:Arial; font-weight:bold;")
+        
+        # Determine how many zeros are leading
+        if days_year < 10:
+            leading_zeros = "00"
+            real_digits = days_str[2:]
+        elif days_year < 100:
+            leading_zeros = "0"
+            real_digits = days_str[1:]
+        else:
+            leading_zeros = ""
+            real_digits = days_str
+
+        if leading_zeros:
+            big_text.add(dr.tspan(leading_zeros, fill=text_color, style="opacity: 0.2;"))
+        big_text.add(dr.tspan(real_digits))
+        g.add(big_text)
+
         # Reduced X offset from 80 to 65 to bring "天" closer to the number
+        # 000 is wide, 65 is fine. 
         g.add(dr.text("天", insert=(offset.x + 65, offset.y + 60), fill=text_color, 
                       style="font-size:12px; font-family:Arial;"))
 

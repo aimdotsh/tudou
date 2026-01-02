@@ -257,15 +257,21 @@ class Poster:
                 )
             )
 
-        # For ayeartotal, we also want lifetime stats for comparison
+        # For ayeartotal, we also want lifetime stats for comparison (up to current year)
         if self.drawer_type == "ayeartotal":
+            try:
+                target_year = int(self.year)
+                lifetime_tracks = [t for t in self.tracks if t.start_time_local.year <= target_year]
+            except (ValueError, TypeError):
+                lifetime_tracks = self.tracks
+
             (
                 lt_total_length,
                 lt_average_length,
                 lt_min_length,
                 lt_max_length,
                 lt_weeks,
-            ) = self.__compute_track_statistics(self.tracks)
+            ) = self.__compute_track_statistics(lifetime_tracks)
 
         d.add(
             d.text(
@@ -279,7 +285,7 @@ class Poster:
         stat_num_text = f"{len(tracks)}"
         stat_total_text = self.format_distance(total_length)
         if self.drawer_type == "ayeartotal":
-            stat_num_text = f"{len(tracks)} / {len(self.tracks)}"
+            stat_num_text = f"{len(tracks)} / {len(lifetime_tracks)}"
             stat_total_text = f"{self.format_distance(total_length)} / {self.format_distance(lt_total_length)}"
 
         d.add(
