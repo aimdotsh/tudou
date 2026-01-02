@@ -110,9 +110,12 @@ class Poster:
         self.tracks_by_date.clear()
         self.length_range = ValueRange()
         self.length_range_by_date = ValueRange()
-        self.years.clear()
-        for track in tracks:
-            self.years.add(track.start_time_local)
+
+        if self.years is None:
+            self.years = YearRange()
+            for track in tracks:
+                self.years.add(track.start_time_local)
+        
         for track in tracks:
             if not self.years.contains(track.start_time_local):
                 continue

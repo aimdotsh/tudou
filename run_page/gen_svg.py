@@ -286,6 +286,10 @@ def main():
     }
     p.units = args.units
     p.year = args.year
+    if args.year != "all":
+        from gpxtrackposter.year_range import YearRange
+        p.years = YearRange()
+        p.years.parse(args.year)
     if args.width:
         p.width = args.width
     if args.height:
