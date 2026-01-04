@@ -306,12 +306,17 @@ def main():
     p.github_style = args.github_style
     # for special circular
     if is_circular:
+        from_year, to_year = p.years.from_year, p.years.to_year
         years = p.years.all()[:]
         for y in years:
             p.years.from_year, p.years.to_year = y, y
             # may be refactor
             p.set_tracks(tracks)
             p.draw(drawers[args.type], os.path.join("assets", f"year_{str(y)}.svg"))
+        if args.year == "all":
+            p.years.from_year, p.years.to_year = from_year, to_year
+            p.set_tracks(tracks)
+            p.draw(drawers[args.type], args.output)
     else:
         p.draw(drawers[args.type], args.output)
 
