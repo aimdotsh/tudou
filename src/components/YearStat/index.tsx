@@ -7,11 +7,14 @@ import { yearStats } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import { SHOW_ELEVATION_GAIN } from "@/utils/const";
 
-const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick: (_year: string) => void ,
-    onClickTypeInYear: (_year: string, _type: string) => void }) => {
+const YearStat = ({ year, onClick, onClickTypeInYear }: {
+  year: string, onClick: (_year: string) => void,
+  onClickTypeInYear: (_year: string, _type: string) => void
+}) => {
   let { activities: runs, years } = useActivities();
   // lazy Component
-  const YearSVG = lazy(() => loadSvgComponent(yearStats, `./year_${year}.svg`));
+  const svgName = year === 'Total' ? 'all' : year;
+  const YearSVG = lazy(() => loadSvgComponent(yearStats, `./year_${svgName}.svg`));
 
   if (years.includes(year)) {
     runs = runs.filter((run) => run.start_date_local.slice(0, 4) === year);
@@ -27,10 +30,10 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
     sumDistance += run.distance || 0;
     sumElevationGain += run.elevation_gain || 0;
     if (run.average_speed) {
-      if(workoutsCounts[run.type]){
+      if (workoutsCounts[run.type]) {
         var [oriCount, oriSecondsAvail, oriMetersAvail] = workoutsCounts[run.type]
         workoutsCounts[run.type] = [oriCount + 1, oriSecondsAvail + (run.distance || 0) / run.average_speed, oriMetersAvail + (run.distance || 0)]
-      }else{
+      } else {
         workoutsCounts[run.type] = [1, (run.distance || 0) / run.average_speed, run.distance]
       }
     }
@@ -59,7 +62,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
     >
       <section>
         <Stat value={year} description=" Journey" />
-        { sumDistance > 0 &&
+        {sumDistance > 0 &&
           <WorkoutStat
             key='total'
             value={runs.length.toString()}
@@ -67,15 +70,15 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
             distance={(sumDistance / 1000.0).toFixed(0)}
             pace=""
             className=""
-            onClick={() => {}}
+            onClick={() => { }}
             color=""
           />
         }
-        { workoutsArr.map(([type, count]) => (
+        {workoutsArr.map(([type, count]) => (
           <WorkoutStat
             key={type}
             value={count[0].toString()}
-            description={` ${type}`+"s"}
+            description={` ${type}` + "s"}
             pace=""
             distance={(count[2] / 1000.0).toFixed(0)}
             className=""
@@ -85,7 +88,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
             color=""
           />
         ))}
-        { SHOW_ELEVATION_GAIN && sumElevationGain > 0 &&
+        {SHOW_ELEVATION_GAIN && sumElevationGain > 0 &&
           <Stat
             value={`${(sumElevationGain).toFixed(0)} `}
             description="M Elevation"
@@ -101,11 +104,9 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: { year: string, onClick:
           <Stat value={avgHeartRate} description=" Avg Heart Rate" />
         )}
       </section>
-      {year !== 'Total' && (
-        <Suspense fallback="loading...">
-          <YearSVG className="my-2 md:my-4 h-4/6 w-[100%] border-0 p-0" />
-        </Suspense>
-      )}
+      <Suspense fallback="loading...">
+        <YearSVG className="my-2 md:my-4 h-4/6 w-[100%] border-0 p-0" />
+      </Suspense>
       <hr color="red" />
     </div>
   );
