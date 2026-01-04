@@ -155,6 +155,14 @@ const Newyear02Stat = lazy(() => loadSvgComponent(newyearStat, `./newyear/2024-0
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
 const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
+// Lazy load annual posters (2018-2026)
+const annualYears = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018];
+const AnnualPosters = annualYears.map(year => ({
+  year,
+  Component: lazy(() => loadSvgComponent(totalStat, `./ayeartotal_${year}.svg`)
+    .catch(() => ({ default: () => <FailedLoadSvg filename={`ayeartotal_${year}.svg`} /> })))
+}));
+
 
 // 特定luck类型的文件获取 Hook
 const useLuckFiles = () => useFileList('/luck.json');
@@ -927,6 +935,21 @@ const Total: React.FC = () => {
             <Suspense fallback={<div className="text-center">Loading...</div>}>
               <GridSvg className="mt-2 h-auto w-full" />
             </Suspense>
+          </div>
+
+          {/* 年度跑步日历网格 */}
+          <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
+            <h3>Annual Running Posters</h3>
+            <div className={styles.annualPostersGrid}>
+              {AnnualPosters.map(({ year, Component }) => (
+                <div key={year} className={styles.annualPosterItem}>
+                  <div className={styles.annualPosterYear}>{year} Year</div>
+                  <Suspense fallback={<div className={styles.loadingCard}>Loading {year}...</div>}>
+                    <Component className={styles.annualPosterSvg} />
+                  </Suspense>
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
