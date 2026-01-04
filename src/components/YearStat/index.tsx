@@ -105,7 +105,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: {
         )}
       </section>
       <Suspense fallback="loading...">
-        <YearSVG className="my-2 md:my-4 h-4/6 w-[100%] border-0 p-0" />
+        <YearSVG className="my-2 md:my-4 w-full h-auto border-0 p-0" />
       </Suspense>
       <hr color="red" />
     </div>
