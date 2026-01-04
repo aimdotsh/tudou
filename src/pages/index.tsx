@@ -520,7 +520,7 @@ const Index = () => {
     >
       <div className="flex flex-col lg:flex-row w-full">
         {/* 左侧栏 */}
-        <div className="w-full lg:w-1/3">
+        <div className="w-full lg:w-[38.2%]">
           <h1 className="my-12 text-5xl font-extrabold italic">
             <a href="/">{siteTitle}</a>
           </h1>
@@ -839,7 +839,7 @@ const Index = () => {
         </div>
 
         {/* 右侧内容区 */}
-        <div className="w-full lg:w-2/3 flex flex-col">
+        <div className="w-full lg:w-[61.8%] flex flex-col">
           {/* 固定地图区域 */}
           <div className={year === 'Total' ? 'map-container' : 'sticky-map-container'}>
             <RunMap
