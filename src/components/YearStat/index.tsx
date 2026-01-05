@@ -107,7 +107,8 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: {
       <Suspense fallback="loading...">
         <YearSVG
           className="my-2 md:my-4 w-full border-0 p-0"
-          style={{ height: 'auto', aspectRatio: '1 / 1', display: 'block' }}
+          style={{ height: 'auto' }}
+          viewBox="0 0 200 200"
         />
       </Suspense>
       <hr color="red" />

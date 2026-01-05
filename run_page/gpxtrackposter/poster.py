@@ -137,8 +137,8 @@ class Poster:
             self.colors["track"] = "red"
             self.colors["special"] = "yellow"
             self.colors["text"] = "#e1ed5e"
-        d = svgwrite.Drawing(output, (f"{width}mm", f"{height}mm"))
-        d.viewbox(0, 0, self.width, height)
+        d = svgwrite.Drawing(output, size=(width, height))
+        d.attribs["viewBox"] = f"0 0 {width} {height}"
         d.add(d.rect((0, 0), (width, height), fill=self.colors["background"]))
         g = d.g(id="tracks")
         d.add(g)
