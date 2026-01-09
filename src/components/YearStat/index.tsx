@@ -112,6 +112,7 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: {
           preserveAspectRatio="xMidYMid meet"
         />
       </Suspense>
+      <hr color="red" />
     </div>
   );
 };
