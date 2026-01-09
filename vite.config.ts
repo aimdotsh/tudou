@@ -20,7 +20,6 @@ export default defineConfig({
         namedExport: 'ReactComponent',
         plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
         svgoConfig: {
-          floatPrecision: 2,
           plugins: [
             {
               name: 'preset-default',
@@ -28,7 +27,7 @@ export default defineConfig({
                 overrides: {
                   removeTitle: false,
                   removeViewBox: false,
-                  cleanupIDs: false,
+                  cleanupIds: false,
                 },
               },
             },
