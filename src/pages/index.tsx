@@ -525,7 +525,7 @@ const Index = () => {
             <a href="/">{siteTitle}</a>
           </h1>
           {year === 'Total' ? (
-            <div className="w-full pb-16 pl-4 sm:pl-4 md:pl-4 lg:w-full lg:pr-16 lg:pl-0">
+            <div className="w-full pb-4 lg:pb-16 pl-4 sm:pl-4 md:pl-4 lg:w-full lg:pr-16 lg:pl-0">
               <div className="cursor-pointer">
                 <section>
                   <div className="mb-4">
