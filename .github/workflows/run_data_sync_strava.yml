@@ -222,6 +222,7 @@ jobs:
           python run_page/gen_svg.py --title "${{ env.TITLE }}" --athlete "${{ env.ATHLETE }}" --type calendar --use-localtime --output assets/calendar_$(date +"%Y").svg --from-db --year $(date +"%Y")  --special-distance 10 --special-distance2 15 --special-color yellow --special-color2 red --min-distance 0
           python run_page/gen_svg.py --type ayeartotal --output assets/ayeartotal_$(date +"%Y").svg --from-db --year $(date +"%Y") --special-color yellow --special-color2 red --special-distance 5 --special-distance2 10 --min-distance 0 --title "年度跑步日历" --athlete "${{ env.ATHLETE }}" --width 200 --height 220
           python run_page/gen_svg_today.py --from-db --day $(date -d "+8 hours" +"%Y-%m-%d") --width 100 --height 130  --output assets/yyyymmdd/$(date -d "+8 hours" +"%Y-%m-%d").svg --athlete "${{ env.ATHLETE }}"   --use-localtime 
+          python scripts/optimize_svg_assets.py
 
       - name: Update SVG colors
         if: env.RUN_TYPE != 'pass'
