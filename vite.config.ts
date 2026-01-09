@@ -28,6 +28,7 @@ export default defineConfig({
                 overrides: {
                   removeTitle: false,
                   removeViewBox: false,
+                  cleanupIDs: false,
                 },
               },
             },
