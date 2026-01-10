@@ -52,7 +52,12 @@ def shift_mol_svg(file_path):
         new_val = max(0, val - 8)
         return f'cx="{new_val}"'
 
-    content = re.sub(r'cx="([\d.]+)"', shift_cx, content)
+    def shift_cx(match):
+        val = float(match.group(1))
+        new_val = max(0, val - 8)
+        return f'cx="{new_val}"'
+
+    content = re.sub(r'\bcx="([\d.]+)"', shift_cx, content)
 
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
@@ -66,25 +71,19 @@ def shift_github_svg(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # 1. Update text x values: reduce by 8
-    def shift_text_x(match):
-        val = float(match.group(1))
-        new_val = max(0, val - 8)
-        return f'x="{new_val}"'
-
-    content = re.sub(r'x="([\d.]+)"', shift_text_x, content)
-    
-    # 2. Update rect x values: reduce by 8
-    # Note: We need to be careful not to shift the background rect (usually x="0")
-    # Actually, shifting x="0" to 0 is fine, but more specifically, content rects.
-    def shift_rect_x(match):
+    # Optimized regex to avoid matching rx, etc. and prevent double shifts
+    def shift_x(match):
         val = float(match.group(1))
         if val == 0:
             return match.group(0)
         new_val = max(0, val - 8)
         return f'x="{new_val}"'
 
-    content = re.sub(r'x="([\d.]+)"', shift_rect_x, content)
+    # The issue was that both text and rect were handled separately but using the same regex r'x="..."'
+    # which would match and shift the same coordinates twice if they were already shifted in a previous pass
+    # or if the regex was applied to the whole content multiple times.
+    # We'll use word boundary \b to ensure we only match the full attribute name 'x'.
+    content = re.sub(r'\bx="([\d.]+)"', shift_x, content)
 
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
