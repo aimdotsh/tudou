@@ -1,96 +1,94 @@
-import re
 import os
+import re
+import glob
 
-def shift_grid_svg(file_path):
+# 统一位移量
+SHIFT_AMOUNT = 6
+
+def shift_svg_content(file_path, patterns):
     if not os.path.exists(file_path):
-        print(f"Skipping: {file_path} not found.")
         return
-    
+
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # 1. Update text x="10" to x="2"
-    content = content.replace('x="10"', 'x="2"')
+    original_content = content
 
-    # 2. Update polyline points: shift x by -8
-    def shift_path(match):
-        points_str = match.group(1)
-        new_parts = []
-        parts = re.split(r'(\s+)', points_str)
-        for part in parts:
-            if ',' in part:
-                coords = part.split(',')
-                try:
-                    new_x = max(0, float(coords[0]) - 8)
-                    new_parts.append(f"{new_x},{coords[1]}")
-                except ValueError:
-                    new_parts.append(part)
-            else:
+    for pattern, repl_func in patterns:
+        content = re.sub(pattern, repl_func, content)
+
+    if content != original_content:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"Optimized SVG: {file_path}")
+
+def shift_x(match):
+    val = float(match.group(1))
+    if val == 0:
+        return match.group(0)
+    new_val = max(0, val - SHIFT_AMOUNT)
+    # 保持一位小数以确保兼容性
+    return f'x="{new_val:.1f}"' if '.' in match.group(1) else f'x="{int(new_val) if new_val == int(new_val) else new_val}"'
+
+def shift_cx(match):
+    val = float(match.group(1))
+    if val == 0:
+        return match.group(0)
+    new_val = max(0, val - SHIFT_AMOUNT)
+    return f'cx="{new_val:.1f}"' if '.' in match.group(1) else f'cx="{int(new_val) if new_val == int(new_val) else new_val}"'
+
+def shift_polyline_points(match):
+    points_str = match.group(1)
+    parts = points_str.split(' ')
+    new_parts = []
+    for part in parts:
+        if ',' in part:
+            coords = part.split(',')
+            try:
+                new_x = max(0, float(coords[0]) - SHIFT_AMOUNT)
+                new_parts.append(f"{new_x},{coords[1]}")
+            except ValueError:
                 new_parts.append(part)
-        return f'points="{"".join(new_parts)}"'
+        else:
+            new_parts.append(part)
+    return f'points="{" ".join(new_parts)}"'
 
-    content = re.sub(r'points="([^"]+)"', shift_path, content)
+def optimize_all():
+    assets_dir = 'assets'
+    
+    # 定义匹配规则
+    # 1. 通用规则：处理 x 和 cx 属性
+    common_patterns = [
+        (r'\bx="([\d.]+)"', shift_x),
+        (r'\bcx="([\d.]+)"', shift_cx)
+    ]
+    
+    # 2. 特殊规则：处理 Grid 的 polyline
+    grid_patterns = common_patterns + [
+        (r'points="([^"]+)"', shift_polyline_points)
+    ]
 
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(content)
-    print(f"Optimized Grid SVG: {file_path}")
-
-def shift_mol_svg(file_path):
-    if not os.path.exists(file_path):
-        print(f"Skipping: {file_path} not found.")
-        return
-
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # 1. Update text x="10" to x="2"
-    content = content.replace('x="10"', 'x="2"')
-
-    # 2. Update circle cx values: reduce by 8
-    def shift_cx(match):
-        val = float(match.group(1))
-        new_val = max(0, val - 8)
-        return f'cx="{new_val}"'
-
-    def shift_cx(match):
-        val = float(match.group(1))
-        new_val = max(0, val - 8)
-        return f'cx="{new_val}"'
-
-    content = re.sub(r'\bcx="([\d.]+)"', shift_cx, content)
-
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(content)
-    print(f"Optimized MOL SVG: {file_path}")
-
-def shift_github_svg(file_path):
-    if not os.path.exists(file_path):
-        print(f"Skipping: {file_path} not found.")
-        return
-
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # Optimized regex to avoid matching rx, etc. and prevent double shifts
-    def shift_x(match):
-        val = float(match.group(1))
-        if val == 0:
-            return match.group(0)
-        new_val = max(0, val - 8)
-        return f'x="{new_val}"'
-
-    # The issue was that both text and rect were handled separately but using the same regex r'x="..."'
-    # which would match and shift the same coordinates twice if they were already shifted in a previous pass
-    # or if the regex was applied to the whole content multiple times.
-    # We'll use word boundary \b to ensure we only match the full attribute name 'x'.
-    content = re.sub(r'\bx="([\d.]+)"', shift_x, content)
-
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(content)
-    print(f"Optimized GitHub SVG: {file_path}")
+    # 处理特定文件
+    # Grid
+    shift_svg_content(os.path.join(assets_dir, 'grid.svg'), grid_patterns)
+    
+    # Month of Life
+    shift_svg_content(os.path.join(assets_dir, 'mol.svg'), common_patterns)
+    
+    # GitHub (all github_*.svg and github.svg)
+    github_files = glob.glob(os.path.join(assets_dir, 'github*.svg'))
+    for f in github_files:
+        shift_svg_content(f, common_patterns)
+        
+    # Annual Total Posters
+    ayeartotal_files = glob.glob(os.path.join(assets_dir, 'ayeartotal*.svg'))
+    for f in ayeartotal_files:
+        shift_svg_content(f, common_patterns)
+        
+    # Calendars
+    calendar_files = glob.glob(os.path.join(assets_dir, 'calendar*.svg'))
+    for f in calendar_files:
+        shift_svg_content(f, common_patterns)
 
 if __name__ == "__main__":
-    assets_dir = 'assets'
-    shift_grid_svg(os.path.join(assets_dir, 'grid.svg'))
-    shift_mol_svg(os.path.join(assets_dir, 'mol.svg'))
-    shift_github_svg(os.path.join(assets_dir, 'github.svg'))
+    optimize_all()
