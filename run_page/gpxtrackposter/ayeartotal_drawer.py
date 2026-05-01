@@ -57,7 +57,8 @@ class AyeartotalDrawer(TracksDrawer):
         
         # Big number with zero padding (3 digits)
         days_str = f"{days_year:03d}"
-        big_text = dr.text("", insert=(offset.x, offset.y + 60), fill=text_color, 
+        number_color = "#2c3e50"
+        big_text = dr.text("", insert=(offset.x, offset.y + 60), fill=number_color, 
                            style="font-size:36px; font-family:Arial; font-weight:bold;")
         
         # Determine how many zeros are leading
@@ -72,7 +73,7 @@ class AyeartotalDrawer(TracksDrawer):
             real_digits = days_str
 
         if leading_zeros:
-            big_text.add(dr.tspan(leading_zeros, fill=text_color, style="opacity: 0.2;"))
+            big_text.add(dr.tspan(leading_zeros, fill=number_color, style="opacity: 0.2;"))
         big_text.add(dr.tspan(real_digits))
         g.add(big_text)
 
