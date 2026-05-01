@@ -827,7 +827,7 @@ const Total: React.FC = () => {
             <h3><Link to="./luck" className="hover:underline">吉象同行</Link> <span className={styles.clickHint}>(点击卡片会翻转噢)</span> </h3>
 
             {!luckLoading && luckSvgs.length > 0 ? (
-              <div className={styles.gridContainer}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 w-full">
                 {luckSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
                   const cardId = `luck-${index}`;
                   return (
@@ -875,7 +875,7 @@ const Total: React.FC = () => {
             <h3>Wonderful Workouts <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
 
             {!halfmarathonLoading && halfmarathonSvgs.length > 0 ? (
-              <div className={styles.gridContainer}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 w-full">
                 {halfmarathonSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
                   const cardId = `halfmarathon-${index}`;
 

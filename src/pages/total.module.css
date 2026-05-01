@@ -795,29 +795,11 @@
 }
 
 /* 容器样式 */
-.gridContainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  /* 关键：防止 3D 翻转时撑开整个页面的布局宽度 */
-  margin-bottom: 2rem;
-}
 
-@media (max-width: 900px) {
-  .gridContainer {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (max-width: 480px) {
-  .gridContainer {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
+
+
+
 
 /* 卡片通用样式 */
 .cardBase {
@@ -1159,10 +1141,7 @@
   }
 
   /* 确保网格容器在中等屏幕下稳定 */
-  .gridContainer {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
+  
 
   /* 中等屏幕下适当调整文字大小 */
   .dateText {
@@ -1262,10 +1241,7 @@
   }
 
   /* 小屏幕下使用单列布局 */
-  .gridContainer {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
+  
 
   /* 小屏幕下调整卡片内文字大小和间距，保持卡片比例 */
   .dateCard {
@@ -1347,9 +1323,7 @@
     margin: auto;
   }
 
-  .gridContainer {
-    gap: 0.5rem;
-  }
+  
 
   /* 超小屏幕下进一步缩小文字和间距，确保卡片比例 */
   .dateCard {
