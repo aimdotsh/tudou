@@ -57,7 +57,7 @@ class AyeartotalDrawer(TracksDrawer):
         
         # Big number with zero padding (3 digits)
         days_str = f"{days_year:03d}"
-        number_color = "#2c3e50"
+        number_color = "#1FB3AA"
         big_text = dr.text("", insert=(offset.x, offset.y + 60), fill=number_color, 
                            style="font-size:36px; font-family:Arial; font-weight:bold;")
         
