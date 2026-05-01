@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -9,9 +9,24 @@ import RunTable from '@/components/RunTable';
 import SVGStat from '@/components/SVGStat';
 import YearsStat from '@/components/YearsStat';
 import BackToTop from '@/components/BackToTop';
+import { totalStat, recentStat, halfmarathonStat, newyearStat, yueyeStat, calendarStat } from '@assets/index';
+import { loadSvgComponent } from '@/utils/svgUtils';
 import locationStats from '@/static/location_stats.json';
 import useActivities from '@/hooks/useActivities';
 import useSiteMetadata from '@/hooks/useSiteMetadata';
+
+const annualYears = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018];
+
+const AYearTotalSvgs = annualYears.reduce((acc, y) => {
+  acc[y] = lazy(() => loadSvgComponent(totalStat, `./ayeartotal_${y}.svg`).catch(() => ({ default: () => null })));
+  return acc;
+}, {} as Record<string, any>);
+
+const CalendarSvgs = annualYears.reduce((acc, y) => {
+  acc[y] = lazy(() => loadSvgComponent(calendarStat, `./calendar_${y}.svg`).catch(() => ({ default: () => null })));
+  return acc;
+}, {} as Record<string, any>);
+
 import { IS_CHINESE, CHINA_CENTER } from '@/utils/const';
 import '@/styles/stickyMap.css';
 import '@/styles/stickyHeader.css';
@@ -574,7 +589,29 @@ const Index = () => {
               <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear} />
             </div>
           ) : (
-            <div>
+            <div className="w-full pb-4 lg:pb-16 pl-4 sm:pl-4 md:pl-4 lg:w-full lg:pr-16 lg:pl-0">
+              {/* 展示当年海报与日历 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <Suspense fallback={<div className="text-sm text-gray-400">Loading charts...</div>}>
+                  {AYearTotalSvgs[year] ? (
+                    <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
+                      {(() => {
+                        const AYearComponent = AYearTotalSvgs[year];
+                        return <AYearComponent className="w-full h-auto" />;
+                      })()}
+                    </div>
+                  ) : null}
+                  {CalendarSvgs[year] ? (
+                    <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
+                      {(() => {
+                        const CalendarComponent = CalendarSvgs[year];
+                        return <CalendarComponent className="w-full h-auto" />;
+                      })()}
+                    </div>
+                  ) : null}
+                </Suspense>
+              </div>
+
               {/* 显示当年新增地点 */}
               {locationStats.yearlyNewLocations[year] && (
                 <div className="mb-4 cursor-pointer border-r border-transparent pl-4 sm:pl-4 md:pl-4 lg:pl-0 pr-4">
