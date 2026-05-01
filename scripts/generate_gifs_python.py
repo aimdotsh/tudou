@@ -59,7 +59,7 @@ class GifGenerator:
         if not self.activities_file.exists():
              self.activities_file = self.project_root / "src" / "static" / "activities.json"
 
-        self.output_dir = self.project_root / "assets" / "gif"
+        self.output_dir = self.project_root / "public" / "assets" / "gif"
         
         # Fixed dimensions 10:13 ratio (SVGs are 100x130, so 300x390 is 3x scale)
         self.width = 300

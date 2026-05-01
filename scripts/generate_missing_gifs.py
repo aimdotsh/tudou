@@ -8,7 +8,7 @@ def main():
     # Setup paths
     project_root = Path(__file__).parent.parent
     activities_file = project_root / "src" / "static" / "activities.json"
-    gif_dir = project_root / "assets" / "gif"
+    gif_dir = project_root / "public" / "assets" / "gif"
     
     # Initialize generator
     generator = GifGenerator(project_root)
