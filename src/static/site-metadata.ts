@@ -69,20 +69,20 @@ const data: ISiteMetadataResult = {
       url: `${getBasePath()}/luck`,
     },
     {
-      name: 'GPX tool',
-      url: `${getBasePath()}/gpx-to-polyline`,
-    },
-    {
       name: 'Daily',
       url: `${getBasePath()}/daily`,
     },
     {
       name: 'Blog',
-      url: 'https://liups.com',
+      url: `${getBasePath()}/blog`,
     },
     {
       name: 'About',
-      url: 'https://liups.com/posts/workouts_page/',
+      url: `${getBasePath()}/about`,
+    },
+    {
+      name: 'GPX tool',
+      url: `${getBasePath()}/gpx-to-polyline`,
     },
   ],
   mapOffset: getDynamicMapOffset(),
