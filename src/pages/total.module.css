@@ -1476,3 +1476,21 @@
     width: 2.5rem !important;
   }
 }
+
+/* === 非破坏性修复 === */
+/* 修复 Safari 卡片 hover 渲染放大 bug，只在最外层透视容器应用 */
+.flipCard {
+  transform: translateZ(0);
+}
+
+/* 修复 Chrome 下翻转后背面内容溢出（跑到角落）的问题，而不破坏其绝对定位 */
+.flipCardBack {
+  overflow: hidden !important; 
+}
+
+/* 限制背面动图或特殊组件的尺寸 */
+.flipCardBack > div,
+.flipCardBack img {
+  max-width: 100%;
+  max-height: 100%;
+}
