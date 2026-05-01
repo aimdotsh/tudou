@@ -1,4 +1,4 @@
-﻿name: Run Data Sync
+name: Run Data Sync
 
 on:
   workflow_dispatch:
@@ -233,6 +233,11 @@ jobs:
         run: |
           pip install duckdb==1.1.0
           python run_page/save_to_parqent.py
+
+      - name: Generate missing track GIFs
+        if: env.RUN_TYPE != 'pass'
+        run: |
+          python scripts/generate_missing_gifs.py
 
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'

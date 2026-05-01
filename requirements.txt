@@ -35,3 +35,5 @@ html.parser
 aiofiles
 # if you need to import kml file
 #fastkml
+Pillow>=10.2.0
+imageio>=2.34.0

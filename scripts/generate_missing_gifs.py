@@ -18,13 +18,7 @@ def main():
     with open(activities_file, 'r', encoding='utf-8') as f:
         activities = json.load(f)
     
-    # Calculate date range (last 7 days from now)
-    # Using the user's current time as reference if possible, or just system time
-    # The metadata says 2025-12-06
-    now = datetime.now()
-    seven_days_ago = now - timedelta(days=7)
-    
-    print(f"Checking for missing GIFs since {seven_days_ago.strftime('%Y-%m-%d')}...")
+    print("Checking for all missing GIFs in history...")
     
     missing_activities = []
     
@@ -32,18 +26,15 @@ def main():
         # Parse date
         try:
             start_date_str = activity['start_date_local'].split(' ')[0]
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-            
-            if start_date >= seven_days_ago:
-                gif_path = gif_dir / f"track_{start_date_str}.gif"
-                if not gif_path.exists():
-                    missing_activities.append({
-                        'date': start_date_str,
-                        'run_id': activity['run_id'],
-                        'activity': activity
-                    })
+            gif_path = gif_dir / f"track_{start_date_str}.gif"
+            if not gif_path.exists():
+                missing_activities.append({
+                    'date': start_date_str,
+                    'run_id': activity['run_id'],
+                    'activity': activity
+                })
         except Exception as e:
-            print(f"Error parsing date for activity {activity.get('run_id')}: {e}")
+            print(f"Error checking activity {activity.get('run_id')}: {e}")
             continue
             
     if not missing_activities:

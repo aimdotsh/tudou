@@ -287,6 +287,12 @@ jobs:
         run: |
           cd run_page && python generate_location_stats.py
 
+      - name: Generate missing track GIFs
+        if: env.RUN_TYPE != 'pass'
+        run: |
+          python scripts/generate_missing_gifs.py
+
+
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'
         run: |
