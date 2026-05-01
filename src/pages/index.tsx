@@ -18,12 +18,18 @@ import useSiteMetadata from '@/hooks/useSiteMetadata';
 const annualYears = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018];
 
 const AYearTotalSvgs = annualYears.reduce((acc, y) => {
-  acc[y] = lazy(() => loadSvgComponent(totalStat, `./ayeartotal_${y}.svg`).catch(() => ({ default: () => null })));
+  const path = `./ayeartotal_${y}.svg`;
+  if (totalStat[path]) {
+    acc[y] = lazy(() => loadSvgComponent(totalStat, path));
+  }
   return acc;
 }, {} as Record<string, any>);
 
 const CalendarSvgs = annualYears.reduce((acc, y) => {
-  acc[y] = lazy(() => loadSvgComponent(calendarStat, `./calendar_${y}.svg`).catch(() => ({ default: () => null })));
+  const path = `./calendar_${y}.svg`;
+  if (calendarStat[path]) {
+    acc[y] = lazy(() => loadSvgComponent(calendarStat, path));
+  }
   return acc;
 }, {} as Record<string, any>);
 
