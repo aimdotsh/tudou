@@ -339,10 +339,12 @@
   background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--secondary-color));
 }
 
-.statCard:hover {
+@media (hover: hover) and (pointer: fine) {
+  .statCard:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 30px var(--shadow-medium);
   border-color: var(--primary-color);
+}
 }
 
 .statCard h4 {
@@ -393,11 +395,13 @@
   overflow: visible;
 }
 
-.chartContainer:hover {
+@media (hover: hover) and (pointer: fine) {
+  .chartContainer:hover {
   transform: translateY(-2px);
   box-shadow: 0 15px 35px rgba(32, 178, 170, 0.15);
   border-color: var(--primary-color);
   z-index: 20;
+}
 }
 
 .chartContainer h3 {
@@ -1477,20 +1481,83 @@
   }
 }
 
-/* === 非破坏性修复 === */
-/* 修复 Safari 卡片 hover 渲染放大 bug，只在最外层透视容器应用 */
+
+/* ==================================================================
+   翻转卡片 3D 渲染与交互重构方案 - 终极修复版
+   消除任何移动端的 hover 残留，重构绝对安全的 3D 渲染结构
+   ================================================================== */
+
+/* 1. 禁用任何在卡片翻转时的父级被动缩放（防御性）*/
+.chartContainer:has(.flipCard:active),
+.chartContainer:has(.flipCard.flipped) {
+  transform: none !important;
+}
+
+/* 2. 最外层容器提供透视，并切断任何可能溢出的复合层渲染（Safari 防放大） */
 .flipCard {
-  transform: translateZ(0);
+  perspective: 1200px !important;
+  /* 阻断 iOS 双击放大和 touch 放大 */
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none !important;
+  /* 防止 Safari 重绘扩散 */
+  transform: translateZ(0) !important;
+  isolation: isolate !important;
+  aspect-ratio: 10 / 13 !important;
 }
 
-/* 修复 Chrome 下翻转后背面内容溢出（跑到角落）的问题，而不破坏其绝对定位 */
+/* 3. 内层容器：提供 3D 舞台，绝对严禁对它使用 overflow: hidden 否则 3D 会被打平 */
+.flipCardInner {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform-style: preserve-3d !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 15px var(--shadow-light) !important;
+}
+
+/* 4. 正反面统一格式，废除之前凌乱的定位重构 */
+.flipCardFront,
 .flipCardBack {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  border-radius: 10px !important;
+  /* 非常关键：保证两面的内容都被严丝合缝地剪裁，杜绝 Chrome 溢出到角落 */
   overflow: hidden !important; 
+  /* 基础布局 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.05), rgba(137, 207, 240, 0.1)) !important;
+  box-sizing: border-box !important;
+  padding: 0.25rem !important;
 }
 
-/* 限制背面动图或特殊组件的尺寸 */
-.flipCardBack > div,
-.flipCardBack img {
-  max-width: 100%;
-  max-height: 100%;
+/* 5. 背面翻转初始状态 */
+.flipCardBack {
+  transform: rotateY(180deg) !important;
+}
+
+/* 6. 反转状态激活 */
+.flipCard.flipped .flipCardInner {
+  transform: rotateY(180deg) !important;
+}
+
+/* 7. 所有可能溢出的图片和地图组件，统一限制并居中 */
+.flipCardFront svg,
+.flipCardBack img,
+.flipCardBack .dynamic-track-map-container,
+.flipCardBack > div {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  margin: auto !important;
 }

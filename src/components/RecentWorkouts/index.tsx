@@ -237,7 +237,7 @@ const RecentWorkouts: React.FC = () => {
                             }>
                                 <div
                                     className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                                    onClick={() => toggleFlip(cardId)}
+                                    onClick={(e) => { e.stopPropagation(); toggleFlip(cardId); }}
                                 >
                                     <div className={styles.flipCardInner}>
                                         <div className={styles.flipCardFront}>
