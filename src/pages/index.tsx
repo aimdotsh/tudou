@@ -125,9 +125,14 @@ const Index = () => {
       }
     } else {
       // 根据name进行模糊搜索
-      const filtered = runs.filter(run =>
-        run.name && run.name.toLowerCase().includes(term.toLowerCase())
-      );
+      const lowerTerm = term.toLowerCase();
+      const filtered = runs.filter(run => {
+        const nameMatch = run.name && run.name.toLowerCase().includes(lowerTerm);
+        const countryMatch = run.location_country && run.location_country.toLowerCase().includes(lowerTerm);
+        const provinceMatch = run.location_province && run.location_province.toLowerCase().includes(lowerTerm);
+        const cityMatch = run.location_city && run.location_city.toLowerCase().includes(lowerTerm);
+        return nameMatch || countryMatch || provinceMatch || cityMatch;
+      });
 
       setFilteredRuns(filtered);
       setGeoData(geoJsonForRuns(filtered));
@@ -147,9 +152,14 @@ const Index = () => {
     if (!searchTerm.trim()) {
       setFilteredRuns(runs);
     } else {
-      const filtered = runs.filter(run =>
-        run.name && run.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const lowerTerm = searchTerm.toLowerCase();
+      const filtered = runs.filter(run => {
+        const nameMatch = run.name && run.name.toLowerCase().includes(lowerTerm);
+        const countryMatch = run.location_country && run.location_country.toLowerCase().includes(lowerTerm);
+        const provinceMatch = run.location_province && run.location_province.toLowerCase().includes(lowerTerm);
+        const cityMatch = run.location_city && run.location_city.toLowerCase().includes(lowerTerm);
+        return nameMatch || countryMatch || provinceMatch || cityMatch;
+      });
       setFilteredRuns(filtered);
       setGeoData(geoJsonForRuns(filtered));
       setTitle(`搜索 "${searchTerm}" - 找到 ${filtered.length} 条记录`);
