@@ -848,28 +848,6 @@ const Index = () => {
                 </div>
               )}
 
-              {/* 展示当年海报与日历 */}
-              <div className="flex flex-col gap-4 mb-6 mt-4">
-                <Suspense fallback={<div className="text-sm text-gray-400">Loading charts...</div>}>
-                  {AYearTotalSvgs[year] ? (
-                    <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
-                      {(() => {
-                        const AYearComponent = AYearTotalSvgs[year];
-                        return <AYearComponent className="w-full h-auto" />;
-                      })()}
-                    </div>
-                  ) : null}
-                  {CalendarSvgs[year] ? (
-                    <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
-                      {(() => {
-                        const CalendarComponent = CalendarSvgs[year];
-                        return <CalendarComponent className="w-full h-auto" />;
-                      })()}
-                    </div>
-                  ) : null}
-                </Suspense>
-              </div>
-
               <LocationStat
                 changeYear={changeYear}
                 changeCity={changeCity}
@@ -877,7 +855,29 @@ const Index = () => {
                 onClickTypeInYear={changeTypeInYear}
                 runs={runs}
                 year={year}
-              />
+              >
+                {/* 展示当年海报与日历 */}
+                <div className="flex flex-col gap-4 mb-6 mt-4">
+                  <Suspense fallback={<div className="text-sm text-gray-400">Loading charts...</div>}>
+                    {AYearTotalSvgs[year] ? (
+                      <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
+                        {(() => {
+                          const AYearComponent = AYearTotalSvgs[year];
+                          return <AYearComponent className="w-full h-auto" />;
+                        })()}
+                      </div>
+                    ) : null}
+                    {CalendarSvgs[year] ? (
+                      <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
+                        {(() => {
+                          const CalendarComponent = CalendarSvgs[year];
+                          return <CalendarComponent className="w-full h-auto" />;
+                        })()}
+                      </div>
+                    ) : null}
+                  </Suspense>
+                </div>
+              </LocationStat>
             </div>
           )}
         </div>

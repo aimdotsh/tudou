@@ -7,9 +7,10 @@ import { yearStats } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import { SHOW_ELEVATION_GAIN } from "@/utils/const";
 
-const YearStat = ({ year, onClick, onClickTypeInYear }: {
+const YearStat = ({ year, onClick, onClickTypeInYear, children }: {
   year: string, onClick: (_year: string) => void,
-  onClickTypeInYear: (_year: string, _type: string) => void
+  onClickTypeInYear: (_year: string, _type: string) => void,
+  children?: React.ReactNode
 }) => {
   let { activities: runs, years } = useActivities();
   // lazy Component
@@ -104,6 +105,11 @@ const YearStat = ({ year, onClick, onClickTypeInYear }: {
           <Stat value={avgHeartRate} description=" Avg Heart Rate" />
         )}
       </section>
+      {children && (
+        <div className="my-4">
+          {children}
+        </div>
+      )}
       <Suspense fallback="loading...">
         <YearSVG
           key={svgName}

@@ -11,6 +11,7 @@ interface ILocationStatProps {
   onClickTypeInYear: (_year: string, _type: string) => void;
   runs?: any[];
   year?: string;
+  children?: React.ReactNode;
 }
 
 const LocationStat = ({
@@ -19,10 +20,13 @@ const LocationStat = ({
   changeType,
   onClickTypeInYear,
   runs,
-  year
+  year,
+  children
 }: ILocationStatProps) => (
   <div className="w-full pb-2 lg:pb-16 pl-4 sm:pl-4 md:pl-4 lg:w-full lg:pr-16 lg:pl-0">
-    <YearStat year={year || "Total"} onClick={changeYear} onClickTypeInYear={onClickTypeInYear} />
+    <YearStat year={year || "Total"} onClick={changeYear} onClickTypeInYear={onClickTypeInYear}>
+      {children}
+    </YearStat>
   </div>
 );
 
