@@ -334,8 +334,8 @@ const FlipCard: React.FC<{
 }> = ({ cardId, baseName, imagePaths, isFlipped, onFlip, altPrefix, children }) => {
   // 当前显示的图片索引
   const [photoIndex, setPhotoIndex] = useState(0);
-  // 实际有效的照片路径（通过 onError 动态过滤掉 404 的图）
-  const [validPaths, setValidPaths] = useState<string[]>([imagePaths[0]]);
+  // 实际有效的路径列表
+  const [validPaths, setValidPaths] = useState<string[]>([]);
   const [checkedAll, setCheckedAll] = useState(false);
 
   // 当卡片翻转时，异步预检所有候选图片是否存在
@@ -344,34 +344,36 @@ const FlipCard: React.FC<{
 
     let cancelled = false;
     const checkImages = async () => {
-      const results: string[] = [];
+      // 同时开始检查照片和 GIF
+      const photoPromises = imagePaths.map(src => 
+        fetch(src, { method: 'HEAD' })
+          .then(res => res.ok ? src : null)
+          .catch(() => null)
+      );
       
-      // 1. 检查照片
-      for (const src of imagePaths) {
-        try {
-          const res = await fetch(src, { method: 'HEAD' });
-          if (res.ok) results.push(src);
-        } catch {
-          // 跳过请求失败的
-        }
-      }
+      const gifPath = `${import.meta.env.BASE_URL}assets/gif/track_${baseName}.gif`.replace(/\/+/g, '/');
+      const gifPromise = fetch(gifPath, { method: 'HEAD' })
+        .then(res => res.ok ? gifPath : null)
+        .catch(() => null);
 
-      // 2. 如果没照片，尝试检查 GIF 动画
-      if (results.length === 0) {
-        // 修正路径：GIF 实际存放在 public/assets/gif/ 下
-        const gifPath = `${import.meta.env.BASE_URL}assets/gif/track_${baseName}.gif`.replace(/\/+/g, '/');
-        try {
-          const res = await fetch(gifPath, { method: 'HEAD' });
-          if (res.ok) results.push(gifPath);
-        } catch {
-          // 跳过
-        }
-      }
+      const [photoResults, gifResult] = await Promise.all([
+        Promise.all(photoPromises),
+        gifPromise
+      ]);
 
       if (!cancelled) {
-        // 如果最终还是没找到，就用 placeholder
-        const placeholder = `${import.meta.env.BASE_URL}placeholder.png`.replace(/\/+/g, '/');
-        setValidPaths(results.length > 0 ? results : [placeholder]);
+        const validPhotos = photoResults.filter((p): p is string => p !== null);
+        
+        let finalResults: string[] = [];
+        if (validPhotos.length > 0) {
+          finalResults = validPhotos;
+        } else if (gifResult) {
+          finalResults = [gifResult];
+        } else {
+          finalResults = [placeholderUrl];
+        }
+
+        setValidPaths(finalResults);
         setCheckedAll(true);
       }
     };
@@ -408,34 +410,42 @@ const FlipCard: React.FC<{
         </div>
         {/* 背面：照片或 GIF 轮播 */}
         <div className={styles.flipCardBack}>
-          <img
-            key={currentSrc}
-            src={currentSrc}
-            alt={`${altPrefix} ${baseName} ${photoIndex + 1}`}
-            className={styles.flipCardPhoto}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              if (target.src.includes('placeholder.png')) return;
-              target.onerror = null;
-              target.src = placeholderUrl;
-            }}
-          />
-          {/* 多张照片时显示导航控件 */}
-          {total > 1 && (
-            <div className={styles.photoNav} onClick={e => e.stopPropagation()}>
-              <button className={styles.photoNavBtn} onClick={handlePrev}>‹</button>
-              <div className={styles.photoDots}>
-                {validPaths.map((_, i) => (
-                  <span
-                    key={i}
-                    className={`${styles.photoDot} ${i === photoIndex ? styles.photoDotActive : ''}`}
-                    onClick={(e) => handleDot(e, i)}
-                  />
-                ))}
-              </div>
-              <button className={styles.photoNavBtn} onClick={handleNext}>›</button>
+          {!checkedAll ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#666', fontSize: '0.9rem' }}>
+              加载中...
             </div>
+          ) : (
+            <>
+              <img
+                key={currentSrc}
+                src={currentSrc}
+                alt={`${altPrefix} ${baseName} ${photoIndex + 1}`}
+                className={styles.flipCardPhoto}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (target.src.includes('placeholder.png')) return;
+                  target.onerror = null;
+                  target.src = placeholderUrl;
+                }}
+              />
+              {/* 多张照片时显示导航控件 */}
+              {total > 1 && (
+                <div className={styles.photoNav} onClick={e => e.stopPropagation()}>
+                  <button className={styles.photoNavBtn} onClick={handlePrev}>‹</button>
+                  <div className={styles.photoDots}>
+                    {validPaths.map((_, i) => (
+                      <span
+                        key={i}
+                        className={`${styles.photoDot} ${i === photoIndex ? styles.photoDotActive : ''}`}
+                        onClick={(e) => handleDot(e, i)}
+                      />
+                    ))}
+                  </div>
+                  <button className={styles.photoNavBtn} onClick={handleNext}>›</button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
