@@ -128,6 +128,78 @@ python3(python) scripts\kml2polyline.py
 
 </details>
 
+---
+
+## Luck Encounters (吉象同行) & Wonderful Workouts — Flip Cards with Track + Photo
+
+On the **Total** page, there are two flip-card sections:
+
+| Section | Description | Photo directory | SVG track directory |
+|---|---|---|---|
+| **Luck Encounters** | Special moments with elephants 🐘 | `assets/luck_photos/` | `assets/luck/` |
+| **Wonderful Workouts** | Memorable workout achievements | `assets/yyyymmdd_photos/` | `assets/yyyymmdd/` |
+
+Click a card to flip it and reveal the photo. If there are multiple photos for the same date, you can swipe left/right with the dot navigation.
+
+### How to add a new card (Luck Encounters example)
+
+> **Wonderful Workouts** follows the exact same steps — just replace `luck_photos/` with `yyyymmdd_photos/` and `luck/` with `yyyymmdd/`.
+
+**Step 1 — Pick a date**
+
+Decide the activity date you want to showcase, in `YYYY-MM-DD` format, e.g. `2025-03-15`.
+
+**Step 2 — Add photo(s)**
+
+Place the photo(s) in JPG format into `assets/luck_photos/`:
+
+```
+assets/luck_photos/
+  ├── 2025-03-15.jpg    ← main photo (required, filename = date)
+  ├── 2025-03-151.jpg   ← extra photo 1 (optional)
+  └── 2025-03-152.jpg   ← extra photo 2 (optional)
+```
+
+> Multiple photos: name them `YYYY-MM-DD.jpg` (main), `YYYY-MM-DD1.jpg`, `YYYY-MM-DD2.jpg` … up to 9 extra photos.
+
+**Step 3 — Generate the SVG track (if not already in `assets/luck/`)**
+
+```bash
+python run_page/gen_svg_today.py \
+  --from-db \
+  --day 2025-03-15 \
+  --width 100 --height 130 \
+  --output assets/luck/2025-03-15.svg \
+  --athlete "Your Name" \
+  --use-localtime
+```
+
+**Step 4 — Update the JSON index**
+
+```bash
+npm run generate:photos
+```
+
+This scans `assets/luck_photos/` and `assets/yyyymmdd_photos/`, finds dates that have a matching SVG, and regenerates `public/luck.json` and `public/wonderful.json`.
+
+**Step 5 — Commit and push**
+
+```bash
+git add .
+git commit -m "feat: add 2025-03-15 luck encounter"
+git push
+```
+
+GitHub Actions will redeploy automatically and the new card will appear on the page.
+
+---
+
+### Automation note
+
+Every time the Strava data sync workflow (`strava Data Sync`) runs, it automatically executes `npm run generate:photos`. Just drop photos into the correct directory and push — the JSON index will be updated on the next sync without any manual steps.
+
+---
+
 # Special thanks
 
 - @[yihong0618](https://github.com/yihong0618) for Awesome [running_page](https://github.com/yihong0618/running_page), Great Thanks

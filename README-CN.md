@@ -147,6 +147,78 @@ python3(python) scripts\kml2polyline.py
 
 </details>
 
+---
+
+## 吉象同行 & Wonderful Workouts — 轨迹 + 照片翻转卡片
+
+在「总览」页面，有两个翻转卡片区域：
+
+| 区域 | 展示内容 | 照片目录 | SVG 轨迹目录 |
+|---|---|---|---|
+| **吉象同行** | 与大象一起运动的特别记忆 | `assets/luck_photos/` | `assets/luck/` |
+| **Wonderful Workouts** | 值得纪念的精彩运动 | `assets/yyyymmdd_photos/` | `assets/yyyymmdd/` |
+
+点击卡片正面（SVG 轨迹）可翻转到背面查看照片；若同一日期有多张照片，翻转后可左右滑动浏览。
+
+### 新增一张轨迹卡片（以吉象同行为例）
+
+> **Wonderful Workouts** 操作完全一致，只需将目录换成 `assets/yyyymmdd_photos/`。
+
+**第 1 步 — 确认日期**
+
+确认你想展示的活动日期，格式为 `YYYY-MM-DD`，例如 `2025-03-15`。
+
+**第 2 步 — 放入照片**
+
+将当天的照片（JPG 格式）放到 `assets/luck_photos/` 目录：
+
+```
+assets/luck_photos/
+  ├── 2025-03-15.jpg       ← 主图（必须，文件名 = 日期）
+  ├── 2025-03-15_1.jpg     ← 附加图1（可选）
+  └── 2025-03-15_2.jpg     ← 附加图2（可选）
+```
+
+> 多张照片命名规则：主图 `YYYY-MM-DD.jpg`，附加图 `YYYY-MM-DD1.jpg`、`YYYY-MM-DD2.jpg` … 最多支持 9 张。
+
+**第 3 步 — 生成 SVG 轨迹（如果 `assets/luck/` 里还没有该日期的 SVG）**
+
+```bash
+python run_page/gen_svg_today.py \
+  --from-db \
+  --day 2025-03-15 \
+  --width 100 --height 130 \
+  --output assets/luck/2025-03-15.svg \
+  --athlete "你的名字" \
+  --use-localtime
+```
+
+**第 4 步 — 更新 JSON 索引文件**
+
+```bash
+npm run generate:photos
+```
+
+脚本会自动扫描 `assets/luck_photos/` 和 `assets/yyyymmdd_photos/`，找出有匹配 SVG 的日期，更新 `public/luck.json` 和 `public/wonderful.json`。
+
+**第 5 步 — 提交推送**
+
+```bash
+git add .
+git commit -m "feat: 新增 2025-03-15 吉象同行轨迹"
+git push
+```
+
+推送后 GitHub Actions 会自动重新部署，新卡片即可在页面上看到。
+
+---
+
+### 自动化说明
+
+每次 Strava 数据同步（GitHub Actions `strava Data Sync` 工作流）运行时，会自动执行 `npm run generate:photos`，无需手动操作 JSON 文件。只要把照片放进对应目录并推送，下次同步时就会自动生效。
+
+---
+
 # 致谢
 
 - @[yihong0618](https://github.com/yihong0618) 特别棒的项目 [running_page](https://github.com/yihong0618/running_page) 非常感谢
