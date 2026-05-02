@@ -22,7 +22,7 @@ except ImportError:
     sys.exit(1)
 
 class MapGifGenerator:
-    def __init__(self, project_root=None, width=500, height=500, track_color='#FF5722', 
+    def __init__(self, project_root=None, width=300, height=390, track_color='#FF5722', 
                  animation_frames=80, static_frames=20, force=False):
         if project_root is None:
             self.project_root = Path(__file__).parent.parent
@@ -30,7 +30,6 @@ class MapGifGenerator:
             self.project_root = Path(project_root)
         
         self.activities_file = self.project_root / "src" / "static" / "activities.json"
-        # 统一输出到 assets/gif，后续可通过脚本同步到 public/assets/gif
         self.output_dir = self.project_root / "public" / "assets" / "gif"
         self.tile_cache = self.project_root / "scripts" / "tile_cache"
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -75,7 +74,7 @@ class MapGifGenerator:
         for p in font_paths:
             if os.path.exists(p):
                 try:
-                    return ImageFont.truetype(p, 44), ImageFont.truetype(p, 36)
+                    return ImageFont.truetype(p, 36), ImageFont.truetype(p, 28)
                 except: continue
         return ImageFont.load_default(), ImageFont.load_default()
 
@@ -117,7 +116,8 @@ class MapGifGenerator:
         for zoom in range(18, 5, -1):
             x1, y1 = self.latlng_to_pixel(max_lat, min_lon, zoom)
             x2, y2 = self.latlng_to_pixel(min_lat, max_lon, zoom)
-            if abs(x2 - x1) < self.draw_width * 0.7 and abs(y2 - y1) < self.draw_height * 0.7:
+            # 增大轨迹占比 (0.88)
+            if abs(x2 - x1) < self.draw_width * 0.88 and abs(y2 - y1) < self.draw_height * 0.88:
                 break
         cx, cy = self.latlng_to_pixel((min_lat+max_lat)/2, (min_lon+max_lon)/2, zoom)
         tx_s, tx_e = int((cx - self.draw_width/2)//256), int((cx + self.draw_width/2)//256)
@@ -163,29 +163,51 @@ class MapGifGenerator:
         pixel_coords = [map_fn(lat, lon) for lat, lon in raw]
         smooth = self.interpolate(pixel_coords, self.animation_frames * 4)
         
+        text_color = "#21B2AA"
+        mask_color = (235, 235, 235, 180)
         frames = []
         for i in range(self.animation_frames):
             frame = bg.copy()
             draw = ImageDraw.Draw(frame, 'RGBA')
             pts = smooth[:int(len(smooth) * (i+1)/self.animation_frames)]
             self.draw_beautiful_line(draw, pts)
-            draw.text((50, 50), date, fill=(40, 40, 40, 220), font=self.f_bold)
+            
+            # 顶部全宽背景与日期
+            t_date = date
+            bbox = draw.textbbox((25, 20), t_date, font=self.f_bold)
+            draw.rectangle([0, 0, self.draw_width, bbox[3]+15], fill=mask_color)
+            draw.text((25, 20), t_date, fill=text_color, font=self.f_bold)
+            
+            # 底部全宽背景与运动名称
             name = activity.get('name') or "Run"
-            draw.text((self.draw_width - 50, self.draw_height - 60), name, fill=(60, 60, 60, 200), font=self.f_reg, anchor="rb")
+            bbox_n = draw.textbbox((self.draw_width - 25, self.draw_height - 25), name, font=self.f_reg, anchor="rb")
+            draw.rectangle([0, bbox_n[1]-15, self.draw_width, self.draw_height], fill=mask_color)
+            draw.text((self.draw_width - 25, self.draw_height - 25), name, fill=text_color, font=self.f_reg, anchor="rb")
+
             if pts:
                 cx, cy = pts[-1]
-                draw.ellipse([cx-6, cy-6, cx+6, cy+6], fill='white', outline=self.track_color, width=2)
+                draw.ellipse([cx-4, cy-4, cx+4, cy+4], fill='white', outline=self.track_color, width=2)
             frames.append(frame.resize((self.target_width, self.target_height), Image.Resampling.LANCZOS))
         
         final = bg.copy()
         draw = ImageDraw.Draw(final, 'RGBA')
         self.draw_beautiful_line(draw, smooth)
-        draw.text((50, 50), date, fill=(40, 40, 40, 220), font=self.f_bold)
-        draw.text((self.draw_width - 50, self.draw_height - 60), activity.get('name') or "Run", fill=(60, 60, 60, 200), font=self.f_reg, anchor="rb")
+        
+        # 顶部全宽背景与日期
+        bbox = draw.textbbox((25, 20), date, font=self.f_bold)
+        draw.rectangle([0, 0, self.draw_width, bbox[3]+15], fill=mask_color)
+        draw.text((25, 20), date, fill=text_color, font=self.f_bold)
+        
+        # 底部全宽背景与运动名称
+        name = activity.get('name') or "Run"
+        bbox_n = draw.textbbox((self.draw_width - 25, self.draw_height - 25), name, font=self.f_reg, anchor="rb")
+        draw.rectangle([0, bbox_n[1]-15, self.draw_width, self.draw_height], fill=mask_color)
+        draw.text((self.draw_width - 25, self.draw_height - 25), name, fill=text_color, font=self.f_reg, anchor="rb")
+
         if self.start_icon:
-            final.paste(i2:=self.start_icon.resize((52,52)), (int(smooth[0][0]-26), int(smooth[0][1]-26)), i2)
+            final.paste(i2:=self.start_icon.resize((32,32)), (int(smooth[0][0]-16), int(smooth[0][1]-16)), i2)
         if self.end_icon:
-            final.paste(i3:=self.end_icon.resize((52,52)), (int(smooth[-1][0]-26), int(smooth[-1][1]-26)), i3)
+            final.paste(i3:=self.end_icon.resize((32,32)), (int(smooth[-1][0]-16), int(smooth[-1][1]-16)), i3)
         final_1x = final.resize((self.target_width, self.target_height), Image.Resampling.LANCZOS)
         
         imageio.mimsave(str(out_path), [np.array(f) for f in (frames + [final_1x] * self.static_frames)], fps=25, loop=0)
@@ -203,7 +225,7 @@ class MapGifGenerator:
         tasks.sort(key=lambda x: x[0], reverse=True)
         print(f"📊 共 {len(tasks)} 条任务")
         
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=8) as executor:
             list(executor.map(lambda x: self.generate(*x), tasks))
         print("🎉 全部完成")
 
@@ -215,7 +237,7 @@ if __name__ == "__main__":
     parser.add_argument("-min-dist", type=float, default=21000)
     args = parser.parse_args()
     
-    gen = MapGifGenerator(width=500, height=500, force=args.force)
+    gen = MapGifGenerator(width=300, height=390, force=args.force)
     if args.day: gen.generate(args.day)
     elif args.all: gen.generate_all(min_distance=args.min_dist)
     else: parser.print_help()
