@@ -358,7 +358,8 @@ const FlipCard: React.FC<{
 
       // 2. 如果没照片，尝试检查 GIF 动画
       if (results.length === 0) {
-        const gifPath = `/gif/track_${baseName}.gif`;
+        // 修正路径：GIF 实际存放在 public/assets/gif/ 下
+        const gifPath = `${import.meta.env.BASE_URL}assets/gif/track_${baseName}.gif`.replace(/\/+/g, '/');
         try {
           const res = await fetch(gifPath, { method: 'HEAD' });
           if (res.ok) results.push(gifPath);
@@ -369,7 +370,8 @@ const FlipCard: React.FC<{
 
       if (!cancelled) {
         // 如果最终还是没找到，就用 placeholder
-        setValidPaths(results.length > 0 ? results : ['./placeholder.png']);
+        const placeholder = `${import.meta.env.BASE_URL}placeholder.png`.replace(/\/+/g, '/');
+        setValidPaths(results.length > 0 ? results : [placeholder]);
         setCheckedAll(true);
       }
     };
@@ -377,8 +379,9 @@ const FlipCard: React.FC<{
     return () => { cancelled = true; };
   }, [isFlipped, baseName, imagePaths]); // 移除 checkedAll 依赖
 
+  const placeholderUrl = `${import.meta.env.BASE_URL}placeholder.png`.replace(/\/+/g, '/');
   const total = validPaths.length;
-  const currentSrc = validPaths[photoIndex] || './placeholder.png';
+  const currentSrc = validPaths[photoIndex] || placeholderUrl;
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -415,7 +418,7 @@ const FlipCard: React.FC<{
               const target = e.target as HTMLImageElement;
               if (target.src.includes('placeholder.png')) return;
               target.onerror = null;
-              target.src = './placeholder.png';
+              target.src = placeholderUrl;
             }}
           />
           {/* 多张照片时显示导航控件 */}
