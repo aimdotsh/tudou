@@ -345,8 +345,9 @@ const FlipCard: React.FC<{
     let cancelled = false;
     const checkImages = async () => {
       const results: string[] = [];
+      
+      // 1. 检查照片
       for (const src of imagePaths) {
-        // 用 fetch HEAD 请求检测图片是否存在
         try {
           const res = await fetch(src, { method: 'HEAD' });
           if (res.ok) results.push(src);
@@ -354,17 +355,30 @@ const FlipCard: React.FC<{
           // 跳过请求失败的
         }
       }
+
+      // 2. 如果没照片，尝试检查 GIF 动画
+      if (results.length === 0) {
+        const gifPath = `/gif/track_${baseName}.gif`;
+        try {
+          const res = await fetch(gifPath, { method: 'HEAD' });
+          if (res.ok) results.push(gifPath);
+        } catch {
+          // 跳过
+        }
+      }
+
       if (!cancelled) {
-        setValidPaths(results.length > 0 ? results : [imagePaths[0]]);
+        // 如果最终还是没找到，就用 placeholder
+        setValidPaths(results.length > 0 ? results : ['./placeholder.png']);
         setCheckedAll(true);
       }
     };
     checkImages();
     return () => { cancelled = true; };
-  }, [isFlipped]);
+  }, [isFlipped, baseName, imagePaths]); // 移除 checkedAll 依赖
 
   const total = validPaths.length;
-  const currentSrc = validPaths[photoIndex] || imagePaths[0];
+  const currentSrc = validPaths[photoIndex] || './placeholder.png';
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -389,15 +403,17 @@ const FlipCard: React.FC<{
         <div className={styles.flipCardFront}>
           {children}
         </div>
-        {/* 背面：照片轮播 */}
+        {/* 背面：照片或 GIF 轮播 */}
         <div className={styles.flipCardBack}>
           <img
             key={currentSrc}
             src={currentSrc}
             alt={`${altPrefix} ${baseName} ${photoIndex + 1}`}
             className={styles.flipCardPhoto}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
+              if (target.src.includes('placeholder.png')) return;
               target.onerror = null;
               target.src = './placeholder.png';
             }}
