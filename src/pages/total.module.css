@@ -1535,3 +1535,86 @@
   object-fit: contain !important;
   margin: auto !important;
 }
+
+/* =============================================
+   多图翻转卡片 — 照片导航控件
+   ============================================= */
+
+/* 照片在背面的展示样式 */
+.flipCardPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+/* 多图导航栏：固定在卡片背面底部 */
+.photoNav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
+  border-radius: 0 0 8px 8px;
+  z-index: 10;
+}
+
+/* 上/下翻页按钮 */
+.photoNavBtn {
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #1FB3AA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.photoNavBtn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.12);
+}
+
+/* 圆点容器 */
+.photoDots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+/* 单个圆点 */
+.photoDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.photoDot:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: scale(1.2);
+}
+
+/* 当前激活的圆点 */
+.photoDotActive {
+  background: #1FB3AA;
+  transform: scale(1.25);
+}
+

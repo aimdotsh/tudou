@@ -292,6 +292,11 @@ jobs:
         run: |
           python scripts/generate_missing_gifs.py
 
+      - name: Generate photo JSON lists
+        # 扫描 luck_photos/ 和 yyyymmdd_photos/ 目录，自动更新 public/luck.json 和 public/wonderful.json
+        if: env.RUN_TYPE != 'pass'
+        run: |
+          node scripts/generate_photo_json.js
 
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'

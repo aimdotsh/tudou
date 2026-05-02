@@ -142,9 +142,9 @@ const useFileList = (jsonPath: string) => {
 // 特定halfmarathon类型的文件获取 Hook
 const useHalfmarathonFiles = () => useFileList('/wonderful.json');
 
-// 特定halfmarathon类型的 SVG 创建函数
+// Wonderful Workouts：照片来自 assets/yyyymmdd_photos/，SVG 来自 assets/yyyymmdd/
 const createHalfmarathonSvgs = (files: string[]) =>
-  createSvgComponents(files, recentStat, './yyyymmdd', './yyyymmdd');
+  createSvgComponents(files, recentStat, './yyyymmdd', '/yyyymmdd_photos');
 
 // Lazy svg yueye 和 newyear
 //const Yueye01Stat = lazy(() => loadSvgComponent(yueyeStat, `./yueye/2024-07-07.svg`));
@@ -172,18 +172,43 @@ const FailedLoadSvg = ({ filename }: { filename: string }) => (
   </div>
 );
 
-// 统一的 SVG 创建函数
+// 从 JSON 文件列表中提取日期，匹配 photosDir 里所有同日期照片
+// 返回 { date, imagePaths[] } 结构
+const buildPhotoMap = (
+  files: string[],
+  photosDirPrefix: string,
+  imageExtension: string = '.jpg'
+): Record<string, string[]> => {
+  // 将 SVG 文件名列表转换为日期集合
+  const dates = files.map(f => f.replace('.svg', ''));
+  // 对每个日期，生成其主图路径（YYYY-MM-DD.jpg）
+  // 多图由使用方通过 photoIndex 参数拼接（YYYY-MM-DDn.jpg）
+  // 这里只记录基础日期路径，实际多图路径在组件内动态处理
+  const map: Record<string, string[]> = {};
+  dates.forEach(date => {
+    // 主图
+    const primary = `${photosDirPrefix}/${date}${imageExtension}`;
+    // 多图（最多支持 9 张附加图）
+    const extras = Array.from({ length: 9 }, (_, i) => `${photosDirPrefix}/${date}${i + 1}${imageExtension}`);
+    map[date] = [primary, ...extras];
+  });
+  return map;
+};
+
+// 统一的 SVG 创建函数，imagePaths 为该日期所有可能的照片路径（含主图+多图）
 const createSvgComponents = (
   files: string[],
   statModule: any,
   svgBasePath: string,
-  imageBasePath: string,
+  photosDirPrefix: string,
   imageExtension: string = '.jpg'
 ) => {
+  const photoMap = buildPhotoMap(files, photosDirPrefix, imageExtension);
+
   return files.map((filename) => {
     const baseName = filename.replace('.svg', '');
     const svgPath = `${svgBasePath}/${filename}`;
-    const imagePath = `${imageBasePath}/${baseName}${imageExtension}`;
+    const imagePaths = photoMap[baseName] || [`${photosDirPrefix}/${baseName}${imageExtension}`];
 
     const LazySvgComponent = lazy(() => loadSvgComponent(statModule, svgPath)
       .catch((error) => {
@@ -193,13 +218,13 @@ const createSvgComponents = (
         };
       }));
 
-    return { LazySvgComponent, baseName, imagePath };
+    return { LazySvgComponent, baseName, imagePaths };
   });
 };
 
-// 特定luck类型的 SVG 创建函数
+// 吉象同行：照片来自 assets/luck_photos/，SVG 来自 assets/luck/
 const createLuckSvgs = (files: string[]) =>
-  createSvgComponents(files, luckStat, './luck', '/luck');
+  createSvgComponents(files, luckStat, './luck', '/luck_photos');
 
 
 
@@ -293,6 +318,111 @@ interface Activity {
   type: string;
   location_country?: string;
 }
+
+/**
+ * 翻转卡片组件：正面显示 SVG 轨迹，点击后翻转显示照片
+ * 支持同一日期多张照片（小圆点导航）
+ */
+const FlipCard: React.FC<{
+  cardId: string;
+  baseName: string;
+  imagePaths: string[];      // 候选图片路径列表（含主图 + 多图）
+  isFlipped: boolean;
+  onFlip: (id: string) => void;
+  altPrefix: string;
+  children: React.ReactNode; // SVG 正面
+}> = ({ cardId, baseName, imagePaths, isFlipped, onFlip, altPrefix, children }) => {
+  // 当前显示的图片索引
+  const [photoIndex, setPhotoIndex] = useState(0);
+  // 实际有效的照片路径（通过 onError 动态过滤掉 404 的图）
+  const [validPaths, setValidPaths] = useState<string[]>([imagePaths[0]]);
+  const [checkedAll, setCheckedAll] = useState(false);
+
+  // 当卡片翻转时，异步预检所有候选图片是否存在
+  useEffect(() => {
+    if (!isFlipped || checkedAll) return;
+
+    let cancelled = false;
+    const checkImages = async () => {
+      const results: string[] = [];
+      for (const src of imagePaths) {
+        // 用 fetch HEAD 请求检测图片是否存在
+        try {
+          const res = await fetch(src, { method: 'HEAD' });
+          if (res.ok) results.push(src);
+        } catch {
+          // 跳过请求失败的
+        }
+      }
+      if (!cancelled) {
+        setValidPaths(results.length > 0 ? results : [imagePaths[0]]);
+        setCheckedAll(true);
+      }
+    };
+    checkImages();
+    return () => { cancelled = true; };
+  }, [isFlipped]);
+
+  const total = validPaths.length;
+  const currentSrc = validPaths[photoIndex] || imagePaths[0];
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIndex(i => (i - 1 + total) % total);
+  };
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIndex(i => (i + 1) % total);
+  };
+  const handleDot = (e: React.MouseEvent, i: number) => {
+    e.stopPropagation();
+    setPhotoIndex(i);
+  };
+
+  return (
+    <div
+      className={`${styles.flipCard} ${isFlipped ? styles.flipped : ''}`}
+      onClick={(e) => { e.stopPropagation(); onFlip(cardId); }}
+    >
+      <div className={styles.flipCardInner}>
+        {/* 正面：SVG 轨迹 */}
+        <div className={styles.flipCardFront}>
+          {children}
+        </div>
+        {/* 背面：照片轮播 */}
+        <div className={styles.flipCardBack}>
+          <img
+            key={currentSrc}
+            src={currentSrc}
+            alt={`${altPrefix} ${baseName} ${photoIndex + 1}`}
+            className={styles.flipCardPhoto}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = './placeholder.png';
+            }}
+          />
+          {/* 多张照片时显示导航控件 */}
+          {total > 1 && (
+            <div className={styles.photoNav} onClick={e => e.stopPropagation()}>
+              <button className={styles.photoNavBtn} onClick={handlePrev}>‹</button>
+              <div className={styles.photoDots}>
+                {validPaths.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`${styles.photoDot} ${i === photoIndex ? styles.photoDotActive : ''}`}
+                    onClick={(e) => handleDot(e, i)}
+                  />
+                ))}
+              </div>
+              <button className={styles.photoNavBtn} onClick={handleNext}>›</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Total: React.FC = () => {
   const [activityType, setActivityType] = useState<string>('all');
@@ -828,31 +958,20 @@ const Total: React.FC = () => {
 
             {!luckLoading && luckSvgs.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 w-full">
-                {luckSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
+                {luckSvgs.map(({ LazySvgComponent, baseName, imagePaths }, index) => {
                   const cardId = `luck-${index}`;
                   return (
                     <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                      <div
-                        className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                        onClick={(e) => { e.stopPropagation(); toggleFlip(cardId); }}
+                      <FlipCard
+                        cardId={cardId}
+                        baseName={baseName}
+                        imagePaths={imagePaths}
+                        isFlipped={!!flippedCards[cardId]}
+                        onFlip={toggleFlip}
+                        altPrefix="Luck"
                       >
-                        <div className={styles.flipCardInner}>
-                          <div className={styles.flipCardFront}>
-                            <LazySvgComponent style={{ width: '100%', height: '100%' }} />
-                          </div>
-                          <div className={styles.flipCardBack}>
-                            <img
-                              src={imagePath}
-                              alt={`Luck ${baseName}`}
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.onerror = null;
-                                target.src = './placeholder.png';
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                        <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                      </FlipCard>
                     </Suspense>
                   );
                 })}
@@ -870,38 +989,26 @@ const Total: React.FC = () => {
 
 
 
-          {/* halfmarathon */}
+          {/* Wonderful Workouts */}
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
             <h3>Wonderful Workouts <span className={styles.clickHint}>(点击卡片会翻转噢)</span></h3>
 
             {!halfmarathonLoading && halfmarathonSvgs.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 w-full">
-                {halfmarathonSvgs.map(({ LazySvgComponent, baseName, imagePath }, index) => {
+                {halfmarathonSvgs.map(({ LazySvgComponent, baseName, imagePaths }, index) => {
                   const cardId = `halfmarathon-${index}`;
-
                   return (
                     <Suspense key={cardId} fallback={<div className={styles.loadingCard}>Loading...</div>}>
-                      <div
-                        className={`${styles.flipCard} ${flippedCards[cardId] ? styles.flipped : ''}`}
-                        onClick={(e) => { e.stopPropagation(); toggleFlip(cardId); }}
+                      <FlipCard
+                        cardId={cardId}
+                        baseName={baseName}
+                        imagePaths={imagePaths}
+                        isFlipped={!!flippedCards[cardId]}
+                        onFlip={toggleFlip}
+                        altPrefix="Workout"
                       >
-                        <div className={styles.flipCardInner}>
-                          <div className={styles.flipCardFront}>
-                            <LazySvgComponent style={{ width: '100%', height: '100%' }} />
-                          </div>
-                          <div className={styles.flipCardBack}>
-                            <img
-                              src={imagePath}
-                              alt={`yyyymmdd ${baseName}`}
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.onerror = null;
-                                target.src = './placeholder.png';
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                        <LazySvgComponent style={{ width: '100%', height: '100%' }} />
+                      </FlipCard>
                     </Suspense>
                   );
                 })}
