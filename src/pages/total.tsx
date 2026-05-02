@@ -222,9 +222,9 @@ const createSvgComponents = (
   });
 };
 
-// 吉象同行：照片来自 assets/luck_photos/，SVG 来自 assets/luck/
+// 吉象同行：照片来自 assets/luck_photos/，SVG 统一从 assets/yyyymmdd/ 读取
 const createLuckSvgs = (files: string[]) =>
-  createSvgComponents(files, luckStat, './luck', '/luck_photos');
+  createSvgComponents(files, recentStat, './yyyymmdd', '/luck_photos');
 
 
 

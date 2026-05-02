@@ -136,7 +136,7 @@ On the **Total** page, there are two flip-card sections:
 
 | Section | Description | Photo directory | SVG track directory |
 |---|---|---|---|
-| **Luck Encounters** | Special moments with elephants 🐘 | `assets/luck_photos/` | `assets/luck/` |
+| **Luck Encounters** | Special moments with elephants 🐘 | `assets/luck_photos/` | `assets/yyyymmdd/` |
 | **Wonderful Workouts** | Memorable workout achievements | `assets/yyyymmdd_photos/` | `assets/yyyymmdd/` |
 
 Click a card to flip it and reveal the photo. If there are multiple photos for the same date, you can swipe left/right with the dot navigation.
@@ -162,17 +162,19 @@ assets/luck_photos/
 
 > Multiple photos: name them `YYYY-MM-DD.jpg` (main), `YYYY-MM-DD1.jpg`, `YYYY-MM-DD2.jpg` … up to 9 extra photos.
 
-**Step 3 — Generate the SVG track (if not already in `assets/luck/`)**
+**Step 3 — Generate the SVG track (if not already in `assets/yyyymmdd/`)**
 
 ```bash
 python run_page/gen_svg_today.py \
   --from-db \
   --day 2025-03-15 \
   --width 100 --height 130 \
-  --output assets/luck/2025-03-15.svg \
+  --output assets/yyyymmdd/2025-03-15.svg \
   --athlete "Your Name" \
   --use-localtime
 ```
+
+> Both sections read SVG from `assets/yyyymmdd/` — one file is enough to show in both places.
 
 **Step 4 — Update the JSON index**
 

@@ -81,8 +81,8 @@ function generateJson(photosDir, svgDir, outputJson) {
 
 console.log('=== 开始生成 JSON 文件列表 ===\n');
 
-console.log('【吉象同行】luck_photos → luck/');
-generateJson('assets/luck_photos', 'assets/luck', 'public/luck.json');
+console.log('【吉象同行】luck_photos → yyyymmdd/');
+generateJson('assets/luck_photos', 'assets/yyyymmdd', 'public/luck.json');
 
 console.log('\n【Wonderful Workouts】yyyymmdd_photos → yyyymmdd/');
 generateJson('assets/yyyymmdd_photos', 'assets/yyyymmdd', 'public/wonderful.json');

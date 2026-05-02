@@ -155,8 +155,8 @@ python3(python) scripts\kml2polyline.py
 
 | 区域 | 展示内容 | 照片目录 | SVG 轨迹目录 |
 |---|---|---|---|
-| **吉象同行** | 与大象一起运动的特别记忆 | `assets/luck_photos/` | `assets/luck/` |
-| **Wonderful Workouts** | 值得纪念的精彩运动 | `assets/yyyymmdd_photos/` | `assets/yyyymmdd/` |
+| **吉象同行** | 与大象一起运动的特别记忆 | `assets/luck_photos/` | `assets/yyyymmdd/` |
+| **Wonderful Workouts** | 値得纪念的精彩运动 | `assets/yyyymmdd_photos/` | `assets/yyyymmdd/` |
 
 点击卡片正面（SVG 轨迹）可翻转到背面查看照片；若同一日期有多张照片，翻转后可左右滑动浏览。
 
@@ -181,17 +181,19 @@ assets/luck_photos/
 
 > 多张照片命名规则：主图 `YYYY-MM-DD.jpg`，附加图 `YYYY-MM-DD1.jpg`、`YYYY-MM-DD2.jpg` … 最多支持 9 张。
 
-**第 3 步 — 生成 SVG 轨迹（如果 `assets/luck/` 里还没有该日期的 SVG）**
+**第 3 步 — 生成 SVG 轨迹（如果 `assets/yyyymmdd/` 里还没有该日期的 SVG）**
 
 ```bash
 python run_page/gen_svg_today.py \
   --from-db \
   --day 2025-03-15 \
   --width 100 --height 130 \
-  --output assets/luck/2025-03-15.svg \
+  --output assets/yyyymmdd/2025-03-15.svg \
   --athlete "你的名字" \
   --use-localtime
 ```
+
+> 两个区域的 SVG 都从 `assets/yyyymmdd/` 读取，放一份即可同时在两个地方展示。
 
 **第 4 步 — 更新 JSON 索引文件**
 
