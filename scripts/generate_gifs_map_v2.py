@@ -13,6 +13,7 @@ import io
 import re
 import urllib.request
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 
 try:
     import imageio
@@ -22,33 +23,33 @@ except ImportError:
 
 class MapGifGenerator:
     def __init__(self, project_root=None, width=500, height=500, track_color='#FF5722', 
-                 animation_frames=80, static_frames=20):
+                 animation_frames=80, static_frames=20, force=False):
         if project_root is None:
             self.project_root = Path(__file__).parent.parent
         else:
             self.project_root = Path(project_root)
         
         self.activities_file = self.project_root / "src" / "static" / "activities.json"
-        self.output_dir = self.project_root / "assets" / "gif"
+        # 统一输出到 assets/gif，后续可通过脚本同步到 public/assets/gif
+        self.output_dir = self.project_root / "public" / "assets" / "gif"
         self.tile_cache = self.project_root / "scripts" / "tile_cache"
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.tile_cache.mkdir(exist_ok=True)
         
-        # 内部使用 2x 绘图，最后缩小实现抗锯齿
-        self.target_width = width
-        self.target_height = height
-        self.draw_width = width * 2
-        self.draw_height = height * 2
-        
+        self.target_width, self.target_height = width, height
+        self.draw_width, self.draw_height = width * 2, height * 2
         self.track_color = track_color
         self.animation_frames = animation_frames
         self.static_frames = static_frames
-        
-        # 2x 比例下的参数
-        self.line_width = 2  # 在 2x 下设为 2，缩小后相当于 1px
+        self.line_width = 2
+        self.force = force
         
         self.offset_lat, self.offset_lng = self.get_offset_config()
         self.start_icon = self.load_svg_icon("start.svg")
         self.end_icon = self.load_svg_icon("end.svg")
+        
+        # 预加载字体
+        self.f_bold, self.f_reg = self.load_fonts()
 
     def get_offset_config(self):
         dist, bearing = 0.0, 114.45
@@ -62,6 +63,21 @@ class MapGifGenerator:
         except: pass
         rad = math.radians(bearing)
         return (dist * math.cos(rad)) / 111.0, (dist * math.sin(rad)) / 89.0
+
+    def load_fonts(self):
+        font_paths = [
+            "/System/Library/Fonts/PingFang.ttc",
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+            "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
+            "/System/Library/Fonts/STHeiti Light.ttc",
+            "/Library/Fonts/Arial Unicode.ttf"
+        ]
+        for p in font_paths:
+            if os.path.exists(p):
+                try:
+                    return ImageFont.truetype(p, 44), ImageFont.truetype(p, 36)
+                except: continue
+        return ImageFont.load_default(), ImageFont.load_default()
 
     def load_svg_icon(self, filename):
         svg_path = self.project_root / "assets" / filename
@@ -126,78 +142,80 @@ class MapGifGenerator:
         if len(points) < 2: return
         pts = [(p[0], p[1]) for p in points]
         rgb = ImageColor.getrgb(self.track_color)
-        # 1. 极淡发光 (在 2x 模式下)
         draw.line(pts, fill=(*rgb, 25), width=int(self.line_width * 3), joint='round')
-        # 2. 中等发光
         draw.line(pts, fill=(*rgb, 60), width=int(self.line_width * 2), joint='round')
-        # 3. 核心线
         draw.line(pts, fill=self.track_color, width=int(self.line_width), joint='round')
 
-    def generate(self, date):
-        print(f"🎬 正在生成 {date} 的超清抗锯齿 GIF...")
-        data = json.load(open(self.activities_file))
-        act = next((a for a in data if a['start_date_local'].startswith(date) and a.get('summary_polyline')), None)
-        if not act: return
+    def generate(self, date, activity=None):
+        out_path = self.output_dir / f"track_{date}.gif"
+        if out_path.exists() and not self.force:
+            print(f"⏩ 跳过 {date} (文件已存在)")
+            return True
+            
+        if not activity:
+            data = json.load(open(self.activities_file))
+            activity = next((a for a in data if a['start_date_local'].startswith(date) and a.get('summary_polyline')), None)
+            
+        if not activity: return False
         
-        raw = [[p[0] + self.offset_lat, p[1] + self.offset_lng] for p in polyline.decode(act['summary_polyline'])]
+        raw = [[p[0] + self.offset_lat, p[1] + self.offset_lng] for p in polyline.decode(activity['summary_polyline'])]
         bg, map_fn = self.get_map_background(raw)
         pixel_coords = [map_fn(lat, lon) for lat, lon in raw]
         smooth = self.interpolate(pixel_coords, self.animation_frames * 4)
         
-        # 准备字体 (明确指定中文字体，增大字号以适应 2x 画布)
-        try:
-            f_bold = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 44)
-            f_reg = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 36)
-        except:
-            try:
-                f_bold = ImageFont.truetype("/Library/Fonts/Arial Unicode.ttf", 44)
-                f_reg = ImageFont.truetype("/Library/Fonts/Arial Unicode.ttf", 36)
-            except:
-                f_bold = f_reg = ImageFont.load_default()
-
         frames = []
         for i in range(self.animation_frames):
             frame = bg.copy()
             draw = ImageDraw.Draw(frame, 'RGBA')
             pts = smooth[:int(len(smooth) * (i+1)/self.animation_frames)]
             self.draw_beautiful_line(draw, pts)
-            
-            # 文本渲染 (2x 位置)
-            draw.text((50, 50), date, fill=(40, 40, 40, 220), font=f_bold)
-            name = act.get('name') or "Run"
-            draw.text((self.draw_width - 50, self.draw_height - 60), name, fill=(60, 60, 60, 200), font=f_reg, anchor="rb")
-
+            draw.text((50, 50), date, fill=(40, 40, 40, 220), font=self.f_bold)
+            name = activity.get('name') or "Run"
+            draw.text((self.draw_width - 50, self.draw_height - 60), name, fill=(60, 60, 60, 200), font=self.f_reg, anchor="rb")
             if pts:
                 cx, cy = pts[-1]
                 draw.ellipse([cx-6, cy-6, cx+6, cy+6], fill='white', outline=self.track_color, width=2)
-            
-            # 缩小到 1x，应用高质量滤镜 (抗锯齿核心)
-            frame_final = frame.resize((self.target_width, self.target_height), Image.Resampling.LANCZOS)
-            frames.append(frame_final)
+            frames.append(frame.resize((self.target_width, self.target_height), Image.Resampling.LANCZOS))
         
-        # 结尾静止帧
         final = bg.copy()
         draw = ImageDraw.Draw(final, 'RGBA')
         self.draw_beautiful_line(draw, smooth)
-        draw.text((50, 50), date, fill=(40, 40, 40, 220), font=f_bold)
-        draw.text((self.draw_width - 50, self.draw_height - 60), act.get('name') or "Run", fill=(60, 60, 60, 200), font=f_reg, anchor="rb")
-
+        draw.text((50, 50), date, fill=(40, 40, 40, 220), font=self.f_bold)
+        draw.text((self.draw_width - 50, self.draw_height - 60), activity.get('name') or "Run", fill=(60, 60, 60, 200), font=self.f_reg, anchor="rb")
         if self.start_icon:
             final.paste(i2:=self.start_icon.resize((52,52)), (int(smooth[0][0]-26), int(smooth[0][1]-26)), i2)
         if self.end_icon:
             final.paste(i3:=self.end_icon.resize((52,52)), (int(smooth[-1][0]-26), int(smooth[-1][1]-26)), i3)
-        
         final_1x = final.resize((self.target_width, self.target_height), Image.Resampling.LANCZOS)
         
-        # 组合帧
-        all_frames = frames + [final_1x] * self.static_frames
+        imageio.mimsave(str(out_path), [np.array(f) for f in (frames + [final_1x] * self.static_frames)], fps=25, loop=0)
+        print(f"✅ 生成完成: {date}")
+        return True
+
+    def generate_all(self, min_distance=0):
+        print(f"🚀 批量生成 (>= {min_distance}m)...")
+        data = json.load(open(self.activities_file))
+        tasks = []
+        for act in data:
+            if not act.get('summary_polyline') or act.get('distance', 0) < min_distance: continue
+            tasks.append((act['start_date_local'][:10], act))
         
-        out = self.output_dir / f"track_{date}.gif"
-        imageio.mimsave(str(out), [np.array(f) for f in all_frames], fps=25, loop=0)
-        print(f"✅ 完成: {out}")
+        tasks.sort(key=lambda x: x[0], reverse=True)
+        print(f"📊 共 {len(tasks)} 条任务")
+        
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            list(executor.map(lambda x: self.generate(*x), tasks))
+        print("🎉 全部完成")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-day", type=str, required=True)
+    parser.add_argument("-day", type=str)
+    parser.add_argument("-all", action="store_true")
+    parser.add_argument("-force", action="store_true")
+    parser.add_argument("-min-dist", type=float, default=21000)
     args = parser.parse_args()
-    MapGifGenerator(width=500, height=500).generate(args.day)
+    
+    gen = MapGifGenerator(width=500, height=500, force=args.force)
+    if args.day: gen.generate(args.day)
+    elif args.all: gen.generate_all(min_distance=args.min_dist)
+    else: parser.print_help()

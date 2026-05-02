@@ -1,64 +1,31 @@
-import json
 import os
-from datetime import datetime, timedelta
+import sys
 from pathlib import Path
-from generate_gifs_python import GifGenerator
+import subprocess
 
 def main():
-    # Setup paths
+    # 切换到脚本所在目录的父目录
     project_root = Path(__file__).parent.parent
-    activities_file = project_root / "src" / "static" / "activities.json"
-    gif_dir = project_root / "public" / "assets" / "gif"
+    os.chdir(project_root)
     
-    # Initialize generator
-    generator = GifGenerator(project_root)
+    print("🚀 正在调用 Map V2 高清生成引擎批量处理缺失或需要更新的 GIF...")
     
-    # Load activities
-    print(f"Loading activities from {activities_file}...")
-    with open(activities_file, 'r', encoding='utf-8') as f:
-        activities = json.load(f)
+    # 直接调用 generate_gifs_map_v2.py 的逻辑
+    # 默认生成所有 >= 21km 的活动 (Wonderful Workouts 需求)
+    # 如果需要生成所有历史活动，可以去掉 -min-dist 或设为 0
+    cmd = [
+        sys.executable, 
+        "scripts/generate_gifs_map_v2.py", 
+        "-all", 
+        "-min-dist", "21000",
+        "-force" # 用户要求重新生成所有的，所以加上 force
+    ]
     
-    print("Checking for all missing GIFs in history...")
-    
-    missing_activities = []
-    
-    for activity in activities:
-        # Parse date
-        try:
-            start_date_str = activity['start_date_local'].split(' ')[0]
-            gif_path = gif_dir / f"track_{start_date_str}.gif"
-            if not gif_path.exists():
-                missing_activities.append({
-                    'date': start_date_str,
-                    'run_id': activity['run_id'],
-                    'activity': activity
-                })
-        except Exception as e:
-            print(f"Error checking activity {activity.get('run_id')}: {e}")
-            continue
-            
-    if not missing_activities:
-        print("No missing GIFs found for the last 7 days.")
-        return
-
-    print(f"Found {len(missing_activities)} missing GIFs.")
-    
-    # Generate GIFs
-    success_count = 0
-    for i, item in enumerate(missing_activities):
-        try:
-            # Check if summary_polyline exists
-            if not item['activity'].get('summary_polyline'):
-                print(f"Skipping {item['date']} - No summary polyline")
-                continue
-                
-            print(f"Generating GIF for {item['date']}...")
-            if generator.generate_single_gif(item, i, len(missing_activities)):
-                success_count += 1
-        except Exception as e:
-            print(f"Failed to generate GIF for {item['date']}: {e}")
-
-    print(f"Finished! Generated {success_count} GIFs.")
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ 批量生成失败: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
