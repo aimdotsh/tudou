@@ -96,6 +96,9 @@ def generate_location_stats():
         # 记录每个地点的首次运动详细信息
         location_first_activity = {}
         
+        # 记录每个省份的汇总统计信息 (distance, count, cities)
+        province_summary = {}
+        
         for start_date, location_country, activity_type, activity_name, run_id, distance, moving_time in results:
             # 提取年份
             try:
@@ -119,6 +122,24 @@ def generate_location_stats():
                 if city and province:
                     city_province_map[city] = province
                 
+                # 统计省份汇总信息
+                # 如果是直辖市，city 可能就是 province 
+                p_name = province
+                if not p_name and city and city in [u'北京市', u'上海市', u'天津市', u'重庆市', u'香港特别行政区', u'澳门特别行政区']:
+                    p_name = city
+                
+                if p_name:
+                    if p_name not in province_summary:
+                        province_summary[p_name] = {
+                            'distance': 0.0,
+                            'count': 0,
+                            'cities': set()
+                        }
+                    province_summary[p_name]['distance'] += (distance or 0.0)
+                    province_summary[p_name]['count'] += 1
+                    if city:
+                        province_summary[p_name]['cities'].add(city)
+
                 # 检查是否为新增地点并记录首次运动信息
                 if country and country not in all_time_countries:
                     all_time_countries.add(country)
@@ -164,6 +185,10 @@ def generate_location_stats():
                 if country:
                     countries.add(country)
         
+        # 转换省份汇总中的 cities set 为 list 以便 JSON 序列化
+        for p in province_summary:
+            province_summary[p]['cities'] = sorted(list(province_summary[p]['cities']))
+
         stats = {
             'years': len(years),
             'countries': len(countries),
@@ -175,7 +200,8 @@ def generate_location_stats():
             'citiesList': sorted(list(cities)),
             'yearlyNewLocations': yearly_new_locations,
             'cityProvinceMap': city_province_map,
-            'locationFirstActivity': location_first_activity
+            'locationFirstActivity': location_first_activity,
+            'provinceSummary': province_summary
         }
         
         # 保存统计结果到JSON文件

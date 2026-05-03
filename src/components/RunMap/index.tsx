@@ -64,45 +64,11 @@ const RunMap = ({
     return (chinaGeojson.features as any[]).map(f => f.properties.name);
   }, []);
 
-  // 计算省份汇总数据
+  // 直接从预计算的 locationStats 中获取省份汇总数据
+  // 这样可以避免隐私模式下 activities 数据缺失地理信息的问题
   const provinceStats = React.useMemo(() => {
-    const stats: Record<string, { cities: string[], distance: number, count: number }> = {};
-
-    activities.forEach(run => {
-      const loc = locationForRun(run);
-      const p = loc.province;
-      const c = loc.city;
-      
-      // 匹配逻辑：
-      // 1. 如果有省份名，在标准库里找（支持“山东”匹配“山东省”）
-      // 2. 如果没找到或没省份名，看城市是不是直辖市
-      // 3. 最后看城市映射表
-      let matchedName = "";
-      if (p) {
-        matchedName = standardProvinces.find(sp => sp.includes(p) || p.includes(sp.replace(/(省|自治区|市|特别行政区)/g, ''))) || "";
-      }
-      if (!matchedName && c) {
-        if (standardProvinces.includes(c)) {
-          matchedName = c;
-        } else if ((locationStats as any).cityProvinceMap[c]) {
-          const mappedP = (locationStats as any).cityProvinceMap[c];
-          matchedName = standardProvinces.find(sp => sp.includes(mappedP)) || "";
-        }
-      }
-
-      if (matchedName) {
-        if (!stats[matchedName]) {
-          stats[matchedName] = { cities: [], distance: 0, count: 0 };
-        }
-        if (c && !stats[matchedName].cities.includes(c)) {
-          stats[matchedName].cities.push(c);
-        }
-        stats[matchedName].distance += run.distance;
-        stats[matchedName].count += 1;
-      }
-    });
-    return stats;
-  }, [activities, standardProvinces]);
+    return (locationStats as any).provinceSummary || {};
+  }, []);
 
   const onMouseMove = useCallback((event: any) => {
     const interactiveLayers = ['visited-areas', 'province', 'visited-province-labels'];
