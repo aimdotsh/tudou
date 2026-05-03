@@ -396,34 +396,34 @@ const RunMap = ({
         />
         {/* 访问过的区域高亮层 - 仅在 Total 年份时显示（包括直辖市和省份） */}
         {thisYear === 'Total' && highlightAreas.length > 0 && (
-          <>
-            <Layer
-              id="visited-areas"
-              type="fill"
-              paint={{
-                'fill-color': VISITED_CITY_FILL_COLOR,
-                'fill-opacity': 0.4,
-              }}
-              filter={filterHighlightAreas}
-            />
-            {/* 增加省份/直辖市名称展示 */}
-            <Layer
-              id="visited-areas-labels"
-              type="symbol"
-              paint={{
-                'text-color': '#21B2AA',
-                'text-halo-color': '#ffffff',
-                'text-halo-width': 1.5,
-              }}
-              layout={{
-                'text-field': ['get', 'name'],
-                'text-size': 12,
-                'text-anchor': 'center',
-                'text-allow-overlap': false,
-              }}
-              filter={filterHighlightAreas}
-            />
-          </>
+          <Layer
+            id="visited-areas"
+            type="fill"
+            paint={{
+              'fill-color': VISITED_CITY_FILL_COLOR,
+              'fill-opacity': 0.4,
+            }}
+            filter={filterHighlightAreas}
+          />
+        )}
+        {/* 增加省份/直辖市名称展示 */}
+        {thisYear === 'Total' && highlightAreas.length > 0 && (
+          <Layer
+            id="visited-province-labels"
+            type="symbol"
+            paint={{
+              'text-color': '#21B2AA',
+              'text-halo-color': '#ffffff',
+              'text-halo-width': 1.5,
+            }}
+            layout={{
+              'text-field': ['get', 'name'],
+              'text-size': 12,
+              'text-anchor': 'center',
+              'text-allow-overlap': true,
+            }}
+            filter={filterHighlightAreas}
+          />
         )}
         <Layer
           id="countries"
