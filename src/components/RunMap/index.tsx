@@ -78,13 +78,16 @@ const RunMap = ({
       // 尝试匹配标准名称
       let matchedName = "";
       if (p) {
-        matchedName = standardProvinces.find(sp => sp.includes(p) || p.includes(sp.replace(/(省|自治区|市|特别行政区)/g, ''))) || "";
+        // 先尝试完全包含匹配，比如 "新疆" 匹配 "新疆维吾尔自治区"
+        matchedName = standardProvinces.find(sp => sp.includes(p) || p.includes(p.replace(/(省|自治区|市|特别行政区)/g, ''))) || "";
       }
+      
+      // 如果省份没匹配到，通过城市查表
       if (!matchedName && c) {
         if (standardProvinces.includes(c)) {
-           matchedName = c;
+          matchedName = c;
         } else if ((locationStats as any).cityProvinceMap[c]) {
-           matchedName = (locationStats as any).cityProvinceMap[c];
+          matchedName = (locationStats as any).cityProvinceMap[c];
         }
       }
 
@@ -102,16 +105,15 @@ const RunMap = ({
     return stats;
   }, [activities]);
 
-  const onMapClick = useCallback((event: any) => {
+  const onMouseMove = useCallback((event: any) => {
     const interactiveLayers = ['visited-areas', 'province', 'visited-province-labels'];
     const features = event.features || [];
-    // 查找点击位置属于我们关注的层的第一个特征
     const feature = features.find((f: any) => interactiveLayers.includes(f.layer.id));
     
     if (feature) {
       const provinceName = feature.properties.name;
       if (provinceName) {
-        setSelectedProvince(prev => prev === provinceName ? null : provinceName);
+        setSelectedProvince(provinceName);
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
@@ -122,7 +124,7 @@ const RunMap = ({
       setSelectedProvince(null);
       setPopupInfo(null);
     }
-  }, [selectedProvince]);
+  }, []);
 
   // 动态轨迹相关
   const animationRef = useRef<number>();
@@ -419,7 +421,7 @@ const RunMap = ({
     <Map
       {...viewState}
       onMove={onMove}
-      onClick={onMapClick}
+      onMouseMove={onMouseMove}
       interactiveLayerIds={['visited-areas', 'province', 'countries', 'visited-province-labels']}
       style={style}
       mapStyle={mapStyle}
