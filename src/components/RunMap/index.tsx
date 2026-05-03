@@ -190,7 +190,7 @@ const RunMap = ({
         // Special logic for labels based on year
         if (isLabelLayer) {
           // 1. If Privacy Mode is ON OR Road Label Display is OFF, always hide labels
-          if (PRIVACY_MODE || !ROAD_LABEL_DISPLAY) {
+          if ((PRIVACY_MODE || !ROAD_LABEL_DISPLAY) && !it.id.includes('visited-province')) {
             map.setLayoutProperty(it.id, 'visibility', 'none');
             return;
           }
@@ -263,7 +263,8 @@ const RunMap = ({
                 (layer: any) =>
                   (layer.type === 'symbol' || layer.type === 'composite') &&
                   layer.layout &&
-                  layer.layout['text-field']
+                  layer.layout['text-field'] &&
+                  !layer.id.includes('visited-province')
               )
               .map((layer: any) => layer.id);
 
