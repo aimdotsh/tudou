@@ -407,23 +407,27 @@ const RunMap = ({
             filter={filterHighlightAreas}
           />
         )}
-        {/* 增加省份/直辖市名称展示 */}
-        {thisYear === 'Total' && highlightAreas.length > 0 && (
+        {/* 增加全国省份/直辖市名称展示 */}
+        {thisYear === 'Total' && (
           <Layer
             id="visited-province-labels"
             type="symbol"
             paint={{
-              'text-color': '#21B2AA',
+              'text-color': [
+                'case',
+                ['in', ['get', 'name'], ['literal', highlightAreas]],
+                '#21B2AA', // 已访问：青色
+                '#999999'  // 未访问：灰色
+              ],
               'text-halo-color': '#ffffff',
               'text-halo-width': 1.5,
             }}
             layout={{
               'text-field': ['get', 'name'],
-              'text-size': 12,
+              'text-size': 11,
               'text-anchor': 'center',
               'text-allow-overlap': true,
             }}
-            filter={filterHighlightAreas}
           />
         )}
         <Layer
