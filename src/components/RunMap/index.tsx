@@ -545,7 +545,8 @@ const RunMap = ({
         <Popup
           longitude={popupInfo.longitude}
           latitude={popupInfo.latitude}
-          anchor="bottom"
+          anchor="left"
+          offset={15}
           onClose={() => setPopupInfo(null)}
           closeButton={false}
           className="province-popup"
