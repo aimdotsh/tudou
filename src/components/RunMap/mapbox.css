@@ -777,3 +777,13 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .mapboxgl-canvas-container.mapboxgl-touch-pan-blocker-override.mapboxgl-scrollable-page .mapboxgl-canvas {
   touch-action: pan-x pan-y;
 }
+/* 自定义省份弹窗样式 */
+.province-popup .mapboxgl-popup-content {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.province-popup .mapboxgl-popup-tip {
+  border-top-color: rgba(255, 255, 255, 0.9) !important;
+}

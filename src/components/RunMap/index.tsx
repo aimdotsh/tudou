@@ -1,6 +1,6 @@
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import Map, { Layer, Source, FullscreenControl, NavigationControl, MapRef } from 'react-map-gl';
+import Map, { Layer, Source, FullscreenControl, NavigationControl, MapRef, Popup } from 'react-map-gl';
 import { MapInstance } from "react-map-gl/src/types/lib";
 import useActivities from '@/hooks/useActivities';
 import {
@@ -20,7 +20,7 @@ import {
   MAP_TILE_ACCESS_TOKEN,
   MAP_TILE_STYLE_LIGHT,
 } from '@/utils/const';
-import { Coordinate, IViewState, geoJsonForMap, getMapStyle } from '@/utils/utils';
+import { Coordinate, IViewState, geoJsonForMap, getMapStyle, locationForRun } from '@/utils/utils';
 import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
 import styles from './style.module.css';
@@ -49,20 +49,58 @@ const RunMap = ({
   thisYear,
   description,
 }: IRunMapProps) => {
-  const { countries, provinces } = useActivities();
+  const { activities, countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
   const [lights, setLights] = useState(PRIVACY_MODE ? false : LIGHTS_ON);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
+  const [popupInfo, setPopupInfo] = useState<{
+    longitude: number;
+    latitude: number;
+    province: string;
+  } | null>(null);
+
+  // 计算省份汇总数据
+  const provinceStats = React.useMemo(() => {
+    const stats: Record<string, { cities: string[], distance: number, count: number }> = {};
+    activities.forEach(run => {
+      const loc = locationForRun(run);
+      const p = loc.province;
+      const c = loc.city;
+      if (p) {
+        if (!stats[p]) {
+          stats[p] = { cities: [], distance: 0, count: 0 };
+        }
+        if (c && !stats[p].cities.includes(c)) {
+          stats[p].cities.push(c);
+        }
+        stats[p].distance += run.distance;
+        stats[p].count += 1;
+      }
+    });
+    return stats;
+  }, [activities]);
 
   const onMapClick = useCallback((event: any) => {
     const feature = event.features && event.features[0];
-    if (feature) {
+    if (feature && (feature.layer.id === 'visited-areas' || feature.layer.id === 'province')) {
       const provinceName = feature.properties.name;
       setSelectedProvince(prev => prev === provinceName ? null : provinceName);
+      
+      // 如果有该省份的数据，显示弹窗
+      if (provinceStats[provinceName]) {
+        setPopupInfo({
+          longitude: event.lngLat.lng,
+          latitude: event.lngLat.lat,
+          province: provinceName
+        });
+      } else {
+        setPopupInfo(null);
+      }
     } else {
       setSelectedProvince(null);
+      setPopupInfo(null);
     }
-  }, []);
+  }, [provinceStats, selectedProvince]);
 
   // 动态轨迹相关
   const animationRef = useRef<number>();
@@ -513,6 +551,42 @@ const RunMap = ({
         <span className={styles.runDescription}>
           {description}
         </span>
+      )}
+      {popupInfo && provinceStats[popupInfo.province] && (
+        <Popup
+          longitude={popupInfo.longitude}
+          latitude={popupInfo.latitude}
+          anchor="bottom"
+          onClose={() => setPopupInfo(null)}
+          closeButton={false}
+          className="province-popup"
+        >
+          <div className="p-2 min-w-[150px] bg-white/90 backdrop-blur-sm rounded shadow-lg text-gray-800">
+            <h3 className="text-lg font-bold border-b border-gray-200 pb-1 mb-2 text-red-500">
+              {popupInfo.province}
+            </h3>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">累计里程:</span>
+                <span className="font-semibold">{(provinceStats[popupInfo.province].distance / 1000).toFixed(2)} km</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">运动次数:</span>
+                <span className="font-semibold">{provinceStats[popupInfo.province].count} 次</span>
+              </div>
+              <div className="mt-2">
+                <span className="text-gray-500 block mb-1">访问城市:</span>
+                <div className="flex flex-wrap gap-1">
+                  {provinceStats[popupInfo.province].cities.map(city => (
+                    <span key={city} className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded-sm text-xs">
+                      {city}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Popup>
       )}
       <FullscreenControl style={fullscreenButton} />
 
