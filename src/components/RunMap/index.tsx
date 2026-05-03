@@ -59,35 +59,34 @@ const RunMap = ({
     province: string;
   } | null>(null);
 
+  // 从 GeoJSON 中提取标准省份名
+  const standardProvinces = React.useMemo(() => {
+    return (chinaGeojson.features as any[]).map(f => f.properties.name);
+  }, []);
+
   // 计算省份汇总数据
   const provinceStats = React.useMemo(() => {
     const stats: Record<string, { cities: string[], distance: number, count: number }> = {};
-    const standardProvinces = [
-      "北京市", "天津市", "河北省", "山西省", "内蒙古自治区", "辽宁省", "吉林省", "黑龙江省",
-      "上海市", "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省",
-      "湖北省", "湖南省", "广东省", "广西壮族自治区", "海南省", "重庆市", "四川省",
-      "贵州省", "云南省", "西藏自治区", "陕西省", "甘肃省", "青海省", "宁夏回族自治区",
-      "新疆维吾尔自治区", "香港特别行政区", "澳门特别行政区", "台湾省"
-    ];
 
     activities.forEach(run => {
       const loc = locationForRun(run);
       const p = loc.province;
       const c = loc.city;
       
-      // 尝试匹配标准名称
+      // 匹配逻辑：
+      // 1. 如果有省份名，在标准库里找（支持“山东”匹配“山东省”）
+      // 2. 如果没找到或没省份名，看城市是不是直辖市
+      // 3. 最后看城市映射表
       let matchedName = "";
       if (p) {
-        // 先尝试完全包含匹配，比如 "新疆" 匹配 "新疆维吾尔自治区"
-        matchedName = standardProvinces.find(sp => sp.includes(p) || p.includes(p.replace(/(省|自治区|市|特别行政区)/g, ''))) || "";
+        matchedName = standardProvinces.find(sp => sp.includes(p) || p.includes(sp.replace(/(省|自治区|市|特别行政区)/g, ''))) || "";
       }
-      
-      // 如果省份没匹配到，通过城市查表
       if (!matchedName && c) {
         if (standardProvinces.includes(c)) {
           matchedName = c;
         } else if ((locationStats as any).cityProvinceMap[c]) {
-          matchedName = (locationStats as any).cityProvinceMap[c];
+          const mappedP = (locationStats as any).cityProvinceMap[c];
+          matchedName = standardProvinces.find(sp => sp.includes(mappedP)) || "";
         }
       }
 
@@ -103,7 +102,7 @@ const RunMap = ({
       }
     });
     return stats;
-  }, [activities]);
+  }, [activities, standardProvinces]);
 
   const onMouseMove = useCallback((event: any) => {
     const interactiveLayers = ['visited-areas', 'province', 'visited-province-labels'];
@@ -584,8 +583,9 @@ const RunMap = ({
           onClose={() => setPopupInfo(null)}
           closeButton={false}
           className="province-popup"
+          style={{ pointerEvents: 'none' }}
         >
-          <div className="p-2 min-w-[150px] bg-white/90 backdrop-blur-sm rounded shadow-lg text-gray-800" style={{ pointerEvents: 'auto' }}>
+          <div className="p-2 min-w-[150px] bg-white/90 backdrop-blur-sm rounded shadow-lg text-gray-800" style={{ pointerEvents: 'none' }}>
             <h3 className="text-lg font-bold border-b border-gray-200 pb-1 mb-2 text-red-500">
               {popupInfo.province}
             </h3>
