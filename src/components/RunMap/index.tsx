@@ -52,6 +52,17 @@ const RunMap = ({
   const { countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
   const [lights, setLights] = useState(PRIVACY_MODE ? false : LIGHTS_ON);
+  const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
+
+  const onMapClick = useCallback((event: any) => {
+    const feature = event.features && event.features[0];
+    if (feature) {
+      const provinceName = feature.properties.name;
+      setSelectedProvince(prev => prev === provinceName ? null : provinceName);
+    } else {
+      setSelectedProvince(null);
+    }
+  }, []);
 
   // 动态轨迹相关
   const animationRef = useRef<number>();
@@ -348,9 +359,12 @@ const RunMap = ({
     <Map
       {...viewState}
       onMove={onMove}
+      onClick={onMapClick}
+      interactiveLayerIds={['visited-areas', 'province', 'countries']}
       style={style}
       mapStyle={mapStyle}
       ref={mapRefCallback}
+      cursor={selectedProvince ? 'pointer' : 'grab'}
       mapboxAccessToken={MAPBOX_TOKEN}
       scrollZoom={false}
       doubleClickZoom={false}
@@ -401,8 +415,18 @@ const RunMap = ({
             id="visited-areas"
             type="fill"
             paint={{
-              'fill-color': VISITED_CITY_FILL_COLOR,
-              'fill-opacity': 0.4,
+              'fill-color': [
+                'case',
+                ['==', ['get', 'name'], selectedProvince || ''],
+                '#FF8C00', // 选中颜色：橙色
+                VISITED_CITY_FILL_COLOR
+              ],
+              'fill-opacity': [
+                'case',
+                ['==', ['get', 'name'], selectedProvince || ''],
+                0.8,
+                0.4
+              ],
             }}
             filter={filterHighlightAreas}
           />
@@ -415,16 +439,28 @@ const RunMap = ({
             paint={{
               'text-color': [
                 'case',
+                ['==', ['get', 'name'], selectedProvince || ''],
+                '#FFFFFF', // 选中时文字反白
                 ['in', ['get', 'name'], ['literal', highlightAreas]],
                 '#21B2AA', // 已访问：青色
                 '#999999'  // 未访问：灰色
               ],
-              'text-halo-color': '#ffffff',
+              'text-halo-color': [
+                'case',
+                ['==', ['get', 'name'], selectedProvince || ''],
+                '#FF8C00', // 选中时光晕颜色
+                '#ffffff'
+              ],
               'text-halo-width': 1.5,
             }}
             layout={{
               'text-field': ['get', 'name'],
-              'text-size': 11,
+              'text-size': [
+                'case',
+                ['==', ['get', 'name'], selectedProvince || ''],
+                14, // 选中时字号变大
+                11
+              ],
               'text-anchor': 'center',
               'text-allow-overlap': true,
             }}
