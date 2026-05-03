@@ -462,8 +462,10 @@ const RunMap = ({
                 11
               ],
               'text-anchor': 'center',
-              'text-allow-overlap': true,
+              'text-allow-overlap': false,
+              'text-padding': 2,
             }}
+            filter={['has', 'cp']}
           />
         )}
         <Layer
