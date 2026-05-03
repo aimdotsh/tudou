@@ -25,7 +25,7 @@ import RunMarker from './RunMarker';
 import RunMapButtons from './RunMapButtons';
 import styles from './style.module.css';
 import { FeatureCollection, LineString, Feature } from 'geojson';
-import { RPGeometry } from '@/static/run_countries';
+import { RPGeometry, chinaGeojson } from '@/static/run_countries';
 import locationStats from '@/static/location_stats.json';
 import './mapbox.css';
 import LightsControl from "@/components/RunMap/LightsControl";
