@@ -64,17 +64,29 @@ const RunMap = ({
     const stats: Record<string, { cities: string[], distance: number, count: number }> = {};
     activities.forEach(run => {
       const loc = locationForRun(run);
-      const p = loc.province;
+      let p = loc.province;
       const c = loc.city;
+
+      // 1. 处理直辖市：当 province 为空而 city 为直辖市时，将 city 视为省份
+      if (!p && c && ["北京市", "上海市", "天津市", "重庆市", "香港特别行政区", "澳门特别行政区"].includes(c)) {
+        p = c;
+      }
+      // 2. 通过映射表补全：如果只有城市信息，尝试查表找省份全称
+      if (!p && c && (locationStats as any).cityProvinceMap[c]) {
+        p = (locationStats as any).cityProvinceMap[c];
+      }
+
       if (p) {
-        if (!stats[p]) {
-          stats[p] = { cities: [], distance: 0, count: 0 };
+        // 统一处理名称（去除多余空格等）
+        const provinceName = p.trim();
+        if (!stats[provinceName]) {
+          stats[provinceName] = { cities: [], distance: 0, count: 0 };
         }
-        if (c && !stats[p].cities.includes(c)) {
-          stats[p].cities.push(c);
+        if (c && !stats[provinceName].cities.includes(c)) {
+          stats[provinceName].cities.push(c);
         }
-        stats[p].distance += run.distance;
-        stats[p].count += 1;
+        stats[provinceName].distance += run.distance;
+        stats[provinceName].count += 1;
       }
     });
     return stats;
@@ -82,7 +94,9 @@ const RunMap = ({
 
   const onMapClick = useCallback((event: any) => {
     const feature = event.features && event.features[0];
-    if (feature && (feature.layer.id === 'visited-areas' || feature.layer.id === 'province')) {
+    const interactiveLayerIds = ['visited-areas', 'province', 'visited-province-labels'];
+    
+    if (feature && interactiveLayerIds.includes(feature.layer.id)) {
       const provinceName = feature.properties.name;
       setSelectedProvince(prev => prev === provinceName ? null : provinceName);
       
@@ -398,7 +412,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       onClick={onMapClick}
-      interactiveLayerIds={['visited-areas', 'province', 'countries']}
+      interactiveLayerIds={['visited-areas', 'province', 'countries', 'visited-province-labels']}
       style={style}
       mapStyle={mapStyle}
       ref={mapRefCallback}
