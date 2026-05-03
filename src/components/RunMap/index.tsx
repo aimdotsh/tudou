@@ -81,7 +81,6 @@ const RunMap = ({
         matchedName = standardProvinces.find(sp => sp.includes(p) || p.includes(sp.replace(/(省|自治区|市|特别行政区)/g, ''))) || "";
       }
       if (!matchedName && c) {
-        // 如果省份没匹配到，试试城市是否是直辖市或者在映射表中
         if (standardProvinces.includes(c)) {
            matchedName = c;
         } else if ((locationStats as any).cityProvinceMap[c]) {
@@ -104,28 +103,26 @@ const RunMap = ({
   }, [activities]);
 
   const onMapClick = useCallback((event: any) => {
-    const feature = event.features && event.features[0];
-    const interactiveLayerIds = ['visited-areas', 'province', 'visited-province-labels'];
+    const interactiveLayers = ['visited-areas', 'province', 'visited-province-labels'];
+    const features = event.features || [];
+    // 查找点击位置属于我们关注的层的第一个特征
+    const feature = features.find((f: any) => interactiveLayers.includes(f.layer.id));
     
-    if (feature && interactiveLayerIds.includes(feature.layer.id)) {
+    if (feature) {
       const provinceName = feature.properties.name;
-      setSelectedProvince(prev => prev === provinceName ? null : provinceName);
-      
-      // 如果有该省份的数据，显示弹窗
-      if (provinceStats[provinceName]) {
+      if (provinceName) {
+        setSelectedProvince(prev => prev === provinceName ? null : provinceName);
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
           province: provinceName
         });
-      } else {
-        setPopupInfo(null);
       }
     } else {
       setSelectedProvince(null);
       setPopupInfo(null);
     }
-  }, [provinceStats, selectedProvince]);
+  }, [selectedProvince]);
 
   // 动态轨迹相关
   const animationRef = useRef<number>();
@@ -577,7 +574,7 @@ const RunMap = ({
           {description}
         </span>
       )}
-      {popupInfo && provinceStats[popupInfo.province] && (
+      {popupInfo && (
         <Popup
           longitude={popupInfo.longitude}
           latitude={popupInfo.latitude}
@@ -586,30 +583,36 @@ const RunMap = ({
           closeButton={false}
           className="province-popup"
         >
-          <div className="p-2 min-w-[150px] bg-white/90 backdrop-blur-sm rounded shadow-lg text-gray-800">
+          <div className="p-2 min-w-[150px] bg-white/90 backdrop-blur-sm rounded shadow-lg text-gray-800" style={{ pointerEvents: 'auto' }}>
             <h3 className="text-lg font-bold border-b border-gray-200 pb-1 mb-2 text-red-500">
               {popupInfo.province}
             </h3>
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">累计里程:</span>
-                <span className="font-semibold">{(provinceStats[popupInfo.province].distance / 1000).toFixed(2)} km</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">运动次数:</span>
-                <span className="font-semibold">{provinceStats[popupInfo.province].count} 次</span>
-              </div>
-              <div className="mt-2">
-                <span className="text-gray-500 block mb-1">访问城市:</span>
-                <div className="flex flex-wrap gap-1">
-                  {provinceStats[popupInfo.province].cities.map(city => (
-                    <span key={city} className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded-sm text-xs">
-                      {city}
-                    </span>
-                  ))}
+            {provinceStats[popupInfo.province] ? (
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">累计里程:</span>
+                  <span className="font-semibold">{(provinceStats[popupInfo.province].distance / 1000).toFixed(2)} km</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">运动次数:</span>
+                  <span className="font-semibold">{provinceStats[popupInfo.province].count} 次</span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-gray-500 block mb-1">访问城市:</span>
+                  <div className="flex flex-wrap gap-1">
+                    {provinceStats[popupInfo.province].cities.map(city => (
+                      <span key={city} className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded-sm text-xs">
+                        {city}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-sm text-gray-400 py-2 text-center">
+                暂无运动记录
+              </div>
+            )}
           </div>
         </Popup>
       )}
