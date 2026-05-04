@@ -13,9 +13,8 @@ const MiniTrack: React.FC<MiniTrackProps> = ({ activity, color = '#20B2AA', size
     if (!activity.summary_polyline) return [];
     try {
       const decoded = mapboxPolyline.decode(activity.summary_polyline);
-      // polyline.decode 返回的是 [lat, lng]，我们需要转换为 [x, y]
-      // 在 SVG 中，y 是向下增长的，所以我们需要反转它
-      return decoded.map(([lat, lng]) => [lng, lat]);
+      // polyline.decode 返回的是 [lat, lng]
+      return decoded.map(([lat, lng]) => ({ lat, lng }));
     } catch (e) {
       console.error('Failed to decode polyline', e);
       return [];
@@ -25,39 +24,46 @@ const MiniTrack: React.FC<MiniTrackProps> = ({ activity, color = '#20B2AA', size
   const svgPath = useMemo(() => {
     if (points.length < 2) return '';
 
-    // 计算边界
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    points.forEach(([x, y]) => {
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
+    // 计算地理边界
+    let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+    points.forEach(({ lat, lng }) => {
+      minLat = Math.min(minLat, lat);
+      maxLat = Math.max(maxLat, lat);
+      minLng = Math.min(minLng, lng);
+      maxLng = Math.max(maxLng, lng);
     });
 
-    const width = maxX - minX;
-    const height = maxY - minY;
-    
-    // 防止除以 0
-    if (width === 0 || height === 0) return '';
+    const centerLat = (minLat + maxLat) / 2;
+    // 经度方向的缩放因子 (考虑到纬度越高，1度经度的实际距离越短)
+    const lngScaleFactor = Math.cos((centerLat * Math.PI) / 180);
 
-    // 留出边距
-    const padding = 10;
+    const geoWidth = (maxLng - minLng) * lngScaleFactor;
+    const geoHeight = maxLat - minLat;
+
+    // 防止除以 0 (点太集中的情况)
+    const safeWidth = Math.max(geoWidth, 0.0001);
+    const safeHeight = Math.max(geoHeight, 0.0001);
+
+    const padding = 15;
     const innerSize = size - padding * 2;
     
-    // 保持纵横比
-    const scale = Math.min(innerSize / width, innerSize / height);
+    // 计算缩放倍数，使轨迹适合 innerSize 并保持物理比例
+    const scale = Math.min(innerSize / safeWidth, innerSize / safeHeight);
     
-    const centerX = (size - width * scale) / 2;
-    const centerY = (size - height * scale) / 2;
+    // 居中偏移
+    const offsetX = (size - safeWidth * scale) / 2;
+    const offsetY = (size - geoHeight * scale) / 2;
 
-    const transform = (x: number, y: number) => {
-      const tx = (x - minX) * scale + centerX;
-      const ty = size - ((y - minY) * scale + centerY); // 反转 Y 轴
-      return `${tx.toFixed(2)},${ty.toFixed(2)}`;
+    const transform = (lng: number, lat: number) => {
+      // 物理 X = (lng - minLng) * lngScaleFactor
+      const x = (lng - minLng) * lngScaleFactor * scale + offsetX;
+      // 物理 Y = (lat - minLat) -> 注意 SVG Y 轴向下，所以用 maxLat 减去
+      const y = (maxLat - lat) * scale + offsetY;
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
     };
 
-    return `M ${transform(points[0][0], points[0][1])} ` + 
-           points.slice(1).map(([x, y]) => `L ${transform(x, y)}`).join(' ');
+    return `M ${transform(points[0].lng, points[0].lat)} ` + 
+           points.slice(1).map(p => `L ${transform(p.lng, p.lat)}`).join(' ');
   }, [points, size]);
 
   return (
