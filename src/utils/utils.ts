@@ -355,6 +355,12 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
     // reverse lat long for mapbox
     let result = c.map((point) => [point[1], point[0]] as Coordinate);
 
+    // 核心脱敏还原逻辑：减去后端的秘密平移量
+    // 经度 point[0] 减 LNG_OFFSET，纬度 point[1] 减 LAT_OFFSET
+    const latOffset = Number(import.meta.env.VITE_LAT_OFFSET || 0.0);
+    const lngOffset = Number(import.meta.env.VITE_LNG_OFFSET || 0.0);
+    result = result.map((point) => [point[0] - lngOffset, point[1] - latOffset] as Coordinate);
+
     // Apply gcoord transformation if NEED_FIX_MAP is true
     if (NEED_FIX_MAP) {
       result = result.map((point) => gcoord.transform([point[1], point[0]], gcoord.GCJ02, gcoord.WGS84) as Coordinate);

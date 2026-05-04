@@ -85,47 +85,43 @@ class Activity(Base):
         return out
     def to_dict_safe(self):
         data = self.to_dict()
-        # 恢复位置信息，用于统计，但这是文字信息，不包含精确坐标
-        # data['location_country'] 已经包含在 to_dict() 中，不需要删除
+        # 秘密平移量（仅在导出 JSON 时使用，用于混淆抓包数据）
+        import os
+        LAT_OFFSET = float(os.getenv("VITE_LAT_OFFSET", 0.0))
+        LNG_OFFSET = float(os.getenv("VITE_LNG_OFFSET", 0.0))
 
-        # 核心脱敏逻辑：将绝对轨迹转换为相对形状
+        # 核心脱敏逻辑：平移绝对轨迹
         if data.get("summary_polyline"):
             try:
                 import polyline
                 import math
                 points = polyline.decode(data["summary_polyline"])
                 if points:
-                    # 1. 计算物理比例修正
+                    # 1. 计算归一化形状（用于 Workouts Grid）
                     lats = [p[0] for p in points]
                     lngs = [p[1] for p in points]
                     center_lat = (min(lats) + max(lats)) / 2
                     lng_factor = math.cos(math.radians(center_lat))
-
-                    # 2. 归一化到 100x100 的虚拟坐标系
                     min_lat, max_lat = min(lats), max(lats)
                     min_lng, max_lng = min(lngs), max(lngs)
-                    
                     geo_w = (max_lng - min_lng) * lng_factor
                     geo_h = max_lat - min_lat
-                    
-                    # 保持比例
                     scale = 100 / max(geo_w, geo_h, 0.000001)
                     
-                    # 3. 生成 SVG 路径字符串 (相对于左上角)
                     def transform(lat, lng):
                         x = (lng - min_lng) * lng_factor * scale
-                        y = (max_lat - lat) * scale # SVG Y 轴向下
+                        y = (max_lat - lat) * scale
                         return f"{x:.1f},{y:.1f}"
 
-                    path = "M " + " L ".join([transform(p[0], p[1]) for p in points])
-                    data["svg_path"] = path
+                    data["svg_path"] = "M " + " L ".join([transform(p[0], p[1]) for p in points])
+
+                    # 2. 对原始轨迹进行平移加密（用于地图显示）
+                    # 这样路人抓包看到的是偏移 10 度后的坐标
+                    shifted_points = [(p[0] + LAT_OFFSET, p[1] + LNG_OFFSET) for p in points]
+                    data["summary_polyline"] = polyline.encode(shifted_points)
             except Exception as e:
                 print(f"脱敏转换失败: {e}")
         
-        # 彻底删除原始轨迹，防止被反推
-        if "summary_polyline" in data:
-            del data["summary_polyline"]
-            
         return data
 
 def update_or_create_activity(session, run_activity):
