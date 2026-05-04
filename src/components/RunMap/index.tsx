@@ -567,11 +567,15 @@ const RunMap = ({
                   <span className="font-semibold">{provinceStats[popupInfo.province].count} 次</span>
                 </div>
                 <div className="mt-2">
-                  <span className="text-gray-500 block mb-1">访问城市:</span>
+                  <span className="text-gray-500 block mb-1">
+                    访问城市: {Object.keys(provinceStats[popupInfo.province].cities).length}个
+                  </span>
                   <div className="flex flex-wrap gap-1">
-                    {provinceStats[popupInfo.province].cities.map(city => (
+                    {Object.entries(provinceStats[popupInfo.province].cities)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([city, count]) => (
                       <span key={city} className="px-1.5 py-0.5 bg-red-50 text-red-600 rounded-sm text-xs">
-                        {city}
+                        {city} ({count})
                       </span>
                     ))}
                   </div>

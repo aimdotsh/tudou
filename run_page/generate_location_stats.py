@@ -133,12 +133,12 @@ def generate_location_stats():
                         province_summary[p_name] = {
                             'distance': 0.0,
                             'count': 0,
-                            'cities': set()
+                            'cities': {}
                         }
                     province_summary[p_name]['distance'] += (distance or 0.0)
                     province_summary[p_name]['count'] += 1
                     if city:
-                        province_summary[p_name]['cities'].add(city)
+                        province_summary[p_name]['cities'][city] = province_summary[p_name]['cities'].get(city, 0) + 1
 
                 # 检查是否为新增地点并记录首次运动信息
                 if country and country not in all_time_countries:
@@ -182,12 +182,13 @@ def generate_location_stats():
                     cities.add(city)
                 if province:
                     provinces.add(province)
-                if country:
-                    countries.add(country)
-        
-        # 转换省份汇总中的 cities set 为 list 以便 JSON 序列化
-        for p in province_summary:
-            province_summary[p]['cities'] = sorted(list(province_summary[p]['cities']))
+        # 总体统计
+        if city:
+            cities.add(city)
+        if province:
+            provinces.add(province)
+        if country:
+            countries.add(country)
 
         stats = {
             'years': len(years),
