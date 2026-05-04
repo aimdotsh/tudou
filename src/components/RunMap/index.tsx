@@ -480,7 +480,7 @@ const RunMap = ({
                 '#FFFFFF', // 选中时文字反白
                 ['in', ['get', 'name'], ['literal', highlightAreas]],
                 '#21B2AA', // 已访问：青色
-                '#999999'  // 未访问：灰色
+                '#666666'  // 未访问：深灰色
               ],
               'text-halo-color': [
                 'case',
@@ -496,13 +496,13 @@ const RunMap = ({
                 'case',
                 ['==', ['get', 'name'], selectedProvince || ''],
                 14,
-                10 // 稍微调小默认字号，防止太拥挤
+                10
               ],
               'text-anchor': 'center',
-              'text-allow-overlap': false, // 设为 false 以防名字叠在一起看不清
-              'text-padding': 1, // 减小间距，让更多标签能挤进去
+              'text-allow-overlap': true, // 强制显示，解决江苏、广东标签消失问题
+              'text-ignore-placement': true,
+              'text-padding': 0,
             }}
-            filter={['has', 'cp']} // 只要有坐标中心点就显示
           />
         )}
         {/* 2. 国外高亮层：着重显示有轨迹的国家 */}
