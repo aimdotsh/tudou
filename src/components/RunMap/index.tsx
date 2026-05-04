@@ -495,17 +495,17 @@ const RunMap = ({
             filter={['has', 'cp']}
           />
         )}
-        {/* 1. 全局背景层：未访问的国家显示为极淡的灰色 */}
+        {/* 1. 全局背景层：将所有未访问国家遮挡为深灰色 */}
         <Layer
           id="countries-bg"
           type="fill"
           paint={{
-            'fill-color': '#EEEEEE',
-            'fill-opacity': 0.3,
+            'fill-color': '#D3D3D3', // 工业灰
+            'fill-opacity': 0.7,     // 强力遮盖底图
           }}
         />
 
-        {/* 2. 足迹高亮层：着重显示中国和已访问过的国家 */}
+        {/* 2. 国外高亮层：着重显示有轨迹的国家 */}
         <Layer
           id="countries"
           type="fill"
@@ -513,15 +513,10 @@ const RunMap = ({
             'fill-color': [
               'case',
               ['==', ['get', 'name'], '中国'],
-              '#FF6B6B', // 中国：温润的淡红色
-              '#FFADAD'  // 已访问国家：更淡一些的红色
+              'rgba(0,0,0,0)', // 中国区域不在这里上色
+              '#FF4500'        // 国外有轨迹国家：橙红色
             ],
-            'fill-opacity': [
-              'case',
-              ['==', ['get', 'name'], '中国'],
-              0.15, // 中国透明度：轻微上色
-              0.35  // 已访问国家透明度：更明显一些
-            ],
+            'fill-opacity': 0.4,
           }}
           filter={['in', 'name', '中国', ...countries]}
         />
