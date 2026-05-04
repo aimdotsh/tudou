@@ -99,6 +99,9 @@ def generate_location_stats():
         # 记录每个省份的汇总统计信息 (distance, count, cities)
         province_summary = {}
         
+        # 记录每个城市的汇总统计信息 (distance, count)
+        city_summary = {}
+        
         for start_date, location_country, activity_type, activity_name, run_id, distance, moving_time in results:
             # 提取年份
             try:
@@ -139,6 +142,16 @@ def generate_location_stats():
                     province_summary[p_name]['count'] += 1
                     if city:
                         province_summary[p_name]['cities'][city] = province_summary[p_name]['cities'].get(city, 0) + 1
+
+                # 统计城市汇总信息
+                if city:
+                    if city not in city_summary:
+                        city_summary[city] = {
+                            'distance': 0.0,
+                            'count': 0
+                        }
+                    city_summary[city]['distance'] += (distance or 0.0)
+                    city_summary[city]['count'] += 1
 
                 # 检查是否为新增地点并记录首次运动信息
                 if country and country not in all_time_countries:
@@ -202,7 +215,8 @@ def generate_location_stats():
             'yearlyNewLocations': yearly_new_locations,
             'cityProvinceMap': city_province_map,
             'locationFirstActivity': location_first_activity,
-            'provinceSummary': province_summary
+            'provinceSummary': province_summary,
+            'citySummary': city_summary
         }
         
         # 保存统计结果到JSON文件

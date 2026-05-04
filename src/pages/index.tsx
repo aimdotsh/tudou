@@ -585,8 +585,21 @@ const Index = () => {
                       <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.provinces}</span>
                       <span style={{ color: '#20B2AA' }}>个省份</span>
                     </div>
-                    <div className="text-sm ml-4" style={{ color: '#20B2AA' }}>
-                      {locationStats.provincesList.join('、')}
+                    <div className="text-sm ml-4 flex flex-wrap gap-x-2 gap-y-1" style={{ color: '#20B2AA' }}>
+                      {locationStats.provincesList.map((p, index) => {
+                        const summary = (locationStats as any).provinceSummary[p];
+                        return (
+                          <span key={p}>
+                            {p}
+                            {summary && (
+                              <span className="text-gray-400 text-xs ml-0.5">
+                                ({summary.count}次 {(summary.distance / 1000).toFixed(1)}km)
+                              </span>
+                            )}
+                            {index < locationStats.provincesList.length - 1 ? '、' : ''}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -595,8 +608,21 @@ const Index = () => {
                       <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.cities}</span>
                       <span style={{ color: '#20B2AA' }}>个城市</span>
                     </div>
-                    <div className="text-sm ml-4 leading-relaxed" style={{ color: '#20B2AA' }}>
-                      {locationStats.citiesList.join('、')}
+                    <div className="text-sm ml-4 leading-relaxed flex flex-wrap gap-x-2 gap-y-1" style={{ color: '#20B2AA' }}>
+                      {locationStats.citiesList.map((c, index) => {
+                        const summary = (locationStats as any).citySummary[c];
+                        return (
+                          <span key={c}>
+                            {c}
+                            {summary && (
+                              <span className="text-gray-400 text-xs ml-0.5">
+                                ({summary.count}次 {(summary.distance / 1000).toFixed(1)}km)
+                              </span>
+                            )}
+                            {index < locationStats.citiesList.length - 1 ? '、' : ''}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </section>
