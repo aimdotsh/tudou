@@ -20,6 +20,8 @@ env:
   TITLE_GRID: Grid Workouts # also here
   GITHUB_NAME: aimdotsh  # change to yours
   GITHUB_EMAIL: liups@liups.com # change to yours
+  VITE_LAT_OFFSET: ${{ secrets.VITE_LAT_OFFSET }}
+  VITE_LNG_OFFSET: ${{ secrets.VITE_LNG_OFFSET }}
 
   ENABLE_DB_CLEANUP: true # set to false to disable database cleanup of long min/km records
 
@@ -297,6 +299,10 @@ jobs:
         if: env.RUN_TYPE != 'pass'
         run: |
           node scripts/generate_photo_json.js
+
+      - name: Update activities data (Privacy)
+        run: |
+          python3 run_page/update_activities_file.py
 
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'
