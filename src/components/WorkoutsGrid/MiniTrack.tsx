@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import * as mapboxPolyline from '@mapbox/polyline';
-import { Activity } from '@/utils/utils';
+import { Activity, pathForRun } from '@/utils/utils';
 
 interface MiniTrackProps {
   activity: Activity;
@@ -10,16 +9,10 @@ interface MiniTrackProps {
 
 const MiniTrack: React.FC<MiniTrackProps> = ({ activity, color = '#20B2AA', size = 160 }) => {
   const points = useMemo(() => {
-    if (!activity.summary_polyline) return [];
-    try {
-      const decoded = mapboxPolyline.decode(activity.summary_polyline);
-      // polyline.decode 返回的是 [lat, lng]
-      return decoded.map(([lat, lng]) => ({ lat, lng }));
-    } catch (e) {
-      console.error('Failed to decode polyline', e);
-      return [];
-    }
-  }, [activity.summary_polyline]);
+    // 使用统一的 pathForRun 处理解密、解码和纠偏
+    const path = pathForRun(activity);
+    return path.map(([lng, lat]) => ({ lat, lng }));
+  }, [activity]);
 
   const svgPath = useMemo(() => {
     if (points.length < 2) return '';
