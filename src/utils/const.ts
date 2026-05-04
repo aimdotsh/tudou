@@ -26,6 +26,11 @@ const MAP_LAYER_LIST = [
   'settlement-label',
   'state-label',
   'country-label',
+  'place-label',
+  'airport-label',
+  'city-label',
+  'state-label',
+  'province-label',
 ];
 
 const USE_GOOGLE_ANALYTICS = false;

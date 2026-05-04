@@ -491,18 +491,29 @@ const RunMap = ({
               'text-halo-width': 1.5,
             }}
             layout={{
-              'text-field': ['get', 'name'],
+              'text-field': [
+                'match',
+                ['get', 'name'],
+                '香港特别行政区', 'HK',
+                '澳门特别行政区', 'MO',
+                ['get', 'name'] // 其他保持原样
+              ],
               'text-size': [
                 'case',
                 ['==', ['get', 'name'], selectedProvince || ''],
                 14,
-                10
+                9 // 调小字号以减少拥挤
               ],
               'text-anchor': 'center',
               'text-allow-overlap': true, // 强制显示，解决江苏、广东标签消失问题
               'text-ignore-placement': true,
               'text-padding': 0,
             }}
+            filter={[
+              'all',
+              ['has', 'cp'],
+              ['!', ['in', ['get', 'name'], ['literal', ['北京市', '天津市']]]]
+            ]}
           />
         )}
         {/* 2. 国外高亮层：着重显示有轨迹的国家 */}
