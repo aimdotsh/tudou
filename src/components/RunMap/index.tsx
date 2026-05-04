@@ -437,16 +437,16 @@ const RunMap = ({
           }}
         />
 
+        {/* 2. 中国全境底图层：确保广东、港澳台等所有省份都可见 */}
         <Layer
           id="province"
           type="fill"
           paint={{
-            'fill-color': PROVINCE_FILL_COLOR,
-            'fill-opacity': 0.2,
+            'fill-color': '#FFFFFF', // 使用纯白色底，使其在灰色背景中脱颖而出
+            'fill-opacity': 0.15,    // 淡淡的亮起感
           }}
-          filter={filterProvinces}
         />
-        {/* 访问过的区域高亮层 - 仅在 Total 年份时显示（包括直辖市和省份） */}
+        {/* 3. 访问过的区域高亮层 - 仅在 Total 年份时显示（包括直辖市和省份） */}
         {thisYear === 'Total' && highlightAreas.length > 0 && (
           <Layer
             id="visited-areas"
@@ -495,14 +495,14 @@ const RunMap = ({
               'text-size': [
                 'case',
                 ['==', ['get', 'name'], selectedProvince || ''],
-                14, // 选中时字号变大
-                11
+                14,
+                10 // 稍微调小默认字号，防止太拥挤
               ],
               'text-anchor': 'center',
-              'text-allow-overlap': false,
-              'text-padding': 2,
+              'text-allow-overlap': false, // 设为 false 以防名字叠在一起看不清
+              'text-padding': 1, // 减小间距，让更多标签能挤进去
             }}
-            filter={['has', 'cp']}
+            filter={['has', 'cp']} // 只要有坐标中心点就显示
           />
         )}
         {/* 2. 国外高亮层：着重显示有轨迹的国家 */}
