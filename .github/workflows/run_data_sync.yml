@@ -210,6 +210,9 @@ jobs:
 
       - name: Update activities data (Privacy)
         if: env.RUN_TYPE != 'pass'
+        env:
+          VITE_LAT_OFFSET: ${{ secrets.VITE_LAT_OFFSET }}
+          VITE_LNG_OFFSET: ${{ secrets.VITE_LNG_OFFSET }}
         run: |
           python3 run_page/update_activities_file.py
 

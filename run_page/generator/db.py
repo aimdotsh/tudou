@@ -87,8 +87,17 @@ class Activity(Base):
         data = self.to_dict()
         # 秘密平移量（仅在导出 JSON 时使用，用于混淆抓包数据）
         import os
-        LAT_OFFSET = float(os.getenv("VITE_LAT_OFFSET", 0.0))
-        LNG_OFFSET = float(os.getenv("VITE_LNG_OFFSET", 0.0))
+        # 尝试多种可能的变量名，并打印到日志以便排查
+        lat_env = os.getenv("VITE_LAT_OFFSET") or os.getenv("LAT_OFFSET") or "0.0"
+        lng_env = os.getenv("VITE_LNG_OFFSET") or os.getenv("LNG_OFFSET") or "0.0"
+        
+        LAT_OFFSET = float(lat_env)
+        LNG_OFFSET = float(lng_env)
+        
+        # 仅当偏移量非 0 时打印（避免日志太乱）
+        if LAT_OFFSET != 0 or LNG_OFFSET != 0:
+             # print(f"DEBUG: 成功读取脱敏偏移量 - Lat: {LAT_OFFSET}, Lng: {LNG_OFFSET}")
+             pass
 
         # 核心脱敏逻辑：平移绝对轨迹
         if data.get("summary_polyline"):
