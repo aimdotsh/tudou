@@ -119,17 +119,12 @@ const RunMap = ({
               if (layer.layout['icon-overlap']) delete layer.layout['icon-overlap'];
             }
 
-            // 2. STRICTLY REMOVE labels if configured to do so
-            // This prevents them from EVER loading, regardless of network speed or JS lag
-            if (PRIVACY_MODE || !ROAD_LABEL_DISPLAY) {
-              const isLabelLayer = layer.type === 'symbol' && layer.layout && layer.layout['text-field'];
-              // Keep admin/country labels if needed, but for "Strict" mode usually we want to nuke detailed street labels
-              // If it's a sensitive label layer, filter it out (return false)
-              if (isLabelLayer) {
-                return false; // Remove this layer entirely from the style
-              }
+            // 2. 彻底清除底图自带的所有文字标注（Symbol 图层）
+            // 只要是文字标注层，统统移除，确保地图上只剩下我们定义的省份标签，杜绝重影和国外名称
+            if (layer.type === 'symbol') {
+              return false; // 移除所有底图自带的文字标注
             }
-            return true; // Keep other layers
+            return true; // 保留底图的几何形状（山川、河流、陆地等）
           });
         }
         setMapStyle(styleJson);
