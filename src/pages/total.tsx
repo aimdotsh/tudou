@@ -20,6 +20,7 @@ import RecentWorkouts from '@/components/RecentWorkouts';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import locationStats from '@/static/location_stats.json';
 import useWindowSize from '@/hooks/useWindowSize';
+import WorkoutsGrid from '@/components/WorkoutsGrid';
 
 // 每日一言显示组件
 const DailyQuoteCard: React.FC<{
@@ -1059,9 +1060,7 @@ const Total: React.FC = () => {
             </Suspense>
           </div>
           <div className={`${styles.chartContainer} ${styles.fullWidth}`}>
-            <Suspense fallback={<div className="text-center">Loading...</div>}>
-              <GridSvg className="mt-2 h-auto w-full" />
-            </Suspense>
+            <WorkoutsGrid />
           </div>
 
         </div>
