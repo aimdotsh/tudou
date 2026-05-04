@@ -147,9 +147,24 @@ const RunMap = ({
     if (isBigMap && IS_CHINESE) {
       const chinaGeoData = geoJsonForMap();
       if (chinaGeoData && chinaGeoData.features) {
+        const featureMap = new Map();
+        const finalFeatures: any[] = [];
+        
+        [...propGeoData.features, ...chinaGeoData.features].forEach(f => {
+          const name = f.properties?.name;
+          if (name) {
+            if (!featureMap.has(name)) {
+               featureMap.set(name, true);
+               finalFeatures.push(f);
+            }
+          } else {
+            finalFeatures.push(f);
+          }
+        });
+        
         tmpGeo = {
           "type": "FeatureCollection",
-          "features": propGeoData.features.concat(chinaGeoData.features)
+          "features": finalFeatures
         };
       }
     }
