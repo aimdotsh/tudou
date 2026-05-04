@@ -111,14 +111,19 @@ class Activity(Base):
                     def transform(lat, lng):
                         x = (lng - min_lng) * lng_factor * scale
                         y = (max_lat - lat) * scale
-                        return f"{x:.1f},{y:.1f}"
+                        return f"{int(x)},{int(y)}"
 
                     data["svg_path"] = "M " + " L ".join([transform(p[0], p[1]) for p in points])
 
                     # 2. 对原始轨迹进行平移加密（用于地图显示）
-                    # 这样路人抓包看到的是偏移 10 度后的坐标
                     shifted_points = [(p[0] + LAT_OFFSET, p[1] + LNG_OFFSET) for p in points]
                     data["summary_polyline"] = polyline.encode(shifted_points)
+
+                # 3. 对地理位置明文进行加密（防止通过文字泄露地点）
+                if data.get("location_country"):
+                    from pycryptodome_aes import encrypt # 项目自带的加密工具
+                    from utils import PRIVACY_KEY
+                    data["location_country"] = encrypt(PRIVACY_KEY, data["location_country"])
             except Exception as e:
                 print(f"脱敏转换失败: {e}")
         
