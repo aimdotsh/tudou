@@ -8,78 +8,33 @@ interface MiniTrackProps {
 }
 
 const MiniTrack: React.FC<MiniTrackProps> = ({ activity, color = '#20B2AA', size = 160 }) => {
-  const points = useMemo(() => {
-    // 使用统一的 pathForRun 处理解密、解码和纠偏
-    const path = pathForRun(activity);
-    return path.map(([lng, lat]) => ({ lat, lng }));
-  }, [activity]);
-
-  const svgPath = useMemo(() => {
-    if (points.length < 2) return '';
-
-    // 计算地理边界
-    let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
-    points.forEach(({ lat, lng }) => {
-      minLat = Math.min(minLat, lat);
-      maxLat = Math.max(maxLat, lat);
-      minLng = Math.min(minLng, lng);
-      maxLng = Math.max(maxLng, lng);
-    });
-
-    const centerLat = (minLat + maxLat) / 2;
-    // 经度方向的缩放因子 (考虑到纬度越高，1度经度的实际距离越短)
-    const lngScaleFactor = Math.cos((centerLat * Math.PI) / 180);
-
-    const geoWidth = (maxLng - minLng) * lngScaleFactor;
-    const geoHeight = maxLat - minLat;
-
-    // 防止除以 0 (点太集中的情况)
-    const safeWidth = Math.max(geoWidth, 0.0001);
-    const safeHeight = Math.max(geoHeight, 0.0001);
-
-    const padding = 15;
-    const innerSize = size - padding * 2;
-    
-    // 计算缩放倍数，使轨迹适合 innerSize 并保持物理比例
-    const scale = Math.min(innerSize / safeWidth, innerSize / safeHeight);
-    
-    // 居中偏移
-    const offsetX = (size - safeWidth * scale) / 2;
-    const offsetY = (size - geoHeight * scale) / 2;
-
-    const transform = (lng: number, lat: number) => {
-      // 物理 X = (lng - minLng) * lngScaleFactor
-      const x = (lng - minLng) * lngScaleFactor * scale + offsetX;
-      // 物理 Y = (lat - minLat) -> 注意 SVG Y 轴向下，所以用 maxLat 减去
-      const y = (maxLat - lat) * scale + offsetY;
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
-    };
-
-    return `M ${transform(points[0].lng, points[0].lat)} ` + 
-           points.slice(1).map(p => `L ${transform(p.lng, p.lat)}`).join(' ');
-  }, [points, size]);
-
   return (
-    <div className="relative group overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+    <div className="group relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100">
+      {/* 轨迹预览区域 */}
       <div 
         style={{ width: size, height: size }}
-        className="flex items-center justify-center p-2 bg-slate-50/50"
+        className="flex items-center justify-center p-4 bg-gray-50/50"
       >
-        {svgPath ? (
-          <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`}>
+        <svg 
+          width="100%" 
+          height="100%" 
+          viewBox="-5 -5 110 110" 
+          className="drop-shadow-sm"
+        >
+          {activity.svg_path ? (
             <path
-              d={svgPath}
+              d={activity.svg_path}
               fill="none"
               stroke={color}
-              strokeWidth="2.5"
+              strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="drop-shadow-sm"
+              className="transition-all duration-500"
             />
-          </svg>
-        ) : (
-          <div className="text-gray-300 text-xs italic">No Track</div>
-        )}
+          ) : (
+            <text x="50" y="50" textAnchor="middle" className="text-gray-300 text-[10px]" fill="#ccc">No Track</text>
+          )}
+        </svg>
       </div>
       
       {/* 悬浮信息层 */}
