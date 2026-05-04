@@ -17,7 +17,8 @@ def main():
         sys.executable, 
         "scripts/generate_gifs_map_v2.py", 
         "-all", 
-        "-min-dist", "21000"
+        "-min-dist", "21000",
+        "-force"
     ]
     
     try:

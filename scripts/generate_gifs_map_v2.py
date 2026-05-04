@@ -40,7 +40,7 @@ class MapGifGenerator:
         self.track_color = track_color
         self.animation_frames = animation_frames
         self.static_frames = static_frames
-        self.line_width = 2
+        self.line_width = 3
         self.force = force
         
         self.offset_lat, self.offset_lng = self.get_offset_config()
@@ -74,7 +74,7 @@ class MapGifGenerator:
         for p in font_paths:
             if os.path.exists(p):
                 try:
-                    return ImageFont.truetype(p, 36), ImageFont.truetype(p, 28)
+                    return ImageFont.truetype(p, 44), ImageFont.truetype(p, 34)
                 except: continue
         return ImageFont.load_default(), ImageFont.load_default()
 
