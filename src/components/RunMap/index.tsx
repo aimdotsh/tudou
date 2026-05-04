@@ -427,6 +427,16 @@ const RunMap = ({
 
       {/* 主要数据层 - 动画时显示动态轨迹，非动画时显示完整轨迹 */}
       <Source id="data" type="geojson" data={animatedGeo || geoData}>
+        {/* 1. 全局背景层：将所有未访问国家遮挡为深灰色 */}
+        <Layer
+          id="countries-bg"
+          type="fill"
+          paint={{
+            'fill-color': '#D3D3D3', // 工业灰
+            'fill-opacity': 0.7,     // 强力遮盖底图
+          }}
+        />
+
         <Layer
           id="province"
           type="fill"
@@ -495,16 +505,6 @@ const RunMap = ({
             filter={['has', 'cp']}
           />
         )}
-        {/* 1. 全局背景层：将所有未访问国家遮挡为深灰色 */}
-        <Layer
-          id="countries-bg"
-          type="fill"
-          paint={{
-            'fill-color': '#D3D3D3', // 工业灰
-            'fill-opacity': 0.7,     // 强力遮盖底图
-          }}
-        />
-
         {/* 2. 国外高亮层：着重显示有轨迹的国家 */}
         <Layer
           id="countries"
