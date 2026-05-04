@@ -89,17 +89,17 @@ const Index = () => {
   const location = useLocation();
   const { siteTitle } = useSiteMetadata();
   const { activities, thisYear } = useActivities();
-  const [year, setYear] = useState(thisYear);
+  const [year, setYear] = useState('Total');
   const [runIndex, setRunIndex] = useState(-1);
   const [selectedRunId, setSelectedRunId] = useState<number | null>(null);
   const [runs, setActivity] = useState(
-    filterAndSortRuns(activities, year, filterYearRuns, sortDateFunc, null, null)
+    filterAndSortRuns(activities, 'Total', filterYearRuns, sortDateFunc, null, null)
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRuns, setFilteredRuns] = useState(runs);
-  const [title, setTitle] = useState(`${thisYear} Year Heatmap`);
+  const [title, setTitle] = useState('Total Heatmap');
   const [description, setDescription] = useState<string>('');
-  const [geoData, setGeoData] = useState(geoJsonForRuns(filteredRuns));
+  const [geoData, setGeoData] = useState(geoJsonForRuns(runs));
   // for auto zoom
   const bounds = getBoundsForGeoData(geoData);
   const [intervalId, setIntervalId] = useState<number>();
