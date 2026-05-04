@@ -512,13 +512,13 @@ const RunMap = ({
           paint={{
             'fill-color': [
               'case',
-              ['==', ['get', 'name'], '中国'],
-              'rgba(0,0,0,0)', // 中国区域不在这里上色
+              ['in', ['get', 'name'], ['literal', ['中国', 'Hong Kong', 'Macao', 'Macau', 'Taiwan']]],
+              'rgba(0,0,0,0)', // 中国版图（含港澳台）不在这里上色
               '#FF4500'        // 国外有轨迹国家：橙红色
             ],
             'fill-opacity': 0.4,
           }}
-          filter={['in', 'name', '中国', ...countries]}
+          filter={['in', 'name', '中国', 'Hong Kong', 'Macao', 'Macau', 'Taiwan', ...countries]}
         />
         <Layer
           id="runs2"
