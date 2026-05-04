@@ -17,8 +17,7 @@ def main():
         sys.executable, 
         "scripts/generate_gifs_map_v2.py", 
         "-all", 
-        "-min-dist", "21000",
-        "-force" # 用户要求重新生成所有的，所以加上 force
+        "-min-dist", "21000"
     ]
     
     try:
