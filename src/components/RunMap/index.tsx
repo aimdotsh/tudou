@@ -462,7 +462,7 @@ const RunMap = ({
                 'case',
                 ['==', ['get', 'name'], selectedProvince || ''],
                 0.8,
-                0.4
+                0.6
               ],
             }}
             filter={filterHighlightAreas}
