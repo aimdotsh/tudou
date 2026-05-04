@@ -147,14 +147,14 @@ const RunMap = ({
     if (isBigMap && IS_CHINESE) {
       const chinaGeoData = geoJsonForMap();
       if (chinaGeoData && chinaGeoData.features) {
-        const featureMap = new Map();
+        const featureNames: {[key: string]: boolean} = {};
         const finalFeatures: any[] = [];
         
         [...propGeoData.features, ...chinaGeoData.features].forEach(f => {
           const name = f.properties?.name;
           if (name) {
-            if (!featureMap.has(name)) {
-               featureMap.set(name, true);
+            if (!featureNames[name]) {
+               featureNames[name] = true;
                finalFeatures.push(f);
             }
           } else {
