@@ -97,7 +97,10 @@ jobs:
           REPO_NAME: ${{ github.event.repository.name }}
           VITE_LAT_OFFSET: ${{ secrets.VITE_LAT_OFFSET }}
           VITE_LNG_OFFSET: ${{ secrets.VITE_LNG_OFFSET }}
-        run: PATH_PREFIX=/$REPO_NAME pnpm build
+        run: |
+          echo "VITE_LAT_OFFSET=${VITE_LAT_OFFSET}" > .env.local
+          echo "VITE_LNG_OFFSET=${VITE_LNG_OFFSET}" >> .env.local
+          PATH_PREFIX=/$REPO_NAME pnpm build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
