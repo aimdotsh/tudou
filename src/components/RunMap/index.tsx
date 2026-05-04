@@ -497,7 +497,7 @@ const RunMap = ({
                 'case',
                 ['==', ['get', 'name'], selectedProvince || ''],
                 14,
-                9 // 调小字号以减少拥挤
+                10
               ],
               'text-anchor': 'center',
               'text-allow-overlap': true, // 强制显示，解决江苏、广东标签消失问题
