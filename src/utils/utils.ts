@@ -330,19 +330,6 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
     }
     // ...
 
-    // Attempt to decrypt location_country
-    if (run.location_country) {
-      try {
-        const bytes = CryptoJS.AES.decrypt(run.location_country, PRIVACY_KEY);
-        const decryptedLoc = bytes.toString(CryptoJS.enc.Utf8);
-        if (decryptedLoc) {
-          run.location_country = decryptedLoc;
-        }
-      } catch (e) {
-        // Fallback
-      }
-    }
-
     // Attempt to decrypt polyline
     let decodedPolyline = run.summary_polyline;
     try {

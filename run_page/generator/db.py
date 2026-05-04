@@ -118,15 +118,13 @@ class Activity(Base):
                     # 2. 对原始轨迹进行平移加密（用于地图显示）
                     shifted_points = [(p[0] + LAT_OFFSET, p[1] + LNG_OFFSET) for p in points]
                     data["summary_polyline"] = polyline.encode(shifted_points)
-
-                # 3. 对地理位置明文进行加密（防止通过文字泄露地点）
-                if data.get("location_country"):
-                    from pycryptodome_aes import encrypt # 项目自带的加密工具
-                    from utils import PRIVACY_KEY
-                    data["location_country"] = encrypt(PRIVACY_KEY, data["location_country"])
             except Exception as e:
                 print(f"脱敏转换失败: {e}")
         
+        # 【物理剔除】不再发送地理位置明文/密文，从源头杜绝泄露
+        if "location_country" in data:
+            del data["location_country"]
+            
         return data
 
 def update_or_create_activity(session, run_activity):
