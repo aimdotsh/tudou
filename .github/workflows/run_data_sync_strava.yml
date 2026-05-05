@@ -32,7 +32,7 @@ env:
   IGNORE_RANGE: 1 # Unit meter
   SAVE_DATA_IN_GITHUB_CACHE: false # if you deploy in the vercal, check the README
   DATA_CACHE_PREFIX: 'track_data'
-  BUILD_GH_PAGES: true # 开启自动构建部署，确保偏移量还原逻辑生效
+  BUILD_GH_PAGES: false # 恢复为 false，避免由于 Github Pages 权限问题导致的报错
 
 jobs:
   sync:
