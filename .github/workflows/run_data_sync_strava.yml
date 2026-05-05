@@ -292,7 +292,6 @@ jobs:
       - name: Generate today track GIFs
         if: env.RUN_TYPE != 'pass'
         run: |
-# ##  python scripts/generate_missing_gifs.py
           python scripts/generate_gifs_map_v2.py -day $(date -d "+8 hours" +"%Y-%m-%d") -force
 
       - name: Generate photo JSON lists
