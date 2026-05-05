@@ -51,17 +51,25 @@ class MapGifGenerator:
         self.f_bold, self.f_reg = self.load_fonts()
 
     def get_offset_config(self):
-        dist, bearing = 0.0, 114.45
-        try:
-            meta_path = self.project_root / "src" / "static" / "site-metadata.ts"
-            content = meta_path.read_text()
-            d_m = re.search(r'distance:\s*([0-9.]+)', content)
-            b_m = re.search(r'bearing:\s*([0-9.]+)', content)
-            if d_m: dist = float(d_m.group(1))
-            if b_m: bearing = float(b_m.group(1))
-        except: pass
-        rad = math.radians(bearing)
-        return (dist * math.cos(rad)) / 111.0, (dist * math.sin(rad)) / 89.0
+        # 优先从环境变量读取（与 GitHub Secrets 保持一致）
+        lat_offset = float(os.environ.get("VITE_LAT_OFFSET", 0.0))
+        lng_offset = float(os.environ.get("VITE_LNG_OFFSET", 0.0))
+        
+        # 如果环境变量为空，则尝试从 site-metadata 解析（向后兼容）
+        if lat_offset == 0.0:
+            dist, bearing = 0.0, 114.45
+            try:
+                meta_path = self.project_root / "src" / "static" / "site-metadata.ts"
+                content = meta_path.read_text()
+                d_m = re.search(r'distance:\s*([0-9.]+)', content)
+                b_m = re.search(r'bearing:\s*([0-9.]+)', content)
+                if d_m: dist = float(d_m.group(1))
+                if b_m: bearing = float(b_m.group(1))
+                rad = math.radians(bearing)
+                lat_offset, lng_offset = (dist * math.cos(rad)) / 111.0, (dist * math.sin(rad)) / 89.0
+            except: pass
+            
+        return lat_offset, lng_offset
 
     def load_fonts(self):
         font_paths = [
@@ -191,7 +199,7 @@ class MapGifGenerator:
             
         if not activity: return False
         
-        raw = [[p[0] + self.offset_lat, p[1] + self.offset_lng] for p in polyline.decode(activity['summary_polyline'])]
+        raw = [[p[0] - self.offset_lat, p[1] - self.offset_lng] for p in polyline.decode(activity['summary_polyline'])]
         bg, map_fn = self.get_map_background(raw)
         pixel_coords = [map_fn(lat, lon) for lat, lon in raw]
         smooth = self.interpolate(pixel_coords, self.animation_frames * 4)

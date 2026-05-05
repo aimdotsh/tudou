@@ -357,15 +357,18 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
 
     // 核心脱敏还原逻辑：减去后端的秘密平移量
     // 经度 point[0] 减 LNG_OFFSET，纬度 point[1] 减 LAT_OFFSET
-    const latOffset = Number(import.meta.env.VITE_LAT_OFFSET || 0.0);
-    const lngOffset = Number(import.meta.env.VITE_LNG_OFFSET || 0.0);
+    const latOffset = parseFloat(String(import.meta.env.VITE_LAT_OFFSET || 0));
+    const lngOffset = parseFloat(String(import.meta.env.VITE_LNG_OFFSET || 0));
+    
+    // 如果偏移量生效，修正坐标
+    if (latOffset !== 0 || lngOffset !== 0) {
+        result = result.map((point) => [point[0] - lngOffset, point[1] - latOffset] as Coordinate);
+    }
     
     // 调试信息：检查环境变量是否成功注入
     if (import.meta.env.DEV || window.location.hostname === 'localhost') {
         // console.log(`Privacy Offset: ${latOffset}, ${lngOffset}`);
     }
-
-    result = result.map((point) => [point[0] - lngOffset, point[1] - latOffset] as Coordinate);
 
     // Apply gcoord transformation if NEED_FIX_MAP is true
     if (NEED_FIX_MAP) {
