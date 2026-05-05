@@ -364,9 +364,6 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
     if (latOffset !== 0 || lngOffset !== 0) {
         result = result.map((point) => [point[0] - lngOffset, point[1] - latOffset] as Coordinate);
     }
-    
-    // 调试信息：强制打印偏移量（请在确认正常后提醒我关闭）
-    console.log(`[Tracer] Offsets: ${latOffset}, ${lngOffset}`);
 
     // Apply gcoord transformation if NEED_FIX_MAP is true
     if (NEED_FIX_MAP) {
