@@ -45,6 +45,8 @@ export default defineConfig({
   base: process.env.PATH_PREFIX || '/',
   define: {
     "import.meta.env.VERCEL": JSON.stringify(process.env.VERCEL),
+    "import.meta.env.VITE_LAT_OFFSET": JSON.stringify(process.env.VITE_LAT_OFFSET),
+    "import.meta.env.VITE_LNG_OFFSET": JSON.stringify(process.env.VITE_LNG_OFFSET),
   },
   build: {
     manifest: true,

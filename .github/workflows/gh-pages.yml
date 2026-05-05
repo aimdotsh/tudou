@@ -98,10 +98,6 @@ jobs:
           VITE_LAT_OFFSET: ${{ secrets.VITE_LAT_OFFSET }}
           VITE_LNG_OFFSET: ${{ secrets.VITE_LNG_OFFSET }}
         run: |
-          echo "VITE_LAT_OFFSET=${{ secrets.VITE_LAT_OFFSET }}" > .env.local
-          echo "VITE_LNG_OFFSET=${{ secrets.VITE_LNG_OFFSET }}" >> .env.local
-          echo "VITE_LAT_OFFSET=${{ secrets.VITE_LAT_OFFSET }}" > .env.production
-          echo "VITE_LNG_OFFSET=${{ secrets.VITE_LNG_OFFSET }}" >> .env.production
           pnpm build
 
       - name: Upload artifact
