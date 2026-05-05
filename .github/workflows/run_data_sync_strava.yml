@@ -296,6 +296,7 @@ jobs:
         if: env.RUN_TYPE != 'pass'
         run: |
           python scripts/generate_gifs_map_v2.py -day $(date -d "+8 hours" +"%Y-%m-%d") -force
+          python scripts/generate_missing_gifs.py
 
       - name: Generate photo JSON lists
         # 扫描 luck_photos/ 和 yyyymmdd_photos/ 目录，自动更新 public/luck.json 和 public/wonderful.json
