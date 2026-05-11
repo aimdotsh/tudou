@@ -549,341 +549,123 @@ const Index = () => {
       onSearch={handleSearch}
       showSearch={location.pathname === '/' || location.pathname === '/index'}
     >
-      <div className="flex flex-col lg:flex-row w-full">
-        {/* 左侧栏 */}
-        <div className="w-full lg:w-1/3">
-          <h1 className="my-12 text-5xl font-extrabold italic">
-            <a href="/">{siteTitle}</a>
-          </h1>
-          {year === 'Total' ? (
-            <div className="w-full pb-4 lg:pb-16 pl-4 sm:pl-4 md:pl-4 lg:w-full lg:pr-16 lg:pl-0">
-              <div className="cursor-pointer">
-                <section>
-                  <div className="mb-4">
-                    <div className="flex items-center mb-2">
-                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.years}</span>
-                      <span style={{ color: '#20B2AA' }}>年里我走过</span>
-                    </div>
-                    <div className="text-sm ml-4" style={{ color: '#20B2AA' }}>
-                      {locationStats.yearsList.join('、')}
-                    </div>
-                  </div>
+      <div className="flex flex-col lg:flex-row w-full gap-10">
+        {/* 左侧栏 - 导航与统计 */}
+        <aside className="w-full lg:w-[400px] flex-shrink-0 space-y-8">
+          <div className="pt-4 lg:pt-8">
+            <motion.h1 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-6xl font-black italic tracking-tighter bg-gradient-to-r from-orange-500 via-orange-400 to-yellow-500 bg-clip-text text-transparent"
+            >
+              <a href="/">{siteTitle}</a>
+            </motion.h1>
+            <p className="text-slate-500 font-medium mt-2 tracking-widest uppercase text-[10px]">Sports Data Visualization 2.0</p>
+          </div>
 
-                  <div className="mb-4">
-                    <div className="flex items-center mb-2">
-                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.countries}</span>
-                      <span style={{ color: '#20B2AA' }}>个国家</span>
-                    </div>
-                    <div className="text-sm ml-4" style={{ color: '#20B2AA' }}>
-                      {locationStats.countriesList.filter(c => c !== 'Other').join('、')}
-                      {locationStats.countriesList.includes('Other') && locationStats.countriesList.length > 1 ? '等' : ''}
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="flex items-center mb-2">
-                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.provinces}</span>
-                      <span style={{ color: '#20B2AA' }}>个省份</span>
-                    </div>
-                    <div className="text-sm ml-4 flex flex-wrap gap-x-2 gap-y-1" style={{ color: '#20B2AA' }}>
-                      {locationStats.provincesList.map((p, index) => {
-                        const summary = (locationStats as any).provinceSummary[p];
-                        return (
-                          <span key={p}>
-                            {p}
-                            {summary && (
-                              <span className="text-gray-400 text-xs ml-0.5">
-                                ({summary.count}次 {(summary.distance / 1000).toFixed(1)}km)
-                              </span>
-                            )}
-                            {index < locationStats.provincesList.length - 1 ? '、' : ''}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="flex items-center mb-2">
-                      <span className="text-2xl font-bold text-red-500 mr-2">{locationStats.cities}</span>
-                      <span style={{ color: '#20B2AA' }}>个城市</span>
-                    </div>
-                    <div className="text-sm ml-4 leading-relaxed flex flex-wrap gap-x-2 gap-y-1" style={{ color: '#20B2AA' }}>
-                      {locationStats.citiesList.map((c, index) => {
-                        const summary = (locationStats as any).citySummary[c];
-                        return (
-                          <span key={c}>
-                            {c}
-                            {summary && (
-                              <span className="text-gray-400 text-xs ml-0.5">
-                                ({summary.count}次 {(summary.distance / 1000).toFixed(1)}km)
-                              </span>
-                            )}
-                            {index < locationStats.citiesList.length - 1 ? '、' : ''}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </section>
-                <hr color="red" />
-              </div>
-              <YearsStat year={year} onClick={changeYear} onClickTypeInYear={changeTypeInYear} />
-            </div>
-          ) : (
-            <div className="w-full pb-4 lg:pb-16 pl-4 sm:pl-4 md:pl-4 lg:w-full lg:pr-16 lg:pl-0">
-              {/* 显示当年新增地点 */}
-              {locationStats.yearlyNewLocations[year] && (
-                <div className="mb-4 cursor-pointer border-r border-transparent pl-4 sm:pl-4 md:pl-4 lg:pl-0 pr-4">
-                  <section>
-                    <div className="mb-4">
-                      <div className="flex items-center mb-2">
-                        <span style={{ color: '#20B2AA' }}>{year}年新增<span className="text-2xl font-bold text-red-500 mx-1">
-                          {(() => {
-                            const newLocs = locationStats.yearlyNewLocations[year];
-                            const formattedItems = [];
-
-                            // 处理新增国家
-                            if (newLocs.countries && newLocs.countries.length > 0) {
-                              newLocs.countries.forEach(country => {
-                                if (country !== 'Other') {
-                                  formattedItems.push(country);
-                                }
-                              });
-                            }
-
-                            // 处理新增省份和城市的组合
-                            const provinces = newLocs.provinces || [];
-                            const cities = newLocs.cities || [];
-
-                            // 为每个城市找到对应的省份（使用自动生成的关联关系）
-                            cities.forEach(city => {
-                              const matchedProvince = locationStats.cityProvinceMap[city];
-
-                              if (matchedProvince) {
-                                formattedItems.push(`${matchedProvince}-${city}`);
-                              } else {
-                                formattedItems.push(city);
-                              }
-                            });
-
-                            // 添加单独的新增省份（没有对应城市的）
-                            provinces.forEach(province => {
-                              const hasMatchingCity = cities.some(city => {
-                                return locationStats.cityProvinceMap[city] === province;
-                              });
-
-                              if (!hasMatchingCity) {
-                                formattedItems.push(province);
-                              }
-                            });
-
-                            return formattedItems.length;
-                          })()}
-                        </span><span style={{ color: '#20B2AA' }}>处地点：</span></span>
-                      </div>
-                      <div className="text-sm leading-relaxed" style={{ color: '#20B2AA' }}>
-                        {(() => {
-                          const newLocs = locationStats.yearlyNewLocations[year];
-
-                          // 收集所有新增地点信息
-                          const allNewLocations = [];
-
-                          // 处理新增国家
-                          if (newLocs.countries && newLocs.countries.length > 0) {
-                            newLocs.countries.forEach((country, index) => {
-                              if (country !== 'Other') {
-                                const activityInfo = locationStats.locationFirstActivity?.[country];
-                                allNewLocations.push({
-                                  name: country,
-                                  displayText: country,
-                                  activityInfo,
-                                  type: 'country',
-                                  key: `country-${country}-${index}`
-                                });
-                              }
-                            });
-                          }
-
-                          // 处理新增省份和城市的组合
-                          const provinces = newLocs.provinces || [];
-                          const cities = newLocs.cities || [];
-
-                          // 为每个城市找到对应的省份（使用自动生成的关联关系）
-                          cities.forEach((city, index) => {
-                            const matchedProvince = locationStats.cityProvinceMap[city];
-                            const activityInfo = locationStats.locationFirstActivity?.[city];
-
-                            let displayText;
-                            if (matchedProvince) {
-                              displayText = `${matchedProvince}-${city}`;
-                            } else {
-                              displayText = city;
-                            }
-
-                            allNewLocations.push({
-                              name: city,
-                              displayText,
-                              activityInfo,
-                              type: 'city',
-                              key: `city-${city}-${index}`
-                            });
-                          });
-
-                          // 添加单独的新增省份（没有对应城市的）
-                          provinces.forEach((province, index) => {
-                            const hasMatchingCity = cities.some(city => {
-                              return locationStats.cityProvinceMap[city] === province;
-                            });
-
-                            if (!hasMatchingCity) {
-                              const activityInfo = locationStats.locationFirstActivity?.[province];
-                              allNewLocations.push({
-                                name: province,
-                                displayText: province,
-                                activityInfo,
-                                type: 'province',
-                                key: `province-${province}-${index}`
-                              });
-                            }
-                          });
-
-                          // 按时间倒序排列（最新的在前）
-                          allNewLocations.sort((a, b) => {
-                            const dateA = a.activityInfo?.date || '0000-00-00';
-                            const dateB = b.activityInfo?.date || '0000-00-00';
-                            return dateB.localeCompare(dateA);
-                          });
-
-                          // 生成排序后的JSX元素
-                          const formattedItems = allNewLocations.map((location) => {
-                            if (location.activityInfo) {
-                              const distance = location.activityInfo.distance ? `${(location.activityInfo.distance / 1000).toFixed(1)}km` : '未知距离';
-                              const duration = location.activityInfo.moving_time ? formatDuration(location.activityInfo.moving_time) : '未知耗时';
-
-                              // 创建运动详情的超链接
-                              const handleActivityClick = (e: React.MouseEvent) => {
-                                e.preventDefault();
-                                if (location.activityInfo?.run_id) {
-                                  const targetRunId = location.activityInfo.run_id;
-
-                                  // 滚动到目标记录的函数
-                                  const scrollToTargetRecord = (targetRunIndex: number) => {
-                                    // 先滚动到地图
-                                    scrollToMap();
-
-                                    // 延迟滚动到对应的运动记录行
-                                    setTimeout(() => {
-                                      const tableContainer = document.getElementById('run-table-container');
-                                      const tableRows = tableContainer?.querySelectorAll('tbody tr');
-
-                                      if (tableRows && tableRows[targetRunIndex]) {
-                                        const targetRow = tableRows[targetRunIndex] as HTMLElement;
-
-                                        // 获取导航栏、地图和表头的高度
-                                        const nav = document.querySelector('nav');
-                                        const mapContainer = document.querySelector('.sticky-map-container');
-                                        const tableHeader = document.getElementById('run-table-header');
-
-                                        const navHeight = nav ? nav.offsetHeight : 0;
-                                        const mapHeight = mapContainer ? mapContainer.clientHeight : 0;
-                                        const headerHeight = tableHeader ? tableHeader.offsetHeight : 0;
-
-                                        // 计算滚动位置：目标行位置 - 导航栏高度 - 地图高度 - 表头高度 - 一些额外空间
-                                        const yOffset = navHeight + mapHeight + headerHeight + 20;
-                                        const y = targetRow.getBoundingClientRect().top + window.pageYOffset - yOffset;
-
-                                        // 使用平滑滚动效果
-                                        window.scrollTo({ top: y, behavior: 'smooth' });
-                                      }
-                                    }, 500); // 等待地图动画完成后再滚动到记录行
-                                  };
-
-                                  // 更新URL
-                                  updateUrlWithRunId(targetRunId);
-
-                                  // 找到对应的运动记录
-                                  const targetRun = activities.find(run => run.run_id === targetRunId);
-                                  if (targetRun) {
-                                    // 获取运动记录的年份
-                                    const runYear = new Date(targetRun.start_date_local).getFullYear().toString();
-
-                                    // 如果当前年份不匹配，切换到对应年份
-                                    if (year !== runYear) {
-                                      setYear(runYear);
-                                      const yearRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
-                                      setActivity(yearRuns);
-
-                                      // 年份切换后，需要等待runs更新，然后再定位
-                                      setTimeout(() => {
-                                        const updatedRuns = filterAndSortRuns(activities, runYear, filterYearRuns, sortDateFunc, null, null);
-                                        // 清除搜索状态以显示完整的年份数据
-                                        setSearchTerm('');
-                                        setFilteredRuns(updatedRuns);
-                                        const runIndex = updatedRuns.findIndex(run => run.run_id === targetRunId);
-                                        if (runIndex !== -1) {
-                                          setRunIndex(runIndex);
-                                          locateActivity([targetRunId], false);
-                                          // 滚动到目标记录
-                                          scrollToTargetRecord(runIndex);
-                                        }
-                                      }, 100);
-                                    } else {
-                                      // 当前年份匹配，直接定位
-                                      // 如果有搜索状态，需要清除以显示完整数据
-                                      if (searchTerm) {
-                                        setSearchTerm('');
-                                        setFilteredRuns(runs);
-                                      }
-                                      const runIndex = runs.findIndex(run => run.run_id === targetRunId);
-                                      if (runIndex !== -1) {
-                                        setRunIndex(runIndex);
-                                        locateActivity([targetRunId], false);
-                                        // 滚动到目标记录
-                                        scrollToTargetRecord(runIndex);
-                                      }
-                                    }
-                                  }
-                                }
-                              };
-
-                              return (
-                                <div key={location.key} className="mb-1" style={{ color: '#20B2AA' }}>
-                                  <span className="font-bold">{location.displayText}</span>
-                                  （首次 Workout：
-                                  <a
-                                    href={`?run_id=${location.activityInfo.run_id}`}
-                                    onClick={handleActivityClick}
-                                    className="cursor-pointer"
-                                    style={{ color: '#20B2AA', textDecoration: 'none' }}
-                                  >
-                                    {location.activityInfo.type} {location.activityInfo.date?.slice(0, 10)} {location.activityInfo.name} {distance} {duration}
-                                  </a>
-                                  ）
-                                </div>
-                              );
-                            } else {
-                              return (
-                                <div key={location.key} className="mb-1" style={{ color: '#20B2AA' }}>
-                                  <span className="font-bold">{location.displayText}</span>
-                                </div>
-                              );
-                            }
-                          });
-
-                          return formattedItems.length > 0 ? (
-                            <div>
-                              {formattedItems}
-                            </div>
-                          ) : '暂无新增地点';
-                        })()}
-                      </div>
-                    </div>
-                  </section>
-                  <hr color="red" />
+          <div className="space-y-8">
+            {year === 'Total' ? (
+              <motion.section 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-card p-8 shadow-2xl relative overflow-hidden group"
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
+                  <svg className="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
                 </div>
-              )}
 
+                <div className="space-y-8 relative z-10">
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-6xl font-black italic text-orange-500">{locationStats.years}</span>
+                      <span className="text-xl font-bold text-slate-400 uppercase italic">Years</span>
+                    </div>
+                    <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                      {locationStats.yearsList.join(' • ')}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6 py-6 border-y border-white/5">
+                    <div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-black text-white">{locationStats.countries}</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Nations</span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-tight">{locationStats.countriesList.filter(c => c !== 'Other').slice(0, 3).join(', ')}...</p>
+                    </div>
+                    <div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-black text-white">{locationStats.provinces}</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Regions</span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-tight">{locationStats.provincesList.slice(0, 3).join(', ')}...</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl font-black text-white">{locationStats.cities}</span>
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cities</span>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {locationStats.citiesList.slice(0, 12).map(c => (
+                        <span key={c} className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.03] text-slate-400 border border-white/5 hover:border-orange-500/30 transition-colors">
+                          {c}
+                        </span>
+                      ))}
+                      <span className="text-[10px] text-slate-600 font-bold ml-1 self-center">+{locationStats.citiesList.length - 12} MORE</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.section>
+            ) : (
+              locationStats.yearlyNewLocations[year] && (
+                <motion.section 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass-card p-6 border-orange-500/10 shadow-orange-500/5"
+                >
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-orange-500 mb-6 flex items-center gap-2">
+                    <span className="w-8 h-[1px] bg-orange-500/30"></span>
+                    {year} New Milestones
+                  </h3>
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {(() => {
+                        const newLocs = locationStats.yearlyNewLocations[year];
+                        const allNewLocations = [];
+                        if (newLocs.countries) {
+                          newLocs.countries.forEach(c => c !== 'Other' && allNewLocations.push({ name: c, type: 'Country', info: locationStats.locationFirstActivity?.[c] }));
+                        }
+                        if (newLocs.cities) {
+                          newLocs.cities.forEach(c => allNewLocations.push({ name: c, type: 'City', info: locationStats.locationFirstActivity?.[c] }));
+                        }
+                        return allNewLocations.map((loc, idx) => (
+                          <div key={idx} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-all group">
+                            <div className="flex justify-between items-start mb-2">
+                              <span className="text-sm font-black text-white group-hover:text-orange-400 transition-colors">{loc.name}</span>
+                              <span className="text-[8px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-500 font-black uppercase">{loc.type}</span>
+                            </div>
+                            {loc.info && (
+                              <a 
+                                href={`?run_id=${loc.info.run_id}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  locateActivity([loc.info.run_id]);
+                                }}
+                                className="text-[10px] text-slate-500 group-hover:text-slate-300 transition-colors flex items-center gap-1"
+                              >
+                                {loc.info.date?.slice(0, 10)} • {(loc.info.distance/1000).toFixed(1)}KM • {loc.info.type}
+                              </a>
+                            )}
+                          </div>
+                        ));
+                    })()}
+                  </div>
+                </motion.section>
+              )
+            )}
+
+            <div className="glass-card p-2 border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent">
               <LocationStat
                 changeYear={changeYear}
                 changeCity={changeCity}
@@ -892,21 +674,6 @@ const Index = () => {
                 runs={runs}
                 year={year}
               >
-                {/* 展示当年海报与日历 */}
-                <div className="flex flex-col gap-4 mb-6 mt-4">
-                  <Suspense fallback={<div className="text-sm text-gray-400">Loading charts...</div>}>
-                    {AYearTotalSvgs[year] ? (
-                      <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
-                        {(() => {
-                          const AYearComponent = AYearTotalSvgs[year];
-                          return <AYearComponent className="w-full h-auto" />;
-                        })()}
-                      </div>
-                    ) : null}
-                    {CalendarSvgs[year] ? (
-                      <div className="bg-white/50 p-2 rounded-lg shadow-sm border border-gray-100">
-                        {(() => {
-                          const CalendarComponent = CalendarSvgs[year];
                           return <CalendarComponent className="w-full h-auto" />;
                         })()}
                       </div>

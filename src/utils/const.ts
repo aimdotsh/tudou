@@ -216,8 +216,8 @@ export const TRAIL_RUN_COLOR = 'rgb(199, 21, 133)'; // MediumVioletRed
 export const MAP_TILE_VENDOR = 'maptiler';
 
 // map tiles style name, see MAP_TILE_STYLES for more details
-export const MAP_TILE_STYLE_LIGHT = 'streets-v2'; // changed to colorful style
-export const MAP_TILE_STYLE_DARK = 'dark-v10';
+export const MAP_TILE_STYLE_LIGHT = 'dataviz-dark'; 
+export const MAP_TILE_STYLE_DARK = 'dataviz-dark';
 
 // access token. you can apply a new one, it's free.
 // maptiler: VOiXPTJcQ8I0pgldbImf | sign up at https://cloud.maptiler.com/auth/widget

@@ -565,18 +565,13 @@ const RunMap = ({
           endLon={endLon}
         />
       )}
-      <span className={styles.runTitle}>
-        {title}
-        {animating && (
-          <span className={styles.animationProgress}>
-            {animationProgress}%
-          </span>
-        )}
-      </span>
-      {description && (
-        <span className={styles.runDescription}>
-          {description}
-        </span>
+      {isSingleRun && !animating && (
+        <RunMarker
+          startLat={startLat}
+          startLon={startLon}
+          endLat={endLat}
+          endLon={endLon}
+        />
       )}
       {popupInfo && (
         <Popup
