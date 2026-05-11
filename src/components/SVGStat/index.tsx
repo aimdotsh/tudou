@@ -1,50 +1,70 @@
 import { lazy, Suspense } from 'react';
 import { totalStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
+import { motion } from 'framer-motion';
 
-// Lazy load both github.svg and grid.svg
 const GithubSvg = lazy(() => loadSvgComponent(totalStat, './github.svg'));
-
 const GridSvg = lazy(() => loadSvgComponent(totalStat, './grid.svg'));
 
-const MonthofLifeSvg = lazy(() => loadSvgComponent(totalStat, './mol.svg'));
-
-// Lazy load annual posters (2018-2026)
 const annualYears = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018];
 const AnnualPosters = annualYears.map(year => ({
   year,
   Component: lazy(() => loadSvgComponent(totalStat, `./ayeartotal_${year}.svg`)
-    .catch(() => ({ default: () => <div className="text-xs text-gray-400">Failed to load {year}</div> })))
+    .catch(() => ({ default: () => <div className="text-[10px] text-slate-600 italic">Historical data unavailable for {year}</div> })))
 }));
 
-
 const SVGStat = () => (
-  <div id="svgStat" className="flex flex-col gap-8">
-    <Suspense fallback={<div className="text-center">Loading...</div>}>
-      <div className="flex flex-col gap-4">
-        <GridSvg className="h-auto w-full" />
-        <GithubSvg className="h-auto w-full" />
-      </div>
+  <div id="svgStat" className="space-y-16">
+    <Suspense fallback={<div className="h-40 flex items-center justify-center text-xs text-slate-500 animate-pulse">Initializing Data Visualization Matrix...</div>}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-8"
+      >
+        <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-4 lg:p-8 overflow-hidden shadow-inner">
+          <GridSvg className="h-auto w-full filter contrast-125 saturate-150" />
+        </div>
+        <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-4 lg:p-8 overflow-hidden shadow-inner">
+          <GithubSvg className="h-auto w-full filter contrast-125 saturate-150" />
+        </div>
+      </motion.div>
 
-      <div className="mt-4">
-        <h3 className="text-xl font-bold mb-6 text-primary flex items-center gap-2">
-          <span className="w-1 h-6 bg-primary rounded-full"></span>
-          Annual Running Posters
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {AnnualPosters.map(({ year, Component }) => (
-            <div key={year} className="bg-white/50 rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-              <div className="text-sm font-semibold text-gray-500 mb-3">{year} Year</div>
-              <Suspense fallback={<div className="h-40 flex items-center justify-center text-xs text-gray-400 bg-gray-50 rounded">Loading {year}...</div>}>
-                <Component className="w-full h-auto" />
+      <div className="pt-12">
+        <div className="flex items-center gap-4 mb-10">
+          <h3 className="text-xl font-black italic text-white uppercase tracking-[0.3em]">
+            Annual Records
+          </h3>
+          <div className="h-[1px] flex-grow bg-white/5"></div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {AnnualPosters.map(({ year, Component }, idx) => (
+            <motion.div 
+              key={year}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: Math.min(idx * 0.1, 1) }}
+              className="group glass-card p-6 border-white/5 hover:border-orange-500/20 transition-all duration-500 bg-gradient-to-br from-white/[0.02] to-transparent"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-2xl font-black italic text-white/20 group-hover:text-orange-500/40 transition-colors">#{year}</span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2 py-1 bg-white/5 rounded">Report</span>
+              </div>
+              <Suspense fallback={<div className="h-48 flex items-center justify-center text-xs text-slate-600 italic animate-pulse">Loading {year} Record...</div>}>
+                <div className="rounded-lg overflow-hidden shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]">
+                  <Component className="w-full h-auto" />
+                </div>
               </Suspense>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
     </Suspense>
   </div>
 );
+
+export default SVGStat;
 
 
 export default SVGStat;

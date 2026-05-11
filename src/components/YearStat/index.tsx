@@ -2,10 +2,10 @@ import { lazy, Suspense } from 'react';
 import Stat from '@/components/Stat';
 import WorkoutStat from '@/components/WorkoutStat';
 import useActivities from '@/hooks/useActivities';
-import { formatPace, colorFromType } from '@/utils/utils';
 import { yearStats } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import { SHOW_ELEVATION_GAIN } from "@/utils/const";
+import { motion } from 'framer-motion';
 
 const YearStat = ({ year, onClick, onClickTypeInYear, children }: {
   year: string, onClick: (_year: string) => void,
@@ -13,7 +13,6 @@ const YearStat = ({ year, onClick, onClickTypeInYear, children }: {
   children?: React.ReactNode
 }) => {
   let { activities: runs, years } = useActivities();
-  // lazy Component
   const svgName = year === 'Total' ? 'all' : year;
   const YearSVG = lazy(() => loadSvgComponent(yearStats, `./year_${svgName}.svg`));
 
@@ -48,79 +47,101 @@ const YearStat = ({ year, onClick, onClickTypeInYear, children }: {
     }
   });
   const hasHeartRate = !(heartRate === 0);
-  const avgHeartRate = (heartRate / (runs.length - heartRateNullCount)).toFixed(
-    0
-  );
+  const avgHeartRate = (heartRate / (runs.length - heartRateNullCount)).toFixed(0);
 
   const workoutsArr = Object.entries(workoutsCounts);
-  workoutsArr.sort((a, b) => {
-    return b[1][0] - a[1][0]
-  });
+  workoutsArr.sort((a, b) => b[1][0] - a[1][0]);
+
   return (
-    <div
-      className="cursor-pointer"
-      onClick={() => onClick(year)}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="group"
     >
-      <section>
-        <Stat value={year} description=" Journey" />
-        {sumDistance > 0 &&
-          <WorkoutStat
-            key='total'
-            value={runs.length.toString()}
-            description={" Total"}
-            distance={(sumDistance / 1000.0).toFixed(0)}
-            pace=""
-            className=""
-            onClick={() => { }}
-            color=""
-          />
-        }
-        {workoutsArr.map(([type, count]) => (
-          <WorkoutStat
-            key={type}
-            value={count[0].toString()}
-            description={` ${type}` + "s"}
-            pace=""
-            distance={(count[2] / 1000.0).toFixed(0)}
-            className=""
-            onClick={() => {
-              onClickTypeInYear(year, type);
-            }}
-            color=""
-          />
-        ))}
-        {SHOW_ELEVATION_GAIN && sumElevationGain > 0 &&
-          <Stat
-            value={`${(sumElevationGain).toFixed(0)} `}
-            description="M Elevation"
-            className="pb-2"
-          />
-        }
-        <Stat
-          value={`${streak} day`}
-          description=" Streak"
-          className="pb-2"
-        />
-        {hasHeartRate && (
-          <Stat value={avgHeartRate} description=" Avg Heart Rate" />
-        )}
-      </section>
-      {children && (
-        <div className="my-4">
-          {children}
+      <div 
+        className="glass-card p-6 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 cursor-pointer overflow-hidden relative"
+        onClick={() => onClick(year)}
+      >
+        <div className="absolute -top-4 -right-4 text-8xl font-black italic text-white/[0.02] pointer-events-none group-hover:text-orange-500/[0.05] transition-colors">
+          {year === 'Total' ? 'ALL' : year}
         </div>
-      )}
-      <Suspense fallback="loading...">
-        <YearSVG
-          key={svgName}
-          className="mt-2 mb-1 md:my-4 w-full border-0 p-0"
-          style={{ height: 'auto', aspectRatio: '1 / 1' }}
-          preserveAspectRatio="xMidYMid meet"
-        />
-      </Suspense>
-      <hr color="red" />
-    </div>
+
+        <section className="relative z-10 space-y-6">
+          <div className="flex items-center gap-4">
+            <Stat value={year} description=" Journey" className="!p-0" />
+            <div className="h-[1px] flex-grow bg-white/5"></div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {sumDistance > 0 &&
+              <WorkoutStat
+                key='total'
+                value={runs.length.toString()}
+                description={" Total Workouts"}
+                distance={(sumDistance / 1000.0).toFixed(0)}
+                pace=""
+                className="bg-orange-500/5 border-orange-500/10"
+                onClick={() => { }}
+                color=""
+              />
+            }
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {workoutsArr.map(([type, count]) => (
+                <WorkoutStat
+                  key={type}
+                  value={count[0].toString()}
+                  description={` ${type}`}
+                  pace=""
+                  distance={(count[2] / 1000.0).toFixed(0)}
+                  className="bg-white/[0.02] border-white/5"
+                  onClick={() => onClickTypeInYear(year, type)}
+                  color=""
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-8 pt-4 border-t border-white/5">
+            {SHOW_ELEVATION_GAIN && sumElevationGain > 0 &&
+              <Stat
+                value={`${(sumElevationGain).toFixed(0)}`}
+                description="M Gain"
+                className="!p-0 scale-75 origin-left"
+              />
+            }
+            <Stat
+              value={`${streak}`}
+              description="D Streak"
+              className="!p-0 scale-75 origin-left"
+            />
+            {hasHeartRate && (
+              <Stat value={avgHeartRate} description=" Avg BPM" className="!p-0 scale-75 origin-left" />
+            )}
+          </div>
+        </section>
+
+        {children && (
+          <div className="mt-8 relative z-10 border-t border-white/5 pt-8">
+            {children}
+          </div>
+        )}
+
+        <div className="mt-8 rounded-xl overflow-hidden shadow-2xl border border-white/5 group-hover:border-orange-500/20 transition-colors">
+          <Suspense fallback={<div className="h-40 flex items-center justify-center text-xs text-slate-500 italic animate-pulse">Loading Visual Stats...</div>}>
+            <YearSVG
+              key={svgName}
+              className="w-full h-auto transform group-hover:scale-105 transition-transform duration-700"
+              style={{ aspectRatio: '1 / 1' }}
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </Suspense>
+        </div>
+      </div>
+    </motion.div>
   );
 };
+
+export default YearStat;
 
 export default YearStat;
