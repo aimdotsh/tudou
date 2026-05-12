@@ -143,5 +143,3 @@ const YearStat = ({ year, onClick, onClickTypeInYear, children }: {
 };
 
 export default YearStat;
-
-export default YearStat;

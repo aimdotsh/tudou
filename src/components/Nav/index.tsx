@@ -87,5 +87,3 @@ const Nav: React.FC<NavProps> = ({ onSearch, showSearch = false }) => {
 };
 
 export default Nav;
-
-export default Nav;

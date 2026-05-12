@@ -65,6 +65,3 @@ const SVGStat = () => (
 );
 
 export default SVGStat;
-
-
-export default SVGStat;

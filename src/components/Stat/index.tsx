@@ -35,5 +35,3 @@ const Stat = ({
 );
 
 export default Stat;
-
-export default Stat;

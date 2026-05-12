@@ -135,5 +135,3 @@ const RunTable = ({
 };
 
 export default RunTable;
-
-export default RunTable;

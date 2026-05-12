@@ -135,5 +135,3 @@ const RunRow = ({ elementIndex, locateActivity, run, runIndex, setRunIndex, sele
 };
 
 export default RunRow;
-
-export default RunRow;
