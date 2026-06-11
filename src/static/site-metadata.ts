@@ -48,7 +48,7 @@ const getDynamicMapOffset = () => {
 const data: ISiteMetadataResult = {
   siteTitle: '蓝皮书的 Workouts Page',
   siteUrl: 'https://run.liups.com',
-  logo: 'https://aim.sh/images/run.png',
+  logo: 'https://run.liups.com/images/favicon.png',
   description: '蓝皮书的 Workouts Page',
   keywords: 'workouts, running, cycling, riding, roadtrip, hiking, swimming',
   navLinks: [
