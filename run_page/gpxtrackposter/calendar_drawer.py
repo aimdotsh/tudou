@@ -25,8 +25,16 @@ class CalendarDrawer(TracksDrawer):
         """Iterate through the Poster's years, creating a calendar for each."""
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw.")
-        years = self.poster.years.count()
-        _, counts = utils.compute_grid(years, size)
+        
+        # 计算实际有数据的年份数量，从 tracks_by_date 中提取年份
+        # 使用 tracks_by_date 而不是 tracks，因为 tracks_by_date 已经根据 poster.years 过滤
+        actual_years = set()
+        for date_str in self.poster.tracks_by_date.keys():
+            year = int(date_str.split('-')[0])
+            actual_years.add(year)
+        years_count = len(actual_years)
+        
+        _, counts = utils.compute_grid(years_count, size)
         if counts is None:
             raise PosterError("Unable to compute grid.")
         count_x, count_y = counts[0], counts[1]
