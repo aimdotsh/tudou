@@ -43,8 +43,8 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
 
   if (loading) {
     return (
-      <div className="w-full bg-[#121824]/90 text-gray-300 rounded-xl p-8 border border-gray-800 shadow-xl flex items-center justify-center space-x-2 my-4">
-        <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-full bg-white text-slate-500 rounded-xl p-8 border border-slate-100 shadow-md flex items-center justify-center space-x-2 my-4">
+        <div className="w-5 h-5 border-2 border-[#20B2AA] border-t-transparent rounded-full animate-spin"></div>
         <span className="text-sm">正在加载高驰专业数据分析...</span>
       </div>
     );
@@ -103,8 +103,8 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
     if (active && payload && payload.length) {
       const activePoint = payload[0].payload;
       return (
-        <div className="bg-[#1a2333]/95 border border-gray-700 p-3 rounded-lg shadow-xl text-xs space-y-1.5 text-gray-200">
-          <div className="font-bold border-b border-gray-700 pb-1 mb-1 text-gray-400">
+        <div className="bg-white/95 border border-slate-200 p-3 rounded-lg shadow-xl text-xs space-y-1.5 text-slate-800">
+          <div className="font-bold border-b border-slate-100 pb-1 mb-1 text-slate-500">
             {chartMode === 'distance' ? `距离: ${activePoint.distanceKm} km` : `时间: ${activePoint.timeFormatted}`}
           </div>
           {payload.map((p: any) => {
@@ -133,25 +133,25 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
   const hasPower = data.records.some((r: any) => r.power && r.power > 0);
 
   return (
-    <div className="w-full bg-[#121824] text-gray-100 rounded-xl p-4 sm:p-6 border border-gray-800 shadow-2xl my-4 select-none">
+    <div className="w-full bg-white text-slate-800 rounded-xl p-4 sm:p-6 border border-slate-100 shadow-xl my-4 select-none">
       {/* 顶部标题与选项 */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 mb-6 space-y-3 sm:space-y-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-6 space-y-3 sm:space-y-0">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse"></span>
-            <h2 className="text-lg font-bold tracking-wide">高驰专业运动数据分析</h2>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#20B2AA] animate-pulse"></span>
+            <h2 className="text-lg font-bold tracking-wide text-slate-800">高驰专业运动数据分析</h2>
           </div>
-          <p className="text-xs text-gray-400 mt-1">数据源自高驰智能运动手表 FIT 轨道解析</p>
+          <p className="text-xs text-slate-400 mt-1">数据源自高驰智能运动手表 FIT 轨道解析</p>
         </div>
-        <div className="flex bg-[#1c2436] rounded-lg p-0.5 border border-gray-700 text-xs">
+        <div className="flex bg-slate-100 rounded-lg p-0.5 border border-slate-200/60 text-xs">
           <button
-            className={`px-3 py-1.5 rounded-md transition-all ${chartMode === 'distance' ? 'bg-orange-500 font-bold text-white' : 'text-gray-400 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-md transition-all ${chartMode === 'distance' ? 'bg-[#20B2AA] font-bold text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
             onClick={() => setChartMode('distance')}
           >
             按距离
           </button>
           <button
-            className={`px-3 py-1.5 rounded-md transition-all ${chartMode === 'time' ? 'bg-orange-500 font-bold text-white' : 'text-gray-400 hover:text-white'}`}
+            className={`px-3 py-1.5 rounded-md transition-all ${chartMode === 'time' ? 'bg-[#20B2AA] font-bold text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
             onClick={() => setChartMode('time')}
           >
             按时间
@@ -161,48 +161,48 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
 
       {/* 概要数据网格 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-[#1c2436]/50 p-4 rounded-lg border border-gray-800">
-          <div className="text-xs text-gray-400">平均 / 最大心率</div>
+        <div className="bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+          <div className="text-xs text-slate-400">平均 / 最大心率</div>
           <div className="text-xl font-black mt-1 flex items-baseline">
-            <span className="text-red-400">{data.summary.avg_heart_rate || '--'}</span>
-            <span className="text-gray-500 text-xs mx-1">/</span>
-            <span className="text-red-500 text-sm">{data.summary.max_heart_rate || '--'}</span>
-            <span className="text-xs text-gray-400 ml-1">bpm</span>
+            <span className="text-rose-600">{data.summary.avg_heart_rate || '--'}</span>
+            <span className="text-slate-300 text-xs mx-1">/</span>
+            <span className="text-rose-500 text-sm">{data.summary.max_heart_rate || '--'}</span>
+            <span className="text-xs text-slate-400 ml-1">bpm</span>
           </div>
         </div>
-        <div className="bg-[#1c2436]/50 p-4 rounded-lg border border-gray-800">
-          <div className="text-xs text-gray-400">累计爬升 / 下降</div>
+        <div className="bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+          <div className="text-xs text-slate-400">累计爬升 / 下降</div>
           <div className="text-xl font-black mt-1 flex items-baseline">
-            <span className="text-blue-400">{data.summary.total_ascent || 0}</span>
-            <span className="text-gray-500 text-xs mx-1">/</span>
+            <span className="text-blue-600">{data.summary.total_ascent || 0}</span>
+            <span className="text-slate-300 text-xs mx-1">/</span>
             <span className="text-blue-500 text-sm">{data.summary.total_descent || 0}</span>
-            <span className="text-xs text-gray-400 ml-1">m</span>
+            <span className="text-xs text-slate-400 ml-1">m</span>
           </div>
         </div>
-        <div className="bg-[#1c2436]/50 p-4 rounded-lg border border-gray-800">
-          <div className="text-xs text-gray-400">平均功率</div>
-          <div className="text-xl font-black mt-1 text-orange-400 flex items-baseline">
+        <div className="bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+          <div className="text-xs text-slate-400">平均功率</div>
+          <div className="text-xl font-black mt-1 text-amber-600 flex items-baseline">
             <span>{data.summary.avg_power || '--'}</span>
-            <span className="text-xs text-gray-400 ml-1">W</span>
+            <span className="text-xs text-slate-400 ml-1">W</span>
           </div>
         </div>
-        <div className="bg-[#1c2436]/50 p-4 rounded-lg border border-gray-800">
-          <div className="text-xs text-gray-400">卡路里消耗</div>
-          <div className="text-xl font-black mt-1 text-emerald-400 flex items-baseline">
+        <div className="bg-slate-50/50 p-4 rounded-lg border border-slate-100">
+          <div className="text-xs text-slate-400">卡路里消耗</div>
+          <div className="text-xl font-black mt-1 text-[#20B2AA] flex items-baseline">
             <span>{data.summary.total_calories || '--'}</span>
-            <span className="text-xs text-gray-400 ml-1">kcal</span>
+            <span className="text-xs text-slate-400 ml-1">kcal</span>
           </div>
         </div>
       </div>
 
       {/* Recharts 图表区域 */}
-      <div className="w-full h-[280px] sm:h-[350px] mb-8 bg-[#181f2f]/30 p-2 sm:p-4 rounded-lg border border-gray-800">
+      <div className="w-full h-[280px] sm:h-[350px] mb-8 bg-slate-50/30 p-2 sm:p-4 rounded-lg border border-slate-100">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
             margin={{ top: 10, right: 5, left: -20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
             <XAxis
               dataKey={chartMode === 'distance' ? 'distanceKm' : 'time_offset'}
               tickFormatter={formatXAxis}
@@ -217,7 +217,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
             <YAxis
               yAxisId="left"
               orientation="left"
-              stroke="#ef4444"
+              stroke="#e11d48"
               fontSize={10}
               tickLine={false}
               axisLine={false}
@@ -228,7 +228,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
               yAxisId="right-pace"
               orientation="right"
               reversed
-              stroke="#10b981"
+              stroke="#20B2AA"
               fontSize={10}
               tickFormatter={formatPace}
               tickLine={false}
@@ -248,7 +248,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
               height={36}
               iconType="circle"
               iconSize={8}
-              wrapperStyle={{ fontSize: 11, color: '#94a3b8' }}
+              wrapperStyle={{ fontSize: 11, color: '#64748b' }}
             />
 
             {/* 海报背景图：海拔面积填充 */}
@@ -259,7 +259,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
               dataKey="altitude"
               stroke="#3b82f6"
               strokeWidth={1}
-              fill="rgba(59, 130, 246, 0.08)"
+              fill="rgba(59, 130, 246, 0.05)"
               dot={false}
             />
             
@@ -269,7 +269,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
               type="monotone"
               name="配速"
               dataKey="pace"
-              stroke="#10b981"
+              stroke="#20B2AA"
               strokeWidth={1.5}
               dot={false}
               activeDot={{ r: 4 }}
@@ -281,7 +281,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
               type="monotone"
               name="心率"
               dataKey="heart_rate"
-              stroke="#ef4444"
+              stroke="#e11d48"
               strokeWidth={1.5}
               dot={false}
               activeDot={{ r: 4 }}
@@ -294,7 +294,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
                 type="monotone"
                 name="功率"
                 dataKey="power"
-                stroke="#f97316"
+                stroke="#f59e0b"
                 strokeWidth={1}
                 dot={false}
               />
@@ -306,13 +306,13 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
       {/* 分圈数据表格 */}
       {data.laps && data.laps.length > 0 && (
         <div className="w-full">
-          <h3 className="text-sm font-bold tracking-wide text-gray-300 mb-3 pl-1 border-l-2 border-orange-500">
+          <h3 className="text-sm font-bold tracking-wide text-slate-700 mb-3 pl-1 border-l-2 border-[#20B2AA]">
             分圈数据记录
           </h3>
-          <div className="overflow-x-auto rounded-lg border border-gray-800">
+          <div className="overflow-x-auto rounded-lg border border-slate-100">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-[#1c2436] text-gray-400 font-bold border-b border-gray-800">
+                <tr className="bg-[#20B2AA]/10 text-slate-600 font-bold border-b border-slate-100">
                   <th className="p-3">圈数</th>
                   <th className="p-3">距离</th>
                   <th className="p-3">时间</th>
@@ -322,16 +322,16 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
                   {hasPower && <th className="p-3">平均功率</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800/50">
+              <tbody className="divide-y divide-slate-100">
                 {data.laps.map((lap: any) => (
-                  <tr key={lap.lap_num} className="hover:bg-[#1c2436]/30 transition-colors">
-                    <td className="p-3 font-semibold text-gray-400">{lap.lap_num}</td>
+                  <tr key={lap.lap_num} className="hover:bg-[#20B2AA]/5 transition-colors">
+                    <td className="p-3 font-semibold text-slate-500">{lap.lap_num}</td>
                     <td className="p-3">{(lap.distance / 1000).toFixed(2)} km</td>
                     <td className="p-3">{formatTime(lap.duration)}</td>
-                    <td className="p-3 font-bold text-emerald-400">{getLapPace(lap.avg_speed)}</td>
-                    <td className="p-3 text-red-400">{lap.avg_heart_rate || '--'} bpm</td>
-                    <td className="p-3">{lap.avg_cadence || '--'} spm</td>
-                    {hasPower && <td className="p-3 text-orange-400">{lap.avg_power || '--'} W</td>}
+                    <td className="p-3 font-bold text-[#20B2AA]">{getLapPace(lap.avg_speed)}</td>
+                    <td className="p-3 text-rose-600">{lap.avg_heart_rate || '--'} bpm</td>
+                    <td className="p-3 text-slate-600">{lap.avg_cadence || '--'} spm</td>
+                    {hasPower && <td className="p-3 text-amber-600">{lap.avg_power || '--'} W</td>}
                   </tr>
                 ))}
               </tbody>
