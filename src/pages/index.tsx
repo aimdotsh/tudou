@@ -93,6 +93,7 @@ const Index = () => {
   const [year, setYear] = useState('Total');
   const [runIndex, setRunIndex] = useState(-1);
   const [selectedRunId, setSelectedRunId] = useState<number | null>(null);
+  const [dynamicMapHeight, setDynamicMapHeight] = useState<number | undefined>(undefined);
   const [runs, setActivity] = useState(
     filterAndSortRuns(activities, 'Total', filterYearRuns, sortDateFunc, null, null)
   );
@@ -497,6 +498,34 @@ const Index = () => {
     }, 10);
     setIntervalId(id);
   }, [filteredRuns.length, selectedRunId]);
+
+  // 当选中了某次活动记录时，监听滚动高度，上滑时缩小地图高度，主要露出高驰专业数据分析
+  useEffect(() => {
+    if (!selectedRunId) {
+      setDynamicMapHeight(undefined);
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const isMobile = window.innerWidth <= 768;
+      const baseHeight = isMobile ? 333 : 396;
+      const minHeight = isMobile ? 120 : 150;
+      
+      // 地图卡片随上滑逐渐线性收缩至最小高度
+      const computedHeight = Math.max(minHeight, baseHeight - scrollY);
+      setDynamicMapHeight(computedHeight);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [selectedRunId]);
 
   useEffect(() => {
     if (year !== 'Total') {
@@ -922,7 +951,7 @@ const Index = () => {
         {/* 右侧内容区 */}
         <div className="w-full lg:w-2/3 flex flex-col">
           {/* 固定地图区域 */}
-          <div className={year === 'Total' ? 'map-container' : 'sticky-map-container'}>
+          <div className={(year === 'Total' && !selectedRunId) ? 'map-container' : 'sticky-map-container'}>
             <RunMap
               title={title}
               viewState={viewState}
@@ -931,6 +960,7 @@ const Index = () => {
               changeYear={changeYear}
               thisYear={year}
               description={description}
+              mapHeight={dynamicMapHeight}
             />
           </div>
 

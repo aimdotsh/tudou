@@ -38,6 +38,7 @@ interface IRunMapProps {
   geoData: FeatureCollection<RPGeometry>;
   thisYear: string;
   description?: string;
+  mapHeight?: number;
 }
 
 const RunMap = ({
@@ -48,6 +49,7 @@ const RunMap = ({
   geoData: propGeoData,
   thisYear,
   description,
+  mapHeight,
 }: IRunMapProps) => {
   const { activities, countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
@@ -369,7 +371,7 @@ const RunMap = ({
   }, []);
   const style: React.CSSProperties = {
     width: '100%',
-    height: MAP_HEIGHT,
+    height: mapHeight !== undefined ? mapHeight : MAP_HEIGHT,
     touchAction: 'pan-x pan-y',
   };
   const fullscreenButton: React.CSSProperties = {
@@ -390,6 +392,12 @@ const RunMap = ({
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.getMap().resize();
+    }
+  }, [mapHeight]);
 
   // --------- 渲染部分 ---------
   return (
