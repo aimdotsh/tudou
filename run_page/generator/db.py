@@ -162,10 +162,33 @@ def update_or_create_activity(session, run_activity):
             except Exception as ex:
                 print(f"Time-based deduplication failed to parse date: {ex}")
                 pass
+        # 尝试获取并匹配高驰云端的自定义标题和描述备注
+        coros_title = ""
+        coros_desc = ""
+        if hasattr(run_activity, "file_names") and run_activity.file_names:
+            try:
+                filename = run_activity.file_names[0]
+                label_id = filename.split(".")[0]
+                import json
+                import os
+                current_dir = os.path.dirname(os.path.realpath(__file__))
+                parent_dir = os.path.dirname(current_dir)
+                meta_path = os.path.join(parent_dir, "public", "data", "coros_meta_temp.json")
+                if os.path.exists(meta_path):
+                    with open(meta_path, "r", encoding="utf-8") as f:
+                        meta_data = json.load(f)
+                    activity_meta = meta_data.get(str(label_id))
+                    if activity_meta:
+                        coros_title = activity_meta.get("name", "")
+                        coros_desc = activity_meta.get("remark", "")
+            except Exception as e:
+                print(f"Failed to read coros_meta_temp metadata: {e}")
+
         type = run_activity.type
         source = run_activity.source if hasattr(run_activity, "source") else "gpx"
         if run_activity.type in TYPE_DICT:
             type = TYPE_DICT[run_activity.type]
+            
         if not activity:
             start_point = run_activity.start_latlng
             location_country = getattr(run_activity, "location_country", "")
@@ -183,9 +206,13 @@ def update_or_create_activity(session, run_activity):
                     # 网络异常时默认 fallback 为 China 并静默跳过，绝不无限挂起
                     location_country = "China"
 
+            # 优先采用高驰云端抓取出的自定义标题与备注
+            activity_name = coros_title if coros_title else (run_activity.name if run_activity.name else "跑步")
+            activity_desc = coros_desc if coros_desc else getattr(run_activity, "description", "")
+
             activity = Activity(
                 run_id=run_activity.id,
-                name=run_activity.name,
+                name=activity_name,
                 distance=run_activity.distance,
                 moving_time=run_activity.moving_time,
                 elapsed_time=run_activity.elapsed_time,
@@ -204,12 +231,22 @@ def update_or_create_activity(session, run_activity):
                     run_activity.map and run_activity.map.summary_polyline or ""
                 ),
                 source=source,
-                description=getattr(run_activity, "description", ""),
+                description=activity_desc,
             )
             session.add(activity)
             created = True
         else:
-            activity.name = run_activity.name
+            # 安全防覆盖：如果是已存在的记录
+            # 1. 如果高驰云端抓到了有效的新自定义标题，且当前库中标题为空或默认“跑步”，我们更新它
+            if coros_title and (not activity.name or activity.name in ["跑步", "户外跑步", "Run"]):
+                activity.name = coros_title
+            # 2. 如果是从 Strava 同步的历史记录，或者没有高驰新标题，坚决不进行覆盖，以此保护原有的自定义标题
+            elif getattr(activity, "source", "") == "strava":
+                pass
+            # 3. 否则，如果不是空标题，则采用本地名
+            else:
+                activity.name = run_activity.name if run_activity.name else activity.name
+
             activity.distance = float(run_activity.distance)
             activity.moving_time = run_activity.moving_time
             activity.elapsed_time = run_activity.elapsed_time
@@ -225,7 +262,12 @@ def update_or_create_activity(session, run_activity):
                 run_activity.map and run_activity.map.summary_polyline or ""
             )
             activity.source = source
-            activity.description = getattr(run_activity, "description", "")
+            
+            # 描述也是相同逻辑，如果有云端备注则补充
+            if coros_desc and not activity.description:
+                activity.description = coros_desc
+            elif not activity.description:
+                activity.description = getattr(run_activity, "description", "")
     except Exception as e:
         print(f"something wrong with {run_activity.id}")
         print(str(e))

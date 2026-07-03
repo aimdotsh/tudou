@@ -66,6 +66,7 @@ class Coros:
     async def fetch_activity_ids(self):
         page_number = 1
         all_activities_ids = []
+        coros_meta = {}
 
         while True:
             url = f"{COROS_URL_DICT.get('ACTIVITY_LIST')}&pageNumber={page_number}&size=20"
@@ -75,12 +76,30 @@ class Coros:
             if not activities:
                 break
             for activity in activities:
-                label_id = activity["labelId"]
+                label_id = activity.get("labelId")
                 if label_id is None:
                     continue
                 all_activities_ids.append(label_id)
+                
+                # 抓取高驰手表的自定义标题和备注/描述
+                coros_meta[str(label_id)] = {
+                    "name": activity.get("name", ""),
+                    "remark": activity.get("remark", "")
+                }
 
             page_number += 1
+            
+        # 写入临时元数据文件供写库模块读取
+        try:
+            import json
+            current_dir = os.path.dirname(os.path.realpath(__file__))
+            parent_dir = os.path.dirname(current_dir)
+            meta_file = os.path.join(parent_dir, "public", "data", "coros_meta_temp.json")
+            os.makedirs(os.path.dirname(meta_file), exist_ok=True)
+            with open(meta_file, "w", encoding="utf-8") as f:
+                json.dump(coros_meta, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"Failed to save coros_meta_temp: {e}")
 
         return all_activities_ids
 

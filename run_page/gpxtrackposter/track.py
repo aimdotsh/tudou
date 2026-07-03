@@ -396,6 +396,7 @@ class Track:
             "map": run_map(self.polyline_str),
             "start_latlng": self.start_latlng,
             "source": self.source,
+            "file_names": self.file_names,
         }
         d.update(self.moving_dict)
         # return a nametuple that can use . to get attr

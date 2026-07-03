@@ -125,6 +125,55 @@ def extract_all_fit_details(fit_dir, output_dir):
             
     print(f"数据提取完成，本次成功生成了 {extracted_count} 个详情 JSON。")
 
+    # 4. 构建 coros_id_mapping.json 映射关系，用开始时间关联 db 中的任何 id 并且输出到 mapping.json 中
+    print("开始构建高驰图表 ID 映射关系表...")
+    try:
+        import sqlite3
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        db_path = os.path.join(parent_dir, "run_page", "data.db")
+        
+        mapping = {}
+        if os.path.exists(db_path):
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT run_id, start_date_local FROM activities")
+            db_runs = cursor.fetchall()
+            conn.close()
+            
+            # 读取已有的详情 JSON 文件名
+            detail_files = [f for f in os.listdir(output_dir) if f.endswith(".json")]
+            
+            # 解析 db 日期
+            db_run_dt = []
+            for db_id, dt_str in db_runs:
+                try:
+                    dt = datetime.datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
+                    db_run_dt.append((db_id, dt))
+                except:
+                    pass
+                    
+            for filename in detail_files:
+                coros_id_str = filename.split(".")[0]
+                try:
+                    coros_id = int(coros_id_str)
+                    coros_dt = datetime.datetime.fromtimestamp(coros_id / 1000.0)
+                    
+                    for db_id, db_dt in db_run_dt:
+                        # 允许 2 分钟范围内的误差
+                        if abs((coros_dt - db_dt).total_seconds()) <= 120:
+                            mapping[str(db_id)] = coros_id_str
+                            break
+                except Exception as ex:
+                    print(f"解析 {filename} 时间失败: {ex}")
+                    
+            mapping_file = os.path.join(parent_dir, "public", "data", "coros_id_mapping.json")
+            with open(mapping_file, "w", encoding="utf-8") as f:
+                json.dump(mapping, f, ensure_ascii=False, indent=2)
+            print(f"成功生成了高驰 ID 映射关系表，包含 {len(mapping)} 条映射记录。")
+    except Exception as e:
+        print(f"构建 ID 映射关系表失败: {e}")
+
 if __name__ == "__main__":
     fit_dir = "/Users/liups/ai/github/tudou/FIT_OUT"
     output_dir = "/Users/liups/ai/github/tudou/public/data/coros_detail"
