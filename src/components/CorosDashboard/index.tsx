@@ -134,30 +134,7 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
 
   return (
     <div className="w-full bg-white text-slate-800 rounded-xl p-4 sm:p-6 border border-slate-100 shadow-xl my-4 select-none">
-      {/* 顶部标题与选项 */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 pb-4 mb-6 space-y-3 sm:space-y-0">
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#20B2AA] animate-pulse"></span>
-            <h2 className="text-lg font-bold tracking-wide text-slate-800">高驰专业运动数据分析</h2>
-          </div>
-          <p className="text-xs text-slate-400 mt-1">数据源自高驰智能运动手表 FIT 轨道解析</p>
-        </div>
-        <div className="flex bg-slate-100 rounded-lg p-0.5 border border-slate-200/60 text-xs">
-          <button
-            className={`px-3 py-1.5 rounded-md transition-all ${chartMode === 'distance' ? 'bg-[#20B2AA] font-bold text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-            onClick={() => setChartMode('distance')}
-          >
-            按距离
-          </button>
-          <button
-            className={`px-3 py-1.5 rounded-md transition-all ${chartMode === 'time' ? 'bg-[#20B2AA] font-bold text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-            onClick={() => setChartMode('time')}
-          >
-            按时间
-          </button>
-        </div>
-      </div>
+
 
       {/* 概要数据网格 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
