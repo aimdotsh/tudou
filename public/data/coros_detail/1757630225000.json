@@ -1,0 +1,4564 @@
+{
+  "run_id": 1757630225000,
+  "summary": {
+    "sport": "running",
+    "total_distance": 6418.43,
+    "total_timer_time": 2461.23,
+    "total_calories": 540,
+    "avg_heart_rate": 158,
+    "max_heart_rate": 179,
+    "avg_power": 223,
+    "avg_cadence": 86,
+    "total_ascent": 0,
+    "total_descent": 0
+  },
+  "laps": [
+    {
+      "lap_num": 1,
+      "distance": 730.33,
+      "duration": 300.21,
+      "avg_speed": 2.433,
+      "avg_heart_rate": 141,
+      "avg_power": 204,
+      "avg_cadence": 84
+    },
+    {
+      "lap_num": 2,
+      "distance": 3932.82,
+      "duration": 1500.0,
+      "avg_speed": 2.622,
+      "avg_heart_rate": 158,
+      "avg_power": 225,
+      "avg_cadence": 86
+    },
+    {
+      "lap_num": 3,
+      "distance": 487.13,
+      "duration": 180.0,
+      "avg_speed": 2.706,
+      "avg_heart_rate": 160,
+      "avg_power": 232,
+      "avg_cadence": 86
+    },
+    {
+      "lap_num": 4,
+      "distance": 541.83,
+      "duration": 180.1,
+      "avg_speed": 3.009,
+      "avg_heart_rate": 169,
+      "avg_power": 252,
+      "avg_cadence": 86
+    },
+    {
+      "lap_num": 5,
+      "distance": 726.32,
+      "duration": 300.89,
+      "avg_speed": 2.414,
+      "avg_heart_rate": 169,
+      "avg_power": 210,
+      "avg_cadence": 84
+    }
+  ],
+  "records": [
+    {
+      "time_offset": 0,
+      "distance": 0.0,
+      "heart_rate": null,
+      "speed": null,
+      "altitude": null,
+      "power": null,
+      "cadence": null
+    },
+    {
+      "time_offset": 4,
+      "distance": 0.0,
+      "heart_rate": 112,
+      "speed": 1.703,
+      "altitude": null,
+      "power": null,
+      "cadence": null
+    },
+    {
+      "time_offset": 9,
+      "distance": 20.0,
+      "heart_rate": 116,
+      "speed": 2.381,
+      "altitude": 63,
+      "power": 173,
+      "cadence": 78
+    },
+    {
+      "time_offset": 14,
+      "distance": 32.0,
+      "heart_rate": 116,
+      "speed": 2.439,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 86
+    },
+    {
+      "time_offset": 19,
+      "distance": 43.5,
+      "heart_rate": 120,
+      "speed": 2.333,
+      "altitude": 64,
+      "power": 203,
+      "cadence": 86
+    },
+    {
+      "time_offset": 24,
+      "distance": 56.0,
+      "heart_rate": 124,
+      "speed": 2.319,
+      "altitude": 64,
+      "power": 198,
+      "cadence": 86
+    },
+    {
+      "time_offset": 29,
+      "distance": 67.5,
+      "heart_rate": 128,
+      "speed": 2.344,
+      "altitude": 64,
+      "power": 200,
+      "cadence": 85
+    },
+    {
+      "time_offset": 34,
+      "distance": 80.0,
+      "heart_rate": 131,
+      "speed": 2.347,
+      "altitude": 64,
+      "power": 201,
+      "cadence": 85
+    },
+    {
+      "time_offset": 39,
+      "distance": 92.5,
+      "heart_rate": 129,
+      "speed": 2.358,
+      "altitude": 64,
+      "power": 201,
+      "cadence": 85
+    },
+    {
+      "time_offset": 44,
+      "distance": 105.0,
+      "heart_rate": 125,
+      "speed": 2.375,
+      "altitude": 64,
+      "power": 203,
+      "cadence": 85
+    },
+    {
+      "time_offset": 49,
+      "distance": 118.0,
+      "heart_rate": 122,
+      "speed": 2.389,
+      "altitude": 64,
+      "power": 204,
+      "cadence": 85
+    },
+    {
+      "time_offset": 54,
+      "distance": 131.0,
+      "heart_rate": 122,
+      "speed": 2.414,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 59,
+      "distance": 143.5,
+      "heart_rate": 133,
+      "speed": 2.467,
+      "altitude": 64,
+      "power": 210,
+      "cadence": 84
+    },
+    {
+      "time_offset": 64,
+      "distance": 156.0,
+      "heart_rate": 140,
+      "speed": 2.464,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 85
+    },
+    {
+      "time_offset": 68,
+      "distance": 166.0,
+      "heart_rate": 140,
+      "speed": 2.461,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 85
+    },
+    {
+      "time_offset": 73,
+      "distance": 178.5,
+      "heart_rate": 141,
+      "speed": 2.464,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 85
+    },
+    {
+      "time_offset": 78,
+      "distance": 191.0,
+      "heart_rate": 143,
+      "speed": 2.467,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 85
+    },
+    {
+      "time_offset": 83,
+      "distance": 202.5,
+      "heart_rate": 142,
+      "speed": 2.453,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 84
+    },
+    {
+      "time_offset": 88,
+      "distance": 215.0,
+      "heart_rate": 143,
+      "speed": 2.442,
+      "altitude": 64,
+      "power": 209,
+      "cadence": 84
+    },
+    {
+      "time_offset": 93,
+      "distance": 228.0,
+      "heart_rate": 144,
+      "speed": 2.444,
+      "altitude": 64,
+      "power": 209,
+      "cadence": 84
+    },
+    {
+      "time_offset": 98,
+      "distance": 240.0,
+      "heart_rate": 144,
+      "speed": 2.481,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 83
+    },
+    {
+      "time_offset": 103,
+      "distance": 252.5,
+      "heart_rate": 144,
+      "speed": 2.467,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 80
+    },
+    {
+      "time_offset": 108,
+      "distance": 265.0,
+      "heart_rate": 144,
+      "speed": 2.456,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 84
+    },
+    {
+      "time_offset": 113,
+      "distance": 276.5,
+      "heart_rate": 145,
+      "speed": 2.444,
+      "altitude": 64,
+      "power": 210,
+      "cadence": 84
+    },
+    {
+      "time_offset": 118,
+      "distance": 288.0,
+      "heart_rate": 145,
+      "speed": 2.433,
+      "altitude": 64,
+      "power": 209,
+      "cadence": 84
+    },
+    {
+      "time_offset": 123,
+      "distance": 300.0,
+      "heart_rate": 146,
+      "speed": 2.422,
+      "altitude": 64,
+      "power": 208,
+      "cadence": 82
+    },
+    {
+      "time_offset": 128,
+      "distance": 312.0,
+      "heart_rate": 147,
+      "speed": 2.414,
+      "altitude": 64,
+      "power": 207,
+      "cadence": 82
+    },
+    {
+      "time_offset": 133,
+      "distance": 323.5,
+      "heart_rate": 148,
+      "speed": 2.406,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 83
+    },
+    {
+      "time_offset": 137,
+      "distance": 332.5,
+      "heart_rate": 148,
+      "speed": 2.397,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 142,
+      "distance": 344.0,
+      "heart_rate": 146,
+      "speed": 2.375,
+      "altitude": 64,
+      "power": 204,
+      "cadence": 82
+    },
+    {
+      "time_offset": 147,
+      "distance": 358.0,
+      "heart_rate": 146,
+      "speed": 2.378,
+      "altitude": 64,
+      "power": 203,
+      "cadence": 82
+    },
+    {
+      "time_offset": 152,
+      "distance": 371.0,
+      "heart_rate": 147,
+      "speed": 2.45,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 83
+    },
+    {
+      "time_offset": 157,
+      "distance": 385.0,
+      "heart_rate": 147,
+      "speed": 2.492,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 82
+    },
+    {
+      "time_offset": 162,
+      "distance": 399.0,
+      "heart_rate": 145,
+      "speed": 2.578,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 84
+    },
+    {
+      "time_offset": 167,
+      "distance": 412.0,
+      "heart_rate": 146,
+      "speed": 2.633,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 85
+    },
+    {
+      "time_offset": 172,
+      "distance": 424.0,
+      "heart_rate": 146,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 85
+    },
+    {
+      "time_offset": 177,
+      "distance": 436.5,
+      "heart_rate": 147,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 83
+    },
+    {
+      "time_offset": 182,
+      "distance": 447.0,
+      "heart_rate": 147,
+      "speed": 2.506,
+      "altitude": 64,
+      "power": 216,
+      "cadence": 84
+    },
+    {
+      "time_offset": 187,
+      "distance": 458.5,
+      "heart_rate": 148,
+      "speed": 2.475,
+      "altitude": 64,
+      "power": 212,
+      "cadence": 84
+    },
+    {
+      "time_offset": 192,
+      "distance": 471.0,
+      "heart_rate": 148,
+      "speed": 2.456,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 85
+    },
+    {
+      "time_offset": 197,
+      "distance": 482.5,
+      "heart_rate": 149,
+      "speed": 2.436,
+      "altitude": 64,
+      "power": 210,
+      "cadence": 85
+    },
+    {
+      "time_offset": 201,
+      "distance": 492.0,
+      "heart_rate": 148,
+      "speed": 2.428,
+      "altitude": 64,
+      "power": 208,
+      "cadence": 85
+    },
+    {
+      "time_offset": 206,
+      "distance": 503.0,
+      "heart_rate": 147,
+      "speed": 2.414,
+      "altitude": 64,
+      "power": 208,
+      "cadence": 85
+    },
+    {
+      "time_offset": 211,
+      "distance": 515.0,
+      "heart_rate": 146,
+      "speed": 2.392,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 216,
+      "distance": 527.0,
+      "heart_rate": 147,
+      "speed": 2.383,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 85
+    },
+    {
+      "time_offset": 221,
+      "distance": 537.0,
+      "heart_rate": 148,
+      "speed": 2.378,
+      "altitude": 64,
+      "power": 204,
+      "cadence": 85
+    },
+    {
+      "time_offset": 226,
+      "distance": 549.0,
+      "heart_rate": 146,
+      "speed": 2.369,
+      "altitude": 64,
+      "power": 203,
+      "cadence": 85
+    },
+    {
+      "time_offset": 231,
+      "distance": 561.5,
+      "heart_rate": 146,
+      "speed": 2.361,
+      "altitude": 64,
+      "power": 202,
+      "cadence": 85
+    },
+    {
+      "time_offset": 236,
+      "distance": 574.0,
+      "heart_rate": 146,
+      "speed": 2.358,
+      "altitude": 64,
+      "power": 202,
+      "cadence": 85
+    },
+    {
+      "time_offset": 241,
+      "distance": 585.0,
+      "heart_rate": 146,
+      "speed": 2.364,
+      "altitude": 64,
+      "power": 202,
+      "cadence": 85
+    },
+    {
+      "time_offset": 246,
+      "distance": 597.0,
+      "heart_rate": 145,
+      "speed": 2.367,
+      "altitude": 64,
+      "power": 203,
+      "cadence": 85
+    },
+    {
+      "time_offset": 251,
+      "distance": 609.5,
+      "heart_rate": 145,
+      "speed": 2.386,
+      "altitude": 64,
+      "power": 204,
+      "cadence": 87
+    },
+    {
+      "time_offset": 256,
+      "distance": 622.0,
+      "heart_rate": 146,
+      "speed": 2.417,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 87
+    },
+    {
+      "time_offset": 261,
+      "distance": 634.5,
+      "heart_rate": 147,
+      "speed": 2.422,
+      "altitude": 64,
+      "power": 207,
+      "cadence": 85
+    },
+    {
+      "time_offset": 266,
+      "distance": 646.0,
+      "heart_rate": 146,
+      "speed": 2.422,
+      "altitude": 64,
+      "power": 208,
+      "cadence": 86
+    },
+    {
+      "time_offset": 270,
+      "distance": 655.0,
+      "heart_rate": 146,
+      "speed": 2.411,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 83
+    },
+    {
+      "time_offset": 275,
+      "distance": 666.5,
+      "heart_rate": 147,
+      "speed": 2.392,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 280,
+      "distance": 679.0,
+      "heart_rate": 146,
+      "speed": 2.383,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 285,
+      "distance": 691.5,
+      "heart_rate": 147,
+      "speed": 2.389,
+      "altitude": 64,
+      "power": 204,
+      "cadence": 83
+    },
+    {
+      "time_offset": 290,
+      "distance": 705.0,
+      "heart_rate": 147,
+      "speed": 2.417,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 295,
+      "distance": 716.0,
+      "heart_rate": 147,
+      "speed": 2.436,
+      "altitude": 64,
+      "power": 208,
+      "cadence": 83
+    },
+    {
+      "time_offset": 300,
+      "distance": 728.0,
+      "heart_rate": 146,
+      "speed": 2.414,
+      "altitude": 64,
+      "power": 207,
+      "cadence": 82
+    },
+    {
+      "time_offset": 305,
+      "distance": 738.5,
+      "heart_rate": 147,
+      "speed": 2.367,
+      "altitude": 64,
+      "power": 204,
+      "cadence": 80
+    },
+    {
+      "time_offset": 310,
+      "distance": 749.0,
+      "heart_rate": 147,
+      "speed": 2.35,
+      "altitude": 64,
+      "power": 202,
+      "cadence": 79
+    },
+    {
+      "time_offset": 315,
+      "distance": 762.0,
+      "heart_rate": 147,
+      "speed": 2.333,
+      "altitude": 64,
+      "power": 198,
+      "cadence": 80
+    },
+    {
+      "time_offset": 320,
+      "distance": 777.0,
+      "heart_rate": 147,
+      "speed": 2.558,
+      "altitude": 64,
+      "power": 208,
+      "cadence": 86
+    },
+    {
+      "time_offset": 325,
+      "distance": 791.0,
+      "heart_rate": 147,
+      "speed": 2.703,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 89
+    },
+    {
+      "time_offset": 330,
+      "distance": 806.0,
+      "heart_rate": 147,
+      "speed": 2.764,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 90
+    },
+    {
+      "time_offset": 334,
+      "distance": 816.0,
+      "heart_rate": 147,
+      "speed": 2.797,
+      "altitude": 64,
+      "power": 239,
+      "cadence": 88
+    },
+    {
+      "time_offset": 339,
+      "distance": 830.5,
+      "heart_rate": 147,
+      "speed": 2.808,
+      "altitude": 64,
+      "power": 240,
+      "cadence": 86
+    },
+    {
+      "time_offset": 344,
+      "distance": 844.0,
+      "heart_rate": 147,
+      "speed": 2.786,
+      "altitude": 64,
+      "power": 240,
+      "cadence": 85
+    },
+    {
+      "time_offset": 349,
+      "distance": 856.0,
+      "heart_rate": 153,
+      "speed": 2.761,
+      "altitude": 64,
+      "power": 237,
+      "cadence": 87
+    },
+    {
+      "time_offset": 354,
+      "distance": 868.0,
+      "heart_rate": 153,
+      "speed": 2.717,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 85
+    },
+    {
+      "time_offset": 359,
+      "distance": 880.5,
+      "heart_rate": 152,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 84
+    },
+    {
+      "time_offset": 364,
+      "distance": 893.0,
+      "heart_rate": 152,
+      "speed": 2.606,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 369,
+      "distance": 905.5,
+      "heart_rate": 152,
+      "speed": 2.572,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 86
+    },
+    {
+      "time_offset": 374,
+      "distance": 917.0,
+      "heart_rate": 153,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 87
+    },
+    {
+      "time_offset": 379,
+      "distance": 929.0,
+      "heart_rate": 153,
+      "speed": 2.497,
+      "altitude": 64,
+      "power": 215,
+      "cadence": 87
+    },
+    {
+      "time_offset": 384,
+      "distance": 941.0,
+      "heart_rate": 153,
+      "speed": 2.472,
+      "altitude": 64,
+      "power": 212,
+      "cadence": 86
+    },
+    {
+      "time_offset": 389,
+      "distance": 953.5,
+      "heart_rate": 152,
+      "speed": 2.453,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 86
+    },
+    {
+      "time_offset": 394,
+      "distance": 966.0,
+      "heart_rate": 151,
+      "speed": 2.447,
+      "altitude": 64,
+      "power": 210,
+      "cadence": 86
+    },
+    {
+      "time_offset": 399,
+      "distance": 978.5,
+      "heart_rate": 151,
+      "speed": 2.439,
+      "altitude": 64,
+      "power": 209,
+      "cadence": 87
+    },
+    {
+      "time_offset": 403,
+      "distance": 989.0,
+      "heart_rate": 151,
+      "speed": 2.456,
+      "altitude": 64,
+      "power": 209,
+      "cadence": 87
+    },
+    {
+      "time_offset": 408,
+      "distance": 1003.0,
+      "heart_rate": 152,
+      "speed": 2.497,
+      "altitude": 64,
+      "power": 212,
+      "cadence": 87
+    },
+    {
+      "time_offset": 413,
+      "distance": 1015.5,
+      "heart_rate": 151,
+      "speed": 2.519,
+      "altitude": 64,
+      "power": 215,
+      "cadence": 87
+    },
+    {
+      "time_offset": 418,
+      "distance": 1028.0,
+      "heart_rate": 151,
+      "speed": 2.539,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 423,
+      "distance": 1041.5,
+      "heart_rate": 151,
+      "speed": 2.547,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 428,
+      "distance": 1056.0,
+      "heart_rate": 151,
+      "speed": 2.564,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 87
+    },
+    {
+      "time_offset": 433,
+      "distance": 1070.0,
+      "heart_rate": 153,
+      "speed": 2.581,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 87
+    },
+    {
+      "time_offset": 438,
+      "distance": 1082.0,
+      "heart_rate": 155,
+      "speed": 2.606,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 87
+    },
+    {
+      "time_offset": 443,
+      "distance": 1095.5,
+      "heart_rate": 154,
+      "speed": 2.614,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 448,
+      "distance": 1108.0,
+      "heart_rate": 153,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 88
+    },
+    {
+      "time_offset": 453,
+      "distance": 1122.0,
+      "heart_rate": 152,
+      "speed": 2.606,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 458,
+      "distance": 1135.0,
+      "heart_rate": 149,
+      "speed": 2.614,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 463,
+      "distance": 1147.5,
+      "heart_rate": 148,
+      "speed": 2.617,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 467,
+      "distance": 1157.5,
+      "heart_rate": 148,
+      "speed": 2.603,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 472,
+      "distance": 1171.0,
+      "heart_rate": 148,
+      "speed": 2.592,
+      "altitude": 63,
+      "power": 222,
+      "cadence": 86
+    },
+    {
+      "time_offset": 477,
+      "distance": 1183.5,
+      "heart_rate": 149,
+      "speed": 2.594,
+      "altitude": 63,
+      "power": 222,
+      "cadence": 86
+    },
+    {
+      "time_offset": 482,
+      "distance": 1197.0,
+      "heart_rate": 149,
+      "speed": 2.597,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 487,
+      "distance": 1209.5,
+      "heart_rate": 149,
+      "speed": 2.6,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 492,
+      "distance": 1223.0,
+      "heart_rate": 149,
+      "speed": 2.603,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 497,
+      "distance": 1235.5,
+      "heart_rate": 149,
+      "speed": 2.606,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 502,
+      "distance": 1248.0,
+      "heart_rate": 149,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 507,
+      "distance": 1261.0,
+      "heart_rate": 149,
+      "speed": 2.611,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 512,
+      "distance": 1274.0,
+      "heart_rate": 149,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 517,
+      "distance": 1285.5,
+      "heart_rate": 150,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 522,
+      "distance": 1298.0,
+      "heart_rate": 150,
+      "speed": 2.592,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 84
+    },
+    {
+      "time_offset": 527,
+      "distance": 1311.0,
+      "heart_rate": 150,
+      "speed": 2.578,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 85
+    },
+    {
+      "time_offset": 532,
+      "distance": 1325.0,
+      "heart_rate": 152,
+      "speed": 2.586,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 87
+    },
+    {
+      "time_offset": 536,
+      "distance": 1335.0,
+      "heart_rate": 156,
+      "speed": 2.606,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 87
+    },
+    {
+      "time_offset": 541,
+      "distance": 1348.5,
+      "heart_rate": 156,
+      "speed": 2.619,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 546,
+      "distance": 1361.0,
+      "heart_rate": 155,
+      "speed": 2.633,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 551,
+      "distance": 1374.5,
+      "heart_rate": 156,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 556,
+      "distance": 1386.0,
+      "heart_rate": 156,
+      "speed": 2.614,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 561,
+      "distance": 1397.5,
+      "heart_rate": 156,
+      "speed": 2.594,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 566,
+      "distance": 1410.0,
+      "heart_rate": 156,
+      "speed": 2.567,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 86
+    },
+    {
+      "time_offset": 571,
+      "distance": 1423.0,
+      "heart_rate": 156,
+      "speed": 2.556,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 87
+    },
+    {
+      "time_offset": 576,
+      "distance": 1436.0,
+      "heart_rate": 156,
+      "speed": 2.542,
+      "altitude": 64,
+      "power": 218,
+      "cadence": 87
+    },
+    {
+      "time_offset": 581,
+      "distance": 1448.5,
+      "heart_rate": 156,
+      "speed": 2.536,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 586,
+      "distance": 1461.0,
+      "heart_rate": 157,
+      "speed": 2.533,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 591,
+      "distance": 1473.5,
+      "heart_rate": 158,
+      "speed": 2.528,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 596,
+      "distance": 1487.0,
+      "heart_rate": 158,
+      "speed": 2.522,
+      "altitude": 64,
+      "power": 216,
+      "cadence": 87
+    },
+    {
+      "time_offset": 600,
+      "distance": 1498.0,
+      "heart_rate": 159,
+      "speed": 2.522,
+      "altitude": 64,
+      "power": 216,
+      "cadence": 85
+    },
+    {
+      "time_offset": 605,
+      "distance": 1511.5,
+      "heart_rate": 159,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 85
+    },
+    {
+      "time_offset": 610,
+      "distance": 1525.0,
+      "heart_rate": 159,
+      "speed": 2.603,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 87
+    },
+    {
+      "time_offset": 615,
+      "distance": 1538.5,
+      "heart_rate": 159,
+      "speed": 2.617,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 620,
+      "distance": 1551.0,
+      "heart_rate": 159,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 625,
+      "distance": 1563.5,
+      "heart_rate": 159,
+      "speed": 2.611,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 630,
+      "distance": 1576.0,
+      "heart_rate": 159,
+      "speed": 2.581,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 635,
+      "distance": 1589.0,
+      "heart_rate": 159,
+      "speed": 2.569,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 87
+    },
+    {
+      "time_offset": 640,
+      "distance": 1602.0,
+      "heart_rate": 158,
+      "speed": 2.567,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 86
+    },
+    {
+      "time_offset": 645,
+      "distance": 1614.5,
+      "heart_rate": 158,
+      "speed": 2.564,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 84
+    },
+    {
+      "time_offset": 650,
+      "distance": 1628.0,
+      "heart_rate": 158,
+      "speed": 2.569,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 82
+    },
+    {
+      "time_offset": 655,
+      "distance": 1642.5,
+      "heart_rate": 158,
+      "speed": 2.656,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 660,
+      "distance": 1655.0,
+      "heart_rate": 158,
+      "speed": 2.683,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 665,
+      "distance": 1668.0,
+      "heart_rate": 158,
+      "speed": 2.678,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 85
+    },
+    {
+      "time_offset": 669,
+      "distance": 1678.5,
+      "heart_rate": 158,
+      "speed": 2.667,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 674,
+      "distance": 1692.0,
+      "heart_rate": 158,
+      "speed": 2.664,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 87
+    },
+    {
+      "time_offset": 679,
+      "distance": 1705.5,
+      "heart_rate": 158,
+      "speed": 2.656,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 87
+    },
+    {
+      "time_offset": 684,
+      "distance": 1718.0,
+      "heart_rate": 158,
+      "speed": 2.653,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 689,
+      "distance": 1730.5,
+      "heart_rate": 157,
+      "speed": 2.642,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 694,
+      "distance": 1743.0,
+      "heart_rate": 158,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 699,
+      "distance": 1756.5,
+      "heart_rate": 158,
+      "speed": 2.619,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 704,
+      "distance": 1769.0,
+      "heart_rate": 158,
+      "speed": 2.617,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 709,
+      "distance": 1783.0,
+      "heart_rate": 158,
+      "speed": 2.619,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 714,
+      "distance": 1796.0,
+      "heart_rate": 158,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 719,
+      "distance": 1808.5,
+      "heart_rate": 159,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 85
+    },
+    {
+      "time_offset": 724,
+      "distance": 1822.0,
+      "heart_rate": 159,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 729,
+      "distance": 1835.0,
+      "heart_rate": 160,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 733,
+      "distance": 1845.5,
+      "heart_rate": 160,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 738,
+      "distance": 1858.0,
+      "heart_rate": 160,
+      "speed": 2.617,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 743,
+      "distance": 1868.0,
+      "heart_rate": 160,
+      "speed": 2.578,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 86
+    },
+    {
+      "time_offset": 748,
+      "distance": 1880.0,
+      "heart_rate": 160,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 753,
+      "distance": 1894.0,
+      "heart_rate": 160,
+      "speed": 2.536,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 86
+    },
+    {
+      "time_offset": 758,
+      "distance": 1908.0,
+      "heart_rate": 161,
+      "speed": 2.539,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 88
+    },
+    {
+      "time_offset": 763,
+      "distance": 1920.5,
+      "heart_rate": 161,
+      "speed": 2.547,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 768,
+      "distance": 1934.0,
+      "heart_rate": 160,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 218,
+      "cadence": 86
+    },
+    {
+      "time_offset": 773,
+      "distance": 1946.5,
+      "heart_rate": 160,
+      "speed": 2.544,
+      "altitude": 64,
+      "power": 218,
+      "cadence": 87
+    },
+    {
+      "time_offset": 778,
+      "distance": 1960.0,
+      "heart_rate": 160,
+      "speed": 2.539,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 783,
+      "distance": 1973.5,
+      "heart_rate": 160,
+      "speed": 2.556,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 86
+    },
+    {
+      "time_offset": 788,
+      "distance": 1988.0,
+      "heart_rate": 161,
+      "speed": 2.575,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 87
+    },
+    {
+      "time_offset": 793,
+      "distance": 2002.0,
+      "heart_rate": 161,
+      "speed": 2.633,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 88
+    },
+    {
+      "time_offset": 798,
+      "distance": 2015.0,
+      "heart_rate": 161,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 86
+    },
+    {
+      "time_offset": 802,
+      "distance": 2026.0,
+      "heart_rate": 160,
+      "speed": 2.653,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 87
+    },
+    {
+      "time_offset": 807,
+      "distance": 2038.5,
+      "heart_rate": 161,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 88
+    },
+    {
+      "time_offset": 812,
+      "distance": 2052.0,
+      "heart_rate": 161,
+      "speed": 2.639,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 91
+    },
+    {
+      "time_offset": 817,
+      "distance": 2066.5,
+      "heart_rate": 160,
+      "speed": 2.664,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 88
+    },
+    {
+      "time_offset": 822,
+      "distance": 2078.0,
+      "heart_rate": 160,
+      "speed": 2.672,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 827,
+      "distance": 2091.0,
+      "heart_rate": 160,
+      "speed": 2.622,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 832,
+      "distance": 2104.0,
+      "heart_rate": 160,
+      "speed": 2.603,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 837,
+      "distance": 2117.5,
+      "heart_rate": 160,
+      "speed": 2.592,
+      "altitude": 63,
+      "power": 222,
+      "cadence": 87
+    },
+    {
+      "time_offset": 842,
+      "distance": 2131.0,
+      "heart_rate": 160,
+      "speed": 2.611,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 88
+    },
+    {
+      "time_offset": 847,
+      "distance": 2144.5,
+      "heart_rate": 161,
+      "speed": 2.619,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 852,
+      "distance": 2158.0,
+      "heart_rate": 161,
+      "speed": 2.636,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 857,
+      "distance": 2172.0,
+      "heart_rate": 161,
+      "speed": 2.647,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 862,
+      "distance": 2186.0,
+      "heart_rate": 161,
+      "speed": 2.675,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 87
+    },
+    {
+      "time_offset": 866,
+      "distance": 2197.0,
+      "heart_rate": 161,
+      "speed": 2.678,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 87
+    },
+    {
+      "time_offset": 871,
+      "distance": 2209.5,
+      "heart_rate": 162,
+      "speed": 2.667,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 88
+    },
+    {
+      "time_offset": 876,
+      "distance": 2223.0,
+      "heart_rate": 162,
+      "speed": 2.656,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 881,
+      "distance": 2236.0,
+      "heart_rate": 162,
+      "speed": 2.642,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 85
+    },
+    {
+      "time_offset": 886,
+      "distance": 2249.0,
+      "heart_rate": 162,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 86
+    },
+    {
+      "time_offset": 891,
+      "distance": 2262.5,
+      "heart_rate": 162,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 86
+    },
+    {
+      "time_offset": 896,
+      "distance": 2275.0,
+      "heart_rate": 162,
+      "speed": 2.644,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 901,
+      "distance": 2288.5,
+      "heart_rate": 162,
+      "speed": 2.639,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 906,
+      "distance": 2300.0,
+      "heart_rate": 162,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 911,
+      "distance": 2312.5,
+      "heart_rate": 162,
+      "speed": 2.6,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 916,
+      "distance": 2324.0,
+      "heart_rate": 162,
+      "speed": 2.583,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 88
+    },
+    {
+      "time_offset": 921,
+      "distance": 2335.0,
+      "heart_rate": 162,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 87
+    },
+    {
+      "time_offset": 926,
+      "distance": 2346.0,
+      "heart_rate": 163,
+      "speed": 2.436,
+      "altitude": 64,
+      "power": 214,
+      "cadence": 88
+    },
+    {
+      "time_offset": 931,
+      "distance": 2358.5,
+      "heart_rate": 162,
+      "speed": 2.414,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 86
+    },
+    {
+      "time_offset": 935,
+      "distance": 2370.0,
+      "heart_rate": 162,
+      "speed": 2.425,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 86
+    },
+    {
+      "time_offset": 940,
+      "distance": 2384.0,
+      "heart_rate": 161,
+      "speed": 2.514,
+      "altitude": 64,
+      "power": 211,
+      "cadence": 88
+    },
+    {
+      "time_offset": 945,
+      "distance": 2399.0,
+      "heart_rate": 162,
+      "speed": 2.578,
+      "altitude": 64,
+      "power": 218,
+      "cadence": 88
+    },
+    {
+      "time_offset": 950,
+      "distance": 2413.0,
+      "heart_rate": 162,
+      "speed": 2.614,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 955,
+      "distance": 2426.0,
+      "heart_rate": 162,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 960,
+      "distance": 2441.0,
+      "heart_rate": 162,
+      "speed": 2.639,
+      "altitude": 63,
+      "power": 225,
+      "cadence": 88
+    },
+    {
+      "time_offset": 965,
+      "distance": 2455.5,
+      "heart_rate": 162,
+      "speed": 2.672,
+      "altitude": 63,
+      "power": 228,
+      "cadence": 88
+    },
+    {
+      "time_offset": 970,
+      "distance": 2468.0,
+      "heart_rate": 162,
+      "speed": 2.703,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 88
+    },
+    {
+      "time_offset": 975,
+      "distance": 2481.5,
+      "heart_rate": 162,
+      "speed": 2.725,
+      "altitude": 63,
+      "power": 233,
+      "cadence": 88
+    },
+    {
+      "time_offset": 980,
+      "distance": 2495.0,
+      "heart_rate": 162,
+      "speed": 2.725,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 87
+    },
+    {
+      "time_offset": 985,
+      "distance": 2507.5,
+      "heart_rate": 162,
+      "speed": 2.719,
+      "altitude": 63,
+      "power": 233,
+      "cadence": 87
+    },
+    {
+      "time_offset": 990,
+      "distance": 2521.0,
+      "heart_rate": 162,
+      "speed": 2.7,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 85
+    },
+    {
+      "time_offset": 995,
+      "distance": 2536.0,
+      "heart_rate": 162,
+      "speed": 2.733,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 86
+    },
+    {
+      "time_offset": 999,
+      "distance": 2548.0,
+      "heart_rate": 162,
+      "speed": 2.778,
+      "altitude": 63,
+      "power": 236,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1004,
+      "distance": 2562.0,
+      "heart_rate": 162,
+      "speed": 2.808,
+      "altitude": 63,
+      "power": 240,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1009,
+      "distance": 2575.5,
+      "heart_rate": 162,
+      "speed": 2.808,
+      "altitude": 63,
+      "power": 240,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1014,
+      "distance": 2589.0,
+      "heart_rate": 163,
+      "speed": 2.794,
+      "altitude": 63,
+      "power": 240,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1019,
+      "distance": 2603.0,
+      "heart_rate": 163,
+      "speed": 2.778,
+      "altitude": 63,
+      "power": 238,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1024,
+      "distance": 2617.0,
+      "heart_rate": 162,
+      "speed": 2.775,
+      "altitude": 63,
+      "power": 237,
+      "cadence": 88
+    },
+    {
+      "time_offset": 1029,
+      "distance": 2631.0,
+      "heart_rate": 162,
+      "speed": 2.783,
+      "altitude": 63,
+      "power": 238,
+      "cadence": 88
+    },
+    {
+      "time_offset": 1034,
+      "distance": 2644.0,
+      "heart_rate": 162,
+      "speed": 2.767,
+      "altitude": 63,
+      "power": 237,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1039,
+      "distance": 2657.5,
+      "heart_rate": 163,
+      "speed": 2.756,
+      "altitude": 63,
+      "power": 236,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1044,
+      "distance": 2671.0,
+      "heart_rate": 163,
+      "speed": 2.742,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1049,
+      "distance": 2684.0,
+      "heart_rate": 163,
+      "speed": 2.728,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 88
+    },
+    {
+      "time_offset": 1054,
+      "distance": 2696.0,
+      "heart_rate": 163,
+      "speed": 2.711,
+      "altitude": 63,
+      "power": 233,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1059,
+      "distance": 2709.5,
+      "heart_rate": 163,
+      "speed": 2.681,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1064,
+      "distance": 2722.0,
+      "heart_rate": 163,
+      "speed": 2.628,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1068,
+      "distance": 2732.0,
+      "heart_rate": 162,
+      "speed": 2.625,
+      "altitude": 63,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1073,
+      "distance": 2745.0,
+      "heart_rate": 162,
+      "speed": 2.619,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1078,
+      "distance": 2757.0,
+      "heart_rate": 162,
+      "speed": 2.603,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 90
+    },
+    {
+      "time_offset": 1083,
+      "distance": 2770.0,
+      "heart_rate": 162,
+      "speed": 2.586,
+      "altitude": 63,
+      "power": 222,
+      "cadence": 89
+    },
+    {
+      "time_offset": 1088,
+      "distance": 2783.0,
+      "heart_rate": 162,
+      "speed": 2.572,
+      "altitude": 63,
+      "power": 221,
+      "cadence": 89
+    },
+    {
+      "time_offset": 1093,
+      "distance": 2794.5,
+      "heart_rate": 162,
+      "speed": 2.547,
+      "altitude": 63,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1098,
+      "distance": 2807.0,
+      "heart_rate": 162,
+      "speed": 2.5,
+      "altitude": 63,
+      "power": 217,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1103,
+      "distance": 2821.0,
+      "heart_rate": 162,
+      "speed": 2.508,
+      "altitude": 63,
+      "power": 213,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1108,
+      "distance": 2835.0,
+      "heart_rate": 162,
+      "speed": 2.553,
+      "altitude": 63,
+      "power": 217,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1113,
+      "distance": 2849.0,
+      "heart_rate": 162,
+      "speed": 2.586,
+      "altitude": 63,
+      "power": 220,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1118,
+      "distance": 2864.0,
+      "heart_rate": 162,
+      "speed": 2.614,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1123,
+      "distance": 2878.0,
+      "heart_rate": 162,
+      "speed": 2.689,
+      "altitude": 63,
+      "power": 227,
+      "cadence": 83
+    },
+    {
+      "time_offset": 1128,
+      "distance": 2891.0,
+      "heart_rate": 163,
+      "speed": 2.708,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1132,
+      "distance": 2903.0,
+      "heart_rate": 163,
+      "speed": 2.725,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 83
+    },
+    {
+      "time_offset": 1137,
+      "distance": 2917.0,
+      "heart_rate": 163,
+      "speed": 2.808,
+      "altitude": 63,
+      "power": 238,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1142,
+      "distance": 2930.0,
+      "heart_rate": 163,
+      "speed": 2.822,
+      "altitude": 63,
+      "power": 241,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1147,
+      "distance": 2943.5,
+      "heart_rate": 163,
+      "speed": 2.769,
+      "altitude": 63,
+      "power": 239,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1152,
+      "distance": 2957.0,
+      "heart_rate": 162,
+      "speed": 2.744,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1157,
+      "distance": 2969.5,
+      "heart_rate": 162,
+      "speed": 2.739,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1162,
+      "distance": 2981.0,
+      "heart_rate": 162,
+      "speed": 2.7,
+      "altitude": 63,
+      "power": 233,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1167,
+      "distance": 2994.5,
+      "heart_rate": 162,
+      "speed": 2.675,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1172,
+      "distance": 3007.0,
+      "heart_rate": 162,
+      "speed": 2.65,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1177,
+      "distance": 3020.5,
+      "heart_rate": 162,
+      "speed": 2.636,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1182,
+      "distance": 3033.0,
+      "heart_rate": 162,
+      "speed": 2.622,
+      "altitude": 63,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1187,
+      "distance": 3046.0,
+      "heart_rate": 162,
+      "speed": 2.614,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1192,
+      "distance": 3059.0,
+      "heart_rate": 162,
+      "speed": 2.619,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 88
+    },
+    {
+      "time_offset": 1197,
+      "distance": 3073.0,
+      "heart_rate": 162,
+      "speed": 2.622,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1201,
+      "distance": 3083.5,
+      "heart_rate": 162,
+      "speed": 2.631,
+      "altitude": 63,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1206,
+      "distance": 3097.0,
+      "heart_rate": 162,
+      "speed": 2.636,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1211,
+      "distance": 3109.5,
+      "heart_rate": 162,
+      "speed": 2.636,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1216,
+      "distance": 3124.0,
+      "heart_rate": 162,
+      "speed": 2.642,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1221,
+      "distance": 3138.0,
+      "heart_rate": 162,
+      "speed": 2.681,
+      "altitude": 63,
+      "power": 228,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1226,
+      "distance": 3151.0,
+      "heart_rate": 162,
+      "speed": 2.706,
+      "altitude": 63,
+      "power": 231,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1231,
+      "distance": 3164.5,
+      "heart_rate": 162,
+      "speed": 2.711,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1236,
+      "distance": 3177.0,
+      "heart_rate": 162,
+      "speed": 2.703,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1241,
+      "distance": 3191.0,
+      "heart_rate": 162,
+      "speed": 2.692,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1246,
+      "distance": 3204.0,
+      "heart_rate": 161,
+      "speed": 2.689,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1251,
+      "distance": 3216.5,
+      "heart_rate": 161,
+      "speed": 2.681,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1256,
+      "distance": 3230.0,
+      "heart_rate": 161,
+      "speed": 2.656,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1261,
+      "distance": 3242.5,
+      "heart_rate": 161,
+      "speed": 2.636,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1265,
+      "distance": 3252.5,
+      "heart_rate": 162,
+      "speed": 2.631,
+      "altitude": 63,
+      "power": 225,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1270,
+      "distance": 3265.0,
+      "heart_rate": 162,
+      "speed": 2.608,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1275,
+      "distance": 3277.5,
+      "heart_rate": 162,
+      "speed": 2.581,
+      "altitude": 63,
+      "power": 222,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1280,
+      "distance": 3290.0,
+      "heart_rate": 162,
+      "speed": 2.564,
+      "altitude": 63,
+      "power": 220,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1285,
+      "distance": 3303.5,
+      "heart_rate": 162,
+      "speed": 2.55,
+      "altitude": 63,
+      "power": 218,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1290,
+      "distance": 3317.0,
+      "heart_rate": 162,
+      "speed": 2.567,
+      "altitude": 63,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1295,
+      "distance": 3331.0,
+      "heart_rate": 162,
+      "speed": 2.575,
+      "altitude": 63,
+      "power": 220,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1300,
+      "distance": 3345.0,
+      "heart_rate": 162,
+      "speed": 2.592,
+      "altitude": 63,
+      "power": 221,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1305,
+      "distance": 3360.0,
+      "heart_rate": 162,
+      "speed": 2.633,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1310,
+      "distance": 3375.0,
+      "heart_rate": 161,
+      "speed": 2.658,
+      "altitude": 63,
+      "power": 227,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1315,
+      "distance": 3388.5,
+      "heart_rate": 160,
+      "speed": 2.672,
+      "altitude": 63,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1320,
+      "distance": 3402.0,
+      "heart_rate": 160,
+      "speed": 2.706,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1325,
+      "distance": 3414.5,
+      "heart_rate": 160,
+      "speed": 2.697,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1330,
+      "distance": 3427.0,
+      "heart_rate": 160,
+      "speed": 2.678,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1334,
+      "distance": 3438.0,
+      "heart_rate": 161,
+      "speed": 2.672,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1339,
+      "distance": 3451.5,
+      "heart_rate": 161,
+      "speed": 2.667,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1344,
+      "distance": 3465.0,
+      "heart_rate": 160,
+      "speed": 2.672,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1349,
+      "distance": 3478.0,
+      "heart_rate": 160,
+      "speed": 2.672,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1354,
+      "distance": 3492.0,
+      "heart_rate": 161,
+      "speed": 2.681,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1359,
+      "distance": 3505.5,
+      "heart_rate": 161,
+      "speed": 2.711,
+      "altitude": 63,
+      "power": 231,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1364,
+      "distance": 3519.0,
+      "heart_rate": 161,
+      "speed": 2.722,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1369,
+      "distance": 3534.0,
+      "heart_rate": 161,
+      "speed": 2.728,
+      "altitude": 63,
+      "power": 233,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1374,
+      "distance": 3549.0,
+      "heart_rate": 160,
+      "speed": 2.761,
+      "altitude": 63,
+      "power": 235,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1379,
+      "distance": 3564.0,
+      "heart_rate": 160,
+      "speed": 2.775,
+      "altitude": 63,
+      "power": 237,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1384,
+      "distance": 3580.0,
+      "heart_rate": 160,
+      "speed": 2.786,
+      "altitude": 63,
+      "power": 238,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1389,
+      "distance": 3593.5,
+      "heart_rate": 161,
+      "speed": 2.8,
+      "altitude": 63,
+      "power": 239,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1394,
+      "distance": 3605.0,
+      "heart_rate": 162,
+      "speed": 2.803,
+      "altitude": 64,
+      "power": 240,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1398,
+      "distance": 3616.0,
+      "heart_rate": 162,
+      "speed": 2.767,
+      "altitude": 64,
+      "power": 238,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1403,
+      "distance": 3629.5,
+      "heart_rate": 162,
+      "speed": 2.758,
+      "altitude": 64,
+      "power": 236,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1408,
+      "distance": 3643.0,
+      "heart_rate": 162,
+      "speed": 2.756,
+      "altitude": 64,
+      "power": 236,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1413,
+      "distance": 3656.0,
+      "heart_rate": 161,
+      "speed": 2.742,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1418,
+      "distance": 3669.0,
+      "heart_rate": 160,
+      "speed": 2.731,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1423,
+      "distance": 3681.0,
+      "heart_rate": 160,
+      "speed": 2.706,
+      "altitude": 64,
+      "power": 232,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1428,
+      "distance": 3693.0,
+      "heart_rate": 160,
+      "speed": 2.681,
+      "altitude": 64,
+      "power": 230,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1433,
+      "distance": 3705.5,
+      "heart_rate": 159,
+      "speed": 2.642,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1438,
+      "distance": 3718.0,
+      "heart_rate": 159,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1443,
+      "distance": 3732.0,
+      "heart_rate": 159,
+      "speed": 2.614,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1448,
+      "distance": 3746.0,
+      "heart_rate": 159,
+      "speed": 2.611,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1453,
+      "distance": 3760.5,
+      "heart_rate": 158,
+      "speed": 2.614,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1458,
+      "distance": 3774.0,
+      "heart_rate": 158,
+      "speed": 2.625,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1463,
+      "distance": 3788.0,
+      "heart_rate": 159,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1467,
+      "distance": 3798.5,
+      "heart_rate": 159,
+      "speed": 2.653,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1472,
+      "distance": 3812.0,
+      "heart_rate": 158,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1477,
+      "distance": 3827.0,
+      "heart_rate": 159,
+      "speed": 2.661,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1482,
+      "distance": 3840.0,
+      "heart_rate": 159,
+      "speed": 2.675,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1487,
+      "distance": 3852.5,
+      "heart_rate": 159,
+      "speed": 2.669,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1492,
+      "distance": 3866.0,
+      "heart_rate": 158,
+      "speed": 2.664,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1497,
+      "distance": 3878.5,
+      "heart_rate": 158,
+      "speed": 2.656,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1502,
+      "distance": 3891.0,
+      "heart_rate": 157,
+      "speed": 2.644,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1507,
+      "distance": 3904.5,
+      "heart_rate": 157,
+      "speed": 2.639,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1512,
+      "distance": 3917.0,
+      "heart_rate": 157,
+      "speed": 2.633,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1517,
+      "distance": 3930.5,
+      "heart_rate": 157,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1522,
+      "distance": 3943.0,
+      "heart_rate": 157,
+      "speed": 2.625,
+      "altitude": 63,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1527,
+      "distance": 3955.5,
+      "heart_rate": 158,
+      "speed": 2.617,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1531,
+      "distance": 3965.5,
+      "heart_rate": 158,
+      "speed": 2.611,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1536,
+      "distance": 3978.0,
+      "heart_rate": 157,
+      "speed": 2.611,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1541,
+      "distance": 3991.5,
+      "heart_rate": 156,
+      "speed": 2.619,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1546,
+      "distance": 4005.0,
+      "heart_rate": 156,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1551,
+      "distance": 4018.0,
+      "heart_rate": 157,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1556,
+      "distance": 4031.0,
+      "heart_rate": 157,
+      "speed": 2.631,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1561,
+      "distance": 4044.5,
+      "heart_rate": 157,
+      "speed": 2.628,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1566,
+      "distance": 4058.0,
+      "heart_rate": 156,
+      "speed": 2.631,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1571,
+      "distance": 4071.0,
+      "heart_rate": 157,
+      "speed": 2.636,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1576,
+      "distance": 4084.0,
+      "heart_rate": 156,
+      "speed": 2.642,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1581,
+      "distance": 4097.5,
+      "heart_rate": 156,
+      "speed": 2.647,
+      "altitude": 64,
+      "power": 226,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1586,
+      "distance": 4110.0,
+      "heart_rate": 156,
+      "speed": 2.653,
+      "altitude": 64,
+      "power": 227,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1591,
+      "distance": 4124.5,
+      "heart_rate": 156,
+      "speed": 2.656,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1596,
+      "distance": 4138.0,
+      "heart_rate": 155,
+      "speed": 2.667,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1600,
+      "distance": 4148.0,
+      "heart_rate": 156,
+      "speed": 2.669,
+      "altitude": 64,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1605,
+      "distance": 4161.5,
+      "heart_rate": 156,
+      "speed": 2.658,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1610,
+      "distance": 4173.0,
+      "heart_rate": 156,
+      "speed": 2.65,
+      "altitude": 64,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1615,
+      "distance": 4185.0,
+      "heart_rate": 156,
+      "speed": 2.631,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1620,
+      "distance": 4197.0,
+      "heart_rate": 156,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1625,
+      "distance": 4208.5,
+      "heart_rate": 155,
+      "speed": 2.586,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1630,
+      "distance": 4222.0,
+      "heart_rate": 155,
+      "speed": 2.572,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1635,
+      "distance": 4235.5,
+      "heart_rate": 155,
+      "speed": 2.564,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1640,
+      "distance": 4249.0,
+      "heart_rate": 154,
+      "speed": 2.558,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1645,
+      "distance": 4260.5,
+      "heart_rate": 153,
+      "speed": 2.556,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1650,
+      "distance": 4273.0,
+      "heart_rate": 153,
+      "speed": 2.544,
+      "altitude": 64,
+      "power": 218,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1655,
+      "distance": 4286.5,
+      "heart_rate": 153,
+      "speed": 2.539,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1660,
+      "distance": 4300.0,
+      "heart_rate": 154,
+      "speed": 2.55,
+      "altitude": 64,
+      "power": 217,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1664,
+      "distance": 4310.0,
+      "heart_rate": 154,
+      "speed": 2.553,
+      "altitude": 64,
+      "power": 218,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1669,
+      "distance": 4322.5,
+      "heart_rate": 155,
+      "speed": 2.556,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1674,
+      "distance": 4336.0,
+      "heart_rate": 154,
+      "speed": 2.561,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1679,
+      "distance": 4350.0,
+      "heart_rate": 155,
+      "speed": 2.581,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 83
+    },
+    {
+      "time_offset": 1684,
+      "distance": 4363.0,
+      "heart_rate": 155,
+      "speed": 2.603,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1689,
+      "distance": 4375.5,
+      "heart_rate": 155,
+      "speed": 2.617,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1694,
+      "distance": 4388.0,
+      "heart_rate": 155,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1699,
+      "distance": 4400.5,
+      "heart_rate": 155,
+      "speed": 2.597,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1704,
+      "distance": 4413.0,
+      "heart_rate": 155,
+      "speed": 2.589,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1709,
+      "distance": 4425.5,
+      "heart_rate": 154,
+      "speed": 2.581,
+      "altitude": 63,
+      "power": 221,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1714,
+      "distance": 4438.0,
+      "heart_rate": 154,
+      "speed": 2.575,
+      "altitude": 63,
+      "power": 221,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1719,
+      "distance": 4451.5,
+      "heart_rate": 154,
+      "speed": 2.564,
+      "altitude": 63,
+      "power": 219,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1724,
+      "distance": 4465.0,
+      "heart_rate": 154,
+      "speed": 2.569,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1729,
+      "distance": 4478.5,
+      "heart_rate": 155,
+      "speed": 2.572,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 83
+    },
+    {
+      "time_offset": 1733,
+      "distance": 4488.5,
+      "heart_rate": 155,
+      "speed": 2.578,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1738,
+      "distance": 4501.0,
+      "heart_rate": 155,
+      "speed": 2.586,
+      "altitude": 64,
+      "power": 221,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1743,
+      "distance": 4514.5,
+      "heart_rate": 155,
+      "speed": 2.586,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1748,
+      "distance": 4528.0,
+      "heart_rate": 156,
+      "speed": 2.597,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1753,
+      "distance": 4540.5,
+      "heart_rate": 156,
+      "speed": 2.603,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1758,
+      "distance": 4554.0,
+      "heart_rate": 156,
+      "speed": 2.608,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1763,
+      "distance": 4567.0,
+      "heart_rate": 156,
+      "speed": 2.611,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1768,
+      "distance": 4581.0,
+      "heart_rate": 156,
+      "speed": 2.617,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1773,
+      "distance": 4593.5,
+      "heart_rate": 156,
+      "speed": 2.631,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1778,
+      "distance": 4606.0,
+      "heart_rate": 156,
+      "speed": 2.631,
+      "altitude": 64,
+      "power": 225,
+      "cadence": 84
+    },
+    {
+      "time_offset": 1783,
+      "distance": 4619.5,
+      "heart_rate": 157,
+      "speed": 2.594,
+      "altitude": 64,
+      "power": 223,
+      "cadence": 82
+    },
+    {
+      "time_offset": 1788,
+      "distance": 4631.0,
+      "heart_rate": 156,
+      "speed": 2.578,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 83
+    },
+    {
+      "time_offset": 1793,
+      "distance": 4643.5,
+      "heart_rate": 156,
+      "speed": 2.558,
+      "altitude": 64,
+      "power": 219,
+      "cadence": 83
+    },
+    {
+      "time_offset": 1797,
+      "distance": 4654.0,
+      "heart_rate": 156,
+      "speed": 2.533,
+      "altitude": 63,
+      "power": 218,
+      "cadence": 82
+    },
+    {
+      "time_offset": 1802,
+      "distance": 4664.0,
+      "heart_rate": 156,
+      "speed": 2.511,
+      "altitude": 63,
+      "power": 217,
+      "cadence": 79
+    },
+    {
+      "time_offset": 1807,
+      "distance": 4673.5,
+      "heart_rate": 157,
+      "speed": 2.128,
+      "altitude": 63,
+      "power": 193,
+      "cadence": 75
+    },
+    {
+      "time_offset": 1812,
+      "distance": 4690.0,
+      "heart_rate": 157,
+      "speed": 2.236,
+      "altitude": 63,
+      "power": 176,
+      "cadence": 79
+    },
+    {
+      "time_offset": 1817,
+      "distance": 4705.5,
+      "heart_rate": 157,
+      "speed": 2.956,
+      "altitude": 63,
+      "power": 244,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1822,
+      "distance": 4720.0,
+      "heart_rate": 156,
+      "speed": 3.067,
+      "altitude": 63,
+      "power": 259,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1827,
+      "distance": 4734.5,
+      "heart_rate": 155,
+      "speed": 3.036,
+      "altitude": 63,
+      "power": 262,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1832,
+      "distance": 4747.0,
+      "heart_rate": 154,
+      "speed": 2.942,
+      "altitude": 63,
+      "power": 256,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1837,
+      "distance": 4758.5,
+      "heart_rate": 155,
+      "speed": 2.822,
+      "altitude": 63,
+      "power": 244,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1842,
+      "distance": 4771.0,
+      "heart_rate": 157,
+      "speed": 2.758,
+      "altitude": 63,
+      "power": 238,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1847,
+      "distance": 4783.5,
+      "heart_rate": 158,
+      "speed": 2.722,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1852,
+      "distance": 4797.0,
+      "heart_rate": 158,
+      "speed": 2.7,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1857,
+      "distance": 4809.5,
+      "heart_rate": 158,
+      "speed": 2.653,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1862,
+      "distance": 4823.0,
+      "heart_rate": 159,
+      "speed": 2.597,
+      "altitude": 63,
+      "power": 222,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1866,
+      "distance": 4833.0,
+      "heart_rate": 159,
+      "speed": 2.611,
+      "altitude": 63,
+      "power": 223,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1871,
+      "distance": 4847.0,
+      "heart_rate": 159,
+      "speed": 2.622,
+      "altitude": 63,
+      "power": 224,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1876,
+      "distance": 4862.0,
+      "heart_rate": 159,
+      "speed": 2.644,
+      "altitude": 63,
+      "power": 226,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1881,
+      "distance": 4876.5,
+      "heart_rate": 159,
+      "speed": 2.672,
+      "altitude": 63,
+      "power": 228,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1886,
+      "distance": 4890.0,
+      "heart_rate": 159,
+      "speed": 2.689,
+      "altitude": 63,
+      "power": 229,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1891,
+      "distance": 4903.0,
+      "heart_rate": 160,
+      "speed": 2.703,
+      "altitude": 63,
+      "power": 230,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1896,
+      "distance": 4917.0,
+      "heart_rate": 160,
+      "speed": 2.708,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1901,
+      "distance": 4931.0,
+      "heart_rate": 159,
+      "speed": 2.708,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1906,
+      "distance": 4946.0,
+      "heart_rate": 159,
+      "speed": 2.717,
+      "altitude": 63,
+      "power": 232,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1911,
+      "distance": 4959.5,
+      "heart_rate": 159,
+      "speed": 2.725,
+      "altitude": 63,
+      "power": 233,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1916,
+      "distance": 4973.0,
+      "heart_rate": 159,
+      "speed": 2.731,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1921,
+      "distance": 4985.5,
+      "heart_rate": 160,
+      "speed": 2.728,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1926,
+      "distance": 4999.0,
+      "heart_rate": 161,
+      "speed": 2.725,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 88
+    },
+    {
+      "time_offset": 1930,
+      "distance": 5011.0,
+      "heart_rate": 163,
+      "speed": 2.728,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 88
+    },
+    {
+      "time_offset": 1935,
+      "distance": 5025.0,
+      "heart_rate": 165,
+      "speed": 2.744,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1940,
+      "distance": 5039.0,
+      "heart_rate": 165,
+      "speed": 2.761,
+      "altitude": 64,
+      "power": 236,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1945,
+      "distance": 5053.0,
+      "heart_rate": 165,
+      "speed": 2.767,
+      "altitude": 64,
+      "power": 236,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1950,
+      "distance": 5067.0,
+      "heart_rate": 165,
+      "speed": 2.769,
+      "altitude": 64,
+      "power": 237,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1955,
+      "distance": 5079.5,
+      "heart_rate": 166,
+      "speed": 2.761,
+      "altitude": 64,
+      "power": 237,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1960,
+      "distance": 5093.0,
+      "heart_rate": 166,
+      "speed": 2.744,
+      "altitude": 64,
+      "power": 235,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1965,
+      "distance": 5106.5,
+      "heart_rate": 168,
+      "speed": 2.742,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1970,
+      "distance": 5120.0,
+      "heart_rate": 168,
+      "speed": 2.731,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1975,
+      "distance": 5133.5,
+      "heart_rate": 169,
+      "speed": 2.708,
+      "altitude": 64,
+      "power": 233,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1980,
+      "distance": 5147.0,
+      "heart_rate": 169,
+      "speed": 2.703,
+      "altitude": 64,
+      "power": 231,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1985,
+      "distance": 5162.0,
+      "heart_rate": 170,
+      "speed": 2.711,
+      "altitude": 64,
+      "power": 231,
+      "cadence": 87
+    },
+    {
+      "time_offset": 1990,
+      "distance": 5178.0,
+      "heart_rate": 170,
+      "speed": 2.731,
+      "altitude": 63,
+      "power": 234,
+      "cadence": 85
+    },
+    {
+      "time_offset": 1995,
+      "distance": 5194.0,
+      "heart_rate": 170,
+      "speed": 2.806,
+      "altitude": 63,
+      "power": 236,
+      "cadence": 86
+    },
+    {
+      "time_offset": 1999,
+      "distance": 5207.0,
+      "heart_rate": 169,
+      "speed": 2.858,
+      "altitude": 63,
+      "power": 242,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2004,
+      "distance": 5223.0,
+      "heart_rate": 170,
+      "speed": 2.911,
+      "altitude": 63,
+      "power": 248,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2009,
+      "distance": 5239.0,
+      "heart_rate": 170,
+      "speed": 2.944,
+      "altitude": 63,
+      "power": 251,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2014,
+      "distance": 5253.0,
+      "heart_rate": 170,
+      "speed": 2.981,
+      "altitude": 64,
+      "power": 253,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2019,
+      "distance": 5268.5,
+      "heart_rate": 170,
+      "speed": 3.006,
+      "altitude": 64,
+      "power": 258,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2024,
+      "distance": 5283.0,
+      "heart_rate": 170,
+      "speed": 2.997,
+      "altitude": 64,
+      "power": 257,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2029,
+      "distance": 5298.0,
+      "heart_rate": 170,
+      "speed": 2.989,
+      "altitude": 64,
+      "power": 256,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2034,
+      "distance": 5313.0,
+      "heart_rate": 170,
+      "speed": 2.986,
+      "altitude": 64,
+      "power": 256,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2039,
+      "distance": 5326.0,
+      "heart_rate": 171,
+      "speed": 2.981,
+      "altitude": 64,
+      "power": 255,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2044,
+      "distance": 5341.0,
+      "heart_rate": 170,
+      "speed": 2.969,
+      "altitude": 64,
+      "power": 254,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2049,
+      "distance": 5356.0,
+      "heart_rate": 170,
+      "speed": 2.961,
+      "altitude": 63,
+      "power": 253,
+      "cadence": 83
+    },
+    {
+      "time_offset": 2054,
+      "distance": 5371.0,
+      "heart_rate": 170,
+      "speed": 2.964,
+      "altitude": 63,
+      "power": 253,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2059,
+      "distance": 5386.5,
+      "heart_rate": 170,
+      "speed": 2.986,
+      "altitude": 63,
+      "power": 254,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2063,
+      "distance": 5399.0,
+      "heart_rate": 170,
+      "speed": 3.014,
+      "altitude": 63,
+      "power": 257,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2068,
+      "distance": 5414.0,
+      "heart_rate": 169,
+      "speed": 3.042,
+      "altitude": 64,
+      "power": 260,
+      "cadence": 88
+    },
+    {
+      "time_offset": 2073,
+      "distance": 5429.5,
+      "heart_rate": 168,
+      "speed": 3.05,
+      "altitude": 64,
+      "power": 261,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2078,
+      "distance": 5444.0,
+      "heart_rate": 169,
+      "speed": 3.031,
+      "altitude": 64,
+      "power": 261,
+      "cadence": 82
+    },
+    {
+      "time_offset": 2083,
+      "distance": 5459.0,
+      "heart_rate": 169,
+      "speed": 3,
+      "altitude": 64,
+      "power": 257,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2088,
+      "distance": 5475.0,
+      "heart_rate": 169,
+      "speed": 3.033,
+      "altitude": 64,
+      "power": 258,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2093,
+      "distance": 5490.0,
+      "heart_rate": 169,
+      "speed": 3.058,
+      "altitude": 64,
+      "power": 261,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2098,
+      "distance": 5505.0,
+      "heart_rate": 169,
+      "speed": 3.069,
+      "altitude": 64,
+      "power": 263,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2103,
+      "distance": 5519.5,
+      "heart_rate": 169,
+      "speed": 3.019,
+      "altitude": 64,
+      "power": 260,
+      "cadence": 82
+    },
+    {
+      "time_offset": 2108,
+      "distance": 5534.0,
+      "heart_rate": 169,
+      "speed": 2.978,
+      "altitude": 64,
+      "power": 256,
+      "cadence": 81
+    },
+    {
+      "time_offset": 2113,
+      "distance": 5547.5,
+      "heart_rate": 170,
+      "speed": 2.947,
+      "altitude": 64,
+      "power": 253,
+      "cadence": 81
+    },
+    {
+      "time_offset": 2118,
+      "distance": 5561.0,
+      "heart_rate": 169,
+      "speed": 2.914,
+      "altitude": 64,
+      "power": 251,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2123,
+      "distance": 5575.0,
+      "heart_rate": 169,
+      "speed": 2.867,
+      "altitude": 64,
+      "power": 247,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2128,
+      "distance": 5590.0,
+      "heart_rate": 168,
+      "speed": 2.842,
+      "altitude": 64,
+      "power": 244,
+      "cadence": 87
+    },
+    {
+      "time_offset": 2132,
+      "distance": 5602.0,
+      "heart_rate": 168,
+      "speed": 2.817,
+      "altitude": 64,
+      "power": 240,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2137,
+      "distance": 5618.5,
+      "heart_rate": 167,
+      "speed": 2.853,
+      "altitude": 64,
+      "power": 243,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2142,
+      "distance": 5634.0,
+      "heart_rate": 167,
+      "speed": 2.886,
+      "altitude": 64,
+      "power": 246,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2147,
+      "distance": 5650.0,
+      "heart_rate": 168,
+      "speed": 2.917,
+      "altitude": 64,
+      "power": 248,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2152,
+      "distance": 5666.0,
+      "heart_rate": 168,
+      "speed": 2.95,
+      "altitude": 64,
+      "power": 252,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2157,
+      "distance": 5680.0,
+      "heart_rate": 167,
+      "speed": 2.975,
+      "altitude": 64,
+      "power": 253,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2162,
+      "distance": 5694.0,
+      "heart_rate": 174,
+      "speed": 2.975,
+      "altitude": 63,
+      "power": 255,
+      "cadence": 86
+    },
+    {
+      "time_offset": 2167,
+      "distance": 5706.0,
+      "heart_rate": 178,
+      "speed": 2.961,
+      "altitude": 63,
+      "power": 254,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2172,
+      "distance": 5718.0,
+      "heart_rate": 178,
+      "speed": 2.878,
+      "altitude": 64,
+      "power": 251,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2177,
+      "distance": 5729.5,
+      "heart_rate": 178,
+      "speed": 2.764,
+      "altitude": 64,
+      "power": 239,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2182,
+      "distance": 5742.0,
+      "heart_rate": 177,
+      "speed": 2.656,
+      "altitude": 64,
+      "power": 234,
+      "cadence": 81
+    },
+    {
+      "time_offset": 2187,
+      "distance": 5754.0,
+      "heart_rate": 178,
+      "speed": 2.611,
+      "altitude": 64,
+      "power": 224,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2192,
+      "distance": 5766.0,
+      "heart_rate": 176,
+      "speed": 2.581,
+      "altitude": 64,
+      "power": 222,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2196,
+      "distance": 5775.0,
+      "heart_rate": 175,
+      "speed": 2.556,
+      "altitude": 64,
+      "power": 220,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2201,
+      "distance": 5787.5,
+      "heart_rate": 176,
+      "speed": 2.506,
+      "altitude": 64,
+      "power": 216,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2206,
+      "distance": 5800.0,
+      "heart_rate": 175,
+      "speed": 2.489,
+      "altitude": 64,
+      "power": 214,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2211,
+      "distance": 5812.0,
+      "heart_rate": 174,
+      "speed": 2.475,
+      "altitude": 63,
+      "power": 212,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2216,
+      "distance": 5823.0,
+      "heart_rate": 173,
+      "speed": 2.45,
+      "altitude": 63,
+      "power": 211,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2221,
+      "distance": 5835.5,
+      "heart_rate": 173,
+      "speed": 2.433,
+      "altitude": 63,
+      "power": 209,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2226,
+      "distance": 5848.0,
+      "heart_rate": 172,
+      "speed": 2.403,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2231,
+      "distance": 5859.5,
+      "heart_rate": 172,
+      "speed": 2.403,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2236,
+      "distance": 5871.0,
+      "heart_rate": 172,
+      "speed": 2.417,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2241,
+      "distance": 5882.5,
+      "heart_rate": 172,
+      "speed": 2.408,
+      "altitude": 64,
+      "power": 207,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2246,
+      "distance": 5894.0,
+      "heart_rate": 172,
+      "speed": 2.389,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2251,
+      "distance": 5906.5,
+      "heart_rate": 170,
+      "speed": 2.394,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2256,
+      "distance": 5919.0,
+      "heart_rate": 170,
+      "speed": 2.4,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2261,
+      "distance": 5931.0,
+      "heart_rate": 171,
+      "speed": 2.408,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2265,
+      "distance": 5940.0,
+      "heart_rate": 170,
+      "speed": 2.411,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2270,
+      "distance": 5952.0,
+      "heart_rate": 169,
+      "speed": 2.414,
+      "altitude": 64,
+      "power": 207,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2275,
+      "distance": 5964.5,
+      "heart_rate": 168,
+      "speed": 2.417,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2280,
+      "distance": 5976.0,
+      "heart_rate": 167,
+      "speed": 2.417,
+      "altitude": 64,
+      "power": 207,
+      "cadence": 83
+    },
+    {
+      "time_offset": 2285,
+      "distance": 5987.5,
+      "heart_rate": 167,
+      "speed": 2.408,
+      "altitude": 64,
+      "power": 206,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2290,
+      "distance": 5999.0,
+      "heart_rate": 167,
+      "speed": 2.4,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2295,
+      "distance": 6011.0,
+      "heart_rate": 167,
+      "speed": 2.397,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2300,
+      "distance": 6023.0,
+      "heart_rate": 167,
+      "speed": 2.394,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2305,
+      "distance": 6035.5,
+      "heart_rate": 168,
+      "speed": 2.392,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 82
+    },
+    {
+      "time_offset": 2310,
+      "distance": 6048.0,
+      "heart_rate": 168,
+      "speed": 2.394,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 83
+    },
+    {
+      "time_offset": 2315,
+      "distance": 6059.5,
+      "heart_rate": 167,
+      "speed": 2.392,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2320,
+      "distance": 6073.0,
+      "heart_rate": 167,
+      "speed": 2.386,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2325,
+      "distance": 6085.5,
+      "heart_rate": 168,
+      "speed": 2.394,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2329,
+      "distance": 6094.5,
+      "heart_rate": 168,
+      "speed": 2.408,
+      "altitude": 64,
+      "power": 205,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2334,
+      "distance": 6107.0,
+      "heart_rate": 167,
+      "speed": 2.417,
+      "altitude": 63,
+      "power": 207,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2339,
+      "distance": 6119.5,
+      "heart_rate": 167,
+      "speed": 2.411,
+      "altitude": 63,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2344,
+      "distance": 6131.0,
+      "heart_rate": 167,
+      "speed": 2.406,
+      "altitude": 63,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2349,
+      "distance": 6143.5,
+      "heart_rate": 167,
+      "speed": 2.403,
+      "altitude": 63,
+      "power": 205,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2354,
+      "distance": 6155.0,
+      "heart_rate": 167,
+      "speed": 2.414,
+      "altitude": 63,
+      "power": 206,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2359,
+      "distance": 6167.0,
+      "heart_rate": 166,
+      "speed": 2.417,
+      "altitude": 63,
+      "power": 207,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2364,
+      "distance": 6179.0,
+      "heart_rate": 165,
+      "speed": 2.403,
+      "altitude": 63,
+      "power": 206,
+      "cadence": 81
+    },
+    {
+      "time_offset": 2369,
+      "distance": 6190.0,
+      "heart_rate": 165,
+      "speed": 2.381,
+      "altitude": 63,
+      "power": 205,
+      "cadence": 82
+    },
+    {
+      "time_offset": 2374,
+      "distance": 6202.0,
+      "heart_rate": 165,
+      "speed": 2.369,
+      "altitude": 63,
+      "power": 204,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2379,
+      "distance": 6213.5,
+      "heart_rate": 165,
+      "speed": 2.367,
+      "altitude": 63,
+      "power": 203,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2384,
+      "distance": 6226.0,
+      "heart_rate": 165,
+      "speed": 2.375,
+      "altitude": 63,
+      "power": 203,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2389,
+      "distance": 6237.5,
+      "heart_rate": 165,
+      "speed": 2.392,
+      "altitude": 63,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2394,
+      "distance": 6250.0,
+      "heart_rate": 165,
+      "speed": 2.389,
+      "altitude": 63,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2398,
+      "distance": 6259.0,
+      "heart_rate": 165,
+      "speed": 2.383,
+      "altitude": 63,
+      "power": 205,
+      "cadence": 83
+    },
+    {
+      "time_offset": 2403,
+      "distance": 6270.5,
+      "heart_rate": 165,
+      "speed": 2.381,
+      "altitude": 63,
+      "power": 204,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2408,
+      "distance": 6283.0,
+      "heart_rate": 165,
+      "speed": 2.381,
+      "altitude": 63,
+      "power": 204,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2413,
+      "distance": 6295.5,
+      "heart_rate": 165,
+      "speed": 2.386,
+      "altitude": 63,
+      "power": 204,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2418,
+      "distance": 6309.0,
+      "heart_rate": 166,
+      "speed": 2.397,
+      "altitude": 63,
+      "power": 205,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2423,
+      "distance": 6321.0,
+      "heart_rate": 166,
+      "speed": 2.411,
+      "altitude": 63,
+      "power": 206,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2428,
+      "distance": 6333.0,
+      "heart_rate": 165,
+      "speed": 2.419,
+      "altitude": 63,
+      "power": 207,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2433,
+      "distance": 6345.5,
+      "heart_rate": 164,
+      "speed": 2.425,
+      "altitude": 63,
+      "power": 207,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2438,
+      "distance": 6359.0,
+      "heart_rate": 164,
+      "speed": 2.433,
+      "altitude": 63,
+      "power": 208,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2443,
+      "distance": 6371.5,
+      "heart_rate": 164,
+      "speed": 2.456,
+      "altitude": 63,
+      "power": 209,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2448,
+      "distance": 6384.0,
+      "heart_rate": 165,
+      "speed": 2.492,
+      "altitude": 63,
+      "power": 213,
+      "cadence": 85
+    },
+    {
+      "time_offset": 2453,
+      "distance": 6396.5,
+      "heart_rate": 165,
+      "speed": 2.492,
+      "altitude": 63,
+      "power": 213,
+      "cadence": 84
+    },
+    {
+      "time_offset": 2458,
+      "distance": 6409.0,
+      "heart_rate": 165,
+      "speed": 2.489,
+      "altitude": 12607.0,
+      "power": 213,
+      "cadence": 85
+    }
+  ]
+}

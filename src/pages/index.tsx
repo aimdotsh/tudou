@@ -9,6 +9,7 @@ import RunTable from '@/components/RunTable';
 import SVGStat from '@/components/SVGStat';
 import YearsStat from '@/components/YearsStat';
 import BackToTop from '@/components/BackToTop';
+import CorosDashboard from '@/components/CorosDashboard';
 import { totalStat, recentStat, halfmarathonStat, newyearStat, yueyeStat, calendarStat } from '@assets/index';
 import { loadSvgComponent } from '@/utils/svgUtils';
 import locationStats from '@/static/location_stats.json';
@@ -935,6 +936,7 @@ const Index = () => {
 
           {/* 可滚动内容区域 */}
           <div className="content-container" id="run-table-container">
+            {selectedRunId && <CorosDashboard runId={selectedRunId} />}
             {year === 'Total' ? (
               <SVGStat />
             ) : (

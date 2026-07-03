@@ -140,6 +140,17 @@ async def download_and_generate(account, password):
     print(f"Download finished. Elapsed {time.time()-start_time} seconds")
     await coros.req.aclose()
     make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, "fit")
+    
+    # 自动提取高驰详细图表与分圈数据 JSON
+    try:
+        from coros_detail_extractor import extract_all_fit_details
+        import os
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        output_detail_dir = os.path.join(parent_dir, "public", "data", "coros_detail")
+        extract_all_fit_details(FIT_FOLDER, output_detail_dir)
+    except Exception as e:
+        print(f"Failed to extract coros detail: {e}")
 
 
 async def gather_with_concurrency(n, tasks):
