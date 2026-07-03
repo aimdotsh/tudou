@@ -81,11 +81,24 @@ class Coros:
                     continue
                 all_activities_ids.append(label_id)
                 
-                # 抓取高驰手表的自定义标题和备注/描述
-                coros_meta[str(label_id)] = {
-                    "name": activity.get("name", ""),
-                    "remark": activity.get("remark", "")
-                }
+                # 抓取高驰手表的自定义标题和备注/描述，以本地时间字符串作为 key
+                start_time_raw = activity.get("startTime", 0)
+                dt_str = ""
+                try:
+                    if start_time_raw > 1000000000000:
+                        start_time_raw = start_time_raw / 1000
+                    from datetime import datetime, timezone, timedelta
+                    tz = timezone(timedelta(hours=8))
+                    dt = datetime.fromtimestamp(start_time_raw, tz)
+                    dt_str = dt.strftime("%Y-%m-%d %H:%M:%S")
+                except Exception as e:
+                    print(f"Failed to parse activity startTime {start_time_raw}: {e}")
+
+                if dt_str:
+                    coros_meta[dt_str] = {
+                        "name": activity.get("name", ""),
+                        "remark": activity.get("remark", "")
+                    }
 
             page_number += 1
             

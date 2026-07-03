@@ -165,24 +165,37 @@ def update_or_create_activity(session, run_activity):
         # 尝试获取并匹配高驰云端的自定义标题和描述备注
         coros_title = ""
         coros_desc = ""
-        if hasattr(run_activity, "file_names") and run_activity.file_names:
-            try:
-                filename = run_activity.file_names[0]
-                label_id = filename.split(".")[0]
-                import json
-                import os
-                current_dir = os.path.dirname(os.path.realpath(__file__))
-                parent_dir = os.path.dirname(current_dir)
-                meta_path = os.path.join(parent_dir, "public", "data", "coros_meta_temp.json")
-                if os.path.exists(meta_path):
-                    with open(meta_path, "r", encoding="utf-8") as f:
-                        meta_data = json.load(f)
-                    activity_meta = meta_data.get(str(label_id))
-                    if activity_meta:
-                        coros_title = activity_meta.get("name", "")
-                        coros_desc = activity_meta.get("remark", "")
-            except Exception as e:
-                print(f"Failed to read coros_meta_temp metadata: {e}")
+        try:
+            import json
+            import os
+            from datetime import datetime
+            current_dir = os.path.dirname(os.path.realpath(__file__))
+            parent_dir = os.path.dirname(current_dir)
+            meta_path = os.path.join(parent_dir, "public", "data", "coros_meta_temp.json")
+            if os.path.exists(meta_path) and hasattr(run_activity, "start_date_local"):
+                with open(meta_path, "r", encoding="utf-8") as f:
+                    meta_data = json.load(f)
+                
+                db_dt_str = run_activity.start_date_local
+                activity_meta = meta_data.get(db_dt_str)
+                
+                # 如果没有精确匹配，则进行 2 分钟（120 秒）内的误差时间段匹配
+                if not activity_meta:
+                    db_dt = datetime.strptime(db_dt_str, "%Y-%m-%d %H:%M:%S")
+                    for meta_dt_str, meta_val in meta_data.items():
+                        try:
+                            meta_dt = datetime.strptime(meta_dt_str, "%Y-%m-%d %H:%M:%S")
+                            if abs((meta_dt - db_dt).total_seconds()) <= 120:
+                                activity_meta = meta_val
+                                break
+                        except:
+                            pass
+                
+                if activity_meta:
+                    coros_title = activity_meta.get("name", "")
+                    coros_desc = activity_meta.get("remark", "")
+        except Exception as e:
+            print(f"Failed to read and match coros_meta_temp metadata: {e}")
 
         type = run_activity.type
         source = run_activity.source if hasattr(run_activity, "source") else "gpx"

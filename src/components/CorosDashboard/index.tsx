@@ -26,7 +26,19 @@ const CorosDashboard = ({ runId }: ICorosDashboardProps) => {
       return;
     }
     setLoading(true);
-    fetch(`/data/coros_detail/${runId}.json`)
+    
+    // 先请求映射关系表，用以兼容旧的 Strava 活动 ID
+    const mappingUrl = `${import.meta.env.BASE_URL}data/coros_id_mapping.json`.replace(/\/+/g, '/');
+    fetch(mappingUrl)
+      .then((res) => {
+        if (!res.ok) return {};
+        return res.json();
+      })
+      .then((mapping) => {
+        const targetId = mapping[String(runId)] || runId;
+        const detailUrl = `${import.meta.env.BASE_URL}data/coros_detail/${targetId}.json`.replace(/\/+/g, '/');
+        return fetch(detailUrl);
+      })
       .then((res) => {
         if (!res.ok) throw new Error("No detail data");
         return res.json();
