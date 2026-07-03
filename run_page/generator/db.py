@@ -169,25 +169,19 @@ def update_or_create_activity(session, run_activity):
         if not activity:
             start_point = run_activity.start_latlng
             location_country = getattr(run_activity, "location_country", "")
-            # or China for #176 to fix
-            if not location_country and start_point or location_country == "China":
+            # 只有在没有国家信息且起终点存在时才反查，并加入 2 秒超时限制以防卡死
+            if not location_country and start_point:
                 try:
                     location_country = str(
                         g.reverse(
-                            f"{start_point.lat}, {start_point.lon}", language="zh-CN"
+                            f"{start_point.lat}, {start_point.lon}",
+                            language="zh-CN",
+                            timeout=2
                         )
                     )
-                # limit (only for the first time)
                 except Exception:
-                    try:
-                        location_country = str(
-                            g.reverse(
-                                f"{start_point.lat}, {start_point.lon}",
-                                language="zh-CN",
-                            )
-                        )
-                    except Exception:
-                        pass
+                    # 网络异常时默认 fallback 为 China 并静默跳过，绝不无限挂起
+                    location_country = "China"
 
             activity = Activity(
                 run_id=run_activity.id,
