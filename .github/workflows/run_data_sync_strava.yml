@@ -1,4 +1,4 @@
-name: strava Data Sync
+name: coros Data Sync
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
 env:
   # please change to your own config.
 
-  RUN_TYPE: strava # support strava/nike/garmin/garmin_cn/keep/only_gpx/only_fit/nike_to_strava/strava_to_garmin/strava_to_garmin_cn/garmin_to_strava/garmin_to_strava_cn/codoon, Please change the 'pass' it to your own
+  RUN_TYPE: coros # support strava/nike/garmin/garmin_cn/keep/only_gpx/only_fit/nike_to_strava/strava_to_garmin/strava_to_garmin_cn/garmin_to_strava/garmin_to_strava_cn/codoon, Please change the 'pass' it to your own
   ATHLETE: 蓝皮书
   TITLE: Workouts
   MIN_GRID_DISTANCE: 2 # change min distance here

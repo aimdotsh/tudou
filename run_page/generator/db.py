@@ -142,6 +142,23 @@ def update_or_create_activity(session, run_activity):
         activity = (
             session.query(Activity).filter_by(run_id=int(run_activity.id)).first()
         )
+        # 尝试通过开始时间进行防重匹配。由于高驰直接同步生成的 run_id 与 Strava 导出的 ID 并不相同，
+        # 但同一条运动记录的开始时间是一致的（或非常接近的）。
+        # 我们查找 start_date_local 在新活动前后 2 分钟范围内的已有活动记录。
+        if not activity and hasattr(run_activity, "start_date_local") and run_activity.start_date_local:
+            from datetime import datetime, timedelta
+            try:
+                new_dt = datetime.strptime(run_activity.start_date_local, "%Y-%m-%d %H:%M:%S")
+                start_range = (new_dt - timedelta(minutes=2)).strftime("%Y-%m-%d %H:%M:%S")
+                end_range = (new_dt + timedelta(minutes=2)).strftime("%Y-%m-%d %H:%M:%S")
+                activity = (
+                    session.query(Activity)
+                    .filter(Activity.start_date_local.between(start_range, end_range))
+                    .first()
+                )
+            except Exception as ex:
+                print(f"Time-based deduplication failed to parse date: {ex}")
+                pass
         type = run_activity.type
         source = run_activity.source if hasattr(run_activity, "source") else "gpx"
         if run_activity.type in TYPE_DICT:
