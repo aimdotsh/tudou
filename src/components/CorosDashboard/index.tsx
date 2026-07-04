@@ -164,7 +164,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
 
       {/* 右下角折线图与分圈明细卡片 - 超紧凑版 */}
       <div 
-        className="w-full flex-1 mt-2 md:mt-0 md:absolute md:bottom-2 md:right-2 md:w-[350px] md:h-[185px] bg-white/50 backdrop-blur-[6px] rounded-lg p-2 border border-white/40 shadow-lg flex flex-col justify-between overflow-hidden z-20"
+        className="absolute bottom-2 left-2 w-[calc(100%-16px)] h-[150px] md:bottom-2 md:right-2 md:w-[350px] md:h-[185px] bg-white/50 backdrop-blur-[6px] rounded-lg p-2 border border-white/40 shadow-lg flex flex-col justify-between overflow-hidden z-20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Tab 选项栏 */}

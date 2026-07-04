@@ -96,7 +96,7 @@
 
 .tableContainer {
   width: 100%;
-  overflow-x: auto;
+  overflow: visible !important;
   position: relative;
 }
 
@@ -140,7 +140,5 @@
 }
 
 @media (min-width: 1024px) {
-  .tableContainer {
-    overflow: visible !important;
-  }
+  /* 已移至全局默认 */
 }
