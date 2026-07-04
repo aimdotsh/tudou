@@ -170,7 +170,8 @@ def update_or_create_activity(session, run_activity):
             import os
             from datetime import datetime
             current_dir = os.path.dirname(os.path.realpath(__file__))
-            parent_dir = os.path.dirname(current_dir)
+            # 向上退两级以正确获取项目根目录
+            parent_dir = os.path.dirname(os.path.dirname(current_dir))
             meta_path = os.path.join(parent_dir, "public", "data", "coros_meta_temp.json")
             if os.path.exists(meta_path) and hasattr(run_activity, "start_date_local"):
                 with open(meta_path, "r", encoding="utf-8") as f:
