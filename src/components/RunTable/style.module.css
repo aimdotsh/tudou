@@ -118,10 +118,10 @@
   border-bottom: 1px solid rgba(32, 178, 170, 0.2); /* 减小边框厚度 */
 }
 
-/* 移动端/小屏幕布局下（宽 < 1024px）：全局滚动，表头需要吸附在导航栏下方 */
+/* 移动端/小屏幕布局下（宽 < 1024px）：全局滚动，表头需要吸附在导航栏下方和地图下方 */
 @media (max-width: 1023px) {
   .stickyHeader th {
-    top: var(--nav-height, 3.5rem);
+    top: calc(var(--nav-height, 3.5rem) + var(--map-height, 350px));
   }
 }
 

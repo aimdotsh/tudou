@@ -46,16 +46,28 @@
   }
 }
 
+/* 移动端/小屏幕布局下（宽 < 1024px）：地图需要固定在视口顶部（紧邻导航栏下方） */
+@media (max-width: 1023px) {
+  .sticky-map-container {
+    position: sticky;
+    z-index: 10;
+  }
+}
+
 /* 移动设备适配 */
 @media (max-width: 768px) {
   .sticky-map-container {
+    position: sticky;
     top: var(--nav-height, 2.8rem);
+    z-index: 10;
   }
 }
 
 /* 小屏幕设备适配 */
 @media (max-width: 480px) {
   .sticky-map-container {
+    position: sticky;
     top: var(--nav-height, 2rem);
+    z-index: 10;
   }
 }

@@ -91,6 +91,7 @@ const Index = () => {
   const [year, setYear] = useState('Total');
   const [runIndex, setRunIndex] = useState(-1);
   const [selectedRunId, setSelectedRunId] = useState<number | null>(null);
+  const [showDashboard, setShowDashboard] = useState(false);
   const [runs, setActivity] = useState(
     filterAndSortRuns(activities, 'Total', filterYearRuns, sortDateFunc, null, null)
   );
@@ -102,6 +103,25 @@ const Index = () => {
   // for auto zoom
   const bounds = getBoundsForGeoData(geoData);
   const [intervalId, setIntervalId] = useState<number>();
+
+  // 动态测量地图容器高度并更新 CSS 变量
+  useEffect(() => {
+    const mapContainer = document.querySelector('.sticky-map-container');
+    if (!mapContainer) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const height = entry.target.clientHeight;
+        document.documentElement.style.setProperty('--map-height', `${height}px`);
+      }
+    });
+
+    resizeObserver.observe(mapContainer);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   // 搜索功能
   const handleSearch = (term: string) => {
@@ -316,6 +336,7 @@ const Index = () => {
 
     // Update state for selected run
     setSelectedRunId(lastRun.run_id);
+    setShowDashboard(true);
     if (updateUrl) {
       updateUrlWithRunId(lastRun.run_id);
     }
@@ -416,6 +437,7 @@ const Index = () => {
         if (runIndex !== -1) {
           setRunIndex(runIndex);
           setSelectedRunId(runIdFromUrl);
+          setShowDashboard(true);
 
           const selectedRuns = filteredRuns.filter((r: any) => r.run_id === runIdFromUrl);
           if (selectedRuns.length > 0) {
@@ -915,15 +937,14 @@ const Index = () => {
               changeYear={changeYear}
               thisYear={year}
               description={description}
+              onMapClick={() => setShowDashboard(false)}
             />
-            {selectedRunId && (
+            {selectedRunId && showDashboard && (
               <CorosDashboard 
                 runId={selectedRunId} 
                 runName={filteredRuns.find((r: any) => r.run_id === selectedRunId)?.name}
                 onClose={() => {
-                  setSelectedRunId(null);
-                  setRunIndex(-1);
-                  updateUrlWithRunId(null);
+                  setShowDashboard(false);
                 }}
               />
             )}

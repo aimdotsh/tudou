@@ -14,7 +14,18 @@ export const loadSvgComponent = async (
   path: string
 ): Promise<SvgComponent> => {
   try {
-    const module = await stats[path]();
+    let loadFn = stats[path];
+    if (!loadFn) {
+      const cleanPath = path.replace(/^\.?\/+/, '');
+      const matchedKey = Object.keys(stats).find(k => k.endsWith(cleanPath));
+      if (matchedKey) {
+        loadFn = stats[matchedKey];
+      }
+    }
+    if (!loadFn) {
+      throw new Error(`无法找到路径对应的SVG组件：${path}`);
+    }
+    const module = await loadFn();
     return { default: module as ComponentType<any> };
   } catch (error) {
     console.error(error);

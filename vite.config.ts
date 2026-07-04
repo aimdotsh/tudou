@@ -1,7 +1,6 @@
 import process from 'node:process';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import path from 'path';
 
@@ -12,7 +11,6 @@ const individuallyPackages = ['activities', 'github.svg', 'grid.svg', 'mol.svg']
 export default defineConfig({
   plugins: [
     react(),
-    viteTsconfigPaths(),
     svgr({
       include: ['**/*.svg'],
       svgrOptions: {
@@ -38,6 +36,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      '@assets/index': path.resolve(__dirname, 'src/assets/index.tsx'),
+      '@assets': path.resolve(__dirname, 'assets'),
       '@': path.resolve(__dirname, 'src'),
       '@/static/activities.json': path.resolve(__dirname, 'src/static/activities_py4567.json')
     }

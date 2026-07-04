@@ -39,6 +39,7 @@ interface IRunMapProps {
   thisYear: string;
   description?: string;
   mapHeight?: number;
+  onMapClick?: () => void;
 }
 
 const RunMap = ({
@@ -50,6 +51,7 @@ const RunMap = ({
   thisYear,
   description,
   mapHeight,
+  onMapClick,
 }: IRunMapProps) => {
   const { activities, countries, provinces } = useActivities();
   const mapRef = useRef<MapRef>();
@@ -405,6 +407,7 @@ const RunMap = ({
       {...viewState}
       onMove={onMove}
       onMouseMove={onMouseMove}
+      onClick={onMapClick}
       interactiveLayerIds={['visited-areas', 'province', 'countries', 'visited-province-labels']}
       style={style}
       mapStyle={mapStyle}
