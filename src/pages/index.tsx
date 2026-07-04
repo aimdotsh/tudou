@@ -452,23 +452,7 @@ const Index = () => {
     }
   }, [year, title]);
 
-  // 处理表头固定在地图下方
-  useEffect(() => {
-    // 只在年份不是Total时处理表头固定
-    if (year !== 'Total') {
-      // 使用更可靠的表头固定方法
-      const cleanupFunction = initStickyHeader({
-        tableHeaderId: 'run-table-header',
-        tableContainerId: 'run-table-container',
-        mapContainerClass: 'sticky-map-container'
-      });
-
-      // 返回清理函数
-      return () => {
-        destroyStickyHeader(cleanupFunction);
-      };
-    }
-  }, [year]);
+  // 处理表头固定已完全移交给 CSS sticky 原生实现，此处无须执行任何 JS 处理
 
   useEffect(() => {
     // 如果已经选中了特定的运动记录，不执行动画

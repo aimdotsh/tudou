@@ -160,113 +160,67 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
         }
       }}
     >
-      {/* 左上角控制与数据概览卡片 */}
-      <div 
-        className="w-full md:absolute md:top-3 md:left-3 md:w-64 bg-white/50 backdrop-blur-[6px] rounded-lg p-3 border border-white/40 shadow-lg flex flex-col justify-between z-20"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 头部信息 */}
-        <div className="flex justify-between items-start">
-          <div className="overflow-hidden mr-2">
-            <h3 className="text-xs font-bold text-[#20B2AA] truncate" title={displayName}>
-              {displayName}
-            </h3>
-            <p className="text-[9px] text-slate-500 mt-0.5">{data.summary.start_date_local || '--'}</p>
-          </div>
-          <button 
-            onClick={onClose} 
-            className="p-1 rounded-full hover:bg-slate-100/50 text-slate-400 hover:text-slate-600 transition-colors"
-            title="关闭详情"
-          >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        
-        {/* 指标四宫格 */}
-        <div className="grid grid-cols-4 md:grid-cols-2 gap-2 mt-3">
-          {/* 1. 心率 */}
-          <div className="bg-slate-50/60 p-2 rounded border border-slate-200/50 flex flex-col justify-center">
-            <span className="text-[9px] text-slate-400 scale-90 origin-left">均/最大心率</span>
-            <div className="text-xs font-bold mt-0.5 flex items-baseline truncate">
-              <span className="text-rose-600 font-extrabold">{data.summary.avg_heart_rate || '--'}</span>
-              <span className="text-slate-400 text-[8px] mx-0.5">/</span>
-              <span className="text-rose-500 text-[10px]">{data.summary.max_heart_rate || '--'}</span>
-            </div>
-          </div>
-          {/* 2. 爬升 */}
-          <div className="bg-slate-50/60 p-2 rounded border border-slate-200/50 flex flex-col justify-center">
-            <span className="text-[9px] text-slate-400 scale-90 origin-left">累计爬升/下降</span>
-            <div className="text-xs font-bold mt-0.5 flex items-baseline truncate">
-              <span className="text-blue-600 font-extrabold">{data.summary.total_ascent || 0}</span>
-              <span className="text-slate-400 text-[8px] mx-0.5">/</span>
-              <span className="text-blue-500 text-[10px]">{data.summary.total_descent || 0}</span>
-            </div>
-          </div>
-          {/* 3. 功率 */}
-          <div className="bg-slate-50/60 p-2 rounded border border-slate-200/50 flex flex-col justify-center">
-            <span className="text-[9px] text-slate-400 scale-90 origin-left">平均功率</span>
-            <div className="text-xs font-bold mt-0.5 text-amber-600 flex items-baseline truncate">
-              <span className="font-extrabold">{data.summary.avg_power || '--'}</span>
-              <span className="text-[8px] text-slate-500 ml-0.5">W</span>
-            </div>
-          </div>
-          {/* 4. 卡路里 */}
-          <div className="bg-slate-50/60 p-2 rounded border border-slate-200/50 flex flex-col justify-center">
-            <span className="text-[9px] text-slate-400 scale-90 origin-left">卡路里</span>
-            <div className="text-xs font-bold mt-0.5 text-[#20B2AA] flex items-baseline truncate">
-              <span className="font-extrabold">{data.summary.total_calories || '--'}</span>
-              <span className="text-[8px] text-slate-500 ml-0.5">kcal</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* 左上角控制与数据概览卡片已按用户指示全部去掉，以防遮挡轨迹 */}
 
-      {/* 右下角折线图与分圈明细卡片 */}
+      {/* 右下角折线图与分圈明细卡片 - 超紧凑版 */}
       <div 
-        className="w-full flex-1 mt-2 md:mt-0 md:absolute md:bottom-3 md:right-3 md:w-[460px] md:h-[260px] bg-white/50 backdrop-blur-[6px] rounded-lg p-3 border border-white/40 shadow-lg flex flex-col justify-between overflow-hidden z-20"
+        className="w-full flex-1 mt-2 md:mt-0 md:absolute md:bottom-2 md:right-2 md:w-[350px] md:h-[185px] bg-white/50 backdrop-blur-[6px] rounded-lg p-2 border border-white/40 shadow-lg flex flex-col justify-between overflow-hidden z-20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Tab 选项栏 */}
-        <div className="flex border-b border-slate-100 pb-1 mb-2 text-xs items-center">
-          <button
-            className={`pb-1 pr-3 font-semibold transition-colors ${activeTab === 'chart' ? 'text-[#20B2AA] border-b-2 border-[#20B2AA]' : 'text-slate-400 hover:text-slate-600'}`}
-            onClick={() => setActiveTab('chart')}
-          >
-            📊 运动曲线
-          </button>
-          <button
-            className={`pb-1 pr-3 font-semibold transition-colors ${activeTab === 'laps' ? 'text-[#20B2AA] border-b-2 border-[#20B2AA]' : 'text-slate-400 hover:text-slate-600'}`}
-            onClick={() => setActiveTab('laps')}
-          >
-            ⏱️ 圈速详情
-          </button>
+        <div className="flex border-b border-slate-100 pb-1 mb-1.5 text-[10px] items-center justify-between">
+          <div className="flex space-x-2">
+            <button
+              className={`pb-0.5 pr-1 font-semibold transition-colors ${activeTab === 'chart' ? 'text-[#20B2AA] border-b border-[#20B2AA]' : 'text-slate-400 hover:text-slate-600'}`}
+              onClick={() => setActiveTab('chart')}
+            >
+              📊 曲线
+            </button>
+            <button
+              className={`pb-0.5 pr-1 font-semibold transition-colors ${activeTab === 'laps' ? 'text-[#20B2AA] border-b border-[#20B2AA]' : 'text-slate-400 hover:text-slate-600'}`}
+              onClick={() => setActiveTab('laps')}
+            >
+              ⏱️ 圈速
+            </button>
+          </div>
 
-          {/* 距离/时间 横轴模式切换 */}
-          {activeTab === 'chart' && (
-            <div className="ml-auto flex bg-slate-50 rounded p-0.5 border border-slate-200/80 text-[9px] scale-90 origin-right">
-              <button
-                className={`px-1.5 py-0.5 rounded transition-all ${chartMode === 'distance' ? 'bg-[#20B2AA] font-bold text-white' : 'text-slate-500 hover:text-slate-700'}`}
-                onClick={() => setChartMode('distance')}
-              >
-                距离
-              </button>
-              <button
-                className={`px-1.5 py-0.5 rounded transition-all ${chartMode === 'time' ? 'bg-[#20B2AA] font-bold text-white' : 'text-slate-500 hover:text-slate-700'}`}
-                onClick={() => setChartMode('time')}
-              >
-                时间
-              </button>
-            </div>
-          )}
+          <div className="flex items-center space-x-1.5 ml-auto">
+            {/* 距离/时间 横轴模式切换 */}
+            {activeTab === 'chart' && (
+              <div className="flex bg-slate-50 rounded p-0.5 border border-slate-200/80 text-[8px] scale-90 origin-right">
+                <button
+                  className={`px-1 py-0.2 rounded transition-all ${chartMode === 'distance' ? 'bg-[#20B2AA] font-bold text-white' : 'text-slate-500'}`}
+                  onClick={() => setChartMode('distance')}
+                >
+                  距离
+                </button>
+                <button
+                  className={`px-1 py-0.2 rounded transition-all ${chartMode === 'time' ? 'bg-[#20B2AA] font-bold text-white' : 'text-slate-500'}`}
+                  onClick={() => setChartMode('time')}
+                >
+                  时间
+                </button>
+              </div>
+            )}
+
+            {/* 关闭详情 X 按钮 */}
+            <button 
+              onClick={onClose} 
+              className="p-0.5 rounded-full hover:bg-slate-100/50 text-slate-400 hover:text-slate-600 transition-colors"
+              title="关闭详情"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* 内容区域 */}
         <div className="flex-1 overflow-hidden relative">
           {activeTab === 'chart' ? (
             <div className="w-full h-full text-slate-800">
-              <ResponsiveContainer width="100%" height={180}>
+              <ResponsiveContainer width="100%" height={125}>
                 <ComposedChart
                   data={chartData}
                   margin={{ top: 10, right: 5, left: -20, bottom: 5 }}
