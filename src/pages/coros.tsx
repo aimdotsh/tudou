@@ -76,6 +76,81 @@ const calculateAveragePace = (distanceMeters: number, durationSeconds: number, d
   return getPaceFromSpeed(speedMs);
 };
 
+// 辅助函数：基于真实的活动历史动态计算出跑步最佳纪录
+const getPersonalRecords = (allActivities: any[]) => {
+  const runs = allActivities.filter((act: any) => act.type === 'Run' || act.type === 'Trail Run');
+  if (runs.length === 0) {
+    return [
+      { project: "最高累计爬升", record: "--", pace: "--", date: "--" },
+      { project: "最长跑步距离", record: "--", pace: "--", date: "--" },
+      { project: "1km", record: "--", pace: "--", date: "--" },
+      { project: "3km", record: "--", pace: "--", date: "--" },
+      { project: "5km", record: "--", pace: "--", date: "--" },
+      { project: "10km", record: "--", pace: "--", date: "--" }
+    ];
+  }
+
+  // 1. 最高累计爬升
+  const maxElevAct = [...runs].sort((a, b) => (b.total_elevation_gain || 0) - (a.total_elevation_gain || 0))[0];
+  // 2. 最长跑步距离
+  const maxDistAct = [...runs].sort((a, b) => (b.distance || 0) - (a.distance || 0))[0];
+
+  // 3. 各里程最快配速
+  const getFastestForDist = (minDist: number) => {
+    const qualified = runs.filter(r => r.distance >= minDist);
+    if (qualified.length === 0) return null;
+    return [...qualified].sort((a, b) => {
+      const speedA = a.distance / parseTimeToSeconds(a.moving_time);
+      const speedB = b.distance / parseTimeToSeconds(b.moving_time);
+      return speedB - speedA; // 按速度从大到小排序
+    })[0];
+  };
+
+  const fast1k = getFastestForDist(1000);
+  const fast3k = getFastestForDist(3000);
+  const fast5k = getFastestForDist(5000);
+  const fast10k = getFastestForDist(10000);
+
+  return [
+    {
+      project: "最高累计爬升",
+      record: maxElevAct?.total_elevation_gain ? `${Math.round(maxElevAct.total_elevation_gain)}m` : "--",
+      pace: maxElevAct?.pace || "--",
+      date: maxElevAct?.start_date_local?.split(' ')[0] || "--"
+    },
+    {
+      project: "最长跑步距离",
+      record: maxDistAct?.distance ? `${(maxDistAct.distance / 1000).toFixed(2)}km` : "--",
+      pace: maxDistAct?.pace || "--",
+      date: maxDistAct?.start_date_local?.split(' ')[0] || "--"
+    },
+    {
+      project: "1km",
+      record: fast1k ? cleanTimeStr(fast1k.moving_time) : "--",
+      pace: fast1k?.pace || "--",
+      date: fast1k?.start_date_local?.split(' ')[0] || "--"
+    },
+    {
+      project: "3km",
+      record: fast3k ? cleanTimeStr(fast3k.moving_time) : "--",
+      pace: fast3k?.pace || "--",
+      date: fast3k?.start_date_local?.split(' ')[0] || "--"
+    },
+    {
+      project: "5km",
+      record: fast5k ? cleanTimeStr(fast5k.moving_time) : "--",
+      pace: fast5k?.pace || "--",
+      date: fast5k?.start_date_local?.split(' ')[0] || "--"
+    },
+    {
+      project: "10km",
+      record: fast10k ? cleanTimeStr(fast10k.moving_time) : "--",
+      pace: fast10k?.pace || "--",
+      date: fast10k?.start_date_local?.split(' ')[0] || "--"
+    }
+  ];
+};
+
 // 辅助函数：将 m/s 速度转换为配速格式 (分'秒")
 const getPaceFromSpeed = (speedMs: number) => {
   if (!speedMs || speedMs <= 0.1) return "--";
@@ -165,6 +240,11 @@ const CorosDashboardPage = () => {
         setLoading(false);
       });
   }, []);
+
+  // 动态分析计算所有活动最佳纪录
+  const personalRecords = React.useMemo(() => {
+    return getPersonalRecords(activities);
+  }, [activities]);
 
   // 选中某次运动加载详情
   const handleSelectActivity = (activity: any) => {
@@ -892,7 +972,7 @@ const CorosDashboardPage = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/40">
-                      {evolabData.personal_records.map((r: any, idx: number) => (
+                      {personalRecords.map((r: any, idx: number) => (
                         <tr key={idx} className="hover:bg-slate-800/20 text-slate-300">
                           <td className="py-2.5 font-medium">{r.project}</td>
                           <td className="py-2.5 text-right font-bold text-white">{r.record}</td>
