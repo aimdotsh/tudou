@@ -98,7 +98,7 @@
     ]
   },
   "recent_workouts": [
-    { "date": "今天", "distance": "10.07k m", "intensity": "08'41\"/km", "load": "151TL" },
+    { "date": "今天", "distance": "10.07km", "intensity": "08'41\"/km", "load": "151TL" },
     { "date": "周五", "distance": "5.33km", "intensity": "08'24\"/km", "load": "85TL" },
     { "date": "周二", "distance": "7.63km", "intensity": "07'48\"/km", "load": "148TL" },
     { "date": "6月25日", "distance": "5.11km", "intensity": "07'29\"/km", "load": "83TL" },
@@ -115,5 +115,100 @@
     { "date": "06/06", "long_term": 35, "short_term": 38, "ratio": 108 },
     { "date": "06/17", "long_term": 36, "short_term": 13, "ratio": 36 },
     { "date": "今天", "long_term": 41, "short_term": 52, "ratio": 126 }
-  ]
+  ],
+  "training_summary_4weeks": {
+    "all": {
+      "distance": "48.58",
+      "time": "06:34:18",
+      "load": 772,
+      "count": 8,
+      "avg_hr": 149
+    },
+    "running": {
+      "distance": "48.58",
+      "time": "06:34:18",
+      "load": 772,
+      "count": 8,
+      "avg_hr": 149
+    },
+    "cycling": {
+      "distance": "0.00",
+      "time": "00:00:00",
+      "load": 0,
+      "count": 0,
+      "avg_hr": 0
+    },
+    "swimming": {
+      "distance": "0.00",
+      "time": "00:00:00",
+      "load": 0,
+      "count": 0,
+      "avg_hr": 0
+    },
+    "walking": {
+      "distance": "0.00",
+      "time": "00:00:00",
+      "load": 0,
+      "count": 0,
+      "avg_hr": 0
+    }
+  },
+  "workout_records_12weeks": {
+    "load": [
+      { "date": "04/12", "value": 240 },
+      { "date": "04/19", "value": 310 },
+      { "date": "04/26", "value": 290 },
+      { "date": "05/03", "value": 180 },
+      { "date": "05/10", "value": 150 },
+      { "date": "05/17", "value": 220 },
+      { "date": "05/24", "value": 320 },
+      { "date": "05/31", "value": 280 },
+      { "date": "06/07", "value": 190 },
+      { "date": "06/14", "value": 340 },
+      { "date": "06/21", "value": 310 },
+      { "date": "今天", "value": 151 }
+    ],
+    "distance": [
+      { "date": "04/12", "value": 15.2 },
+      { "date": "04/19", "value": 20.1 },
+      { "date": "04/26", "value": 18.5 },
+      { "date": "05/03", "value": 12.3 },
+      { "date": "05/10", "value": 10.1 },
+      { "date": "05/17", "value": 14.5 },
+      { "date": "05/24", "value": 22.1 },
+      { "date": "05/31", "value": 19.3 },
+      { "date": "06/07", "value": 11.2 },
+      { "date": "06/14", "value": 24.3 },
+      { "date": "06/21", "value": 23.0 },
+      { "date": "今天", "value": 10.07 }
+    ],
+    "time_minutes": [
+      { "date": "04/12", "value": 125 },
+      { "date": "04/19", "value": 160 },
+      { "date": "04/26", "value": 145 },
+      { "date": "05/03", "value": 98 },
+      { "date": "05/10", "value": 85 },
+      { "date": "05/17", "value": 110 },
+      { "date": "05/24", "value": 175 },
+      { "date": "05/31", "value": 150 },
+      { "date": "06/07", "value": 90 },
+      { "date": "06/14", "value": 195 },
+      { "date": "06/21", "value": 180 },
+      { "date": "今天", "value": 87 }
+    ],
+    "count": [
+      { "date": "04/12", "value": 3 },
+      { "date": "04/19", "value": 4 },
+      { "date": "04/26", "value": 3 },
+      { "date": "05/03", "value": 2 },
+      { "date": "05/10", "value": 2 },
+      { "date": "05/17", "value": 3 },
+      { "date": "05/24", "value": 4 },
+      { "date": "05/31", "value": 3 },
+      { "date": "06/07", "value": 2 },
+      { "date": "06/14", "value": 4 },
+      { "date": "06/21", "value": 3 },
+      { "date": "今天", "value": 1 }
+    ]
+  }
 }
