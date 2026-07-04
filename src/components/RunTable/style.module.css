@@ -138,3 +138,9 @@
 .runDate {
   color: #20B2AA;
 }
+
+@media (min-width: 1024px) {
+  .tableContainer {
+    overflow: visible !important;
+  }
+}
