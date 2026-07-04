@@ -107,7 +107,7 @@
   transition: box-shadow 0.3s ease;
 }
 
-/* 原生粘性定位 - th 单元格吸顶，自动保持完美的列宽对齐，绝不产生行遮挡，统一吸附在导航栏下方 */
+/* 原生粘性定位 - th 单元格吸顶，自动保持完美的列宽对齐，绝不产生行遮挡，默认吸附在导航栏下方 */
 .stickyHeader th {
   position: sticky;
   top: var(--nav-height, 3.5rem);
@@ -116,6 +116,13 @@
   padding: 0.5rem 0.5rem 0.3rem 0.5rem !important; /* 减少底部内边距 */
   font-weight: 600;
   border-bottom: 1px solid rgba(32, 178, 170, 0.2); /* 减小边框厚度 */
+}
+
+/* 大屏幕电脑分栏布局下（宽 >= 1024px）：吸附在地图底部（导航高度 3.5rem + 地图高度 396px） */
+@media (min-width: 1024px) {
+  .stickyHeader th {
+    top: calc(var(--nav-height, 3.5rem) + 396px);
+  }
 }
 
 /* 适配不同屏幕尺寸下的单元格内边距 */

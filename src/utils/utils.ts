@@ -360,6 +360,17 @@ const pathForRun = (run: Activity, applyOffsetToPath: boolean = false): Coordina
     let latOffset = parseFloat(String(import.meta.env.VITE_LAT_OFFSET || 0));
     let lngOffset = parseFloat(String(import.meta.env.VITE_LNG_OFFSET || 0));
     
+    // 如果是本地开发环境，自动忽略偏移量，保证本地预览 100% 准确无偏移
+    const isLocal = typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || 
+       window.location.hostname === '127.0.0.1' || 
+       window.location.hostname.startsWith('192.168.'));
+       
+    if (isLocal) {
+        latOffset = 0;
+        lngOffset = 0;
+    }
+    
     // 防御性编程：强制将 NaN 归零，防止轨迹坐标全变 NaN 导致崩溃偏海
     if (isNaN(latOffset)) latOffset = 0;
     if (isNaN(lngOffset)) lngOffset = 0;
