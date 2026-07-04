@@ -9,6 +9,8 @@
 .buttons {
   margin: 0 auto;
   padding-right: 70px;
+  position: fixed;
+  z-index: 99;
 }
 
 .button {

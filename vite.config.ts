@@ -36,10 +36,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      '@/static/activities.json': path.resolve(__dirname, 'src/static/activities_py4567.json'),
       '@assets/index': path.resolve(__dirname, 'src/assets/index.tsx'),
       '@assets': path.resolve(__dirname, 'assets'),
-      '@': path.resolve(__dirname, 'src'),
-      '@/static/activities.json': path.resolve(__dirname, 'src/static/activities_py4567.json')
+      '@': path.resolve(__dirname, 'src')
     }
   },
   base: process.env.PATH_PREFIX || '/',
