@@ -559,7 +559,8 @@ export interface IViewState {
 }
 
 const getBoundsForGeoData = (
-  geoData: FeatureCollection<LineString>
+  geoData: FeatureCollection<LineString>,
+  options?: { showDashboard?: boolean; isMobile?: boolean; mapWidth?: number }
 ): IViewState => {
   const { features } = geoData;
   let points: Coordinate[] = [];
@@ -583,10 +584,35 @@ const getBoundsForGeoData = (
     [Math.min(...pointsLong), Math.min(...pointsLat)],
     [Math.max(...pointsLong), Math.max(...pointsLat)],
   ];
+
+  const showDashboard = options?.showDashboard || false;
+  const isMobile = options?.isMobile || false;
+  const mapWidth = options?.mapWidth || (isMobile ? 375 : 800);
+
+  const width = mapWidth;
+  const height = isMobile ? 333 : 396;
+
+  const padding = {
+    top: 20,
+    bottom: 20,
+    left: 20,
+    right: 20
+  };
+
+  if (showDashboard) {
+    if (isMobile) {
+      // 手机模式下，折线图高150px悬浮于底部，将底部padding设为170，把轨迹推到上方区域居中
+      padding.bottom = 170;
+    } else {
+      // 电脑模式下，折线图宽350px悬浮于右下角，将右侧padding设为370，把轨迹推到左侧区域居中
+      padding.right = 370;
+    }
+  }
+
   const viewState = new WebMercatorViewport({
-    width: 800,
-    height: 600,
-  }).fitBounds(cornersLongLat, { padding: 200 });
+    width,
+    height,
+  }).fitBounds(cornersLongLat, { padding });
   let { longitude, latitude, zoom } = viewState;
   if (features.length > 1) {
     zoom = 11.5;

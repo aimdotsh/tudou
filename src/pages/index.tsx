@@ -249,8 +249,12 @@ const Index = () => {
         zoom: 3,                // 适合显示中国全貌的缩放级别
       });
     } else if ((viewState.zoom ?? 0) > 3 && bounds) {
+      const mapContainer = document.querySelector('.sticky-map-container');
+      const mapWidth = mapContainer ? mapContainer.clientWidth : (window.innerWidth >= 1024 ? window.innerWidth * 0.66 : window.innerWidth);
+      const isMobile = window.innerWidth < 1024;
+      const currentBounds = getBoundsForGeoData(geoData, { showDashboard, isMobile, mapWidth });
       setViewState({
-        ...bounds,
+        ...currentBounds,
       });
     }
 
@@ -351,11 +355,15 @@ const Index = () => {
   useEffect(() => {
     // 当年份为Total时，保持中国全貌视图，不使用bounds
     if (year !== 'Total') {
+      const mapContainer = document.querySelector('.sticky-map-container');
+      const mapWidth = mapContainer ? mapContainer.clientWidth : (window.innerWidth >= 1024 ? window.innerWidth * 0.66 : window.innerWidth);
+      const isMobile = window.innerWidth < 1024;
+      const currentBounds = getBoundsForGeoData(geoData, { showDashboard, isMobile, mapWidth });
       setViewState({
-        ...bounds,
+        ...currentBounds,
       });
     }
-  }, [geoData, year]);
+  }, [geoData, year, showDashboard]);
 
   // 页面加载时检查URL中是否有运动记录ID
   useEffect(() => {
