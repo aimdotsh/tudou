@@ -1,0 +1,119 @@
+{
+  "running_ability": {
+    "score": 70.9,
+    "sub_scores": {
+      "aerobic_endurance": { "score": 70.8, "pace_range": "06'35\" - 07'53\"" },
+      "lactate_threshold": { "score": 68.7, "pace_range": "05'21\" - 05'56\"" },
+      "speed_endurance": { "score": 68.7, "pace_range": "04'53\" - 05'20\"" },
+      "sprint_ability": { "score": 68.2, "pace_range": "< 04'53\"" }
+    }
+  },
+  "training_status": {
+    "state": "高效训练",
+    "description": "最近7天运动积极，体能正快速提升。长期维持该状态能够平稳提高体能水平，继续保持。",
+    "short_term_load": 52,
+    "long_term_load": 41,
+    "load_ratio": 126
+  },
+  "seven_day_performance": {
+    "score": 97,
+    "status": "正常",
+    "daily_data": [
+      { "day": "周日", "value": 80 },
+      { "day": "周一", "value": 80 },
+      { "day": "周二", "value": 95 },
+      { "day": "周三", "value": 80 },
+      { "day": "周四", "value": 80 },
+      { "day": "周五", "value": 94 },
+      { "day": "今天", "value": 97 }
+    ]
+  },
+  "recovery": {
+    "percentage": 99,
+    "remaining_hours": 6,
+    "advice": "体力充沛"
+  },
+  "heart_rate_zones": {
+    "threshold_hr": 167,
+    "max_hr": 188,
+    "resting_hr": 56,
+    "zones": [
+      { "name": "积极恢复区", "range": "< 134", "color": "#20B2AA" },
+      { "name": "有氧耐力区", "range": "134 - 150", "color": "#10b981" },
+      { "name": "有氧动力区", "range": "151 - 159", "color": "#eab308" },
+      { "name": "乳酸阈区", "range": "160 - 170", "color": "#f97316" },
+      { "name": "速度耐力区", "range": "171 - 177", "color": "#ef4444" },
+      { "name": "无氧动力区", "range": "> 177", "color": "#b91c1c" }
+    ]
+  },
+  "pace_zones": {
+    "threshold_pace": "05'27\"",
+    "zones": [
+      { "name": "积极恢复区", "range": "> 07'53\"", "color": "#20B2AA" },
+      { "name": "有氧耐力区", "range": "06'35\" - 07'53\"", "color": "#10b981" },
+      { "name": "有氧动力区", "range": "05'57\" - 06'34\"", "color": "#eab308" },
+      { "name": "乳酸阈区", "range": "05'21\" - 05'56\"", "color": "#f97316" },
+      { "name": "速度耐力区", "range": "04'53\" - 05'20\"", "color": "#ef4444" },
+      { "name": "无氧动力区", "range": "< 04'53\"", "color": "#b91c1c" }
+    ]
+  },
+  "personal_records": [
+    { "project": "最高累计爬升", "record": "10m", "pace": "08'41\"/km", "date": "今天" },
+    { "project": "最长跑步距离", "record": "10.07km", "pace": "08'41\"/km", "date": "今天" },
+    { "project": "1km", "record": "00:06:52", "pace": "06'52\"/km", "date": "周二" },
+    { "project": "3km", "record": "00:21:58", "pace": "07'19\"/km", "date": "2026/06/22" },
+    { "project": "5km", "record": "00:37:17", "pace": "07'27\"/km", "date": "2026/06/25" },
+    { "project": "10km", "record": "01:26:35", "pace": "08'40\"/km", "date": "今天" }
+  ],
+  "race_predictions": [
+    { "project": "5km", "time": "00:26:23", "pace": "05'17\"/km" },
+    { "project": "10km", "time": "00:55:36", "pace": "05'34\"/km" },
+    { "project": "半马", "time": "02:04:57", "pace": "05'55\"/km" },
+    { "project": "全马", "time": "04:24:35", "pace": "06'16\"/km" }
+  ],
+  "hrv_eval": {
+    "status": "--",
+    "resting_average": "--",
+    "normal_range": "37-49 ms",
+    "chart_data": [
+      { "date": "06/28", "value": 41 },
+      { "date": "06/29", "value": 43 },
+      { "date": "06/30", "value": 40 },
+      { "date": "07/01", "value": 42 },
+      { "date": "07/02", "value": 39 },
+      { "date": "07/03", "value": 42 },
+      { "date": "今天", "value": null }
+    ]
+  },
+  "weekly_workouts": {
+    "total_distance": 23.03,
+    "chart_data": [
+      { "day": "周一", "distance": 0 },
+      { "day": "周二", "distance": 7.63 },
+      { "day": "周三", "distance": 0 },
+      { "day": "周四", "distance": 0 },
+      { "day": "周五", "distance": 5.33 },
+      { "day": "今天", "distance": 10.07 },
+      { "day": "周日", "distance": 0 }
+    ]
+  },
+  "recent_workouts": [
+    { "date": "今天", "distance": "10.07k m", "intensity": "08'41\"/km", "load": "151TL" },
+    { "date": "周五", "distance": "5.33km", "intensity": "08'24\"/km", "load": "85TL" },
+    { "date": "周二", "distance": "7.63km", "intensity": "07'48\"/km", "load": "148TL" },
+    { "date": "6月25日", "distance": "5.11km", "intensity": "07'29\"/km", "load": "83TL" },
+    { "date": "6月24日", "distance": "5.13km", "intensity": "08'03\"/km", "load": "93TL" },
+    { "date": "6月22日", "distance": "5.14km", "intensity": "07'36\"/km", "load": "99TL" },
+    { "date": "6月15日", "distance": "5.01km", "intensity": "08'18\"/km", "load": "63TL" }
+  ],
+  "training_load_history": [
+    { "date": "04/12", "long_term": 35, "short_term": 45, "ratio": 128 },
+    { "date": "04/23", "long_term": 38, "short_term": 58, "ratio": 152 },
+    { "date": "05/04", "long_term": 42, "short_term": 40, "ratio": 95 },
+    { "date": "05/15", "long_term": 40, "short_term": 30, "ratio": 75 },
+    { "date": "05/26", "long_term": 37, "short_term": 48, "ratio": 129 },
+    { "date": "06/06", "long_term": 35, "short_term": 38, "ratio": 108 },
+    { "date": "06/17", "long_term": 36, "short_term": 13, "ratio": 36 },
+    { "date": "今天", "long_term": 41, "short_term": 52, "ratio": 126 }
+  ]
+}

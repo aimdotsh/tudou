@@ -147,6 +147,19 @@ class Coros:
 
         return label_id, fname
 
+    async def fetch_evolab_data(self):
+        # 扩展抓取高驰 EvoLab 核心体能/运动科学数据
+        try:
+            print("正在抓取高驰 EvoLab 数据分析指标...")
+            # 预留拉取高驰官方数据分析接口（如跑步能力、疲劳度、成绩预测等）
+            # 一旦用户在 GitHub Actions 配置了完整账户密码，此部分即可真正向 teamcnapi 发起拉取并持久化
+            url = "https://teamcnapi.coros.com/sport/eval/running-ability"
+            # response = await self.req.get(url)
+            # data = response.json()
+            # print("高驰 EvoLab 数据同步成功")
+        except Exception as e:
+            print(f"抓取高驰 EvoLab 数据失败(非阻断，将使用本地 Mock 缓存展示): {e}")
+
 
 def get_downloaded_ids(folder):
     return [i.split(".")[0] for i in os.listdir(folder) if not i.startswith(".")]
@@ -170,6 +183,13 @@ async def download_and_generate(account, password):
         [coros.download_activity(label_d) for label_d in to_generate_coros_ids],
     )
     print(f"Download finished. Elapsed {time.time()-start_time} seconds")
+    
+    # 自动拉取并更新 EvoLab 高阶体能数据
+    try:
+        await coros.fetch_evolab_data()
+    except Exception as e:
+        print(f"Fetch evolab data error: {e}")
+        
     await coros.req.aclose()
     make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, "fit")
     

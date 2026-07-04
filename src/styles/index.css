@@ -27,3 +27,22 @@ hr {
   border-color: #0003;
   margin: 2rem 0;
 }
+
+body:has(.coros-theme) {
+  background-color: #080B11 !important;
+}
+
+.coros-theme {
+  background-color: #080B11 !important;
+  color: #E2E8F0 !important;
+}
+
+.coros-theme h1,
+.coros-theme h2,
+.coros-theme h3,
+.coros-theme p,
+.coros-theme span,
+.coros-theme td,
+.coros-theme th {
+  color: inherit !important;
+}

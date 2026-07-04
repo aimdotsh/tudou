@@ -84,6 +84,10 @@ const data: ISiteMetadataResult = {
       name: 'GPX tool',
       url: `${getBasePath()}/gpx-to-polyline`,
     },
+    {
+      name: 'Coros Pro',
+      url: `${getBasePath()}/coros`,
+    },
   ],
   mapOffset: getDynamicMapOffset(),
 };

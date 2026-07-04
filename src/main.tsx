@@ -19,6 +19,7 @@ import DailyD from './pages/daily-d';
 import Luck from './pages/luck';
 import GPXToPolyline from './pages/gpx-to-polyline';
 import IframePage from './pages/iframe-page';
+import CorosPage from './pages/coros';
 
 if (USE_GOOGLE_ANALYTICS) {
   ReactGA.initialize(GOOGLE_ANALYTICS_TRACKING_ID);
@@ -57,6 +58,10 @@ const routes = createBrowserRouter(
     {
       path: 'blog',
       element: withOptionalGAPageTracking(<IframePage url="https://liups.com/" title="Blog" />),
+    },
+    {
+      path: 'coros',
+      element: withOptionalGAPageTracking(<CorosPage />),
     },
     {
       path: 'about',
