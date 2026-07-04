@@ -36,8 +36,6 @@ const CalendarSvgs = annualYears.reduce((acc, y) => {
 
 import { IS_CHINESE, CHINA_CENTER } from '@/utils/const';
 import '@/styles/stickyMap.css';
-import '@/styles/stickyHeader.css';
-import { initStickyHeader, destroyStickyHeader } from '@/utils/stickyHeader';
 import {
   Activity,
   IViewState,

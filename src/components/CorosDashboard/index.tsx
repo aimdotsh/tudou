@@ -185,6 +185,17 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
           </div>
 
           <div className="flex items-center space-x-1.5 ml-auto">
+            {/* 颜色曲线含义图例 */}
+            {activeTab === 'chart' && (
+              <div className="flex space-x-1 text-[8px] text-slate-500 scale-90 origin-right items-center mr-1">
+                <span className="flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-0.5 inline-block"></span>心率</span>
+                <span className="flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-[#20B2AA] mr-0.5 inline-block"></span>配速</span>
+                {hasPower && (
+                  <span className="flex items-center"><span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-0.5 inline-block"></span>功率</span>
+                )}
+              </div>
+            )}
+
             {/* 距离/时间 横轴模式切换 */}
             {activeTab === 'chart' && (
               <div className="flex bg-slate-50 rounded p-0.5 border border-slate-200/80 text-[8px] scale-90 origin-right">
@@ -217,13 +228,13 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
         </div>
 
         {/* 内容区域 */}
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative -mb-1">
           {activeTab === 'chart' ? (
             <div className="w-full h-full text-slate-800">
-              <ResponsiveContainer width="100%" height={125}>
+              <ResponsiveContainer width="100%" height={135}>
                 <ComposedChart
                   data={chartData}
-                  margin={{ top: 10, right: 5, left: -20, bottom: 5 }}
+                  margin={{ top: 5, right: -12, left: -25, bottom: -10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                   <XAxis
@@ -235,6 +246,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
                     axisLine={false}
                     type="number"
                     domain={['dataMin', 'dataMax']}
+                    height={12}
                   />
                   {/* 左Y轴：心率与功率 */}
                   <YAxis
@@ -245,6 +257,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
                     tickLine={false}
                     axisLine={false}
                     domain={['dataMin - 10', 'dataMax + 10']}
+                    width={20}
                   />
                   {/* 右Y轴：配速 */}
                   <YAxis
@@ -257,6 +270,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
                     tickLine={false}
                     axisLine={false}
                     domain={['dataMin - 30', 'dataMax + 30']}
+                    width={24}
                   />
                   {/* 海拔Y轴 */}
                   <YAxis
