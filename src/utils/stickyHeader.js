@@ -91,11 +91,12 @@ function setupStickyHeader(tableHeaderId, tableContainerId, mapContainerClass) {
       // 同步列宽
       syncColumnWidths();
 
-      // 如果地图底部已经滚动到导航栏下方或更上方
-      if (mapRect.bottom <= navHeight) {
-        // 固定表头在导航栏下方
+      // 如果表格的顶部边界已经向上滚到了地图底部的上方或重合
+      if (tableRect.top <= mapRect.bottom) {
+        // 固定表头在地图底部或导航栏下方
         tableHeader.style.position = 'fixed';
-        tableHeader.style.top = `${navHeight}px`;
+        const stickyTop = Math.max(navHeight, mapRect.bottom);
+        tableHeader.style.top = `${stickyTop}px`;
         tableHeader.style.left = `${tableLeft}px`;
         tableHeader.style.width = `${tableWidth}px`;
         tableHeader.style.zIndex = '5';
@@ -103,21 +104,16 @@ function setupStickyHeader(tableHeaderId, tableContainerId, mapContainerClass) {
 
         // 添加padding-top到表格容器，防止内容跳动
         const headerHeight = tableHeader.offsetHeight;
-        tableContainer.style.paddingTop = `${headerHeight - 8}px`;
-      }
-      // 如果地图底部在视口中
-      else if (mapRect.bottom > navHeight) {
-        // 固定表头在地图底部
-        tableHeader.style.position = 'fixed';
-        tableHeader.style.top = `${mapRect.bottom}px`;
-        tableHeader.style.left = `${tableLeft}px`;
-        tableHeader.style.width = `${tableWidth}px`;
-        tableHeader.style.zIndex = '5';
-        tableHeader.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-
-        // 添加padding-top到表格容器，防止内容跳动
-        const headerHeight = tableHeader.offsetHeight;
-        tableContainer.style.paddingTop = `${headerHeight - 8}px`;
+        tableContainer.style.paddingTop = `${headerHeight}px`;
+      } else {
+        // 未滚动到地图底边时，恢复天然的文档流排版
+        tableHeader.style.position = '';
+        tableHeader.style.top = '';
+        tableHeader.style.left = '';
+        tableHeader.style.width = '';
+        tableHeader.style.zIndex = '';
+        tableHeader.style.boxShadow = '';
+        tableContainer.style.paddingTop = '';
       }
     } catch (error) {
       console.warn('处理滚动事件时出错:', error);
