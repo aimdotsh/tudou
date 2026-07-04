@@ -1,9 +1,6 @@
-/* 固定地图样式 */
+/* 默认地图样式 - 适用于移动端/小屏堆叠布局，随页面整体自然滑动 */
 .sticky-map-container {
-  position: sticky;
-  top: var(--nav-height, 3.5rem);
-  /* 使用变量同步导航栏高度 */
-  z-index: 10;
+  position: relative;
   background-color: #FAF9F5;
   margin-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -11,10 +8,18 @@
   overflow: hidden;
 }
 
+/* 只有在 lg 大屏幕分栏布局下（lg:w-2/3 并排）才开启悬浮粘性定位，固定在右上角 */
+@media (min-width: 1024px) {
+  .sticky-map-container {
+    position: sticky;
+    top: var(--nav-height, 3.5rem);
+    z-index: 10;
+  }
+}
+
 /* 非悬浮地图样式 - 用于Total年份 */
 .map-container {
   position: relative;
-  /* 不悬浮 */
   background-color: #FAF9F5;
   margin-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

@@ -152,7 +152,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
 
   return (
     <div 
-      className="absolute inset-0 bg-white/10 backdrop-blur-[1.2px] z-20 flex flex-col md:block p-3 select-none text-slate-800 rounded-lg overflow-hidden"
+      className="absolute inset-0 bg-transparent z-20 flex flex-col md:block p-3 select-none text-slate-800 rounded-lg overflow-hidden"
       onClick={(e) => {
         // 点击空白处直接关闭数据蒙版
         if (e.target === e.currentTarget) {
@@ -162,7 +162,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
     >
       {/* 左上角控制与数据概览卡片 */}
       <div 
-        className="w-full md:absolute md:top-3 md:left-3 md:w-64 bg-white/85 backdrop-blur-md rounded-lg p-3 border border-white/60 shadow-lg flex flex-col justify-between z-20"
+        className="w-full md:absolute md:top-3 md:left-3 md:w-64 bg-white/50 backdrop-blur-[6px] rounded-lg p-3 border border-white/40 shadow-lg flex flex-col justify-between z-20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 头部信息 */}
@@ -225,7 +225,7 @@ const CorosDashboard = ({ runId, runName, onClose }: ICorosDashboardProps) => {
 
       {/* 右下角折线图与分圈明细卡片 */}
       <div 
-        className="w-full flex-1 mt-2 md:mt-0 md:absolute md:bottom-3 md:right-3 md:w-[460px] md:h-[260px] bg-white/85 backdrop-blur-md rounded-lg p-3 border border-white/60 shadow-lg flex flex-col justify-between overflow-hidden z-20"
+        className="w-full flex-1 mt-2 md:mt-0 md:absolute md:bottom-3 md:right-3 md:w-[460px] md:h-[260px] bg-white/50 backdrop-blur-[6px] rounded-lg p-3 border border-white/40 shadow-lg flex flex-col justify-between overflow-hidden z-20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Tab 选项栏 */}
