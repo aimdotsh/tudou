@@ -107,23 +107,18 @@
   transition: box-shadow 0.3s ease;
 }
 
-/* 原生粘性定位 - th 单元格吸顶，自动保持完美的列宽对齐，绝不产生行遮挡。大屏局部滚动下吸附在容器顶端（top: 0） */
+/* 原生粘性定位 - th 单元格吸顶，自动保持完美的列宽对齐，吸附在地图下方 */
 .stickyHeader th {
   position: sticky;
-  top: 0;
+  top: calc(var(--nav-height, 3.5rem) + var(--map-height, 350px));
   z-index: 5;
-  background-color: #FAF9F5;
+  background-color: #FAF9F5 !important;
   padding: 0.5rem 0.5rem 0.3rem 0.5rem !important; /* 减少底部内边距 */
   font-weight: 600;
   border-bottom: 1px solid rgba(32, 178, 170, 0.2); /* 减小边框厚度 */
 }
 
-/* 移动端/小屏幕布局下（宽 < 1024px）：全局滚动，表头需要吸附在导航栏下方和地图下方 */
-@media (max-width: 1023px) {
-  .stickyHeader th {
-    top: calc(var(--nav-height, 3.5rem) + var(--map-height, 350px));
-  }
-}
+
 
 /* 适配不同屏幕尺寸下的单元格内边距 */
 @media (max-width: 1023px) {

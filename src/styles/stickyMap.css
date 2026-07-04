@@ -1,6 +1,8 @@
 /* 默认地图样式 - 适用于移动端/小屏堆叠布局，随页面整体自然滑动 */
 .sticky-map-container {
-  position: relative;
+  position: sticky;
+  top: var(--nav-height, 3.5rem);
+  z-index: 99 !important;
   background-color: #FAF9F5;
   margin-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -8,11 +10,12 @@
   overflow: hidden;
 }
 
-/* 大屏幕电脑分栏布局下地图静态居上，由于下部表格已设为局部滚动，地图天然固定于上方不动 */
+/* 大屏幕电脑分栏布局下地图采用sticky定位，跟随全局滚动并保持在导航栏下方 */
 @media (min-width: 1024px) {
   .sticky-map-container {
-    position: relative;
-    z-index: 10;
+    position: sticky;
+    top: var(--nav-height, 3.5rem);
+    z-index: 99 !important;
   }
 }
 
@@ -32,16 +35,15 @@
   min-height: 300px;
   /* 确保有足够的滚动空间 */
   position: relative;
+  z-index: 1;
   /* 为固定表头提供定位上下文 */
   margin-top: 0.5rem;
   /* 与地图之间的间距 */
 }
 
-/* 大屏幕电脑分栏布局下（宽 >= 1024px）：表格列表区域形成局部滚动，防止全局滚动带来的高度抖动 */
+/* 大屏幕电脑分栏布局下（宽 >= 1024px）：移除局部滚动限制，形成单一的页面滚动条 */
 @media (min-width: 1024px) {
   .content-container {
-    height: calc(100vh - var(--nav-height, 3.5rem) - 396px - 2rem);
-    overflow-y: auto;
     margin-top: 0.2rem;
   }
 }
@@ -50,7 +52,7 @@
 @media (max-width: 1023px) {
   .sticky-map-container {
     position: sticky;
-    z-index: 10;
+    z-index: 99 !important;
   }
 }
 
@@ -59,7 +61,7 @@
   .sticky-map-container {
     position: sticky;
     top: var(--nav-height, 2.8rem);
-    z-index: 10;
+    z-index: 99 !important;
   }
 }
 
@@ -68,6 +70,6 @@
   .sticky-map-container {
     position: sticky;
     top: var(--nav-height, 2rem);
-    z-index: 10;
+    z-index: 99 !important;
   }
 }
