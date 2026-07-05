@@ -192,7 +192,16 @@ const decodePolyline = (str: string) => {
 };
 
 const CorosDashboardPage = () => {
-  const API_BASE = window.location.port === '5173' ? 'http://localhost:5005' : '';
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const API_BASE = (isDev && window.location.port !== '5005') ? 'http://localhost:5005' : '';
+
+  // 自适应携带 credentials: include 的跨域 fetch 封装
+  const paotuanFetch = (url: string, options: any = {}) => {
+    return fetch(url, {
+      ...options,
+      credentials: 'include'
+    });
+  };
 
   const [evolabData, setEvolabData] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
@@ -235,12 +244,12 @@ const CorosDashboardPage = () => {
 
   // 刷新跑团汇总与 Feed
   const fetchClubData = () => {
-    fetch(`${API_BASE}/api/club/summary`)
+    paotuanFetch(`${API_BASE}/api/club/summary`)
       .then(res => res.json())
       .then(data => setClubSummary(data))
       .catch(() => {});
 
-    fetch(`${API_BASE}/api/club/feed`)
+    paotuanFetch(`${API_BASE}/api/club/feed`)
       .then(res => res.json())
       .then(data => setClubFeed(data.feed || []))
       .catch(() => {});
@@ -249,7 +258,7 @@ const CorosDashboardPage = () => {
   // 加载特定用户大盘数据
   const loadUserDashboard = (userId: number, isSelf: boolean) => {
     setLoading(true);
-    fetch(`${API_BASE}/api/user/${userId}/dashboard`)
+    paotuanFetch(`${API_BASE}/api/user/${userId}/dashboard`)
       .then(res => res.json())
       .then(data => {
         if (data.evolab) setEvolabData(data.evolab);
@@ -268,7 +277,7 @@ const CorosDashboardPage = () => {
 
   useEffect(() => {
     // 1. 尝试获取当前登录用户
-    fetch(`${API_BASE}/api/auth/me`)
+    paotuanFetch(`${API_BASE}/api/auth/me`)
       .then(res => res.json())
       .then(data => {
         if (data.user) {
@@ -286,13 +295,13 @@ const CorosDashboardPage = () => {
     // 加载映射文件
     const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
     const mappingUrl = `${basePath}/data/coros_id_mapping.json`.replace(/\/+/g, '/');
-    fetch(mappingUrl).then(res => res.json()).then(json => setIdMapping(json)).catch(() => ({}));
+    paotuanFetch(mappingUrl).then(res => res.json()).then(json => setIdMapping(json)).catch(() => ({}));
   }, []);
 
   const loadStaticMockData = () => {
     const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
     const evolabUrl = `${basePath}/data/coros_evolab_mock.json`.replace(/\/+/g, '/');
-    fetch(evolabUrl)
+    paotuanFetch(evolabUrl)
       .then(res => res.json())
       .then(evolabJson => {
         setEvolabData(evolabJson);
@@ -319,7 +328,7 @@ const CorosDashboardPage = () => {
       alert("请先登录再进行点赞互动");
       return;
     }
-    fetch(`${API_BASE}/api/activity/like`, {
+    paotuanFetch(`${API_BASE}/api/activity/like`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ run_id: runId })
@@ -337,7 +346,7 @@ const CorosDashboardPage = () => {
       alert("请先登录再发表评论");
       return;
     }
-    fetch(`${API_BASE}/api/activity/comment`, {
+    paotuanFetch(`${API_BASE}/api/activity/comment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ run_id: runId, content })
@@ -354,7 +363,7 @@ const CorosDashboardPage = () => {
   const handleSaveCorosConfig = (e: React.FormEvent) => {
     e.preventDefault();
     if (!corosAccount || !corosPassword) return;
-    fetch(`${API_BASE}/api/user/coros-config`, {
+    paotuanFetch(`${API_BASE}/api/user/coros-config`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ coros_account: corosAccount, coros_password: corosPassword })
@@ -371,7 +380,7 @@ const CorosDashboardPage = () => {
   const handleSyncCorosData = () => {
     if (syncing) return;
     setSyncing(true);
-    fetch(`${API_BASE}/api/user/sync`, { method: 'POST' })
+    paotuanFetch(`${API_BASE}/api/user/sync`, { method: 'POST' })
       .then(res => res.json())
       .then(data => {
         alert(data.message || '已通知后台抓取，同步需要 1-2 分钟，稍后将自动刷新！');
@@ -388,7 +397,7 @@ const CorosDashboardPage = () => {
   const handleDevLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!devUsername.trim()) return;
-    fetch(`${API_BASE}/api/auth/dev-login`, {
+    paotuanFetch(`${API_BASE}/api/auth/dev-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: devUsername })
@@ -405,7 +414,7 @@ const CorosDashboardPage = () => {
 
   // 退出登录
   const handleLogout = () => {
-    fetch(`${API_BASE}/api/auth/logout`, { method: 'POST' })
+    paotuanFetch(`${API_BASE}/api/auth/logout`, { method: 'POST' })
       .then(() => {
         setCurrentUser(null);
         setViewingUser(null);
