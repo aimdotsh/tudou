@@ -34,10 +34,10 @@ RUN mkdir -p run_page && chmod 777 run_page
 VOLUME ["/app/run_page"]
 
 # 设置运行变量
-ENV PORT=5000
+ENV PORT=5005
 ENV NODE_ENV=production
 
-EXPOSE 5000
+EXPOSE 5005
 
 # 启动 Node.js 全栈服务端
 CMD ["node", "server/index.js"]

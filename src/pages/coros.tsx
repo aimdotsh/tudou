@@ -192,7 +192,7 @@ const decodePolyline = (str: string) => {
 };
 
 const CorosDashboardPage = () => {
-  const API_BASE = window.location.port === '5173' ? 'http://localhost:5000' : '';
+  const API_BASE = window.location.port === '5173' ? 'http://localhost:5005' : '';
 
   const [evolabData, setEvolabData] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);

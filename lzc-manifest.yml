@@ -3,7 +3,7 @@ application:
   # 懒猫微服微服务自动重定向的回调端点
   oidc_redirect_path: /api/auth/oidc/callback
   routes:
-    - /=http://paotuan.cloud.lazycat.app.coros-paotuan.lzcapp:5000
+    - /=http://paotuan.cloud.lazycat.app.coros-paotuan.lzcapp:5005
 
 services:
   paotuan:
