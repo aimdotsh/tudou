@@ -147,7 +147,7 @@ class Coros:
 
         return label_id, fname
 
-    async def fetch_evolab_data(self):
+    async def fetch_evolab_data(self, user_id=None):
         # 真正直接通过 API 抓取高驰 EvoLab 核心体能/运动科学数据
         try:
             print("正在从高驰 API 同步获取您的 EvoLab 运动生理学指标数据...")
@@ -366,6 +366,33 @@ class Coros:
             with open(target_json_path, "w", encoding="utf-8") as f:
                 json.dump(formatted_data, f, ensure_ascii=False, indent=2)
             print(f"[Success] 成功拉取高驰真实 EvoLab 指标，已更新至 {target_json_path}")
+
+            # 多用户跑团数据同步写入
+            if user_id:
+                try:
+                    import sqlite3
+                    db_path = os.path.join(current_dir, "paotuan.db")
+                    conn = sqlite3.connect(db_path)
+                    cursor = conn.cursor()
+                    cursor.execute("""
+                        INSERT OR REPLACE INTO evolab_data (
+                            user_id, running_score, fatigue_load, fitness_load, load_ratio, recovery_percent, recovery_advice, raw_json, updated_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+                    """, (
+                        user_id,
+                        formatted_data["running_ability"]["score"],
+                        formatted_data["training_status"]["short_term_load"],
+                        formatted_data["training_status"]["long_term_load"],
+                        formatted_data["training_status"]["load_ratio"],
+                        formatted_data["recovery"]["percentage"],
+                        formatted_data["recovery"]["advice"],
+                        json.dumps(formatted_data, ensure_ascii=False)
+                    ))
+                    conn.commit()
+                    conn.close()
+                    print(f"成功将跑团成员 ID {user_id} 的 EvoLab 指标写入数据库 {db_path}")
+                except Exception as db_err:
+                    print(f"写入跑团成员数据库失败: {db_err}")
         except Exception as e:
             print(f"抓取高驰 EvoLab 数据失败(非阻断，将使用本地 Mock 缓存展示): {e}")
 
@@ -374,7 +401,7 @@ def get_downloaded_ids(folder):
     return [i.split(".")[0] for i in os.listdir(folder) if not i.startswith(".")]
 
 
-async def download_and_generate(account, password):
+async def download_and_generate(account, password, user_id=None):
     folder = FIT_FOLDER
     downloaded_ids = get_downloaded_ids(folder)
     coros = Coros(account, password)
@@ -395,7 +422,7 @@ async def download_and_generate(account, password):
     
     # 自动拉取并更新 EvoLab 高阶体能数据
     try:
-        await coros.fetch_evolab_data()
+        await coros.fetch_evolab_data(user_id)
     except Exception as e:
         print(f"Fetch evolab data error: {e}")
         
@@ -413,6 +440,44 @@ async def download_and_generate(account, password):
     except Exception as e:
         print(f"Failed to extract coros detail: {e}")
 
+    # 将同步完的新活动写入多用户跑团 SQLite 数据库中
+    if user_id:
+        try:
+            import sqlite3
+            print(f"正在将新同步的活动记录导出至多用户跑团数据库...")
+            conn_src = sqlite3.connect(SQL_FILE)
+            cursor_src = conn_src.cursor()
+            cursor_src.execute("SELECT run_id, name, type, distance, moving_time, pace, average_heartrate, total_elevation_gain, start_date_local, summary_polyline FROM activities")
+            rows = cursor_src.fetchall()
+            conn_src.close()
+            
+            db_path = os.path.join(current_dir, "paotuan.db")
+            conn_dest = sqlite3.connect(db_path)
+            cursor_dest = conn_dest.cursor()
+            for row in rows:
+                cursor_dest.execute("""
+                    INSERT OR REPLACE INTO activities (
+                        run_id, user_id, name, type, distance, moving_time, pace, average_heartrate, total_elevation_gain, start_date_local, summary_polyline, sync_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+                """, (
+                    str(row[0]),
+                    user_id,
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
+                    row[7],
+                    row[8],
+                    row[9]
+                ))
+            conn_dest.commit()
+            conn_dest.close()
+            print("跑团活动数据库迁移同步完成！")
+        except Exception as trans_err:
+            print(f"同步跑团活动数据库出错: {trans_err}")
+
 
 async def gather_with_concurrency(n, tasks):
     semaphore = asyncio.Semaphore(n)
@@ -427,12 +492,13 @@ async def gather_with_concurrency(n, tasks):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("account", nargs="?", help="input coros account")
-
     parser.add_argument("password", nargs="?", help="input coros password")
+    parser.add_argument("--user-id", type=int, default=None, help="user id for multi-user database storage")
     options = parser.parse_args()
 
     account = options.account
     password = options.password
+    user_id = options.user_id
     encrypted_pwd = hashlib.md5(password.encode()).hexdigest()
 
-    asyncio.run(download_and_generate(account, encrypted_pwd))
+    asyncio.run(download_and_generate(account, encrypted_pwd, user_id))

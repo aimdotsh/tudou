@@ -1,0 +1,6 @@
+# 懒猫构建定义文件
+build:
+  # 构建时使用的 dockerfile
+  dockerfile: Dockerfile
+  # 导出的目标服务镜像名称
+  image: registry.lazycat.cloud/liups/coros-paotuan:latest

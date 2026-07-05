@@ -1,0 +1,19 @@
+application:
+  subdomain: coros-paotuan
+  # 懒猫微服微服务自动重定向的回调端点
+  oidc_redirect_path: /api/auth/oidc/callback
+  routes:
+    - /=http://paotuan.cloud.lazycat.app.coros-paotuan.lzcapp:5000
+
+services:
+  paotuan:
+    image: registry.lazycat.cloud/liups/coros-paotuan:latest
+    environment:
+      - LAZYCAT_AUTH_OIDC_CLIENT_ID=${LAZYCAT_AUTH_OIDC_CLIENT_ID}
+      - LAZYCAT_AUTH_OIDC_CLIENT_SECRET=${LAZYCAT_AUTH_OIDC_CLIENT_SECRET}
+      - LAZYCAT_AUTH_OIDC_AUTH_URI=${LAZYCAT_AUTH_OIDC_AUTH_URI}
+      - LAZYCAT_AUTH_OIDC_TOKEN_URI=${LAZYCAT_AUTH_OIDC_TOKEN_URI}
+      - LAZYCAT_AUTH_OIDC_USERINFO_URI=${LAZYCAT_AUTH_OIDC_USERINFO_URI}
+      - LAZYCAT_BOXDOMAIN=${LAZYCAT_BOXDOMAIN}
+    volumes:
+      - /app/run_page

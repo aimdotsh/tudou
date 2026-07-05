@@ -192,11 +192,29 @@ const decodePolyline = (str: string) => {
 };
 
 const CorosDashboardPage = () => {
+  const API_BASE = window.location.port === '5173' ? 'http://localhost:5000' : '';
+
   const [evolabData, setEvolabData] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
   const [idMapping, setIdMapping] = useState<{ [key: string]: string }>({});
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'analysis' | 'activities' | 'schedule'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'club' | 'dashboard' | 'analysis' | 'activities' | 'schedule'>('club');
   const [loading, setLoading] = useState(true);
+
+  // 多用户与跑团相关状态
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [clubSummary, setClubSummary] = useState<any>({ summary: { total_distance: "0.00", total_count: 0, active_members: 0 }, leaderboard: [] });
+  const [clubFeed, setClubFeed] = useState<any[]>([]);
+  const [viewingUser, setViewingUser] = useState<any>(null); // 当前正在看哪位团友的大盘
+
+  // 配置高驰账号密码弹窗
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [corosAccount, setCorosAccount] = useState('');
+  const [corosPassword, setCorosPassword] = useState('');
+  const [syncing, setSyncing] = useState(false);
+  const [devUsername, setDevUsername] = useState('');
+
+  // 评论输入框状态
+  const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
 
   // 单次运动详情状态
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
@@ -215,20 +233,69 @@ const CorosDashboardPage = () => {
   // 日程 Tab 内部状态
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
+  // 刷新跑团汇总与 Feed
+  const fetchClubData = () => {
+    fetch(`${API_BASE}/api/club/summary`)
+      .then(res => res.json())
+      .then(data => setClubSummary(data))
+      .catch(() => {});
+
+    fetch(`${API_BASE}/api/club/feed`)
+      .then(res => res.json())
+      .then(data => setClubFeed(data.feed || []))
+      .catch(() => {});
+  };
+
+  // 加载特定用户大盘数据
+  const loadUserDashboard = (userId: number, isSelf: boolean) => {
+    setLoading(true);
+    fetch(`${API_BASE}/api/user/${userId}/dashboard`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.evolab) setEvolabData(data.evolab);
+        if (data.activities) {
+          const sorted = [...data.activities].sort((a: any, b: any) => {
+            return new Date(b.start_date_local).getTime() - new Date(a.start_date_local).getTime();
+          });
+          setActivities(sorted);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
-    // 异步加载 EvoLab 数据、映射文件
+    // 1. 尝试获取当前登录用户
+    fetch(`${API_BASE}/api/auth/me`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setCurrentUser(data.user);
+          loadUserDashboard(data.user.id, true);
+          fetchClubData();
+        } else {
+          loadStaticMockData();
+        }
+      })
+      .catch(() => {
+        loadStaticMockData();
+      });
+
+    // 加载映射文件
+    const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+    const mappingUrl = `${basePath}/data/coros_id_mapping.json`.replace(/\/+/g, '/');
+    fetch(mappingUrl).then(res => res.json()).then(json => setIdMapping(json)).catch(() => ({}));
+  }, []);
+
+  const loadStaticMockData = () => {
     const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
     const evolabUrl = `${basePath}/data/coros_evolab_mock.json`.replace(/\/+/g, '/');
-    const mappingUrl = `${basePath}/data/coros_id_mapping.json`.replace(/\/+/g, '/');
-
-    Promise.all([
-      fetch(evolabUrl).then(res => res.json()),
-      fetch(mappingUrl).then(res => res.json()).catch(() => ({}))
-    ])
-      .then(([evolabJson, mappingJson]) => {
+    fetch(evolabUrl)
+      .then(res => res.json())
+      .then(evolabJson => {
         setEvolabData(evolabJson);
-        setIdMapping(mappingJson);
-        // 排序静态导入的数据
         const sorted = [...activitiesData].sort((a: any, b: any) => {
           return new Date(b.start_date_local).getTime() - new Date(a.start_date_local).getTime();
         });
@@ -236,15 +303,132 @@ const CorosDashboardPage = () => {
         setLoading(false);
       })
       .catch(err => {
-        console.error("加载数据失败", err);
+        console.error("加载静态数据失败", err);
         setLoading(false);
       });
-  }, []);
+  };
 
   // 动态分析计算所有活动最佳纪录
   const personalRecords = React.useMemo(() => {
     return getPersonalRecords(activities);
   }, [activities]);
+
+  // 社交点赞
+  const handleLikeActivity = (runId: string) => {
+    if (!currentUser) {
+      alert("请先登录再进行点赞互动");
+      return;
+    }
+    fetch(`${API_BASE}/api/activity/like`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ run_id: runId })
+    })
+      .then(res => res.json())
+      .then(() => fetchClubData())
+      .catch(() => {});
+  };
+
+  // 发表评论
+  const handleCommentActivity = (runId: string) => {
+    const content = commentInputs[runId] || '';
+    if (!content.trim()) return;
+    if (!currentUser) {
+      alert("请先登录再发表评论");
+      return;
+    }
+    fetch(`${API_BASE}/api/activity/comment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ run_id: runId, content })
+    })
+      .then(res => res.json())
+      .then(() => {
+        setCommentInputs(prev => ({ ...prev, [runId]: '' }));
+        fetchClubData();
+      })
+      .catch(() => {});
+  };
+
+  // 配置高驰账号密码
+  const handleSaveCorosConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!corosAccount || !corosPassword) return;
+    fetch(`${API_BASE}/api/user/coros-config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coros_account: corosAccount, coros_password: corosPassword })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || '凭证保存成功');
+        setShowConfigModal(false);
+      })
+      .catch(() => {});
+  };
+
+  // 一键同步高驰
+  const handleSyncCorosData = () => {
+    if (syncing) return;
+    setSyncing(true);
+    fetch(`${API_BASE}/api/user/sync`, { method: 'POST' })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || '已通知后台抓取，同步需要 1-2 分钟，稍后将自动刷新！');
+        setTimeout(() => {
+          setSyncing(false);
+          fetchClubData();
+          if (currentUser) loadUserDashboard(currentUser.id, true);
+        }, 10000);
+      })
+      .catch(() => setSyncing(false));
+  };
+
+  // 开发/测试免密登录
+  const handleDevLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!devUsername.trim()) return;
+    fetch(`${API_BASE}/api/auth/dev-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: devUsername })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setCurrentUser(data.user);
+          loadUserDashboard(data.user.id, true);
+          fetchClubData();
+        }
+      });
+  };
+
+  // 退出登录
+  const handleLogout = () => {
+    fetch(`${API_BASE}/api/auth/logout`, { method: 'POST' })
+      .then(() => {
+        setCurrentUser(null);
+        setViewingUser(null);
+        loadStaticMockData();
+      });
+  };
+
+  // 点击查看其他跑友大盘
+  const handleViewUserDashboard = (user: any) => {
+    setViewingUser(user);
+    loadUserDashboard(user.user_id || user.id, false);
+    setActiveTab('dashboard'); // 切换到仪表板 Tab 展示
+  };
+
+  // 切回自己大盘
+  const handleViewSelf = () => {
+    setViewingUser(null);
+    if (currentUser) {
+      loadUserDashboard(currentUser.id, true);
+    } else {
+      loadStaticMockData();
+    }
+  };
 
   // 选中某次运动加载详情
   const handleSelectActivity = (activity: any) => {
@@ -440,7 +624,7 @@ const CorosDashboardPage = () => {
             // 详情页面下的返回按钮
             <button
               onClick={() => setSelectedActivity(null)}
-              className="flex items-center space-x-2 text-[#20B2AA] hover:opacity-85 font-bold text-sm"
+              className="flex items-center space-x-2 text-[#00F5D4] hover:opacity-85 font-bold text-sm"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -448,7 +632,7 @@ const CorosDashboardPage = () => {
               <span>返回大盘</span>
             </button>
           ) : (
-            <Link to="/" className="flex items-center space-x-2 text-[#20B2AA] hover:opacity-80 transition-opacity">
+            <Link to="/" className="flex items-center space-x-2 text-[#00F5D4] hover:opacity-80 transition-opacity">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
               </svg>
@@ -456,34 +640,101 @@ const CorosDashboardPage = () => {
             </Link>
           )}
           <div className="h-4 w-px bg-slate-800"></div>
-          <span className="font-black text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-[#20B2AA] bg-clip-text text-transparent">
-            COROS Training Hub
+          <span className="font-black text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-[#00F5D4] bg-clip-text text-transparent">
+            COROS 跑团
           </span>
         </div>
 
         {/* 详情页面隐藏 Tab 选项卡 */}
         {!selectedActivity && (
-          <div className="flex bg-[#161C2C] p-1 rounded-lg border border-slate-800 space-x-1">
-            {(['dashboard', 'analysis', 'activities', 'schedule'] as const).map(tab => {
-              const labelMap = {
-                dashboard: '仪表板',
-                analysis: '数据分析',
-                activities: '活动列表',
-                schedule: '日程'
-              };
-              return (
-                <button
-                  key={tab}
-                  className={styles.tabBtn(activeTab === tab)}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {labelMap[tab]}
-                </button>
-              );
-            })}
+          <div className="flex bg-[#001D3D] p-1 rounded-lg border border-cyan-950 space-x-1">
+            {[
+              { id: 'club', label: '跑团大厅' },
+              { id: 'dashboard', label: '体能大盘' },
+              { id: 'analysis', label: '数据分析' },
+              { id: 'activities', label: '活动列表' },
+              { id: 'schedule', label: '日程' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                className={styles.tabBtn(activeTab === tab.id)}
+                onClick={() => {
+                  if (tab.id !== 'club' && !viewingUser && currentUser) {
+                    loadUserDashboard(currentUser.id, true);
+                  }
+                  setActiveTab(tab.id as any);
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         )}
+
+        {/* 用户控制面板与登录 */}
+        <div className="flex items-center space-x-3 text-xs">
+          {currentUser ? (
+            <div className="flex items-center space-x-3 text-slate-300">
+              <span className="font-semibold text-white">👤 {currentUser.username}</span>
+              <button 
+                onClick={() => setShowConfigModal(true)} 
+                className="px-2.5 py-1 bg-cyan-950 text-[#00F5D4] border border-cyan-800/40 rounded hover:bg-cyan-900 transition-all"
+              >
+                ⚙️ 高驰配置
+              </button>
+              {currentUser.coros_account && (
+                <button 
+                  onClick={handleSyncCorosData} 
+                  disabled={syncing}
+                  className="px-2.5 py-1 bg-[#00F5D4] text-[#000814] font-bold rounded hover:opacity-90 disabled:opacity-50 transition-all flex items-center space-x-1"
+                >
+                  <span>{syncing ? '🔄 同步中' : '🔄 一键同步'}</span>
+                </button>
+              )}
+              <button onClick={handleLogout} className="text-slate-400 hover:text-red-400 transition-colors">
+                退出
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-3">
+              {/* OIDC 登录 */}
+              <a 
+                href={`${API_BASE}/api/auth/oidc/login`} 
+                className="px-3 py-1 bg-[#00F5D4] text-[#000814] font-black rounded shadow hover:opacity-90 transition-all"
+              >
+                ⚡ 懒猫微服 OIDC 登录
+              </a>
+              {/* 免密测试登录入口 */}
+              <form onSubmit={handleDevLogin} className="hidden sm:flex items-center space-x-1 border border-slate-800 p-0.5 rounded">
+                <input 
+                  type="text" 
+                  placeholder="测试用户名" 
+                  value={devUsername} 
+                  onChange={e => setDevUsername(e.target.value)} 
+                  className="bg-transparent text-white px-2 py-0.5 w-24 outline-none border-none text-[11px]" 
+                />
+                <button type="submit" className="bg-slate-800 px-2 py-0.5 rounded text-[11px] text-slate-300 hover:bg-slate-700">登录</button>
+              </form>
+            </div>
+          )}
+        </div>
       </header>
+
+      {/* 正在浏览团友大盘的置顶横幅 */}
+      {viewingUser && activeTab !== 'club' && !selectedActivity && (
+        <div className="bg-cyan-950/80 border-b border-cyan-800/60 px-6 py-2 flex items-center justify-between text-xs">
+          <div className="flex items-center space-x-2">
+            <span className="animate-pulse text-[#00F5D4]">●</span>
+            <span className="text-slate-300">您当前正在浏览跑友 <strong className="text-white">{viewingUser.username}</strong> 的高驰大盘</span>
+          </div>
+          <button 
+            onClick={handleViewSelf} 
+            className="px-3 py-0.5 bg-[#00F5D4] text-[#000814] font-bold rounded hover:opacity-90"
+          >
+            返回我自己的大盘
+          </button>
+        </div>
+      )}
 
       {/* ==================== 5. 运动详情子页面 (100% 官方详情页结构还原) ==================== */}
       {selectedActivity ? (
@@ -695,6 +946,264 @@ const CorosDashboardPage = () => {
         </div>
       ) : (
         <>
+          {/* ==================== 0. 跑团大厅 Tab (海洋发光社交广场) ==================== */}
+          {activeTab === 'club' && (
+            <div className="px-6 mt-6 pb-12 animate-fade-in space-y-6">
+              
+              {/* 跑团累计统计 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-[#001D3D]/30 border border-[#00F5D4]/20 rounded-xl p-5 shadow-lg relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">🏃‍♂️</div>
+                  <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">跑团累计总里程</div>
+                  <div className="text-4xl font-black text-white tracking-tight bg-gradient-to-r from-white to-[#00F5D4] bg-clip-text text-transparent">
+                    {clubSummary.summary.total_distance} <span className="text-sm font-medium text-slate-400">KM</span>
+                  </div>
+                </div>
+                <div className="bg-[#001D3D]/30 border border-cyan-800/40 rounded-xl p-5 shadow-lg relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">🔥</div>
+                  <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">累计跑步总次数</div>
+                  <div className="text-4xl font-black text-white tracking-tight">
+                    {clubSummary.summary.total_count} <span className="text-sm font-medium text-slate-400">次</span>
+                  </div>
+                </div>
+                <div className="bg-[#001D3D]/30 border border-cyan-800/40 rounded-xl p-5 shadow-lg relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">🌊</div>
+                  <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">已同步活跃成员</div>
+                  <div className="text-4xl font-black text-white tracking-tight">
+                    {clubSummary.summary.active_members} <span className="text-sm font-medium text-slate-400">人</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* 跑友运动动态广场 Feed */}
+                <div className="lg:col-span-8 space-y-6">
+                  <div className="flex items-center justify-between border-b border-cyan-950/60 pb-3">
+                    <h2 className="text-lg font-black text-white flex items-center space-x-2">
+                      <span className="text-[#00F5D4]">🌊</span>
+                      <span>跑团动态广场</span>
+                    </h2>
+                    <span className="text-xs text-slate-400">最新动态实时更新</span>
+                  </div>
+
+                  {clubFeed.length === 0 ? (
+                    <div className="text-center py-16 bg-[#001D3D]/10 border border-cyan-950/40 rounded-xl text-slate-500 space-y-3">
+                      <div className="text-4xl">👟</div>
+                      <p className="text-sm">广场上空荡荡的，还没有小伙伴发布动态</p>
+                      {currentUser && (
+                        <button 
+                          onClick={() => setShowConfigModal(true)} 
+                          className="px-4 py-1.5 bg-[#00F5D4] text-[#000814] font-bold rounded hover:opacity-90 text-xs"
+                        >
+                          设置我的高驰数据
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    clubFeed.map((act) => {
+                      return (
+                        <div key={act.run_id} className="bg-[#001D3D]/30 border border-cyan-950/80 rounded-xl p-5 hover:border-cyan-800/40 transition-all shadow-md">
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#00F5D4] to-[#00A8E8] flex items-center justify-center font-bold text-[#000814]">
+                                {act.username.slice(0, 2)}
+                              </div>
+                              <div>
+                                <h3 
+                                  onClick={() => handleViewUserDashboard({ user_id: act.user_id, username: act.username })}
+                                  className="font-bold text-white text-sm hover:text-[#00F5D4] cursor-pointer transition-colors"
+                                >
+                                  {act.username}
+                                </h3>
+                                <span className="text-slate-500 text-[10px]">{act.start_date_local}</span>
+                              </div>
+                            </div>
+                            <span className="text-xs font-bold text-slate-400 bg-slate-800/40 px-2 py-0.5 rounded">
+                              {act.type === 'Run' ? '🏃‍♂️ 户外跑步' : act.type === 'Trail Run' ? '⛰️ 越野跑' : '👟 运动'}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mt-4">
+                            {/* 主要跑量大字 */}
+                            <div className="md:col-span-8 grid grid-cols-3 gap-2 border-r border-slate-800/40 pr-4">
+                              <div>
+                                <span className="text-[10px] text-slate-500 block mb-1">距离</span>
+                                <span className="text-2xl font-black text-[#00F5D4]">{act.distance} <span className="text-xs font-medium text-slate-400">km</span></span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-slate-500 block mb-1">用时</span>
+                                <span className="text-2xl font-black text-white">{cleanTimeStr(act.moving_time)}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-slate-500 block mb-1">平均配速</span>
+                                <span className="text-2xl font-black text-white">{act.pace || '--'}</span>
+                              </div>
+                            </div>
+
+                            {/* 轨迹小缩略图 */}
+                            <div className="md:col-span-4 flex items-center justify-center bg-slate-900/40 rounded-lg p-2 h-20 relative overflow-hidden">
+                              {act.summary_polyline ? (
+                                <svg className="w-full h-full max-h-16" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                                  {(() => {
+                                    const coords = decodePolyline(act.summary_polyline);
+                                    if (!coords || coords.length === 0) return null;
+                                    const lats = coords.map(c => c[0]);
+                                    const lngs = coords.map(c => c[1]);
+                                    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+                                    const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+                                    const latDiff = maxLat - minLat || 1;
+                                    const lngDiff = maxLng - minLng || 1;
+                                    const points = coords.map(c => {
+                                      const x = 10 + ((c[1] - minLng) / lngDiff) * 80;
+                                      const y = 90 - ((c[0] - minLat) / latDiff) * 80;
+                                      return `${x},${y}`;
+                                    }).join(' ');
+                                    return (
+                                      <>
+                                        <polyline points={points} fill="none" stroke="#00F5D4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" filter="drop-shadow(0px 0px 3px rgba(0, 245, 212, 0.4))" />
+                                        <circle cx={points.split(' ')[0].split(',')[0]} cy={points.split(' ')[0].split(',')[1]} r="2.5" fill="#00E676" />
+                                        <circle cx={points.split(' ')[points.split(' ').length - 1].split(',')[0]} cy={points.split(' ')[points.split(' ').length - 1].split(',')[1]} r="2.5" fill="#FF5252" />
+                                      </>
+                                    );
+                                  })()}
+                                </svg>
+                              ) : (
+                                <span className="text-[10px] text-slate-600">无轨迹折线</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 评论点赞区 */}
+                          <div className="border-t border-slate-800/40 mt-4 pt-3 flex flex-col space-y-3">
+                            <div className="flex items-center space-x-6 text-xs">
+                              <button 
+                                onClick={() => handleLikeActivity(act.run_id)}
+                                className={`flex items-center space-x-1.5 transition-colors font-bold ${act.is_liked ? 'text-rose-500' : 'text-slate-400 hover:text-rose-500'}`}
+                              >
+                                <span>{act.is_liked ? '❤️' : '🤍'}</span>
+                                <span>点赞 ({act.like_count || 0})</span>
+                              </button>
+                              <span className="text-slate-400">💬 评论 ({act.comment_count || 0})</span>
+                            </div>
+
+                            {/* 评论列表 */}
+                            {act.comments && act.comments.length > 0 && (
+                              <div className="bg-slate-900/30 rounded-lg p-3 space-y-2 border border-slate-800/30 text-xs">
+                                {act.comments.map((comment: any) => (
+                                  <div key={comment.id} className="text-slate-300">
+                                    <strong className="text-[#00F5D4] mr-1.5">{comment.username}:</strong>
+                                    <span>{comment.content}</span>
+                                    <span className="text-[9px] text-slate-500 float-right block mt-0.5">
+                                      {new Date(comment.created_at).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* 评论输入框 */}
+                            {currentUser && (
+                              <div className="flex items-center space-x-2 text-xs">
+                                <input 
+                                  type="text" 
+                                  placeholder="写句吐槽或点赞加油..." 
+                                  value={commentInputs[act.run_id] || ''}
+                                  onChange={e => setCommentInputs(prev => ({ ...prev, [act.run_id]: e.target.value }))}
+                                  className="flex-1 bg-slate-900/60 border border-slate-800/80 rounded-md px-3 py-1.5 text-white outline-none focus:border-[#00F5D4]/60"
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter') handleCommentActivity(act.run_id);
+                                  }}
+                                />
+                                <button 
+                                  onClick={() => handleCommentActivity(act.run_id)}
+                                  className="px-3 py-1.5 bg-cyan-950 text-[#00F5D4] font-bold rounded-md hover:bg-cyan-900"
+                                >
+                                  发送
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* 右侧排行榜 */}
+                <div className="lg:col-span-4 space-y-6">
+                  <div className="flex items-center justify-between border-b border-cyan-950/60 pb-3">
+                    <h2 className="text-lg font-black text-white flex items-center space-x-2">
+                      <span className="text-amber-400">👑</span>
+                      <span>里程龙虎榜</span>
+                    </h2>
+                    <span className="text-xs text-amber-400 font-semibold">跑量排行</span>
+                  </div>
+
+                  <div className="bg-[#001D3D]/30 border border-cyan-950/80 rounded-xl p-4 space-y-4">
+                    {clubSummary.leaderboard.length === 0 ? (
+                      <div className="text-center py-10 text-slate-500 text-xs">
+                        目前尚无跑成员数据，请先配置并同步
+                      </div>
+                    ) : (
+                      clubSummary.leaderboard.map((member: any, index: number) => {
+                        const isTop3 = index < 3;
+                        const rankMedals = ['🥇', '🥈', '🥉'];
+                        return (
+                          <div 
+                            key={member.user_id} 
+                            className="flex items-center justify-between border-b border-slate-800/20 pb-3 last:border-b-0 last:pb-0"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <span className="text-sm font-bold w-6 text-center text-slate-400">
+                                {isTop3 ? rankMedals[index] : index + 1}
+                              </span>
+                              <div>
+                                <h4 
+                                  onClick={() => handleViewUserDashboard({ user_id: member.user_id, username: member.username })}
+                                  className="font-bold text-white text-sm hover:text-[#00F5D4] cursor-pointer transition-colors"
+                                >
+                                  {member.username}
+                                </h4>
+                                <span className="text-slate-500 text-[10px]">{member.count} 次运动</span>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <span className="font-extrabold text-[#00F5D4] text-sm">
+                                {member.total_distance} <span className="text-[10px] text-slate-400">KM</span>
+                              </span>
+                              <button 
+                                onClick={() => handleViewUserDashboard({ user_id: member.user_id, username: member.username })}
+                                className="block text-[10px] text-cyan-400 hover:underline mt-0.5"
+                              >
+                                查看大盘
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* 引导配置卡片 */}
+                  {currentUser && !currentUser.coros_account && (
+                    <div className="bg-gradient-to-br from-[#001D3D]/60 to-cyan-950/20 border border-cyan-800/40 rounded-xl p-5 space-y-3">
+                      <h3 className="font-bold text-white text-sm">⚙️ 尚未配置高驰凭证</h3>
+                      <p className="text-xs text-slate-400 leading-relaxed">
+                        您需要配置您高驰的登录账户与密码，我们才能从云端定时帮您捞取真实的 EvoLab 指标和运动轨迹。
+                      </p>
+                      <button 
+                        onClick={() => setShowConfigModal(true)}
+                        className="w-full py-2 bg-[#00F5D4] text-[#000814] font-black rounded-lg text-xs"
+                      >
+                        立即配置高驰账号
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ==================== 1. 仪表板 Tab ==================== */}
           {activeTab === 'dashboard' && (
             <>
@@ -1368,6 +1877,65 @@ const CorosDashboardPage = () => {
             </div>
           )}
         </>
+      )}
+
+      {/* 高驰凭证配置弹窗 */}
+      {showConfigModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 backdrop-blur-sm px-4">
+          <div className="bg-[#001D3D] border border-cyan-950 rounded-2xl w-full max-w-md p-6 shadow-2xl relative animate-scale-up text-left">
+            <button 
+              onClick={() => setShowConfigModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white text-lg font-bold"
+            >
+              ×
+            </button>
+            <h3 className="text-lg font-black text-white mb-2 flex items-center space-x-2">
+              <span>⚙️ 配置高驰账号</span>
+            </h3>
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              输入您登录高驰 App 的账号与密码。我们将仅将其在您的自托管 SQLite 中安全保存，以帮您自动同步运动与 EvoLab 数据。
+            </p>
+            <form onSubmit={handleSaveCorosConfig} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1">高驰账号 (手机号或邮箱)</label>
+                <input 
+                  type="text"
+                  required
+                  placeholder="请输入手机号或邮箱"
+                  value={corosAccount}
+                  onChange={e => setCorosAccount(e.target.value)}
+                  className="w-full bg-[#000814] border border-cyan-950/80 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#00F5D4]/60 text-left"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-1">登录密码</label>
+                <input 
+                  type="password"
+                  required
+                  placeholder="请输入密码"
+                  value={corosPassword}
+                  onChange={e => setCorosPassword(e.target.value)}
+                  className="w-full bg-[#000814] border border-cyan-950/80 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-[#00F5D4]/60 text-left"
+                />
+              </div>
+              <div className="flex space-x-3 pt-2">
+                <button 
+                  type="button"
+                  onClick={() => setShowConfigModal(false)}
+                  className="flex-1 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-xs hover:bg-slate-700 transition-colors"
+                >
+                  取消
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 py-2 bg-[#00F5D4] text-[#000814] font-black rounded-lg text-xs hover:opacity-90 transition-opacity"
+                >
+                  保存配置
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
