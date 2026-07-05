@@ -481,23 +481,74 @@ const CorosDashboardPage = () => {
     );
   }
 
-  if (!evolabData) {
-    return (
-      <div className="flex h-screen bg-[#080B11] items-center justify-center flex-col space-y-4">
-        <span className="text-slate-400">未发现高驰 EvoLab 本地数据源</span>
-        <Link to="/" className="text-[#20B2AA] hover:underline">返回首页</Link>
-      </div>
-    );
-  }
+  // 安全的体能数据兜底
+  const safeEvolab = evolabData || {
+    running_ability: {
+      score: 0,
+      sub_scores: {
+        aerobic_endurance: { score: 0, pace_range: "--" },
+        lactate_threshold: { score: 0, pace_range: "--" },
+        speed_endurance: { score: 0, pace_range: "--" },
+        sprint_ability: { score: 0, pace_range: "--" }
+      }
+    },
+    training_status: {
+      state: "暂无数据",
+      description: "您尚未绑定并拉取高驰云端数据，请点击右上角【高驰配置】进行数据拉取！",
+      short_term_load: 0,
+      long_term_load: 0,
+      load_ratio: 0
+    },
+    seven_day_performance: {
+      score: 0,
+      status: "--",
+      daily_data: []
+    },
+    recovery: {
+      percentage: 0,
+      remaining_hours: 0,
+      advice: "暂无建议"
+    },
+    heart_rate_zones: {
+      threshold_hr: 0,
+      max_hr: 0,
+      resting_hr: 0,
+      zones: []
+    },
+    pace_zones: {
+      threshold_pace: "--",
+      zones: []
+    },
+    race_predictions: [],
+    hrv_eval: {
+      status: "--",
+      resting_average: "--",
+      normal_range: "--",
+      chart_data: []
+    },
+    weekly_workouts: {
+      total_distance: 0,
+      chart_data: []
+    },
+    training_load_history: [],
+    training_summary_4weeks: {
+      all: { distance: 0, time: "00:00:00", load: 0, count: 0, avg_hr: 0 },
+      running: { distance: 0, time: "00:00:00", load: 0, count: 0, avg_hr: 0 },
+      cycling: { distance: 0, time: "00:00:00", load: 0, count: 0, avg_hr: 0 },
+      walking: { distance: 0, time: "00:00:00", load: 0, count: 0, avg_hr: 0 },
+      swimming: { distance: 0, time: "00:00:00", load: 0, count: 0, avg_hr: 0 }
+    },
+    workout_records_12weeks: { load: [], distance: [], time_minutes: [], count: [] }
+  };
 
   // 跑步能力极坐标环数据拟合
   const runningAbilityData = [
     { name: 'Max', value: 100, fill: 'transparent' },
-    { name: '跑步能力', value: evolabData.running_ability.score, fill: '#20B2AA' }
+    { name: '跑步能力', value: safeEvolab.running_ability.score, fill: '#00F5D4' }
   ];
 
   // 12周运动记录数据解析与切换
-  const recordChartData = evolabData.workout_records_12weeks[recordMetric] || [];
+  const recordChartData = safeEvolab.workout_records_12weeks[recordMetric] || [];
   const metricLabelMap = {
     load: "训练负荷",
     distance: "总距离",
@@ -1240,7 +1291,7 @@ const CorosDashboardPage = () => {
                         </RadialBarChart>
                       </ResponsiveContainer>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-3xl font-black text-white">{evolabData.running_ability.score}</span>
+                        <span className="text-3xl font-black text-white">{safeEvolab.running_ability.score}</span>
                         <span className="text-[10px] text-slate-500 font-bold uppercase mt-0.5">RUN ABILITY</span>
                       </div>
                     </div>
@@ -1249,32 +1300,32 @@ const CorosDashboardPage = () => {
                       <div>
                         <div className="flex justify-between text-[10px] text-slate-400 mb-0.5">
                           <span>有氧耐力</span>
-                          <span className="font-semibold text-white">{evolabData.running_ability.sub_scores.aerobic_endurance.score}</span>
+                          <span className="font-semibold text-white">{safeEvolab.running_ability.sub_scores.aerobic_endurance.score}</span>
                         </div>
                         <div className="w-full h-1.5 bg-[#1F293D] rounded-full overflow-hidden">
-                          <div className="bg-[#20B2AA] h-full rounded-full" style={{ width: `${evolabData.running_ability.sub_scores.aerobic_endurance.score}%` }}></div>
+                          <div className="bg-[#20B2AA] h-full rounded-full" style={{ width: `${safeEvolab.running_ability.sub_scores.aerobic_endurance.score}%` }}></div>
                         </div>
-                        <span className="text-[9px] text-slate-500 block mt-0.5">{evolabData.running_ability.sub_scores.aerobic_endurance.pace_range}</span>
+                        <span className="text-[9px] text-slate-500 block mt-0.5">{safeEvolab.running_ability.sub_scores.aerobic_endurance.pace_range}</span>
                       </div>
                       <div>
                         <div className="flex justify-between text-[10px] text-slate-400 mb-0.5">
                           <span>乳酸阈能力</span>
-                          <span className="font-semibold text-white">{evolabData.running_ability.sub_scores.lactate_threshold.score}</span>
+                          <span className="font-semibold text-white">{safeEvolab.running_ability.sub_scores.lactate_threshold.score}</span>
                         </div>
                         <div className="w-full h-1.5 bg-[#1F293D] rounded-full overflow-hidden">
-                          <div className="bg-[#10b981] h-full rounded-full" style={{ width: `${evolabData.running_ability.sub_scores.lactate_threshold.score}%` }}></div>
+                          <div className="bg-[#10b981] h-full rounded-full" style={{ width: `${safeEvolab.running_ability.sub_scores.lactate_threshold.score}%` }}></div>
                         </div>
-                        <span className="text-[9px] text-slate-500 block mt-0.5">{evolabData.running_ability.sub_scores.lactate_threshold.pace_range}</span>
+                        <span className="text-[9px] text-slate-500 block mt-0.5">{safeEvolab.running_ability.sub_scores.lactate_threshold.pace_range}</span>
                       </div>
                       <div>
                         <div className="flex justify-between text-[10px] text-slate-400 mb-0.5">
                           <span>速度耐力</span>
-                          <span className="font-semibold text-white">{evolabData.running_ability.sub_scores.speed_endurance.score}</span>
+                          <span className="font-semibold text-white">{safeEvolab.running_ability.sub_scores.speed_endurance.score}</span>
                         </div>
                         <div className="w-full h-1.5 bg-[#1F293D] rounded-full overflow-hidden">
-                          <div className="bg-[#eab308] h-full rounded-full" style={{ width: `${evolabData.running_ability.sub_scores.speed_endurance.score}%` }}></div>
+                          <div className="bg-[#eab308] h-full rounded-full" style={{ width: `${safeEvolab.running_ability.sub_scores.speed_endurance.score}%` }}></div>
                         </div>
-                        <span className="text-[9px] text-slate-500 block mt-0.5">{evolabData.running_ability.sub_scores.speed_endurance.pace_range}</span>
+                        <span className="text-[9px] text-slate-500 block mt-0.5">{safeEvolab.running_ability.sub_scores.speed_endurance.pace_range}</span>
                       </div>
                     </div>
                   </div>
@@ -1288,23 +1339,23 @@ const CorosDashboardPage = () => {
                   </div>
                   <div className="flex flex-col justify-between h-[180px]">
                     <div>
-                      <h3 className="text-xl font-bold text-[#f59e0b]">{evolabData.training_status.state}</h3>
+                      <h3 className="text-xl font-bold text-[#f59e0b]">{safeEvolab.training_status.state}</h3>
                       <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                        {evolabData.training_status.description}
+                        {safeEvolab.training_status.description}
                       </p>
                     </div>
                     <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-800 text-center">
                       <div>
                         <span className="text-slate-500 text-[10px] uppercase block mb-1">短期负荷</span>
-                        <span className="text-lg font-extrabold text-white">{evolabData.training_status.short_term_load}</span>
+                        <span className="text-lg font-extrabold text-white">{safeEvolab.training_status.short_term_load}</span>
                       </div>
                       <div>
                         <span className="text-slate-500 text-[10px] uppercase block mb-1">长期负荷</span>
-                        <span className="text-lg font-extrabold text-white">{evolabData.training_status.long_term_load}</span>
+                        <span className="text-lg font-extrabold text-white">{safeEvolab.training_status.long_term_load}</span>
                       </div>
                       <div>
                         <span className="text-slate-500 text-[10px] uppercase block mb-1">负荷比</span>
-                        <span className="text-lg font-extrabold text-[#f59e0b]">{evolabData.training_status.load_ratio}%</span>
+                        <span className="text-lg font-extrabold text-[#f59e0b]">{safeEvolab.training_status.load_ratio}%</span>
                       </div>
                     </div>
                   </div>
@@ -1320,13 +1371,13 @@ const CorosDashboardPage = () => {
                     <div className="flex justify-between items-baseline mb-2">
                       <span className="text-xs text-slate-400">今天</span>
                       <div className="flex items-baseline space-x-1.5">
-                        <span className={styles.indicatorValue}>{evolabData.seven_day_performance.score}%</span>
-                        <span className="text-xs text-[#10b981] font-semibold">{evolabData.seven_day_performance.status}</span>
+                        <span className={styles.indicatorValue}>{safeEvolab.seven_day_performance.score}%</span>
+                        <span className="text-xs text-[#10b981] font-semibold">{safeEvolab.seven_day_performance.status}</span>
                       </div>
                     </div>
                     <div className="w-full h-[110px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart data={evolabData.seven_day_performance.daily_data}>
+                        <ComposedChart data={safeEvolab.seven_day_performance.daily_data}>
                           <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
                           <YAxis domain={[50, 100]} hide />
                           <Bar dataKey="value" fill="#10b981" radius={[3, 3, 0, 0]} barSize={12} />
@@ -1378,16 +1429,16 @@ const CorosDashboardPage = () => {
                   </div>
                   <div className="flex items-center justify-around h-[200px]">
                     <div className="flex flex-col justify-center">
-                      <span className="text-5xl font-black text-[#10b981]">{evolabData.recovery.percentage}%</span>
-                      <span className="text-xs text-slate-400 mt-2 block">{evolabData.recovery.remaining_hours} 小时后恢复100%</span>
-                      <span className="text-[10px] text-slate-500 font-semibold mt-0.5 uppercase tracking-wide">{evolabData.recovery.advice}</span>
+                      <span className="text-5xl font-black text-[#10b981]">{safeEvolab.recovery.percentage}%</span>
+                      <span className="text-xs text-slate-400 mt-2 block">{safeEvolab.recovery.remaining_hours} 小时后恢复100%</span>
+                      <span className="text-[10px] text-slate-500 font-semibold mt-0.5 uppercase tracking-wide">{safeEvolab.recovery.advice}</span>
                     </div>
                     <div className="w-24 h-24 text-[#10b981] opacity-90 flex items-center justify-center relative">
                       <svg className="w-20 h-20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z" />
                       </svg>
                       <div className="absolute bottom-0 w-full h-1.5 bg-[#1F293D] rounded-full overflow-hidden">
-                        <div className="bg-[#10b981] h-full rounded-full" style={{ width: `${evolabData.recovery.percentage}%` }}></div>
+                        <div className="bg-[#10b981] h-full rounded-full" style={{ width: `${safeEvolab.recovery.percentage}%` }}></div>
                       </div>
                     </div>
                   </div>
@@ -1397,12 +1448,12 @@ const CorosDashboardPage = () => {
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>
                     <span>本周运动记录</span>
-                    <span className="text-xs text-slate-400 font-semibold">总距离 <strong className="text-[#20B2AA] font-black">{evolabData.weekly_workouts.total_distance} km</strong></span>
+                    <span className="text-xs text-slate-400 font-semibold">总距离 <strong className="text-[#20B2AA] font-black">{safeEvolab.weekly_workouts.total_distance} km</strong></span>
                   </div>
                   <div className="h-[200px] flex flex-col justify-end">
                     <div className="w-full h-[150px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart data={evolabData.weekly_workouts.chart_data}>
+                        <ComposedChart data={safeEvolab.weekly_workouts.chart_data}>
                           <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
                           <YAxis hide />
                           <Tooltip 
@@ -1423,17 +1474,17 @@ const CorosDashboardPage = () => {
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>
                     <span>乳酸阈心率区间</span>
-                    <span className="text-xs text-slate-400 font-semibold">阈值心率 <strong className="text-rose-500 font-black">{evolabData.heart_rate_zones.threshold_hr} bpm</strong></span>
+                    <span className="text-xs text-slate-400 font-semibold">阈值心率 <strong className="text-rose-500 font-black">{safeEvolab.heart_rate_zones.threshold_hr} bpm</strong></span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col justify-center border-r border-slate-800/80 pr-4">
                       <div className="text-[10px] text-slate-500 uppercase">最大心率 / 静息心率</div>
                       <div className="text-2xl font-black text-white mt-1">
-                        {evolabData.heart_rate_zones.max_hr} <span className="text-xs text-slate-500 font-normal">/ {evolabData.heart_rate_zones.resting_hr} bpm</span>
+                        {safeEvolab.heart_rate_zones.max_hr} <span className="text-xs text-slate-500 font-normal">/ {safeEvolab.heart_rate_zones.resting_hr} bpm</span>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      {evolabData.heart_rate_zones.zones.map((z: any, idx: number) => (
+                      {safeEvolab.heart_rate_zones.zones.map((z: any, idx: number) => (
                         <div key={idx} className="flex justify-between items-center text-xs">
                           <div className="flex items-center space-x-2">
                             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: z.color }}></span>
@@ -1450,17 +1501,17 @@ const CorosDashboardPage = () => {
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>
                     <span>乳酸阈配速区间</span>
-                    <span className="text-xs text-slate-400 font-semibold">阈值配速 <strong className="text-[#20B2AA] font-black">{evolabData.pace_zones.threshold_pace}</strong></span>
+                    <span className="text-xs text-slate-400 font-semibold">阈值配速 <strong className="text-[#20B2AA] font-black">{safeEvolab.pace_zones.threshold_pace}</strong></span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col justify-center border-r border-slate-800/80 pr-4">
                       <div className="text-[10px] text-slate-500 uppercase">乳酸阈配速</div>
                       <div className="text-2xl font-black text-[#20B2AA] mt-1">
-                        {evolabData.pace_zones.threshold_pace} <span className="text-xs text-slate-500 font-normal">/km</span>
+                        {safeEvolab.pace_zones.threshold_pace} <span className="text-xs text-slate-500 font-normal">/km</span>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      {evolabData.pace_zones.zones.map((z: any, idx: number) => (
+                      {safeEvolab.pace_zones.zones.map((z: any, idx: number) => (
                         <div key={idx} className="flex justify-between items-center text-xs">
                           <div className="flex items-center space-x-2">
                             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: z.color }}></span>
@@ -1516,7 +1567,7 @@ const CorosDashboardPage = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/40">
-                      {evolabData.race_predictions.map((p: any, idx: number) => (
+                      {safeEvolab.race_predictions.map((p: any, idx: number) => (
                         <tr key={idx} className="hover:bg-slate-800/20 text-slate-300">
                           <td className="py-3 font-semibold text-slate-200">{p.project}</td>
                           <td className="py-3 text-right font-black text-[#20B2AA]">{p.time}</td>
@@ -1532,11 +1583,11 @@ const CorosDashboardPage = () => {
                 <div className={styles.card}>
                   <div className={styles.cardTitle}>
                     <span>HRV 评估 (最近7天)</span>
-                    <span className="text-xs text-slate-400 font-semibold">昨晚平均 <strong className="text-white font-black">{evolabData.hrv_eval.resting_average}</strong> (正常范围 {evolabData.hrv_eval.normal_range})</span>
+                    <span className="text-xs text-slate-400 font-semibold">昨晚平均 <strong className="text-white font-black">{safeEvolab.hrv_eval.resting_average}</strong> (正常范围 {safeEvolab.hrv_eval.normal_range})</span>
                   </div>
                   <div className="h-[180px] w-full mt-4">
                     <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={evolabData.hrv_eval.chart_data}>
+                      <ComposedChart data={safeEvolab.hrv_eval.chart_data}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
                         <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
                         <YAxis domain={[30, 60]} hide />
@@ -1572,7 +1623,7 @@ const CorosDashboardPage = () => {
                   </div>
                   <div className="h-[220px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={evolabData.training_load_history}>
+                      <ComposedChart data={safeEvolab.training_load_history}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
                         <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
                         <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
@@ -1642,34 +1693,34 @@ const CorosDashboardPage = () => {
                     <div className="bg-[#161C2C] border border-slate-800/60 rounded-lg p-4 flex flex-col justify-between">
                       <span className="text-[10px] text-slate-500 font-bold block mb-1">总距离</span>
                       <div>
-                        <span className="text-2xl font-black text-[#38bdf8]">{evolabData.training_summary_4weeks[summaryType].distance}</span>
+                        <span className="text-2xl font-black text-[#38bdf8]">{safeEvolab.training_summary_4weeks[summaryType].distance}</span>
                         <span className="text-xs text-slate-400 font-bold ml-1">km</span>
                       </div>
                     </div>
                     <div className="bg-[#161C2C] border border-slate-800/60 rounded-lg p-4 flex flex-col justify-between">
                       <span className="text-[10px] text-slate-500 font-bold block mb-1">总时间</span>
                       <div>
-                        <span className="text-2xl font-black text-white">{evolabData.training_summary_4weeks[summaryType].time}</span>
+                        <span className="text-2xl font-black text-white">{safeEvolab.training_summary_4weeks[summaryType].time}</span>
                       </div>
                     </div>
                     <div className="bg-[#161C2C] border border-slate-800/60 rounded-lg p-4 flex flex-col justify-between">
                       <span className="text-[10px] text-slate-500 font-bold block mb-1">总负荷</span>
                       <div>
-                        <span className="text-2xl font-black text-amber-500">{evolabData.training_summary_4weeks[summaryType].load}</span>
+                        <span className="text-2xl font-black text-amber-500">{safeEvolab.training_summary_4weeks[summaryType].load}</span>
                         <span className="text-xs text-slate-500 font-semibold ml-1">TL</span>
                       </div>
                     </div>
                     <div className="bg-[#161C2C] border border-slate-800/60 rounded-lg p-4 flex flex-col justify-between">
                       <span className="text-[10px] text-slate-500 font-bold block mb-1">总次数</span>
                       <div>
-                        <span className="text-2xl font-black text-emerald-500">{evolabData.training_summary_4weeks[summaryType].count}</span>
+                        <span className="text-2xl font-black text-emerald-500">{safeEvolab.training_summary_4weeks[summaryType].count}</span>
                         <span className="text-xs text-slate-500 font-semibold ml-1">次</span>
                       </div>
                     </div>
                   </div>
                   <div className="mt-4 pt-3 border-t border-slate-850 flex justify-between items-center text-xs text-slate-400 px-1">
                     <span>平均心率</span>
-                    <span className="font-extrabold text-white">{evolabData.training_summary_4weeks[summaryType].avg_hr} <span className="text-[10px] text-slate-500 font-normal">bpm</span></span>
+                    <span className="font-extrabold text-white">{safeEvolab.training_summary_4weeks[summaryType].avg_hr} <span className="text-[10px] text-slate-500 font-normal">bpm</span></span>
                   </div>
                 </div>
 
@@ -1682,7 +1733,7 @@ const CorosDashboardPage = () => {
                   </div>
                   <div className="h-[220px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={evolabData.training_load_history}>
+                      <ComposedChart data={safeEvolab.training_load_history}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
                         <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
                         <YAxis domain={[65, 75]} axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} />
