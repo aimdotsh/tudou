@@ -286,6 +286,10 @@ def update_or_create_activity(session, run_activity):
         print(f"something wrong with {run_activity.id}")
         print(str(e))
 
+    # 历史遗留或高驰默认命名为“天津市 跑步”时，自动转换为 "Morning Run"
+    if activity and activity.name == "天津市 跑步":
+        activity.name = "Morning Run"
+
     return created
 
 
