@@ -14,6 +14,7 @@ from gpxtrackposter import (
     calendar_drawer,
     heatmap_drawer,
     ayeartotal_drawer,
+    snake_drawer,
 )
 from gpxtrackposter.exceptions import ParameterError, PosterError
 
@@ -34,6 +35,7 @@ def main():
         "calendar": calendar_drawer.CalendarDrawer(p),
         "heatmap": heatmap_drawer.HeatmapDrawer(p),
         "ayeartotal": ayeartotal_drawer.AyeartotalDrawer(p),
+        "snake": snake_drawer.SnakeDrawer(p),
     }
 
     args_parser = argparse.ArgumentParser()
@@ -303,6 +305,10 @@ def main():
         p.drawer_type = "ayeartotal"
     if args.type == "github":
         p.height = 55 + p.years.real_year * 43
+    elif args.type == "snake":
+        p.width = 880
+        p.height = 192
+        p.drawer_type = "plain"
     p.github_style = args.github_style
     # for special circular
     if is_circular:
