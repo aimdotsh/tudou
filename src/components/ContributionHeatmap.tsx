@@ -510,11 +510,11 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
         key={String(selectedYear)}
       >
         {yearData.map(({ year: yr, grid, max, monthPositions, stats }, idx) => {
-          const squareSize = 11
-          const gap = 3
+          const squareSize = 14.5
+          const gap = 4
           const step = squareSize + gap
-          const leftMargin = 22
-          const topMargin = 20
+          const leftMargin = 24
+          const topMargin = 24
           const numWeeks = grid.length
           const svgWidth = leftMargin + numWeeks * step
           const svgHeight = topMargin + 7 * step
@@ -560,9 +560,10 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
                       <text
                         key={i}
                         x={x}
-                        y={12}
+                        y={14}
                         fill="var(--color-muted)"
-                        fontSize="10"
+                        fontSize="11"
+                        fontWeight="500"
                         fontFamily="sans-serif"
                       >
                         {text}
@@ -575,10 +576,10 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
                     d ? (
                       <text
                         key={i}
-                        x={16}
-                        y={topMargin + i * step + 9}
+                        x={17}
+                        y={topMargin + i * step + 11}
                         fill="var(--color-muted)"
-                        fontSize="9"
+                        fontSize="10"
                         textAnchor="end"
                         fontFamily="sans-serif"
                       >
@@ -610,8 +611,8 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
                           y={y}
                           width={squareSize}
                           height={squareSize}
-                          rx={2.5}
-                          ry={2.5}
+                          rx={3}
+                          ry={3}
                           fill={bgColor}
                           className="transition-opacity hover:opacity-75 cursor-pointer"
                           onClick={() => { if (day.activities.length > 0) onSelectActivity?.(day.activities[0]) }}

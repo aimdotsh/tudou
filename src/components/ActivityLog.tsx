@@ -121,6 +121,16 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
   const pageData = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
+  const [windowStart, setWindowStart] = useState(0)
+  const VISIBLE_YEAR_COUNT = 4
+  const visibleYears = years.slice(windowStart, windowStart + VISIBLE_YEAR_COUNT)
+  const canScrollLeft = windowStart > 0
+  const canScrollRight = windowStart + VISIBLE_YEAR_COUNT < years.length
+
+  const shiftWindow = (dir: -1 | 1) => {
+    setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, years.length - VISIBLE_YEAR_COUNT)))
+  }
+
   const gymTypes = WORKOUT_TYPES.filter(t => activities.some(a => a.type === t))
 
   const logTitle = filter === 'Run'  ? (locale === 'zh' ? '跑步记录' : 'Run Log')
@@ -138,21 +148,53 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
         </span>
       </div>
 
-      {/* Year tabs - 单行可平滑横滑，解决手机端多行堆叠臃肿问题 */}
-      <div className="flex items-center gap-1.5 sm:gap-2 mb-3 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5 max-w-full">
+      {/* Year tabs - 带 < > 箭头的年份滑动选择器（与活动热力图完全一致） */}
+      <div className="flex items-center gap-1.5 mb-3 overflow-x-auto no-scrollbar py-0.5 max-w-full">
         <button
-          onClick={() => setYear(null)}
-          className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${year === null ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+          onClick={() => { setYear(null); setPage(0) }}
+          className={`px-2.5 py-1 rounded text-xs font-medium transition-all shrink-0 ${
+            year === null ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+          }`}
         >
-          All
+          {locale === 'zh' ? '全部' : 'ALL'}
         </button>
-        {years.map((y) => (
-          <button key={y} onClick={() => { setYear(y); setPage(0) }}
-            className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${year === y ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+
+        <span className="w-px h-3 bg-[var(--color-border)] shrink-0" />
+
+        {/* Left arrow */}
+        <button
+          onClick={() => shiftWindow(-1)}
+          disabled={!canScrollLeft}
+          className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
+        >
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* Visible year buttons */}
+        {visibleYears.map((y) => (
+          <button
+            key={y}
+            onClick={() => { setYear(y); setPage(0) }}
+            className={`px-2.5 py-1 rounded text-xs font-medium transition-all shrink-0 ${
+              year === y ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+            }`}
           >
             {y}
           </button>
         ))}
+
+        {/* Right arrow */}
+        <button
+          onClick={() => shiftWindow(1)}
+          disabled={!canScrollRight}
+          className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
+        >
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
 
       {/* Gym: type filter / Normal: distance filter - 同样支持单行横滑 */}
