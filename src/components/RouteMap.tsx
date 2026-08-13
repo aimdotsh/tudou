@@ -33,18 +33,18 @@ function AnimatedSingleTrack({ item }: { item: any }) {
 
   return (
     <g key={item.key}>
-      {/* 1.【底层】：浅色完整的静态运动轨迹路线 (呈现轨迹全貌) */}
+      {/* 1.【底层】：浅色完整的静态运动轨迹路线 (呈现全貌) */}
       <path
         d={item.d}
         fill="none"
         stroke={item.baseLightColor}
         strokeWidth="6"
-        strokeOpacity="0.65"
+        strokeOpacity="0.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
-      {/* 2.【中层】：深色发光轨迹线，绝对从【起点】(dashLength) 顺方向绘制充填到【终点】(0) */}
+      {/* 2.【中层】：从【始】点延伸画向【终】点的实时生长轨迹线 */}
       <path
         ref={pathRef}
         d={item.d}
@@ -57,59 +57,58 @@ function AnimatedSingleTrack({ item }: { item: any }) {
         style={{
           strokeDasharray: dashLength,
           strokeDashoffset: dashLength,
-          animation: `strokeGrowFromStartToEnd 3.2s cubic-bezier(0.35, 0, 0.25, 1) infinite`,
+          animation: `strokeGrowStrict 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
         }}
         filter="url(#svgGlow)"
       />
 
-      {/* 3.【顶层】：在生长最前端领跑的高亮彗星头部流光 */}
-      <path
-        d={item.d}
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="5"
-        strokeOpacity="0.95"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{
-          strokeDasharray: `36 ${dashLength + 100}`,
-          strokeDashoffset: dashLength,
-          animation: `strokeCometHeadFromStart 3.2s cubic-bezier(0.35, 0, 0.25, 1) infinite`,
-        }}
-      />
+      {/* 3.【顶层-核心运动体】：绝对从【始】点平滑沿着 SVG Path 奔跑运行到【终】点的真实运动光珠 */}
+      <g>
+        {/* 外围白色发光晕 */}
+        <circle r="7" fill="#ffffff" opacity="0.95" filter="url(#svgGlow)">
+          <animateMotion
+            path={item.d}
+            dur="3.5s"
+            repeatCount="indefinite"
+            keyTimes="0; 0.8; 1"
+            keyPoints="0; 1; 1"
+            calcMode="linear"
+          />
+        </circle>
+        {/* 内部高彩运动小球 */}
+        <circle r="4.5" fill={item.flowDarkColor} stroke="#ffffff" strokeWidth="1.5">
+          <animateMotion
+            path={item.d}
+            dur="3.5s"
+            repeatCount="indefinite"
+            keyTimes="0; 0.8; 1"
+            keyPoints="0; 1; 1"
+            calcMode="linear"
+          />
+        </circle>
+      </g>
 
       {/* 4. 起点【始】（绿色徽章）与终点【终】（红色徽章）里程碑标志 */}
       {/* 起点 - 始 */}
-      <g transform={`translate(${item.startX}, ${item.startY})`} className="z-10 cursor-pointer">
+      <g transform={`translate(${item.startX}, ${item.startY})`} className="z-10">
         <circle r="9" fill="#10b981" opacity="0.3" className="animate-ping" />
         <circle r="7" fill="#10b981" stroke="#ffffff" strokeWidth="1.5" />
         <text y="2.5" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="system-ui">始</text>
       </g>
 
       {/* 终点 - 终 */}
-      <g transform={`translate(${item.endX}, ${item.endY})`} className="z-10 cursor-pointer">
+      <g transform={`translate(${item.endX}, ${item.endY})`} className="z-10">
         <circle r="9" fill="#ef4444" opacity="0.3" className="animate-ping" />
         <circle r="7" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
         <text y="2.5" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="system-ui">终</text>
       </g>
 
       <style>{`
-        @keyframes strokeGrowFromStartToEnd {
+        @keyframes strokeGrowStrict {
           0% {
             stroke-dashoffset: ${dashLength};
           }
-          75% {
-            stroke-dashoffset: 0;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
-        }
-        @keyframes strokeCometHeadFromStart {
-          0% {
-            stroke-dashoffset: ${dashLength};
-          }
-          75% {
+          80% {
             stroke-dashoffset: 0;
           }
           100% {
