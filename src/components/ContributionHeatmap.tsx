@@ -510,11 +510,11 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
         key={String(selectedYear)}
       >
         {yearData.map(({ year: yr, grid, max, monthPositions, stats }, idx) => {
-          const squareSize = 14.5
+          const squareSize = 16
           const gap = 4
           const step = squareSize + gap
-          const leftMargin = 24
-          const topMargin = 24
+          const leftMargin = 26
+          const topMargin = 26
           const numWeeks = grid.length
           const svgWidth = leftMargin + numWeeks * step
           const svgHeight = topMargin + 7 * step
@@ -546,11 +546,11 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
                 </div>
               )}
 
-              {/* Vector SVG Heatmap */}
-              <div className="w-full">
+              {/* Vector SVG Heatmap - 支持手机端高清流畅划动，保障大图标物理尺寸 */}
+              <div className="w-full overflow-x-auto no-scrollbar touch-pan-x pb-1">
                 <svg
                   viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-                  className="w-full h-auto text-[var(--color-text)] select-none block overflow-visible"
+                  className="w-full h-auto min-w-[680px] text-[var(--color-text)] select-none block overflow-visible"
                 >
                   {/* Month Labels */}
                   {monthPositions.map((m, i) => {
