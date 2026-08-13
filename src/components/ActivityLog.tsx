@@ -104,6 +104,20 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
     }
   }, [selectedActivity?.run_id])
 
+  const handleSelectActivity = (act: Activity) => {
+    const isSame = selectedActivity?.run_id === act.run_id
+    const nextSel = isSame ? null : act
+    onSelectActivity?.(nextSel)
+
+    if (nextSel) {
+      // 平滑滚动到轨迹地图区域
+      const mapEl = document.getElementById('route-map-section')
+      if (mapEl) {
+        mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }
+  }
+
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
   const pageData = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
@@ -117,41 +131,41 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   return (
     <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-6 w-full max-w-full min-w-0 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold">{logTitle}</h2>
-        <span className="text-sm text-[var(--color-muted)]">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <h2 className="text-base sm:text-lg font-bold">{logTitle}</h2>
+        <span className="text-xs sm:text-sm text-[var(--color-muted)]">
           {t('showing')} {page * PAGE_SIZE + 1}-{Math.min((page + 1) * PAGE_SIZE, sorted.length)} {t('of')} {sorted.length}
         </span>
       </div>
 
-      {/* Year tabs */}
-      <div className="flex items-center gap-2 mb-3 flex-wrap">
+      {/* Year tabs - 单行可平滑横滑，解决手机端多行堆叠臃肿问题 */}
+      <div className="flex items-center gap-1.5 sm:gap-2 mb-3 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5 max-w-full">
         <button
           onClick={() => setYear(null)}
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${year === null ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+          className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${year === null ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
         >
           All
         </button>
         {years.map((y) => (
           <button key={y} onClick={() => { setYear(y); setPage(0) }}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${year === y ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+            className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${year === y ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
           >
             {y}
           </button>
         ))}
       </div>
 
-      {/* Gym: type filter / Normal: distance filter */}
+      {/* Gym: type filter / Normal: distance filter - 同样支持单行横滑 */}
       {isGym ? (
-        <div className="flex items-center gap-2 mb-5 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-4 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5 max-w-full">
           <button onClick={() => { setGymTypeFilter('all'); setPage(0) }}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${gymTypeFilter === 'all' ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+            className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${gymTypeFilter === 'all' ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
           >
             {t('all')}
           </button>
           {gymTypes.map(gt => (
             <button key={gt} onClick={() => { setGymTypeFilter(gt === gymTypeFilter ? 'all' : gt); setPage(0) }}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${gymTypeFilter === gt ? 'text-white' : 'bg-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+              className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${gymTypeFilter === gt ? 'text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
               style={gymTypeFilter === gt ? { backgroundColor: typeColor(gt) } : {}}
             >
               {typeLabel(gt, locale)}
@@ -159,10 +173,10 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
           ))}
         </div>
       ) : (
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-4 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5 max-w-full">
           {([['all', t('all')], ['10', '10km+'], ['20', '20km+'], ['40', '40km+']] as [DistanceFilter, string][]).map(([val, label]) => (
             <button key={val} onClick={() => { setDistFilter(val); setPage(0) }}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${distFilter === val ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
+              className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 transition-all ${distFilter === val ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-border)]/60 text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}
             >
               {label}
             </button>
@@ -170,81 +184,139 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
         </div>
       )}
 
-      {/* Table */}
-      <div className="overflow-x-auto no-scrollbar max-w-full -mx-4 sm:mx-0 px-4 sm:px-0">
+      {/* 📱 移动手机端 Mobile 专属响应式精致 Card 列表 View */}
+      <div className="block md:hidden space-y-2 mb-4">
+        {pageData.map((a) => {
+          const isSelected = selectedActivity?.run_id === a.run_id
+          const dateStr = a.start_date_local.slice(0, 10) // 剔除时间只显示日期 YYYY-MM-DD
+          return (
+            <div
+              key={a.run_id}
+              onClick={() => handleSelectActivity(a)}
+              className={`p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
+                isSelected
+                  ? 'bg-[var(--color-accent)]/10 border-[var(--color-accent)] shadow-sm'
+                  : 'bg-[var(--color-bg)]/50 border-[var(--color-border)]/60 hover:bg-[var(--color-bg)]'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-border)]/40 flex items-center justify-center text-sm shrink-0">
+                    {typeIcon(a.type)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold truncate leading-tight">
+                      {a.name || (a.type === 'Run' ? t('run') : t('ride'))}
+                    </p>
+                    <p className="text-[10px] text-[var(--color-muted)] mt-0.5 font-mono">
+                      {dateStr} · {a.type}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                  {isGym ? (
+                    <>
+                      <p className="text-xs font-mono font-bold">{formatSecs(parseTimeSecs(a.moving_time))}</p>
+                      <p className="text-[10px] text-[var(--color-muted)] mt-0.5">
+                        {a.average_heartrate ? `${Math.round(a.average_heartrate)} bpm` : '--'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs font-mono font-bold text-[var(--color-accent)]">
+                        {(a.distance / 1000).toFixed(1)} <span className="text-[10px] font-normal text-[var(--color-muted)]">km</span>
+                      </p>
+                      <p className="text-[10px] text-[var(--color-muted)] font-mono mt-0.5">
+                        {formatDuration(a.moving_time)} · {a.type === 'Run' ? formatPace(a.average_speed) : `${(a.average_speed * 3.6).toFixed(1)}km/h`}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 💻 PC 桌面端保留精美 7 列宽表 View */}
+      <div className="hidden md:block overflow-x-auto no-scrollbar max-w-full">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-[var(--color-muted)] border-b border-[var(--color-border)]">
-              <th className="pb-3 font-medium">{t('date')}</th>
-              <th className="pb-3 font-medium">{t('type')}</th>
+            <tr className="text-left text-[var(--color-muted)] border-b border-[var(--color-border)] whitespace-nowrap">
+              <th className="pb-3 font-medium min-w-[95px]">{t('date')}</th>
+              <th className="pb-3 font-medium min-w-[80px]">{t('type')}</th>
               <th className="pb-3 font-medium">{t('name')}</th>
               {isGym ? (
                 <>
-                  <th className="pb-3 font-medium">{t('duration')}</th>
-                  <th className="pb-3 font-medium">{t('hr')}</th>
+                  <th className="pb-3 font-medium min-w-[70px]">{t('duration')}</th>
+                  <th className="pb-3 font-medium min-w-[65px]">{t('hr')}</th>
                 </>
               ) : (
                 <>
-                  <th className="pb-3 font-medium">{t('distance')}</th>
-                  <th className="pb-3 font-medium">{t('duration')}</th>
-                  <th className="pb-3 font-medium">{t('pace')}</th>
-                  <th className="pb-3 font-medium">{t('hr')}</th>
+                  <th className="pb-3 font-medium min-w-[75px]">{t('distance')}</th>
+                  <th className="pb-3 font-medium min-w-[75px]">{t('duration')}</th>
+                  <th className="pb-3 font-medium min-w-[80px]">{t('pace')}</th>
+                  <th className="pb-3 font-medium min-w-[65px]">{t('hr')}</th>
                 </>
               )}
             </tr>
           </thead>
           <tbody>
-            {pageData.map((a) => (
-              <tr
-                key={a.run_id}
-                onClick={() => onSelectActivity?.(selectedActivity?.run_id === a.run_id ? null : a)}
-                className={`border-b border-[var(--color-border)]/30 cursor-pointer transition-colors ${
-                  selectedActivity?.run_id === a.run_id
-                    ? 'bg-[var(--color-accent)]/10 border-l-2 border-l-[var(--color-accent)]'
-                    : 'hover:bg-[var(--color-bg)]'
-                }`}
-              >
-                <td className="py-3 text-[var(--color-muted)]">{a.start_date_local.slice(0, 16).replace('T', ' ')}</td>
-                <td className="py-3">
+            {pageData.map((a) => {
+              const dateStr = a.start_date_local.slice(0, 10) // 剔除时间只保留干净的 YYYY-MM-DD
+              return (
+                <tr
+                  key={a.run_id}
+                  onClick={() => handleSelectActivity(a)}
+                  className={`border-b border-[var(--color-border)]/30 cursor-pointer transition-colors ${
+                    selectedActivity?.run_id === a.run_id
+                      ? 'bg-[var(--color-accent)]/10 border-l-2 border-l-[var(--color-accent)]'
+                      : 'hover:bg-[var(--color-bg)]'
+                  }`}
+                >
+                  <td className="py-3 text-[var(--color-muted)] font-mono whitespace-nowrap">{dateStr}</td>
+                  <td className="py-3 whitespace-nowrap">
+                    {isGym ? (
+                      <span className="text-xs font-medium px-1.5 py-0.5 rounded-full" style={{ backgroundColor: typeColor(a.type) + '22', color: typeColor(a.type) }}>
+                        {typeIcon(a.type)} {typeLabel(a.type, locale)}
+                      </span>
+                    ) : (
+                      <span className="text-[var(--color-muted)]">{typeIcon(a.type)} {a.type}</span>
+                    )}
+                  </td>
+                  <td className="py-3">{a.name || (a.type === 'Run' ? t('run') : t('ride'))}</td>
                   {isGym ? (
-                    <span className="text-xs font-medium px-1.5 py-0.5 rounded-full" style={{ backgroundColor: typeColor(a.type) + '22', color: typeColor(a.type) }}>
-                      {typeIcon(a.type)} {typeLabel(a.type, locale)}
-                    </span>
+                    <>
+                      <td className="py-3 font-mono font-medium whitespace-nowrap">{formatSecs(parseTimeSecs(a.moving_time))}</td>
+                      <td className="py-3 text-[var(--color-muted)] font-mono whitespace-nowrap">{a.average_heartrate ? `${Math.round(a.average_heartrate)} bpm` : '--'}</td>
+                    </>
                   ) : (
-                    <span className="text-[var(--color-muted)]">{typeIcon(a.type)} {a.type}</span>
+                    <>
+                      <td className="py-3 font-mono font-medium whitespace-nowrap">
+                        {(a.distance / 1000).toFixed(1)}<span className="text-[var(--color-muted)] ml-1 font-normal text-xs">km</span>
+                      </td>
+                      <td className="py-3 text-[var(--color-muted)] font-mono whitespace-nowrap">{formatDuration(a.moving_time)}</td>
+                      <td className="py-3 text-[var(--color-muted)] font-mono whitespace-nowrap">
+                        {a.type === 'Run' ? formatPace(a.average_speed) : `${(a.average_speed * 3.6).toFixed(1)} km/h`}
+                      </td>
+                      <td className="py-3 text-[var(--color-muted)] font-mono whitespace-nowrap">{a.average_heartrate ? Math.round(a.average_heartrate) : '--'}</td>
+                    </>
                   )}
-                </td>
-                <td className="py-3">{a.name || (a.type === 'Run' ? t('run') : t('ride'))}</td>
-                {isGym ? (
-                  <>
-                    <td className="py-3 font-mono font-medium">{formatSecs(parseTimeSecs(a.moving_time))}</td>
-                    <td className="py-3 text-[var(--color-muted)]">{a.average_heartrate ? `${Math.round(a.average_heartrate)} bpm` : '--'}</td>
-                  </>
-                ) : (
-                  <>
-                    <td className="py-3 font-mono font-medium">
-                      {(a.distance / 1000).toFixed(1)}<span className="text-[var(--color-muted)] ml-1 font-normal text-xs">km</span>
-                    </td>
-                    <td className="py-3 text-[var(--color-muted)]">{formatDuration(a.moving_time)}</td>
-                    <td className="py-3 text-[var(--color-muted)]">
-                      {a.type === 'Run' ? formatPace(a.average_speed) : `${(a.average_speed * 3.6).toFixed(1)} km/h`}
-                    </td>
-                    <td className="py-3 text-[var(--color-muted)]">{a.average_heartrate ? Math.round(a.average_heartrate) : '--'}</td>
-                  </>
-                )}
-              </tr>
-            ))}
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--color-border)]">
+      <div className="flex items-center justify-between mt-4 pt-3 sm:pt-4 border-t border-[var(--color-border)]">
         <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}
-          className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors">←</button>
-        <span className="text-sm text-[var(--color-muted)]">{t('page')} {page + 1} {t('pageOf')} {totalPages} {t('pages')}</span>
+          className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors px-2 py-1">←</button>
+        <span className="text-xs sm:text-sm text-[var(--color-muted)] font-mono">{t('page')} {page + 1} {t('pageOf')} {totalPages} {t('pages')}</span>
         <button onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
-          className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors">→</button>
+          className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors px-2 py-1">→</button>
       </div>
     </div>
   )
