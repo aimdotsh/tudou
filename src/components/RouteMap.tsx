@@ -44,7 +44,7 @@ function AnimatedSingleTrack({ item }: { item: any }) {
         strokeLinejoin="round"
       />
 
-      {/* 2.【中层】：深色轨迹线，从起点(0px)精准沿坐标几何路线平滑生长充填到终点(dashLength px) */}
+      {/* 2.【中层】：深色发光轨迹线，绝对从【起点】(dashLength) 顺方向绘制充填到【终点】(0) */}
       <path
         ref={pathRef}
         d={item.d}
@@ -56,40 +56,47 @@ function AnimatedSingleTrack({ item }: { item: any }) {
         strokeLinejoin="round"
         style={{
           strokeDasharray: dashLength,
-          animation: `strokeGrowFromStart 3.6s cubic-bezier(0.35, 0, 0.25, 1) infinite`,
+          strokeDashoffset: dashLength,
+          animation: `strokeGrowFromStartToEnd 3.2s cubic-bezier(0.35, 0, 0.25, 1) infinite`,
         }}
         filter="url(#svgGlow)"
       />
 
-      {/* 3.【顶层】：在生长前端领跑的高亮白炽流光粒子 */}
+      {/* 3.【顶层】：在生长最前端领跑的高亮彗星头部流光 */}
       <path
         d={item.d}
         fill="none"
         stroke="#ffffff"
         strokeWidth="5"
-        strokeOpacity="0.9"
+        strokeOpacity="0.95"
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          strokeDasharray: `45 ${dashLength + 100}`,
-          animation: `strokeCometHead 3.6s cubic-bezier(0.35, 0, 0.25, 1) infinite`,
+          strokeDasharray: `36 ${dashLength + 100}`,
+          strokeDashoffset: dashLength,
+          animation: `strokeCometHeadFromStart 3.2s cubic-bezier(0.35, 0, 0.25, 1) infinite`,
         }}
       />
 
-      {/* 4. 起点（绿色闪烁）与终点（红色闪烁）里程碑标志 */}
-      <g transform={`translate(${item.startX}, ${item.startY})`}>
-        <circle r="6" fill="#10b981" className="animate-ping opacity-75" />
-        <circle r="4.5" fill="#10b981" stroke="#ffffff" strokeWidth="1.5" />
+      {/* 4. 起点【始】（绿色徽章）与终点【终】（红色徽章）里程碑标志 */}
+      {/* 起点 - 始 */}
+      <g transform={`translate(${item.startX}, ${item.startY})`} className="z-10 cursor-pointer">
+        <circle r="9" fill="#10b981" opacity="0.3" className="animate-ping" />
+        <circle r="7" fill="#10b981" stroke="#ffffff" strokeWidth="1.5" />
+        <text y="2.5" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="system-ui">始</text>
       </g>
-      <g transform={`translate(${item.endX}, ${item.endY})`}>
-        <circle r="6" fill="#ef4444" className="animate-ping opacity-75" />
-        <circle r="4.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
+
+      {/* 终点 - 终 */}
+      <g transform={`translate(${item.endX}, ${item.endY})`} className="z-10 cursor-pointer">
+        <circle r="9" fill="#ef4444" opacity="0.3" className="animate-ping" />
+        <circle r="7" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
+        <text y="2.5" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="system-ui">终</text>
       </g>
 
       <style>{`
-        @keyframes strokeGrowFromStart {
+        @keyframes strokeGrowFromStartToEnd {
           0% {
-            stroke-dashoffset: -${dashLength};
+            stroke-dashoffset: ${dashLength};
           }
           75% {
             stroke-dashoffset: 0;
@@ -98,15 +105,15 @@ function AnimatedSingleTrack({ item }: { item: any }) {
             stroke-dashoffset: 0;
           }
         }
-        @keyframes strokeCometHead {
+        @keyframes strokeCometHeadFromStart {
           0% {
-            stroke-dashoffset: 45;
+            stroke-dashoffset: ${dashLength};
           }
           75% {
-            stroke-dashoffset: -${dashLength};
+            stroke-dashoffset: 0;
           }
           100% {
-            stroke-dashoffset: -${dashLength};
+            stroke-dashoffset: 0;
           }
         }
       `}</style>
