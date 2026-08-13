@@ -12,6 +12,44 @@ interface StatsCardsProps {
   onSelectActivity: (a: Activity) => void
 }
 
+function ProgressRing({ percent, size = 44, strokeWidth = 4, color = 'var(--color-accent)' }: { percent: number; size?: number; strokeWidth?: number; color?: string }) {
+  const radius = (size - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const clamped = Math.min(Math.max(percent, 0), 100)
+  const offset = circumference - (clamped / 100) * circumference
+
+  return (
+    <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="rotate-[-90deg]">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="var(--color-border)"
+          strokeWidth={strokeWidth}
+          strokeOpacity={0.6}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-700 ease-out"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold font-mono">
+        {Math.round(clamped)}%
+      </span>
+    </div>
+  )
+}
+
 export function StatsCards({ activities, allActivities, year, filter, onSelectActivity }: StatsCardsProps) {
   const { t, locale } = useLocale()
   const goal = GOALS[filter] ?? DEFAULT_GOAL
@@ -98,6 +136,11 @@ export function StatsCards({ activities, allActivities, year, filter, onSelectAc
   const lastWeekDistance = lastWeekActivities.reduce((s, a) => s + a.distance, 0)
   const weekDiff = weekDistance - lastWeekDistance
 
+  // Percentages
+  const yearPct = Math.min(goal.unit === 'time' ? (yearSeconds / (yearGoalMins * 60)) * 100 : (yearDistance / yearGoalMeters) * 100, 100)
+  const monthPct = Math.min(goal.unit === 'time' ? (monthSeconds / (monthGoalMins * 60)) * 100 : (monthDistance / monthGoalMeters) * 100, 100)
+  const weekPct = Math.min(goal.unit === 'time' ? (weekSeconds / (weekGoalMins * 60)) * 100 : (weekDistance / weekGoalMeters) * 100, 100)
+
   // Use local date string to avoid UTC offset issues
   function toLocalDateStr(d: Date): string {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -150,8 +193,12 @@ export function StatsCards({ activities, allActivities, year, filter, onSelectAc
       const seen = new Set<string>()
       while (true) {
         const key = `${d.getFullYear()}-${getWeekNumber(d)}`
-        if (weekSet.has(key) && !seen.has(key)) {
-          seen.add(key)
+        if (seen.has(key)) {
+          d = new Date(d.getTime() - 7 * 86400000)
+          continue
+        }
+        seen.add(key)
+        if (weekSet.has(key)) {
           currentWeekStreak++
           d = new Date(d.getTime() - 7 * 86400000)
         } else {
@@ -180,20 +227,19 @@ export function StatsCards({ activities, allActivities, year, filter, onSelectAc
   // Longest streak ever
   let longestStreak = 0
   if (sortedDates.length > 0) {
-    const ascending = [...sortedDates].reverse()
     let streak = 1
-    for (let i = 1; i < ascending.length; i++) {
-      const prev = new Date(ascending[i - 1] + 'T00:00:00')
-      const curr = new Date(ascending[i] + 'T00:00:00')
-      const diff = (curr.getTime() - prev.getTime()) / 86400000
-      if (diff === 1) {
+    longestStreak = 1
+    for (let i = 0; i < sortedDates.length - 1; i++) {
+      const curr = new Date(sortedDates[i] + 'T12:00:00')
+      const prev = new Date(sortedDates[i + 1] + 'T12:00:00')
+      const diffDays = Math.round((curr.getTime() - prev.getTime()) / 86400000)
+      if (diffDays === 1) {
         streak++
-      } else {
         longestStreak = Math.max(longestStreak, streak)
+      } else {
         streak = 1
       }
     }
-    longestStreak = Math.max(longestStreak, streak)
   }
 
   // Longest week streak - iterate all weeks from earliest to latest
@@ -226,111 +272,112 @@ export function StatsCards({ activities, allActivities, year, filter, onSelectAc
   const unit = filter === 'Run' ? t('runs') : filter === 'Ride' ? t('rides') : t('activities')
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      {/* Yearly Goal */}
-      <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0">
-        <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2 flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          {t('yearlyGoal')}
-        </p>
-        <p className="text-2xl sm:text-3xl font-bold font-mono truncate">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* Yearly Goal - 移动端全宽 MVP 牌面 */}
+      <div className="col-span-2 sm:col-span-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] flex items-center gap-1.5 font-medium">
+            <svg className="w-3.5 h-3.5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            {t('yearlyGoal')}
+          </p>
+          <ProgressRing percent={yearPct} size={44} color="#a855f7" />
+        </div>
+        <p className="text-2xl sm:text-3xl font-bold font-mono truncate -mt-2">
           {goal.unit === 'time' ? formatHours(yearSeconds) : formatDistance(yearDistance)}
-          <span className="text-sm sm:text-base font-normal text-[var(--color-muted)] ml-1">
+          <span className="text-xs sm:text-sm font-normal text-[var(--color-muted)] ml-1">
             / {goal.unit === 'time' ? `${Math.round(yearGoalMins / 60)}h` : `${goal.yearly} km`}
           </span>
         </p>
-        <div className="mt-3 h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
+        <div className="mt-3 h-1.5 bg-[var(--color-border)]/60 rounded-full overflow-hidden">
           <div
-            className="h-full bg-[var(--color-accent)] rounded-full transition-all"
-            style={{ width: `${Math.min(goal.unit === 'time' ? (yearSeconds / (yearGoalMins * 60)) * 100 : (yearDistance / yearGoalMeters) * 100, 100)}%` }}
+            className="h-full bg-gradient-to-r from-purple-500 to-[var(--color-accent)] rounded-full transition-all duration-500"
+            style={{ width: `${yearPct}%` }}
           />
         </div>
-        <div className="mt-3 flex items-center justify-between text-sm text-[var(--color-muted)]">
-          <span className="flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="mt-3 flex items-center justify-between text-xs sm:text-sm text-[var(--color-muted)]">
+          <span className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5 text-[var(--color-accent)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             {yearCount} {unit}
           </span>
-          <span>{formatHours(yearSeconds)}</span>
+          <span className="font-mono">{formatHours(yearSeconds)}</span>
         </div>
-        <p className={`mt-1.5 text-xs ${yearDiff >= 0 ? 'text-emerald-500' : 'text-red-400'}`}>
-          {yearDiff >= 0 ? '↗' : '↘'} {goal.unit === 'time' ? formatHours(Math.abs(yearDiff)) : `${formatDistance(Math.abs(yearDiff))} km`} {t('vsLastYear')}
-        </p>
+        <div className="mt-1.5 flex items-center justify-between">
+          <span className={`text-[11px] font-mono px-2 py-0.5 rounded ${yearDiff >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+            {yearDiff >= 0 ? '↗' : '↘'} {goal.unit === 'time' ? formatHours(Math.abs(yearDiff)) : `${formatDistance(Math.abs(yearDiff))} km`} {t('vsLastYear')}
+          </span>
+        </div>
       </div>
 
-      {/* Monthly Goal */}
-      <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0">
-        <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2 flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          {t('monthlyGoal')}
-        </p>
-        <p className="text-2xl sm:text-3xl font-bold font-mono truncate">
+      {/* Monthly Goal - 移动端双列紧凑并排 */}
+      <div className="col-span-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-3.5 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0">
+        <div className="flex items-start justify-between gap-1 mb-1 sm:mb-2">
+          <p className="text-[11px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] flex items-center gap-1 font-medium truncate">
+            <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span className="truncate">{t('monthlyGoal')}</span>
+          </p>
+          <ProgressRing percent={monthPct} size={38} color="#3b82f6" />
+        </div>
+        <p className="text-xl sm:text-3xl font-bold font-mono truncate -mt-1">
           {goal.unit === 'time' ? formatHours(monthSeconds) : formatDistance(monthDistance)}
-          <span className="text-sm sm:text-base font-normal text-[var(--color-muted)] ml-1">
-            / {goal.unit === 'time' ? `${Math.round(monthGoalMins / 60)}h` : `${goal.monthly} km`}
+          <span className="text-[10px] sm:text-sm font-normal text-[var(--color-muted)] ml-0.5">
+            /{goal.unit === 'time' ? `${Math.round(monthGoalMins / 60)}h` : `${monthGoalMeters/1000}k`}
           </span>
         </p>
-        <div className="mt-3 h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
+        <div className="mt-2.5 h-1.5 bg-[var(--color-border)]/60 rounded-full overflow-hidden">
           <div
-            className="h-full bg-[var(--color-accent)] rounded-full transition-all"
-            style={{ width: `${Math.min(goal.unit === 'time' ? (monthSeconds / (monthGoalMins * 60)) * 100 : (monthDistance / monthGoalMeters) * 100, 100)}%` }}
+            className="h-full bg-blue-500 rounded-full transition-all duration-500"
+            style={{ width: `${monthPct}%` }}
           />
         </div>
-        <div className="mt-3 flex items-center justify-between text-sm text-[var(--color-muted)]">
-          <span className="flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            {monthCount} {unit}
-          </span>
-          <span>{formatHours(monthSeconds)}</span>
+        <div className="mt-2.5 flex items-center justify-between text-[11px] sm:text-sm text-[var(--color-muted)]">
+          <span>{monthCount} {unit}</span>
+          <span className="font-mono">{formatHours(monthSeconds)}</span>
         </div>
-        <p className={`mt-1.5 text-xs ${monthDiff >= 0 ? 'text-emerald-500' : 'text-red-400'}`}>
-          {monthDiff >= 0 ? '↗' : '↘'} {goal.unit === 'time' ? formatHours(Math.abs(monthDiff)) : `${formatDistance(Math.abs(monthDiff))} km`} {t('vsLastMonth')}
+        <p className={`mt-1 text-[10px] font-mono truncate ${monthDiff >= 0 ? 'text-emerald-500' : 'text-rose-400'}`}>
+          {monthDiff >= 0 ? '↗' : '↘'} {goal.unit === 'time' ? formatHours(Math.abs(monthDiff)) : `${formatDistance(Math.abs(monthDiff))}k`} {t('vsLastMonth')}
         </p>
       </div>
 
-      {/* Weekly Goal */}
-      <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0">
-        <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2 flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          {locale === 'zh' ? '周目标' : 'WEEKLY GOAL'}
-        </p>
-        <p className="text-2xl sm:text-3xl font-bold font-mono truncate">
+      {/* Weekly Goal - 移动端双列紧凑并排 */}
+      <div className="col-span-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-3.5 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0">
+        <div className="flex items-start justify-between gap-1 mb-1 sm:mb-2">
+          <p className="text-[11px] sm:text-xs uppercase tracking-wider text-[var(--color-muted)] flex items-center gap-1 font-medium truncate">
+            <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="truncate">{locale === 'zh' ? '周目标' : 'WEEKLY'}</span>
+          </p>
+          <ProgressRing percent={weekPct} size={38} color="#10b981" />
+        </div>
+        <p className="text-xl sm:text-3xl font-bold font-mono truncate -mt-1">
           {goal.unit === 'time' ? formatHours(weekSeconds) : formatDistance(weekDistance)}
-          <span className="text-sm sm:text-base font-normal text-[var(--color-muted)] ml-1">
-            / {goal.unit === 'time' ? `${weekGoalMins}m` : `${goal.weekly} km`}
+          <span className="text-[10px] sm:text-sm font-normal text-[var(--color-muted)] ml-0.5">
+            /{goal.unit === 'time' ? `${weekGoalMins}m` : `${weekGoalMeters/1000}k`}
           </span>
         </p>
-        <div className="mt-3 h-1.5 bg-[var(--color-border)] rounded-full overflow-hidden">
+        <div className="mt-2.5 h-1.5 bg-[var(--color-border)]/60 rounded-full overflow-hidden">
           <div
-            className="h-full bg-[var(--color-accent)] rounded-full transition-all"
-            style={{ width: `${Math.min(goal.unit === 'time' ? (weekSeconds / (weekGoalMins * 60)) * 100 : (weekDistance / weekGoalMeters) * 100, 100)}%` }}
+            className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+            style={{ width: `${weekPct}%` }}
           />
         </div>
-        <div className="mt-3 flex items-center justify-between text-sm text-[var(--color-muted)]">
-          <span className="flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            {weekCount} {unit}
-          </span>
-          <span>{formatHours(weekSeconds)}</span>
+        <div className="mt-2.5 flex items-center justify-between text-[11px] sm:text-sm text-[var(--color-muted)]">
+          <span>{weekCount} {unit}</span>
+          <span className="font-mono">{formatHours(weekSeconds)}</span>
         </div>
-        <p className={`mt-1.5 text-xs ${weekDiff >= 0 ? 'text-emerald-500' : 'text-red-400'}`}>
-          {weekDiff >= 0 ? '↗' : '↘'} {goal.unit === 'time' ? formatHours(Math.abs(weekDiff)) : `${formatDistance(Math.abs(weekDiff))} km`} {locale === 'zh' ? 'vs 上周同期' : 'vs last week'}
+        <p className={`mt-1 text-[10px] font-mono truncate ${weekDiff >= 0 ? 'text-emerald-500' : 'text-rose-400'}`}>
+          {weekDiff >= 0 ? '↗' : '↘'} {goal.unit === 'time' ? formatHours(Math.abs(weekDiff)) : `${formatDistance(Math.abs(weekDiff))}k`} {locale === 'zh' ? 'vs 上周' : 'vs last week'}
         </p>
       </div>
 
-      {/* Streak */}
-      <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0 overflow-hidden">
+      {/* Streak - 移动端全宽 */}
+      <div className="col-span-2 sm:col-span-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 sm:p-5 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent)]/5 hover:border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/5 min-w-0 overflow-hidden">
         <p className="text-xs uppercase tracking-wider text-[var(--color-muted)] mb-2 flex items-center gap-1.5">
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
