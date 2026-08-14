@@ -1,0 +1,96 @@
+name: Run Strava Data Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - master
+      - ok
+      - workouts
+
+env:
+  RUN_TYPE: strava
+  ATHLETE: ben_29
+  TITLE: Workouts
+  MIN_GRID_DISTANCE: 10
+  TITLE_GRID: Over 10km Workouts
+
+  IGNORE_START_END_RANGE: 0
+  IGNORE_POLYLINE: ""
+  IGNORE_RANGE: 0
+  SAVE_DATA_IN_GITHUB_CACHE: false
+  DATA_CACHE_PREFIX: 'track_data'
+  BUILD_GH_PAGES: false
+  SAVE_TO_PARQENT: false
+  GENERATE_MONTH_OF_LIFE: true
+  BIRTHDAY_MONTH: 1994-12
+  VITE_LAT_OFFSET: ${{ secrets.VITE_LAT_OFFSET }}
+  VITE_LNG_OFFSET: ${{ secrets.VITE_LNG_OFFSET }}
+
+jobs:
+  sync:
+    name: Sync Strava Data
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        id: setup_python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: 'requirements.txt'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run sync Strava script
+        run: |
+          python run_page/strava_sync.py ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }}
+
+      - name: Update activities data (Privacy)
+        env:
+          VITE_LAT_OFFSET: ${{ secrets.VITE_LAT_OFFSET }}
+          VITE_LNG_OFFSET: ${{ secrets.VITE_LNG_OFFSET }}
+        run: |
+          python3 run_page/update_activities_file.py
+
+      - name: Make svg GitHub profile
+        env:
+          TITLE: ${{ env.TITLE }}
+          TITLE_GRID: ${{ env.TITLE_GRID }}
+          ATHLETE: ${{ env.ATHLETE }}
+          MIN_GRID_DISTANCE: ${{ env.MIN_GRID_DISTANCE }}
+        run: |
+          python run_page/gen_svg.py --from-db --title "$TITLE" --type github --github-style "align-firstday" --athlete "$ATHLETE" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github.svg --use-localtime --min-distance 0.5
+          python run_page/gen_svg.py --from-db --title "$TITLE_GRID" --type grid --athlete "$ATHLETE" --output assets/grid.svg --special-color yellow --special-color2 red --special-distance 20 --special-distance2 40 --use-localtime --min-distance "$MIN_GRID_DISTANCE"
+          python run_page/gen_svg.py --from-db --type circular --use-localtime
+          python run_page/gen_svg.py --from-db --year $(date +"%Y")  --language zh_CN --title "$(date +"%Y") Workouts" --type github --github-style "align-firstday" --athlete "$ATHLETE" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github_$(date +"%Y").svg --use-localtime --min-distance 0.5
+
+      - name: Make month of life
+        if: env.GENERATE_MONTH_OF_LIFE == 'true'
+        env:
+          BIRTHDAY_MONTH: ${{ env.BIRTHDAY_MONTH }}
+        run: |
+          python run_page/gen_svg.py --from-db --type monthoflife --birth "${{env.BIRTHDAY_MONTH}}" --special-color '#f9d367'  --special-color2 '#f0a1a8' --output assets/mol.svg --use-localtime --athlete "${{env.ATHLETE}}" --title 'Runner Month of Life'
+
+      - name: Generate missing track GIFs
+        run: |
+          python scripts/generate_missing_gifs.py
+
+      - name: Push new runs
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m 'Add new workouts from Strava' || echo "nothing to commit"
+          git push || echo "nothing to push"
