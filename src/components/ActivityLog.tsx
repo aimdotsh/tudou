@@ -122,13 +122,29 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   const pageData = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
   const [windowStart, setWindowStart] = useState(0)
-  const VISIBLE_YEAR_COUNT = 4
-  const visibleYears = years.slice(windowStart, windowStart + VISIBLE_YEAR_COUNT)
+  const [visibleCount, setVisibleCount] = useState(4)
+
+  useEffect(() => {
+    const updateCount = () => {
+      if (window.innerWidth >= 1024) {
+        setVisibleCount(8)
+      } else if (window.innerWidth >= 640) {
+        setVisibleCount(6)
+      } else {
+        setVisibleCount(4)
+      }
+    }
+    updateCount()
+    window.addEventListener('resize', updateCount)
+    return () => window.removeEventListener('resize', updateCount)
+  }, [])
+
+  const visibleYears = years.slice(windowStart, windowStart + visibleCount)
   const canScrollLeft = windowStart > 0
-  const canScrollRight = windowStart + VISIBLE_YEAR_COUNT < years.length
+  const canScrollRight = windowStart + visibleCount < years.length
 
   const shiftWindow = (dir: -1 | 1) => {
-    setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, years.length - VISIBLE_YEAR_COUNT)))
+    setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, years.length - visibleCount)))
   }
 
   const gymTypes = WORKOUT_TYPES.filter(t => activities.some(a => a.type === t))

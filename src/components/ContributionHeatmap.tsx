@@ -242,18 +242,29 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
     setSelectedYear(yr)
   }
 
-  // Visible year window (4 years max shown at once)
-  const VISIBLE_YEAR_COUNT = 4
-  const visibleYears = allYears.slice(windowStart, windowStart + VISIBLE_YEAR_COUNT)
-  // Left arrow (<): move towards more recent years (decrease windowStart)
+  const [visibleCount, setVisibleCount] = useState(4)
+
+  useEffect(() => {
+    const updateCount = () => {
+      if (window.innerWidth >= 1024) {
+        setVisibleCount(8)
+      } else if (window.innerWidth >= 640) {
+        setVisibleCount(6)
+      } else {
+        setVisibleCount(4)
+      }
+    }
+    updateCount()
+    window.addEventListener('resize', updateCount)
+    return () => window.removeEventListener('resize', updateCount)
+  }, [])
+
+  const visibleYears = allYears.slice(windowStart, windowStart + visibleCount)
   const canScrollLeft = windowStart > 0
-  // Right arrow (>): move towards older years (increase windowStart)
-  const canScrollRight = windowStart + VISIBLE_YEAR_COUNT < allYears.length
+  const canScrollRight = windowStart + visibleCount < allYears.length
 
   const shiftWindow = (dir: -1 | 1) => {
-    // dir === -1: click left arrow (<) -> see newer years
-    // dir === 1: click right arrow (>) -> see older years
-    setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, allYears.length - VISIBLE_YEAR_COUNT)))
+    setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, allYears.length - visibleCount)))
   }
 
   // 原生 Canvas 降级导出机制
