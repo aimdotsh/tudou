@@ -247,7 +247,7 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
   useEffect(() => {
     const updateCount = () => {
       if (window.innerWidth >= 1024) {
-        setVisibleCount(8)
+        setVisibleCount(10)
       } else if (window.innerWidth >= 640) {
         setVisibleCount(6)
       } else {

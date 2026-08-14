@@ -127,7 +127,7 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   useEffect(() => {
     const updateCount = () => {
       if (window.innerWidth >= 1024) {
-        setVisibleCount(8)
+        setVisibleCount(10)
       } else if (window.innerWidth >= 640) {
         setVisibleCount(6)
       } else {
