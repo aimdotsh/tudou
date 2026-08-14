@@ -104,12 +104,9 @@ class Track:
             if errors:
                 print(f"FIT file read fail: {errors}")
                 return
-            if (
-                messages.get("session_mesgs") is None
-                or messages.get("session_mesgs")[0].get("total_distance") is None
-            ):
+            if messages.get("session_mesgs") is None:
                 print(
-                    f"Session message or total distance is missing when loading FIT. for file {self.file_names[0]}, we just ignore this file and continue"
+                    f"Session message is missing when loading FIT. for file {self.file_names[0]}, we just ignore this file and continue"
                 )
                 return
             self._load_fit_data(messages)
@@ -279,7 +276,7 @@ class Track:
             (message["start_time"] + FIT_EPOCH_S + message["total_elapsed_time"]),
             tz=timezone.utc,
         )
-        self.length = message["total_distance"]
+        self.length = message.get("total_distance", 0.0) or 0.0
         self.average_heartrate = (
             message["avg_heart_rate"] if "avg_heart_rate" in message else None
         )
