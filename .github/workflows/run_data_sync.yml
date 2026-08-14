@@ -249,7 +249,7 @@ jobs:
       - name: Generate missing track GIFs
         if: env.RUN_TYPE != 'pass'
         run: |
-          python scripts/generate_missing_gifs.py
+          if [ -f scripts/generate_missing_gifs.py ]; then python scripts/generate_missing_gifs.py; else echo "scripts/generate_missing_gifs.py not found, skipping"; fi
 
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'
