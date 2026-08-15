@@ -85,25 +85,25 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
   }
 
   return (
-    <div className={`relative flex flex-col items-center justify-center p-6 bg-[#0d0d10] border border-white/10 rounded-2xl overflow-hidden shadow-2xl ${className}`}>
+    <div className={`relative flex flex-col items-center justify-center p-6 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl overflow-hidden shadow-md transition-colors ${className}`}>
       {/* Background glow ambiance */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-transparent to-amber-900/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 via-transparent to-amber-500/5 pointer-events-none" />
 
       {/* Top Header */}
       <div className="z-10 text-center mb-4">
-        <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-medium tracking-wide">
+        <span className="px-2.5 py-0.5 rounded-full bg-[var(--color-accent)]/15 text-[var(--color-accent)] border border-[var(--color-accent)]/30 text-[11px] font-semibold tracking-wide">
           🏋️ 肌肉热力分布图
         </span>
-        <h4 className="text-white font-bold text-base mt-1.5 tracking-tight">{workoutName} 肌群目标</h4>
+        <h4 className="text-[var(--color-text)] font-bold text-base mt-1.5 tracking-tight">{workoutName} 肌群目标</h4>
       </div>
 
       {/* Main Human Anatomy SVG Container (Front & Back) */}
       <div className="z-10 flex items-center justify-center gap-8 md:gap-16 my-2">
         {/* === 正面 FRONT === */}
         <div className="flex flex-col items-center">
-          <span className="text-xs font-semibold text-gray-400 mb-3 tracking-widest uppercase">正面</span>
+          <span className="text-xs font-semibold text-[var(--color-muted)] mb-3 tracking-widest uppercase">正面</span>
           <div className="relative w-36 h-72">
-            <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-lg">
+            <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-md text-[var(--color-text)]">
               <defs>
                 <filter id="heat-glow-front" x="-20%" y="-20%" width="140%" height="140%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
@@ -113,17 +113,17 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
 
               {/* 人体基础浅色线框轮廓 */}
               {/* 头部 */}
-              <circle cx="50" cy="20" r="11" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
+              <circle cx="50" cy="20" r="11" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
               {/* 颈部 */}
-              <rect x="46" y="31" width="8" height="6" rx="2" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+              <rect x="46" y="31" width="8" height="6" rx="2" fill="currentColor" fillOpacity="0.05" stroke="currentColor" strokeWidth="1" className="opacity-30" />
               {/* 躯干外轮廓 */}
-              <path d="M 30,42 L 70,42 L 64,115 L 36,115 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" rx="4" />
+              <path d="M 30,42 L 70,42 L 64,115 L 36,115 Z" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1.5" className="opacity-30" rx="4" />
               {/* 手臂线框 */}
-              <rect x="18" y="44" width="10" height="38" rx="5" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-              <rect x="72" y="44" width="10" height="38" rx="5" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+              <rect x="18" y="44" width="10" height="38" rx="5" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1" className="opacity-25" />
+              <rect x="72" y="44" width="10" height="38" rx="5" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1" className="opacity-25" />
               {/* 腿部线框 */}
-              <rect x="36" y="118" width="12" height="72" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-              <rect x="52" y="118" width="12" height="72" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+              <rect x="36" y="118" width="12" height="72" rx="6" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
+              <rect x="52" y="118" width="12" height="72" rx="6" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
 
               {/* === 高亮发光肌肉热力图层 === */}
               {/* 1. 肩部 / 三角肌 */}
@@ -170,9 +170,9 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
 
         {/* === 背面 BACK === */}
         <div className="flex flex-col items-center">
-          <span className="text-xs font-semibold text-gray-400 mb-3 tracking-widest uppercase">背面</span>
+          <span className="text-xs font-semibold text-[var(--color-muted)] mb-3 tracking-widest uppercase">背面</span>
           <div className="relative w-36 h-72">
-            <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-lg">
+            <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-md text-[var(--color-text)]">
               <defs>
                 <filter id="heat-glow-back" x="-20%" y="-20%" width="140%" height="140%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
@@ -181,13 +181,13 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
               </defs>
 
               {/* 背面基础浅色线框轮廓 */}
-              <circle cx="50" cy="20" r="11" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
-              <rect x="46" y="31" width="8" height="6" rx="2" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-              <path d="M 30,42 L 70,42 L 64,115 L 36,115 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" rx="4" />
-              <rect x="18" y="44" width="10" height="38" rx="5" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-              <rect x="72" y="44" width="10" height="38" rx="5" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-              <rect x="36" y="118" width="12" height="72" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-              <rect x="52" y="118" width="12" height="72" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+              <circle cx="50" cy="20" r="11" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
+              <rect x="46" y="31" width="8" height="6" rx="2" fill="currentColor" fillOpacity="0.05" stroke="currentColor" strokeWidth="1" className="opacity-30" />
+              <path d="M 30,42 L 70,42 L 64,115 L 36,115 Z" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1.5" className="opacity-30" rx="4" />
+              <rect x="18" y="44" width="10" height="38" rx="5" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1" className="opacity-25" />
+              <rect x="72" y="44" width="10" height="38" rx="5" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1" className="opacity-25" />
+              <rect x="36" y="118" width="12" height="72" rx="6" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
+              <rect x="52" y="118" width="12" height="72" rx="6" fill="currentColor" fillOpacity="0.03" stroke="currentColor" strokeWidth="1.5" className="opacity-30" />
 
               {/* === 背面高亮肌肉图层 === */}
               {/* 1. 上背 / 背阔肌 */}
@@ -237,7 +237,7 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
         {activeMuscles.map((m) => (
           <span
             key={m}
-            className="px-2.5 py-1 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-semibold text-xs transition-all shadow-sm"
+            className="px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-300 font-semibold text-xs transition-all shadow-sm"
           >
             {muscleLabels[m] || m}
           </span>

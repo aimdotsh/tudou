@@ -111,11 +111,6 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
     const nextSel = isSame ? null : act
     onSelectActivity?.(nextSel)
 
-    // 当具备 extra_details 或者是力量健身/Gym 打卡记录时，无论点卡片任何地方，都直接自动弹出明细弹窗！
-    if (act.extra_details || WORKOUT_TYPES.includes(act.type) || isGym) {
-      setModalActivity(act)
-    }
-
     if (nextSel) {
       // 平滑滚动到轨迹地图区域
       const mapEl = document.getElementById('route-map-section')
@@ -284,9 +279,16 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                     <p className="text-xs font-semibold text-[var(--color-text)] truncate flex items-center gap-1.5">
                       {a.name || (a.type === 'Run' ? t('run') : t('ride'))}
                       {a.extra_details && (
-                        <span className="px-1.5 py-0.2 text-[9px] font-normal rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setModalActivity(a)
+                          }}
+                          className="px-1.5 py-0.5 text-[9px] font-medium rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 border border-purple-500/30 transition-all cursor-pointer shadow-sm active:scale-95"
+                        >
                           🏋️ 明细
-                        </span>
+                        </button>
                       )}
                     </p>
                     <p className="text-[10px] text-[var(--color-muted)] mt-0.5 font-mono">
@@ -370,9 +372,16 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                     <span className="inline-flex items-center gap-1.5">
                       {a.name || (a.type === 'Run' ? t('run') : t('ride'))}
                       {a.extra_details && (
-                        <span className="px-1.5 py-0.2 text-[9px] font-normal rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setModalActivity(a)
+                          }}
+                          className="px-1.5 py-0.5 text-[9px] font-medium rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 border border-purple-500/30 transition-all cursor-pointer shadow-sm active:scale-95"
+                        >
                           🏋️ 明细
-                        </span>
+                        </button>
                       )}
                     </span>
                   </td>
