@@ -13,6 +13,7 @@ export interface Activity {
   elevation_gain: number | null
   source: string
   streak: number
+  extra_details?: string | null
 }
 
 export type SportFilter = 'all' | 'Run' | 'Ride' | 'Hike' | 'Gym'

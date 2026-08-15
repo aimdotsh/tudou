@@ -3,6 +3,7 @@ import type { Activity, SportFilter } from '../types'
 import { WORKOUT_TYPES } from '../types'
 import { formatDuration, formatPace } from '../hooks/useActivities'
 import { useLocale } from '../hooks/useLocale'
+import { WorkoutDetailModal } from './WorkoutDetailModal'
 
 interface ActivityLogProps {
   activities: Activity[]
@@ -83,6 +84,7 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   const [page, setPage] = useState(0)
   const [distFilter, setDistFilter] = useState<DistanceFilter>('all')
   const [gymTypeFilter, setGymTypeFilter] = useState<string>('all')
+  const [modalActivity, setModalActivity] = useState<Activity | null>(null)
 
   const isGym = filter === 'Gym'
 
@@ -104,6 +106,24 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
     (a, b) => new Date(b.start_date_local).getTime() - new Date(a.start_date_local).getTime()
   )
 
+  const handleSelectActivity = (act: Activity) => {
+    const isSame = selectedActivity?.run_id === act.run_id
+    const nextSel = isSame ? null : act
+    onSelectActivity?.(nextSel)
+
+    if (act.extra_details) {
+      setModalActivity(act)
+    }
+
+    if (nextSel) {
+      // 平滑滚动到轨迹地图区域
+      const mapEl = document.getElementById('route-map-section')
+      if (mapEl) {
+        mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+  }
+
   useEffect(() => {
     if (selectedActivity) {
       const idx = sorted.findIndex(a => a.run_id === selectedActivity.run_id)
@@ -114,20 +134,6 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
       }
     }
   }, [selectedActivity?.run_id])
-
-  const handleSelectActivity = (act: Activity) => {
-    const isSame = selectedActivity?.run_id === act.run_id
-    const nextSel = isSame ? null : act
-    onSelectActivity?.(nextSel)
-
-    if (nextSel) {
-      // 平滑滚动到轨迹地图区域
-      const mapEl = document.getElementById('route-map-section')
-      if (mapEl) {
-        mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-    }
-  }
 
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
   const pageData = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
@@ -274,8 +280,13 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                     {typeIcon(a.type)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold truncate leading-tight">
+                    <p className="text-xs font-semibold text-[var(--color-text)] truncate flex items-center gap-1.5">
                       {a.name || (a.type === 'Run' ? t('run') : t('ride'))}
+                      {a.extra_details && (
+                        <span className="px-1.5 py-0.2 text-[9px] font-normal rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                          🏋️ 明细
+                        </span>
+                      )}
                     </p>
                     <p className="text-[10px] text-[var(--color-muted)] mt-0.5 font-mono">
                       {dateStr} · {a.type}
@@ -354,7 +365,16 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                       <span className="text-[var(--color-muted)]">{typeIcon(a.type)} {a.type}</span>
                     )}
                   </td>
-                  <td className="py-3">{a.name || (a.type === 'Run' ? t('run') : t('ride'))}</td>
+                  <td className="py-3 font-medium">
+                    <span className="inline-flex items-center gap-1.5">
+                      {a.name || (a.type === 'Run' ? t('run') : t('ride'))}
+                      {a.extra_details && (
+                        <span className="px-1.5 py-0.2 text-[9px] font-normal rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                          🏋️ 明细
+                        </span>
+                      )}
+                    </span>
+                  </td>
                   {isGym ? (
                     <>
                       <td className="py-3 font-mono font-medium whitespace-nowrap">{formatSecs(parseTimeSecs(a.moving_time))}</td>
@@ -387,6 +407,8 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
         <button onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
           className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors px-2 py-1">→</button>
       </div>
+
+      <WorkoutDetailModal activity={modalActivity} onClose={() => setModalActivity(null)} />
     </div>
   )
 }
