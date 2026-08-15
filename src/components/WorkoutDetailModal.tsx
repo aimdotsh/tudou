@@ -1,5 +1,6 @@
 import type { Activity } from '../types'
 import { X, Dumbbell, Flame, Heart, Calendar, Clock } from 'lucide-react'
+import { MuscleHeatmap, inferMusclesFromItems } from './MuscleHeatmap'
 
 interface WorkoutSet {
   set_num?: number
@@ -87,6 +88,11 @@ export function WorkoutDetailModal({ activity, onClose }: WorkoutDetailModalProp
             </span>
             <span className="font-semibold text-white">{setDetails.length} 项</span>
           </div>
+        </div>
+
+        {/* 人体肌肉锤炼热力分布图组件 */}
+        <div className="p-4 border-b border-white/5 bg-[#141417]">
+          <MuscleHeatmap activeMuscles={inferMusclesFromItems(activity.extra_details)} workoutName={activity.name} />
         </div>
 
         {/* Breakdown List */}

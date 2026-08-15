@@ -2,6 +2,8 @@ import { useMemo, useState, useEffect, useRef } from 'react'
 import * as polyline from '@mapbox/polyline'
 import type { Activity } from '../types'
 import { extractProvince } from '../hooks/useActivities'
+import { WORKOUT_TYPES } from '../types'
+import { MuscleHeatmap, inferMusclesFromItems } from './MuscleHeatmap'
 
 interface RouteMapProps {
   activities: Activity[]
@@ -322,6 +324,31 @@ export function RouteMap({
       return { viewW, viewH, renderPaths: [], totalCount: 0 }
     }
   }, [activities, allActivities, selectedActivity])
+
+  const isGymWithoutRoute = Boolean(
+    selectedActivity &&
+    (WORKOUT_TYPES.includes(selectedActivity.type) || selectedSport === 'Gym') &&
+    (!selectedActivity.summary_polyline || selectedActivity.summary_polyline.length < 5)
+  )
+
+  if (isGymWithoutRoute && selectedActivity) {
+    return (
+      <div id="route-map-section" className="relative w-full rounded-xl overflow-hidden shadow-sm transition-all duration-300">
+        <MuscleHeatmap
+          activeMuscles={inferMusclesFromItems(selectedActivity.extra_details)}
+          workoutName={selectedActivity.name || '力量健身'}
+        />
+        {onClearSelection && (
+          <button
+            onClick={onClearSelection}
+            className="absolute top-3 left-3 z-20 px-3 py-1.5 bg-[#18181c]/90 backdrop-blur-md border border-white/10 rounded-lg text-xs font-medium text-white shadow-md hover:border-purple-500 hover:text-purple-300 transition-all flex items-center gap-1.5"
+          >
+            ← 返回地图
+          </button>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div
