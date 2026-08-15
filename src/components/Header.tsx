@@ -9,6 +9,7 @@ import siteMetadata from '../static/site-metadata'
 
 import { Palette } from 'lucide-react'
 import type { ThemePreset } from '../hooks/useTheme'
+import type { ThemeLayoutPreset } from '../themes/types'
 
 type Page = 'home' | 'tracks'
 
@@ -19,12 +20,24 @@ interface HeaderProps {
   toggleTheme: () => void
   preset: ThemePreset
   setPreset: (p: ThemePreset) => void
+  layoutPreset: ThemeLayoutPreset
+  setLayoutPreset: (l: ThemeLayoutPreset) => void
   activities: Activity[]
   page: Page
   onNavigate: (p: Page) => void
 }
 
-function ThemePresetPicker({ preset, setPreset }: { preset: ThemePreset; setPreset: (p: ThemePreset) => void }) {
+function ThemePresetPicker({
+  preset,
+  setPreset,
+  layoutPreset,
+  setLayoutPreset,
+}: {
+  preset: ThemePreset
+  setPreset: (p: ThemePreset) => void
+  layoutPreset: ThemeLayoutPreset
+  setLayoutPreset: (l: ThemeLayoutPreset) => void
+}) {
   const { locale } = useLocale()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -39,42 +52,77 @@ function ThemePresetPicker({ preset, setPreset }: { preset: ThemePreset; setPres
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const options: { value: ThemePreset; label: string; color: string }[] = [
+  const colorOptions: { value: ThemePreset; label: string; color: string }[] = [
     { value: 'classic', label: locale === 'zh' ? '经典暖金' : 'Classic Amber', color: '#f59e0b' },
     { value: 'nike', label: locale === 'zh' ? '耐克荧光' : 'Nike Neon', color: '#a3e635' },
     { value: 'strava', label: locale === 'zh' ? 'Strava 珊瑚' : 'Strava Coral', color: '#fc4c02' },
     { value: 'garmin', label: locale === 'zh' ? '佳明科技蓝' : 'Garmin Ocean', color: '#38bdf8' },
   ]
 
-  const activeOpt = options.find((o) => o.value === preset) ?? options[0]
+  const layoutOptions: { value: ThemeLayoutPreset; label: string; icon: string }[] = [
+    { value: 'dashboard', label: locale === 'zh' ? 'Dashboard 现代单页' : 'Dashboard Layout', icon: '📱' },
+    { value: 'classic', label: locale === 'zh' ? 'Classic 经典流式' : 'Classic Layout', icon: '📜' },
+    { value: 'map_focused', label: locale === 'zh' ? 'Map Master 地图主导' : 'Map Focused', icon: '🗺️' },
+    { value: 'gym_pro', label: locale === 'zh' ? 'Gym Pro 力量专业' : 'Gym Pro Layout', icon: '🏋️' },
+  ]
+
+  const activeColorOpt = colorOptions.find((o) => o.value === preset) ?? colorOptions[0]
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)] relative group"
-        title={locale === 'zh' ? '切换运动主题' : 'Switch Theme Preset'}
+        title={locale === 'zh' ? '切换运动色彩与插拔布局主题' : 'Switch Theme & Layout Presets'}
       >
-        <Palette className="w-4 h-4 transition-transform group-hover:scale-110" style={{ color: activeOpt.color }} />
+        <Palette className="w-4 h-4 transition-transform group-hover:scale-110" style={{ color: activeColorOpt.color }} />
         <span
           className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full ring-1 ring-white/20"
-          style={{ backgroundColor: activeOpt.color }}
+          style={{ backgroundColor: activeColorOpt.color }}
         />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 w-44 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-xl py-1 z-50 animate-in fade-in duration-150">
-          <div className="px-3 py-1.5 border-b border-[var(--color-border)] text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider">
-            {locale === 'zh' ? '运动主题系统' : 'Theme Presets'}
+        <div className="absolute right-0 top-10 w-56 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-2xl p-1.5 z-50 animate-in fade-in duration-150 space-y-1">
+          {/* 1. 布局主题 Preset (Running Page 3.0 规范) */}
+          <div className="px-2.5 py-1 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-wider">
+            {locale === 'zh' ? '布局主题 (Layout Presets)' : 'Layout Presets'}
           </div>
-          {options.map((opt) => (
+          {layoutOptions.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                setLayoutPreset(opt.value)
+                setOpen(false)
+              }}
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                layoutPreset === opt.value
+                  ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] font-bold'
+                  : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span>{opt.icon}</span>
+                <span>{opt.label}</span>
+              </div>
+              {layoutPreset === opt.value && <span className="text-[10px]">✓</span>}
+            </button>
+          ))}
+
+          <div className="my-1 border-t border-[var(--color-border)]/50" />
+
+          {/* 2. 色彩 Preset */}
+          <div className="px-2.5 py-1 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-wider">
+            {locale === 'zh' ? '色彩 Preset (Color Themes)' : 'Color Themes'}
+          </div>
+          {colorOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => {
                 setPreset(opt.value)
                 setOpen(false)
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 text-xs transition-colors ${
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
                 preset === opt.value
                   ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] font-bold'
                   : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30'
@@ -196,7 +244,7 @@ function GitHubAuthDropdown() {
   )
 }
 
-export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset, activities, page, onNavigate }: HeaderProps) {
+export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset, layoutPreset, setLayoutPreset, activities, page, onNavigate }: HeaderProps) {
   const { locale, setLocale, t } = useLocale()
 
   const existingTypes = new Set(activities.map((a) => a.type))
@@ -233,7 +281,7 @@ export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset
 
           {/* Right quick tools for Mobile (Theme, Preset, Locale, GitHub Auth) */}
           <div className="flex md:hidden items-center gap-2">
-            <ThemePresetPicker preset={preset} setPreset={setPreset} />
+            <ThemePresetPicker preset={preset} setPreset={setPreset} layoutPreset={layoutPreset} setLayoutPreset={setLayoutPreset} />
             <button
               onClick={toggleTheme}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)]"
@@ -299,7 +347,7 @@ export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset
 
         {/* Right nav (Desktop Only) */}
         <div className="hidden md:flex items-center gap-4">
-          <ThemePresetPicker preset={preset} setPreset={setPreset} />
+          <ThemePresetPicker preset={preset} setPreset={setPreset} layoutPreset={layoutPreset} setLayoutPreset={setLayoutPreset} />
           <button
             onClick={toggleTheme}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors"

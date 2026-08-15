@@ -1,5 +1,6 @@
 interface ISiteMetadataResult {
   siteTitle: string;
+  theme_preset?: string;
   siteUrl: string;
   description: string;
   keywords: string;
@@ -32,6 +33,7 @@ const getDynamicMapOffset = () => {
 
 const data: ISiteMetadataResult = {
   siteTitle: '蓝皮书的 Workouts Page',
+  theme_preset: 'dashboard', // dashboard | classic | map_focused | gym_pro
   siteUrl: 'https://workouts.liups.com',
   logo: 'https://workouts.liups.com/images/favicon.png',
   description: '蓝皮书的 Workouts Page',

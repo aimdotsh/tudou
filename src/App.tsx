@@ -6,16 +6,12 @@ import { useTheme } from './hooks/useTheme'
 import { LocaleProvider } from './hooks/useLocale'
 import { GitHubAuthProvider } from './hooks/useGitHubAuthContext'
 import { Header } from './components/Header'
-import { StatsCards } from './components/StatsCards'
-import { ContributionHeatmap } from './components/ContributionHeatmap'
-import { ActivityLog } from './components/ActivityLog'
-import { RouteMap } from './components/RouteMap'
-import { CalendarWidget } from './components/CalendarWidget'
-import { ProfileCard } from './components/ProfileCard'
-import { PersonalBest } from './components/PersonalBest'
 import { TracksPage } from './components/TracksPage'
-import { ChinaMap } from './components/ChinaMap'
 import { ShareActivityPage } from './components/ShareActivityPage'
+import { DashboardTheme } from './themes/DashboardTheme'
+import { ClassicTheme } from './themes/ClassicTheme'
+import { MapFocusedTheme } from './themes/MapFocusedTheme'
+import { GymProTheme } from './themes/GymProTheme'
 import rawActivities from './static/activities.json'
 import siteMetadata from './static/site-metadata'
 const activities = rawActivities as Activity[]
@@ -23,7 +19,7 @@ const activities = rawActivities as Activity[]
 type Page = 'home' | 'tracks'
 
 export default function App() {
-  const { dark, toggle, preset, setPreset } = useTheme()
+  const { dark, toggle, preset, setPreset, layoutPreset, setLayoutPreset } = useTheme()
   const [filter, setFilter] = useState<SportFilter>('all')
   const [year, setYear] = useState<number | null>(null)
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
@@ -70,6 +66,8 @@ export default function App() {
           toggleTheme={toggle}
           preset={preset}
           setPreset={setPreset}
+          layoutPreset={layoutPreset}
+          setLayoutPreset={setLayoutPreset}
           activities={activities}
           page={page}
           onNavigate={setPage}
@@ -95,54 +93,40 @@ export default function App() {
             dark={dark}
           />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-6 items-start">
-            {/* Left column */}
-            <div className="space-y-6 min-w-0 overflow-hidden">
-              <StatsCards activities={filtered} allActivities={activities} year={year} filter={filter} onSelectActivity={setSelectedActivity} />
-              <ContributionHeatmap activities={sportFiltered} year={heatmapYear} filter={filter} onSelectActivity={setSelectedActivity} />
-              <ActivityLog
-                activities={filtered}
-                years={years}
-                year={year}
-                setYear={setYear}
-                selectedActivity={selectedActivity}
-                onSelectActivity={setSelectedActivity}
-                onShareActivity={(act) => {
-                  setShareActivity(act)
-                  window.history.pushState({}, '', `?run_id=${act.run_id}`)
-                }}
-                filter={filter}
-              />
-            </div>
+          (() => {
+            const sharedThemeProps = {
+              activities,
+              filteredActivities: filtered,
+              sportFilteredActivities: sportFiltered,
+              provinceFilteredActivities: provinceFiltered,
+              years,
+              year,
+              setYear,
+              filter,
+              selectedActivity,
+              setSelectedActivity,
+              selectedProvince,
+              setSelectedProvince,
+              heatmapYear,
+              dark,
+              onShareActivity: (act: Activity) => {
+                setShareActivity(act)
+                window.history.pushState({}, '', `?run_id=${act.run_id}`)
+              },
+            }
 
-            {/* Right column */}
-            <div className="flex flex-col gap-6 min-w-0 overflow-hidden">
-              <ProfileCard activities={activities} filter={filter} />
-              <ChinaMap
-                activities={filtered}
-                filter={filter}
-                selectedProvince={selectedProvince}
-                onSelectProvince={(p) => {
-                  setSelectedProvince(p)
-                  setSelectedActivity(null)
-                }}
-              />
-              <RouteMap
-                activities={provinceFiltered}
-                allActivities={activities}
-                selectedActivity={selectedActivity}
-                selectedYear={year}
-                selectedSport={filter}
-                dark={dark}
-                onClearSelection={() => setSelectedActivity(null)}
-              />
-              <PersonalBest activities={activities} onSelectActivity={setSelectedActivity} />
-              <CalendarWidget
-                activities={filtered}
-                onSelectActivity={setSelectedActivity}
-              />
-            </div>
-          </div>
+            switch (layoutPreset) {
+              case 'classic':
+                return <ClassicTheme {...sharedThemeProps} />
+              case 'map_focused':
+                return <MapFocusedTheme {...sharedThemeProps} />
+              case 'gym_pro':
+                return <GymProTheme {...sharedThemeProps} />
+              case 'dashboard':
+              default:
+                return <DashboardTheme {...sharedThemeProps} />
+            }
+          })()
         )}
       </main>
 
