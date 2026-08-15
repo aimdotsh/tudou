@@ -112,7 +112,7 @@ class Coros:
             return None, None
 
         try:
-            fname = os.path.basename(file_url)
+            fname = f"{label_id}.fit"
             file_path = os.path.join(download_folder, fname)
 
             async with self.req.stream("GET", file_url) as response:
@@ -133,7 +133,23 @@ class Coros:
 
 
 def get_downloaded_ids(folder):
-    return [i.split(".")[0] for i in os.listdir(folder) if not i.startswith(".")]
+    valid_ids = []
+    if not os.path.exists(folder):
+        return valid_ids
+    for f in os.listdir(folder):
+        if f.startswith("."):
+            continue
+        fpath = os.path.join(folder, f)
+        # 如果文件大小为 0，说明上次下载损坏中断，自动清理并重新从高驰拉取
+        if os.path.getsize(fpath) == 0:
+            try:
+                os.remove(fpath)
+                print(f"Removed corrupt empty fit file: {f}")
+            except Exception:
+                pass
+            continue
+        valid_ids.append(f.split(".")[0])
+    return valid_ids
 
 
 async def download_and_generate(account, password):
