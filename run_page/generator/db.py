@@ -211,7 +211,7 @@ def update_or_create_activity(session, run_activity):
 
             activity = Activity(
                 run_id=run_activity.id,
-                name=run_activity.name,
+                name=clean_activity_name(run_activity.name),
                 distance=run_activity.distance,
                 moving_time=run_activity.moving_time,
                 elapsed_time=run_activity.elapsed_time,
@@ -234,7 +234,7 @@ def update_or_create_activity(session, run_activity):
             session.add(activity)
             created = True
         else:
-            activity.name = run_activity.name
+            activity.name = clean_activity_name(run_activity.name)
             activity.distance = float(run_activity.distance)
             activity.moving_time = run_activity.moving_time
             activity.elapsed_time = run_activity.elapsed_time
