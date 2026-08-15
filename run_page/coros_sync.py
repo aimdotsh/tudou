@@ -72,8 +72,16 @@ class Coros:
             response = await self.req.get(url)
             data = response.json()
             activities = data.get("data", {}).get("dataList", None)
-            if not activities:
-                break
+            if page_number == 1 and activities:
+                print("--- COROS Server Latest 5 Activities ---")
+                for act in activities[:5]:
+                    name = act.get("name", "Unnamed Workout")
+                    label_id = act.get("labelId")
+                    mode = act.get("mode")
+                    start_time = act.get("startTime")
+                    print(f"-> Date: {start_time}, Name: {name}, LabelID: {label_id}, Mode: {mode}")
+                print("---------------------------------------")
+
             for activity in activities:
                 label_id = activity.get("labelId")
                 mode = activity.get("mode", 100)
