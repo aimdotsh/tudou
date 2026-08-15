@@ -15,6 +15,7 @@ import { ProfileCard } from './components/ProfileCard'
 import { PersonalBest } from './components/PersonalBest'
 import { TracksPage } from './components/TracksPage'
 import { ChinaMap } from './components/ChinaMap'
+import { ShareActivityPage } from './components/ShareActivityPage'
 import rawActivities from './static/activities.json'
 import siteMetadata from './static/site-metadata'
 const activities = rawActivities as Activity[]
@@ -28,8 +29,21 @@ export default function App() {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null)
   const [page, setPage] = useState<Page>('home')
+  const [shareActivity, setShareActivity] = useState<Activity | null>(null)
 
   useEffect(() => {
+    // 自动解析微信/独立分享 URL 里的 ?run_id=xxxx 参数
+    const params = new URLSearchParams(window.location.search)
+    const runIdParam = params.get('run_id')
+    if (runIdParam) {
+      const matched = activities.find(a => String(a.run_id) === runIdParam)
+      if (matched) {
+        setShareActivity(matched)
+        const kmStr = (matched.distance / 1000).toFixed(2)
+        document.title = `${kmStr} km ${matched.name || matched.type} | 蓝皮书的 Workouts`
+        return
+      }
+    }
     document.title = siteMetadata.siteTitle || '蓝皮书的 Workouts Page'
   }, [])
 
@@ -59,7 +73,16 @@ export default function App() {
       />
 
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-6 w-full min-w-0">
-        {page === 'tracks' ? (
+        {shareActivity ? (
+          <ShareActivityPage
+            activity={shareActivity}
+            allActivities={activities}
+            onBack={() => {
+              setShareActivity(null)
+              window.history.pushState({}, '', window.location.pathname)
+            }}
+          />
+        ) : page === 'tracks' ? (
           <TracksPage
             activities={activities}
             filter={filter}
@@ -80,6 +103,10 @@ export default function App() {
                 setYear={setYear}
                 selectedActivity={selectedActivity}
                 onSelectActivity={setSelectedActivity}
+                onShareActivity={(act) => {
+                  setShareActivity(act)
+                  window.history.pushState({}, '', `?run_id=${act.run_id}`)
+                }}
                 filter={filter}
               />
             </div>

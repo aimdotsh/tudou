@@ -12,6 +12,7 @@ interface ActivityLogProps {
   setYear: (y: number | null) => void
   selectedActivity?: Activity | null
   onSelectActivity?: (a: Activity | null) => void
+  onShareActivity?: (a: Activity) => void
   filter?: SportFilter
 }
 
@@ -79,7 +80,7 @@ function formatSecs(secs: number): string {
   return `${m}m`
 }
 
-export function ActivityLog({ activities, years, year, setYear, selectedActivity, onSelectActivity, filter = 'all' }: ActivityLogProps) {
+export function ActivityLog({ activities, years, year, setYear, selectedActivity, onSelectActivity, onShareActivity, filter = 'all' }: ActivityLogProps) {
   const { t, locale } = useLocale()
   const [page, setPage] = useState(0)
   const [distFilter, setDistFilter] = useState<DistanceFilter>('all')
@@ -343,6 +344,7 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                   <th className="pb-3 font-medium min-w-[65px]">{t('hr')}</th>
                 </>
               )}
+              <th className="pb-3 font-medium text-right pr-2 min-w-[60px]">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -402,6 +404,20 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                       <td className="py-3 text-[var(--color-muted)] font-mono whitespace-nowrap">{a.average_heartrate ? Math.round(a.average_heartrate) : '--'}</td>
                     </>
                   )}
+                  <td className="py-3 text-right pr-2 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onShareActivity?.(a)
+                      }}
+                      className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs active:scale-95 inline-flex items-center gap-1"
+                      title="分享独立海报页面"
+                    >
+                      <span>🔗</span>
+                      <span>分享</span>
+                    </button>
+                  </td>
                 </tr>
               )
             })}
