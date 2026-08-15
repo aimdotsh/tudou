@@ -49,6 +49,21 @@ ACTIVITY_KEYS = [
 ]
 
 
+def sanitize_location(loc_str):
+    if not loc_str:
+        return ""
+    parts = [p.strip() for p in loc_str.split(",") if p.strip()]
+    clean_parts = []
+    for p in parts:
+        # 过滤具体的小区名、街道名、路名、门牌号、村名、大厦、邮编
+        if p.isdigit() or (len(p) == 6 and p.isnumeric()):
+            continue
+        if any(kw in p for kw in ["路", "街", "小区", "村", "园区", "大厦", "号", "弄", "巷", "苑", "家园"]):
+            continue
+        clean_parts.append(p)
+    return ", ".join(clean_parts) if clean_parts else "中国"
+
+
 class Activity(Base):
     __tablename__ = "activities"
 
@@ -76,6 +91,9 @@ class Activity(Base):
                 out[key] = str(attr)
             else:
                 out[key] = attr
+
+        if out.get("location_country"):
+            out["location_country"] = sanitize_location(out["location_country"])
 
         if self.streak:
             out["streak"] = self.streak
