@@ -191,9 +191,14 @@ class Generator:
 
     def load(self):
         # if sub_type is not in the db, just add an empty string to it
+        # 保留有效运动：位移大于 0.1km，或属于健身/力量训练类型，或时长大于 60s
         activities = (
             self.session.query(Activity)
-            .filter(Activity.distance > 0.1)
+            .filter(
+                (Activity.distance > 0.1) |
+                (Activity.type.in_(["WeightTraining", "Workout", "Gym", "StairStepper", "WaterSport"])) |
+                (Activity.elapsed_time > datetime.timedelta(seconds=60))
+            )
             .order_by(Activity.start_date_local)
         )
         activity_list = []
