@@ -231,23 +231,29 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
 
       {/* 📷 按照用户上传参考图片完全比照设计的【动作组数胶囊标牌明细 (Compact Workout Sets Grid)】 */}
       {items && items.length > 0 && (
-        <div className="z-10 mt-5 w-full pt-4 border-t border-[var(--color-border)]/60 space-y-2.5">
+        <div className="z-10 mt-4 w-full pt-3.5 border-t border-[var(--color-border)]/60 space-y-3">
           {items.map((item: any, idx: number) => (
-            <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs py-1 border-b border-[var(--color-border)]/30 last:border-0">
-              <span className="font-bold text-[var(--color-text)] shrink-0 font-sans tracking-tight flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]" />
-                {item.name}
-              </span>
-              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div key={idx} className="grid grid-cols-12 gap-2 text-xs items-start pb-2.5 border-b border-[var(--color-border)]/30 last:border-0 last:pb-0">
+              {/* 左侧：动作名称（占 4/12 宽度，严格顶端对齐） */}
+              <div className="col-span-4 sm:col-span-3 font-bold text-[var(--color-text)] font-sans tracking-tight flex items-center gap-1.5 pt-0.5 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] shrink-0" />
+                <span className="truncate">{item.name}</span>
+              </div>
+
+              {/* 右侧：胶囊标牌（占 8/12 宽度，紧凑美观排列） */}
+              <div className="col-span-8 sm:col-span-9 flex flex-wrap items-center gap-1.5">
                 {item.sets && item.sets.length > 0 ? (
                   item.sets.map((s: any, sIdx: number) => {
                     let label = ''
                     if (s.weight && s.reps) {
-                      // 格式化为图片中的 60kg×12 样式
-                      const repNum = s.reps.includes('/') ? s.reps.split('/')[0].trim() : s.reps
-                      label = `${s.weight.replace(' ', '')}×${repNum}`
+                      // 精简重量格式：15.0kg 简化为 15kg，去除末尾 .0
+                      const cleanWeight = s.weight.replace('.0', '').replace(' ', '')
+                      const cleanReps = s.reps.includes('/') ? s.reps.split('/')[0].trim() : s.reps
+                      label = `${cleanWeight}×${cleanReps}`
                     } else if (s.reps) {
-                      label = `${s.reps}次`
+                      // 精简次数格式：13 / 10次 简化为 13/10
+                      const cleanReps = s.reps.replace('次', '').trim()
+                      label = cleanReps
                     } else if (s.duration) {
                       label = s.duration
                     } else {
@@ -257,14 +263,14 @@ export function MuscleHeatmap({ activeMuscles = ['quads', 'shoulders', 'biceps',
                     return (
                       <span
                         key={sIdx}
-                        className="px-2.5 py-1 rounded-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text)] font-mono text-[11px] font-medium shadow-xs"
+                        className="px-2 py-0.5 rounded-full bg-[var(--color-bg)]/90 border border-[var(--color-border)] text-[var(--color-text)] font-mono text-[10px] font-semibold shadow-2xs whitespace-nowrap transition-all"
                       >
                         {label}
                       </span>
                     )
                   })
                 ) : (
-                  <span className="px-2 py-0.5 rounded-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-muted)] font-mono text-[11px]">
+                  <span className="px-2 py-0.5 rounded-full bg-[var(--color-bg)]/90 border border-[var(--color-border)] text-[var(--color-muted)] font-mono text-[10px]">
                     {item.duration || `${item.total_sets || 1}组`}
                   </span>
                 )}
