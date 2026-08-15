@@ -337,11 +337,12 @@ export function RouteMap({
         <MuscleHeatmap
           activeMuscles={inferMusclesFromItems(selectedActivity.extra_details)}
           workoutName={selectedActivity.name || '力量健身'}
+          setItemsJson={selectedActivity.extra_details}
         />
         {onClearSelection && (
           <button
             onClick={onClearSelection}
-            className="absolute top-3 left-3 z-20 px-3 py-1.5 bg-[#18181c]/90 backdrop-blur-md border border-white/10 rounded-lg text-xs font-medium text-white shadow-md hover:border-purple-500 hover:text-purple-300 transition-all flex items-center gap-1.5"
+            className="absolute top-3 left-3 z-20 px-3 py-1.5 bg-[var(--color-card)]/90 backdrop-blur-md border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] shadow-md hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all flex items-center gap-1.5 cursor-pointer"
           >
             ← 返回地图
           </button>
