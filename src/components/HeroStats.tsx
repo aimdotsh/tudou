@@ -44,7 +44,7 @@ export function HeroStats({ activities }: HeroStatsProps) {
       value: (bestSpeed * 3.6).toFixed(1),
       unit: 'km/h',
     },
-    { label: '连续打卡', value: streak.toString(), unit: '天' },
+    { label: '连续天数', value: streak.toString(), unit: '天' },
   ]
 
   return (

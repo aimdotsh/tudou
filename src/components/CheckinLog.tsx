@@ -159,7 +159,7 @@ export function CheckinLog({ checkins }: { checkins: Checkin[] }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-[var(--color-text)]">
-          {locale === 'zh' ? '打卡记录' : 'Checkin Log'}
+          {locale === 'zh' ? '记录明细' : 'Checkin Log'}
         </h3>
         <span className="text-sm text-[var(--color-muted)]">
           {locale === 'zh' ? `共 ${filtered.length} 条` : `${filtered.length} entries`}

@@ -327,7 +327,7 @@ export function CheckinCard({ todayCheckin, saving, onSave }: CheckinCardProps) 
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="text-lg font-bold text-[var(--color-text)]">
-            {locale === 'zh' ? '今日打卡' : "Today's Check-in"}
+            {locale === 'zh' ? '今日完成' : "Today's Check-in"}
           </h2>
           <p className="text-xs text-[var(--color-muted)] mt-0.5">{today}</p>
         </div>

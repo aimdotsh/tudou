@@ -126,7 +126,7 @@ export function CheckinStats({ checkins }: { checkins: Checkin[] }) {
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5">
       <h3 className="text-sm font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-4">
-        {locale === 'zh' ? '打卡统计' : 'Checkin Stats'}
+        {locale === 'zh' ? '统计' : 'Stats'}
       </h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((s) => (
