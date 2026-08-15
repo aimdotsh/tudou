@@ -72,7 +72,10 @@ class Coros:
             response = await self.req.get(url)
             data = response.json()
             activities = data.get("data", {}).get("dataList", None)
-            if page_number == 1 and activities:
+            if not activities:
+                break
+
+            if page_number == 1:
                 print("--- COROS Server Latest 5 Activities ---")
                 for act in activities[:5]:
                     name = act.get("name", "Unnamed Workout")
@@ -117,12 +120,6 @@ class Coros:
 
         if not file_url:
             print(f"No file URL found for label_id {label_id} (mode: {mode})")
-            ignore_path = os.path.join(download_folder, f"{label_id}.ignore")
-            try:
-                with open(ignore_path, "w") as f:
-                    f.write("no_file_url")
-            except Exception:
-                pass
             return None, None
 
         try:
