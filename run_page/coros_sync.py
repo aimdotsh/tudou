@@ -109,6 +109,12 @@ class Coros:
 
         if not file_url:
             print(f"No file URL found for label_id {label_id} (mode: {mode})")
+            ignore_path = os.path.join(download_folder, f"{label_id}.ignore")
+            try:
+                with open(ignore_path, "w") as f:
+                    f.write("no_file_url")
+            except Exception:
+                pass
             return None, None
 
         try:
