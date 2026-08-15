@@ -16,5 +16,15 @@ export interface Activity {
 }
 
 export type SportFilter = 'all' | 'Run' | 'Ride' | 'Hike' | 'Gym'
-export type WorkoutType = 'WeightTraining' | 'Workout' | 'StairStepper' | 'WaterSport'
-export const WORKOUT_TYPES: WorkoutType[] = ['WeightTraining', 'Workout', 'StairStepper', 'WaterSport']
+export type WorkoutType = 'WeightTraining' | 'Workout' | 'StairStepper' | 'WaterSport' | 'Gym' | 'Climb' | 'Sail' | 'Velomobile' | '爬山' | string
+export const WORKOUT_TYPES: string[] = [
+  'WeightTraining',
+  'Workout',
+  'StairStepper',
+  'WaterSport',
+  'Gym',
+  'Climb',
+  'Sail',
+  'Velomobile',
+  '爬山',
+]

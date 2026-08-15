@@ -25,8 +25,12 @@ function typeIcon(type: string): string {
     Hike: '🥾',
     WeightTraining: '🏋️',
     Workout: '💪',
+    Gym: '💪',
+    Climb: '🧗',
+    爬山: '🧗',
     StairStepper: '🪜',
     WaterSport: '🏊',
+    Sail: '⛵',
   }
   return icons[type] ?? '📌'
 }
@@ -35,8 +39,12 @@ function typeLabel(type: string, locale: string): string {
   const map: Record<string, { zh: string; en: string }> = {
     WeightTraining: { zh: '力量', en: 'Weights' },
     Workout:        { zh: '训练', en: 'Workout' },
+    Gym:            { zh: '健身', en: 'Gym' },
+    Climb:          { zh: '攀登', en: 'Climb' },
+    爬山:           { zh: '爬山', en: 'Climb' },
     StairStepper:   { zh: '楼梯', en: 'Stairs' },
     WaterSport:     { zh: '水上', en: 'Water' },
+    Sail:           { zh: '帆船', en: 'Sail' },
   }
   return map[type]?.[locale as 'zh' | 'en'] ?? type
 }
@@ -45,6 +53,9 @@ function typeColor(type: string): string {
   const colors: Record<string, string> = {
     WeightTraining: '#f97316',
     Workout:        '#c026d3',
+    Gym:            '#c026d3',
+    Climb:          '#10b981',
+    爬山:           '#10b981',
     StairStepper:   '#3b82f6',
     WaterSport:     '#06b6d4',
   }
