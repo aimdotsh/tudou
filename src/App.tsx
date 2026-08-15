@@ -15,12 +15,11 @@ import { ProfileCard } from './components/ProfileCard'
 import { PersonalBest } from './components/PersonalBest'
 import { TracksPage } from './components/TracksPage'
 import { ChinaMap } from './components/ChinaMap'
-import { CheckinPage } from './components/CheckinPage'
 import rawActivities from './static/activities.json'
 import siteMetadata from './static/site-metadata'
 const activities = rawActivities as Activity[]
 
-type Page = 'home' | 'tracks' | 'checkin'
+type Page = 'home' | 'tracks'
 
 export default function App() {
   const { dark, toggle } = useTheme()
@@ -68,8 +67,6 @@ export default function App() {
             onBack={() => setPage('home')}
             dark={dark}
           />
-        ) : page === 'checkin' ? (
-          <CheckinPage />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_380px] gap-6 items-start">
             {/* Left column */}
