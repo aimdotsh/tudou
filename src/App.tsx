@@ -23,7 +23,7 @@ const activities = rawActivities as Activity[]
 type Page = 'home' | 'tracks'
 
 export default function App() {
-  const { dark, toggle } = useTheme()
+  const { dark, toggle, preset, setPreset } = useTheme()
   const [filter, setFilter] = useState<SportFilter>('all')
   const [year, setYear] = useState<number | null>(null)
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
@@ -68,6 +68,8 @@ export default function App() {
           setFilter={setFilter}
           dark={dark}
           toggleTheme={toggle}
+          preset={preset}
+          setPreset={setPreset}
           activities={activities}
           page={page}
           onNavigate={setPage}

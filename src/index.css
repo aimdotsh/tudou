@@ -15,12 +15,89 @@
   --color-accent: #a855f7;
 }
 
+/* === 多主题系统 (Multi-Theme Preset System) === */
+:root {
+  /* 默认经典主题 Classic Amber */
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-accent: #d97706;
+  --color-accent-hover: #b45309;
+}
+
+/* 1. 经典暖金 (Classic) */
+[data-theme="classic"].dark,
+.dark[data-theme="classic"],
 .dark {
-  --color-bg: #0d1117;
-  --color-card: #161b22;
-  --color-border: #30363d;
-  --color-text: #e6edf3;
-  --color-muted: #8b949e;
+  --color-bg: #0b0d10;
+  --color-card: #13171f;
+  --color-text: #f1f5f9;
+  --color-muted: #94a3b8;
+  --color-border: #1e293b;
+  --color-accent: #f59e0b;
+  --color-accent-hover: #d97706;
+}
+
+/* 2. 耐克荧光 (Nike Neon) */
+[data-theme="nike"] {
+  --color-bg: #f7fee7;
+  --color-card: #ffffff;
+  --color-text: #1a2e05;
+  --color-muted: #4d7c0f;
+  --color-border: #d9f99d;
+  --color-accent: #65a30d;
+  --color-accent-hover: #4d7c0f;
+}
+.dark[data-theme="nike"] {
+  --color-bg: #080a04;
+  --color-card: #111608;
+  --color-text: #ecfccb;
+  --color-muted: #84cc16;
+  --color-border: #1a2e05;
+  --color-accent: #a3e635;
+  --color-accent-hover: #84cc16;
+}
+
+/* 3. Strava 珊瑚橘 (Strava Coral) */
+[data-theme="strava"] {
+  --color-bg: #fff7ed;
+  --color-card: #ffffff;
+  --color-text: #431407;
+  --color-muted: #9a3412;
+  --color-border: #ffedd5;
+  --color-accent: #ea580c;
+  --color-accent-hover: #c2410c;
+}
+.dark[data-theme="strava"] {
+  --color-bg: #0c0604;
+  --color-card: #180d08;
+  --color-text: #ffedd5;
+  --color-muted: #fb923c;
+  --color-border: #431407;
+  --color-accent: #fc4c02;
+  --color-accent-hover: #ea580c;
+}
+
+/* 4. 佳明深海蓝 (Garmin Ocean Blue) */
+[data-theme="garmin"] {
+  --color-bg: #f0f9ff;
+  --color-card: #ffffff;
+  --color-text: #0c4a6e;
+  --color-muted: #0369a1;
+  --color-border: #e0f2fe;
+  --color-accent: #0284c7;
+  --color-accent-hover: #0369a1;
+}
+.dark[data-theme="garmin"] {
+  --color-bg: #040d14;
+  --color-card: #091a27;
+  --color-text: #e0f2fe;
+  --color-muted: #38bdf8;
+  --color-border: #0c4a6e;
+  --color-accent: #38bdf8;
+  --color-accent-hover: #0284c7;
 }
 
 [data-filter="all"] { --color-accent: #a855f7; }

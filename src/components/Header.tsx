@@ -7,6 +7,9 @@ import { useGitHubAuthContext } from '../hooks/useGitHubAuthContext'
 
 import siteMetadata from '../static/site-metadata'
 
+import { Palette } from 'lucide-react'
+import type { ThemePreset } from '../hooks/useTheme'
+
 type Page = 'home' | 'tracks'
 
 interface HeaderProps {
@@ -14,9 +17,80 @@ interface HeaderProps {
   setFilter: (f: SportFilter) => void
   dark: boolean
   toggleTheme: () => void
+  preset: ThemePreset
+  setPreset: (p: ThemePreset) => void
   activities: Activity[]
   page: Page
   onNavigate: (p: Page) => void
+}
+
+function ThemePresetPicker({ preset, setPreset }: { preset: ThemePreset; setPreset: (p: ThemePreset) => void }) {
+  const { locale } = useLocale()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const options: { value: ThemePreset; label: string; color: string }[] = [
+    { value: 'classic', label: locale === 'zh' ? '经典暖金' : 'Classic Amber', color: '#f59e0b' },
+    { value: 'nike', label: locale === 'zh' ? '耐克荧光' : 'Nike Neon', color: '#a3e635' },
+    { value: 'strava', label: locale === 'zh' ? 'Strava 珊瑚' : 'Strava Coral', color: '#fc4c02' },
+    { value: 'garmin', label: locale === 'zh' ? '佳明科技蓝' : 'Garmin Ocean', color: '#38bdf8' },
+  ]
+
+  const activeOpt = options.find((o) => o.value === preset) ?? options[0]
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)] relative group"
+        title={locale === 'zh' ? '切换运动主题' : 'Switch Theme Preset'}
+      >
+        <Palette className="w-4 h-4 transition-transform group-hover:scale-110" style={{ color: activeOpt.color }} />
+        <span
+          className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full ring-1 ring-white/20"
+          style={{ backgroundColor: activeOpt.color }}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-10 w-44 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-xl py-1 z-50 animate-in fade-in duration-150">
+          <div className="px-3 py-1.5 border-b border-[var(--color-border)] text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider">
+            {locale === 'zh' ? '运动主题系统' : 'Theme Presets'}
+          </div>
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                setPreset(opt.value)
+                setOpen(false)
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 text-xs transition-colors ${
+                preset === opt.value
+                  ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] font-bold'
+                  : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full shadow-xs shrink-0" style={{ backgroundColor: opt.color }} />
+                <span>{opt.label}</span>
+              </div>
+              {preset === opt.value && <span className="text-[10px]">✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 function GitHubAuthDropdown() {
@@ -122,7 +196,7 @@ function GitHubAuthDropdown() {
   )
 }
 
-export function Header({ filter, setFilter, dark, toggleTheme, activities, page, onNavigate }: HeaderProps) {
+export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset, activities, page, onNavigate }: HeaderProps) {
   const { locale, setLocale, t } = useLocale()
 
   const existingTypes = new Set(activities.map((a) => a.type))
@@ -157,8 +231,9 @@ export function Header({ filter, setFilter, dark, toggleTheme, activities, page,
             </span>
           </div>
 
-          {/* Right quick tools for Mobile (Theme, Locale, GitHub Auth) */}
+          {/* Right quick tools for Mobile (Theme, Preset, Locale, GitHub Auth) */}
           <div className="flex md:hidden items-center gap-2">
+            <ThemePresetPicker preset={preset} setPreset={setPreset} />
             <button
               onClick={toggleTheme}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)]"
@@ -224,6 +299,7 @@ export function Header({ filter, setFilter, dark, toggleTheme, activities, page,
 
         {/* Right nav (Desktop Only) */}
         <div className="hidden md:flex items-center gap-4">
+          <ThemePresetPicker preset={preset} setPreset={setPreset} />
           <button
             onClick={toggleTheme}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors"
