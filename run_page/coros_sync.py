@@ -63,9 +63,10 @@ class Coros:
     async def init(self):
         await self.login()
 
-    async def fetch_activities(self):
+    async def fetch_activities_dict(self):
         page_number = 1
         all_activities = []
+        act_map = {}
 
         while True:
             url = f"{COROS_URL_DICT.get('ACTIVITY_LIST')}&pageNumber={page_number}&size=20"
@@ -90,10 +91,16 @@ class Coros:
                 mode = activity.get("mode", 100)
                 if label_id is None:
                     continue
-                all_activities.append((str(label_id), mode))
+                str_label_id = str(label_id)
+                all_activities.append((str_label_id, mode))
+                act_map[str_label_id] = activity
 
             page_number += 1
 
+        return all_activities, act_map
+
+    async def fetch_activities(self):
+        all_activities, _ = await self.fetch_activities_dict()
         return all_activities
 
     async def download_activity(self, label_id, mode=100):
@@ -163,13 +170,71 @@ def get_downloaded_ids(folder):
     return valid_ids
 
 
+def sync_coros_summary_to_db(act):
+    import datetime
+    from generator.db import update_or_create_activity, init_db
+
+    label_id = str(act.get("labelId"))
+    name = act.get("name", "力量训练")
+    mode = act.get("mode", 23)
+    start_time_ts = act.get("startTime", 0)
+
+    if start_time_ts:
+        dt = datetime.datetime.fromtimestamp(start_time_ts)
+        start_date_local = dt.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        start_date_local = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    duration = act.get("duration") or act.get("totalTime") or 0
+    m, s = divmod(duration, 60)
+    h, m = divmod(m, 60)
+    moving_time_str = f"1970-01-01 {h:02d}:{m:02d}:{s:02d}.000000"
+
+    distance = float(act.get("distance", 0.0) or 0.0)
+    avg_hr = act.get("avgHr")
+
+    if mode in [23, 24, 25]:
+        act_type = "WeightTraining"
+    elif mode in [8, 9, 100]:
+        act_type = "Run"
+    elif mode in [14]:
+        act_type = "Hike"
+    else:
+        act_type = "Workout"
+
+    class MockActivity:
+        pass
+
+    mock_act = MockActivity()
+    mock_act.id = int(label_id)
+    mock_act.name = name
+    mock_act.distance = distance
+    mock_act.moving_time = moving_time_str
+    mock_act.elapsed_time = moving_time_str
+    mock_act.type = act_type
+    mock_act.start_date = start_date_local
+    mock_act.start_date_local = start_date_local
+    mock_act.location_country = "中国"
+    mock_act.map = None
+    mock_act.average_heartrate = avg_hr
+    mock_act.average_speed = (distance * 1000 / duration) if (duration and distance) else 0.0
+    mock_act.elevation_gain = 0.0
+    mock_act.source = "coros"
+
+    session = init_db(SQL_FILE)
+    update_or_create_activity(session, mock_act)
+    session.commit()
+    session.close()
+    print(f"✅ Fallback synced activity metadata directly to DB: {name} ({start_date_local}, mode:{mode})")
+
+
 async def download_and_generate(account, password):
     folder = FIT_FOLDER
     downloaded_ids = set(get_downloaded_ids(folder))
     coros = Coros(account, password)
     await coros.init()
 
-    all_activities = await coros.fetch_activities()
+    all_activities, act_map = await coros.fetch_activities_dict()
     print("activity_ids total: ", len(all_activities))
     print("downloaded_ids count: ", len(downloaded_ids))
     to_generate_coros_items = [
@@ -178,11 +243,26 @@ async def download_and_generate(account, password):
     print("to_generate_activity_ids count: ", len(to_generate_coros_items))
 
     start_time = time.time()
-    await gather_with_concurrency(
+    results = await gather_with_concurrency(
         10,
         [coros.download_activity(label_id, mode) for label_id, mode in to_generate_coros_items],
     )
     print(f"Download finished. Elapsed {time.time()-start_time} seconds")
+
+    # 对未生成 FIT 档案的高驰非轨迹健身（如 Mode 23 力量训练），自动使用高驰原始元数据直接落库！
+    for (label_id, mode), res in zip(to_generate_coros_items, results):
+        if res is None or res[0] is None:
+            act_obj = act_map.get(label_id)
+            if act_obj:
+                try:
+                    sync_coros_summary_to_db(act_obj)
+                    # 建立 ignore 文件避免 Actions 后续重复重试
+                    ignore_path = os.path.join(folder, f"{label_id}.ignore")
+                    with open(ignore_path, "w") as f:
+                        f.write("synced_summary")
+                except Exception as e:
+                    print(f"Error in sync_coros_summary_to_db for {label_id}: {e}")
+
     await coros.req.aclose()
     make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, "fit")
 
