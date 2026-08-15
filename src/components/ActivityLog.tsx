@@ -4,6 +4,7 @@ import { WORKOUT_TYPES } from '../types'
 import { formatDuration, formatPace } from '../hooks/useActivities'
 import { useLocale } from '../hooks/useLocale'
 import { WorkoutDetailModal } from './WorkoutDetailModal'
+import { Share2 } from 'lucide-react'
 
 interface ActivityLogProps {
   activities: Activity[]
@@ -411,11 +412,10 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
                         e.stopPropagation()
                         onShareActivity?.(a)
                       }}
-                      className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 transition-all cursor-pointer shadow-2xs active:scale-95 inline-flex items-center gap-1"
-                      title="分享独立海报页面"
+                      className="p-1.5 rounded-full bg-[var(--color-accent)]/15 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/30 border border-[var(--color-accent)]/30 transition-all cursor-pointer shadow-2xs active:scale-95 inline-flex items-center justify-center"
+                      title="分享运动独立海报"
                     >
-                      <span>🔗</span>
-                      <span>分享</span>
+                      <Share2 className="w-3.5 h-3.5" />
                     </button>
                   </td>
                 </tr>

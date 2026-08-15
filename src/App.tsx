@@ -62,15 +62,17 @@ export default function App() {
     <LocaleProvider>
       <GitHubAuthProvider>
         <div className="min-h-screen bg-[var(--color-bg)]" data-filter={filter}>
-      <Header
-        filter={filter}
-        setFilter={setFilter}
-        dark={dark}
-        toggleTheme={toggle}
-        activities={activities}
-        page={page}
-        onNavigate={setPage}
-      />
+      {!shareActivity && (
+        <Header
+          filter={filter}
+          setFilter={setFilter}
+          dark={dark}
+          toggleTheme={toggle}
+          activities={activities}
+          page={page}
+          onNavigate={setPage}
+        />
+      )}
 
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-6 w-full min-w-0">
         {shareActivity ? (
