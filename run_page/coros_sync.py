@@ -87,10 +87,14 @@ class Coros:
 
     async def download_activity(self, label_id, mode=100):
         download_folder = FIT_FOLDER
-        # 高驰官方 API 下载地址：优先使用真实的 sportType/mode 参数
+        # 高驰官方 API 下载地址：全量尝试 fileType=1 (FIT), fileType=4, fileType=2 (TCX)
         urls_to_try = [
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=1",
             f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=4",
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=1",
             f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=4",
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=2",
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=2",
         ]
         file_url = None
         for download_url in urls_to_try:
