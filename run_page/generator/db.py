@@ -103,20 +103,20 @@ class Activity(Base):
     def to_dict_safe(self):
         data = self.to_dict()
         import os
-        lat_env = os.getenv("VITE_LAT_OFFSET") or os.getenv("LAT_OFFSET") or os.getenv("VITE_LAT_OFFSET_DEFAULT") or "0.5201314"
-        lng_env = os.getenv("VITE_LNG_OFFSET") or os.getenv("LNG_OFFSET") or os.getenv("VITE_LNG_OFFSET_DEFAULT") or "0.1314520"
+        lat_env = os.getenv("VITE_LAT_OFFSET") or os.getenv("LAT_OFFSET") or os.getenv("VITE_LAT_OFFSET_DEFAULT") or "1.8201314"
+        lng_env = os.getenv("VITE_LNG_OFFSET") or os.getenv("LNG_OFFSET") or os.getenv("VITE_LNG_OFFSET_DEFAULT") or "2.2314520"
         
         try:
             LAT_OFFSET = float(lat_env)
             LNG_OFFSET = float(lng_env)
         except ValueError:
-            LAT_OFFSET = 0.5201314
-            LNG_OFFSET = 0.1314520
+            LAT_OFFSET = 1.8201314
+            LNG_OFFSET = 2.2314520
 
-        # 杜绝真实经纬度裸漏：若偏置全为0则强制使用默认防泄漏偏置
+        # 杜绝真实经纬度裸漏：若偏置全为0则强制使用大范围 200km+ 自动防泄漏偏置
         if LAT_OFFSET == 0.0 and LNG_OFFSET == 0.0:
-            LAT_OFFSET = 0.5201314
-            LNG_OFFSET = 0.1314520
+            LAT_OFFSET = 1.8201314
+            LNG_OFFSET = 2.2314520
 
         # 擦除小地名与门牌街道，仅保留国家/省/市
         if data.get("location_country"):
