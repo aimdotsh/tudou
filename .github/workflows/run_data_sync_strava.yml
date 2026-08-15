@@ -1,4 +1,4 @@
-name: Run Data Sync
+name: Run Strava / Coros Data Sync
 
 on:
   workflow_dispatch:
@@ -11,7 +11,6 @@ on:
       - workouts
     paths:
       - run_page/nike_sync.py
-      - run_page/nike_to_strava_sync.py
       - run_page/strava_sync.py
       - run_page/gen_svg.py
       - run_page/garmin_sync.py
@@ -19,10 +18,7 @@ on:
       - run_page/keep_sync.py
       - run_page/gpx_sync.py
       - run_page/tcx_sync.py
-      - run_page/tcx_to_garmin_sync.py
-      - run_page/garmin_to_strava_sync.py
-      - run_page/keep_to_strava_sync.py
-      - run_page/oppo_sync.py
+      - run_page/fit_sync.py
       - requirements.txt
 
 env:
@@ -46,12 +42,8 @@ env:
 
 jobs:
   sync:
-    name: Sync
+    name: Sync Workout Data
     runs-on: ubuntu-latest
-    outputs:
-      SAVE_DATA_IN_GITHUB_CACHE: ${{ steps.set_output.outputs.SAVE_DATA_IN_GITHUB_CACHE }}
-      DATA_CACHE_PREFIX: ${{ steps.set_output.outputs.DATA_CACHE_PREFIX }}
-      BUILD_GH_PAGES: ${{ steps.set_output.outputs.BUILD_GH_PAGES }}
 
     steps:
       - name: Checkout
@@ -72,84 +64,25 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Cache Data Files
-        if: env.SAVE_DATA_IN_GITHUB_CACHE == 'true'
-        uses: actions/cache@v4
-        with:
-          path: |
-            activities
-            assets
-            GPX_OUT
-            TCX_OUT
-            FIT_OUT
-            Workouts
-            run_page/data.db
-            src/static/activities.json
-            imported.json
-          key: ${{ env.DATA_CACHE_PREFIX }}-${{ github.sha }}-${{ github.run_id }}
-          restore-keys: |
-            ${{ env.DATA_CACHE_PREFIX }}-${{ github.sha }}-
-            ${{ env.DATA_CACHE_PREFIX }}-
-
-      - name: Run sync Nike script
-        if: env.RUN_TYPE == 'nike'
-        run: |
-          python run_page/nike_sync.py ${{ secrets.NIKE_REFRESH_TOKEN }}
-
-      - name: Run sync Nike to Strava
-        if: env.RUN_TYPE == 'nike_to_strava'
-        run: |
-          python run_page/nike_to_strava_sync.py ${{ secrets.NIKE_REFRESH_TOKEN }} ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }}
-
-      - name: Run sync Keep script
-        if: env.RUN_TYPE == 'keep'
-        run: |
-          python run_page/keep_sync.py ${{ secrets.KEEP_MOBILE }} ${{ secrets.KEEP_PASSWORD }} --with-gpx
-
-      - name: Run sync Coros script
+      - name: Run sync Coros script (高驰)
         if: env.RUN_TYPE == 'coros'
         run: |
           python run_page/coros_sync.py ${{ secrets.COROS_ACCOUNT }} ${{ secrets.COROS_PASSWORD }}
-
-      - name: Run sync Keep_to_strava script
-        if: env.RUN_TYPE == 'keep_to_strava_sync'
-        run: |
-          python run_page/keep_to_strava_sync.py ${{ secrets.KEEP_MOBILE }} ${{ secrets.KEEP_PASSWORD }} ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }} --sync-types running cycling hiking
 
       - name: Run sync Strava script
         if: env.RUN_TYPE == 'strava'
         run: |
           python run_page/strava_sync.py ${{ secrets.STRAVA_CLIENT_ID }} ${{ secrets.STRAVA_CLIENT_SECRET }} ${{ secrets.STRAVA_CLIENT_REFRESH_TOKEN }}
 
-      - name: Run sync Codoon script
-        if: env.RUN_TYPE == 'codoon'
-        run: |
-          python run_page/codoon_sync.py ${{ secrets.CODOON_MOBILE }} ${{ secrets.CODOON_PASSWORD }}
-
       - name: Run sync Garmin script
         if: env.RUN_TYPE == 'garmin'
         run: |
           python run_page/garmin_sync.py ${{ secrets.GARMIN_SECRET_STRING }}
 
-      - name: Run sync Garmin CN script
-        if: env.RUN_TYPE == 'garmin_cn'
+      - name: Run sync Keep script
+        if: env.RUN_TYPE == 'keep'
         run: |
-          python run_page/garmin_sync.py ${{ secrets.GARMIN_SECRET_STRING_CN }} --is-cn
-
-      - name: Run sync Only GPX script
-        if: env.RUN_TYPE == 'only_gpx'
-        run: |
-          python run_page/gpx_sync.py
-
-      - name: Run sync Only FIT script
-        if: env.RUN_TYPE == 'only_fit'
-        run: |
-          python run_page/fit_sync.py
-
-      - name: Run sync Only TCX script
-        if: env.RUN_TYPE == 'only_tcx'
-        run: |
-          python run_page/tcx_sync.py
+          python run_page/keep_sync.py ${{ secrets.KEEP_MOBILE }} ${{ secrets.KEEP_PASSWORD }} --with-gpx
 
       - name: Update activities data (Privacy)
         if: env.RUN_TYPE != 'pass'
@@ -168,21 +101,9 @@ jobs:
           MIN_GRID_DISTANCE: ${{ env.MIN_GRID_DISTANCE }}
         run: |
           python run_page/gen_svg.py --from-db --title "$TITLE" --type github --github-style "align-firstday" --athlete "$ATHLETE" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github.svg --use-localtime --min-distance 0.5
-          python run_page/gen_svg.py --from-db --title "$TITLE_GRID" --type grid --athlete "$ATHLETE" --output assets/grid.svg --special-color yellow --special-color2 red --special-distance 20 --special-distance2 40 --use-localtime --min-distance "$MIN_GRID_DISTANCE"
+          python run_page/gen_svg.py --from-db --title "$TITLE_GRID" --type grid --athlete "$ATHLETE" --output assets/grid.svg --special-color yellow --special-color2 red --special-distance 20 --special-color2 red --use-localtime --min-distance "$MIN_GRID_DISTANCE"
           python run_page/gen_svg.py --from-db --type circular --use-localtime
           python run_page/gen_svg.py --from-db --year $(date +"%Y")  --language zh_CN --title "$(date +"%Y") Workouts" --type github --github-style "align-firstday" --athlete "$ATHLETE" --special-distance 10 --special-distance2 20 --special-color yellow --special-color2 red --output assets/github_$(date +"%Y").svg --use-localtime --min-distance 0.5
-
-      - name: Make month of life
-        if: env.GENERATE_MONTH_OF_LIFE == 'true'
-        env:
-          BIRTHDAY_MONTH: ${{ env.BIRTHDAY_MONTH }}
-        run: |
-          python run_page/gen_svg.py --from-db --type monthoflife --birth "${{env.BIRTHDAY_MONTH}}" --special-color '#f9d367'  --special-color2 '#f0a1a8' --output assets/mol.svg --use-localtime --athlete "${{env.ATHLETE}}" --title 'Runner Month of Life'
-
-      - name: Generate missing track GIFs
-        if: env.RUN_TYPE != 'pass'
-        run: |
-          if [ -f scripts/generate_missing_gifs.py ]; then python scripts/generate_missing_gifs.py; else echo "scripts/generate_missing_gifs.py not found, skipping"; fi
 
       - name: Push new runs
         if: env.SAVE_DATA_IN_GITHUB_CACHE != 'true'
@@ -192,14 +113,3 @@ jobs:
           git add .
           git commit -m 'Add new workouts' || echo "nothing to commit"
           git push || echo "nothing to push"
-
-      - name: Set Output
-        id: set_output
-        env:
-          SAVE_DATA_IN_GITHUB_CACHE: ${{ env.SAVE_DATA_IN_GITHUB_CACHE }}
-          DATA_CACHE_PREFIX: ${{ env.DATA_CACHE_PREFIX }}
-          BUILD_GH_PAGES: ${{ env.BUILD_GH_PAGES }}
-        run: |
-          echo "SAVE_DATA_IN_GITHUB_CACHE=$SAVE_DATA_IN_GITHUB_CACHE" >> "$GITHUB_OUTPUT"
-          echo "DATA_CACHE_PREFIX=$DATA_CACHE_PREFIX" >> "$GITHUB_OUTPUT"
-          echo "BUILD_GH_PAGES=$BUILD_GH_PAGES" >> "$GITHUB_OUTPUT"
