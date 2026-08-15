@@ -157,6 +157,15 @@ def get_downloaded_ids(folder):
     for f in os.listdir(folder):
         if f.startswith("."):
             continue
+        # 严格过滤：只有真正的 .fit 档案才能作为物理已下载标志
+        if not f.endswith(".fit"):
+            if f.endswith(".ignore"):
+                try:
+                    os.remove(os.path.join(folder, f))
+                    print(f"Cleaned legacy ignore file: {f}")
+                except Exception:
+                    pass
+            continue
         fpath = os.path.join(folder, f)
         # 如果文件大小为 0，说明上次下载损坏中断，自动清理并重新从高驰拉取
         if os.path.getsize(fpath) == 0:
@@ -252,16 +261,14 @@ async def download_and_generate(account, password):
     # 对未生成 FIT 档案的高驰非轨迹健身（如 Mode 23 力量训练），自动使用高驰原始元数据直接落库！
     for (label_id, mode), res in zip(to_generate_coros_items, results):
         if res is None or res[0] is None:
-            act_obj = act_map.get(label_id)
+            act_obj = act_map.get(str(label_id)) or act_map.get(label_id)
             if act_obj:
                 try:
                     sync_coros_summary_to_db(act_obj)
-                    # 建立 ignore 文件避免 Actions 后续重复重试
-                    ignore_path = os.path.join(folder, f"{label_id}.ignore")
-                    with open(ignore_path, "w") as f:
-                        f.write("synced_summary")
                 except Exception as e:
                     print(f"Error in sync_coros_summary_to_db for {label_id}: {e}")
+            else:
+                print(f"Warning: label_id {label_id} not found in act_map")
 
     await coros.req.aclose()
     make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, "fit")
