@@ -63,9 +63,9 @@ class Coros:
     async def init(self):
         await self.login()
 
-    async def fetch_activity_ids(self):
+    async def fetch_activities(self):
         page_number = 1
-        all_activities_ids = []
+        all_activities = []
 
         while True:
             url = f"{COROS_URL_DICT.get('ACTIVITY_LIST')}&pageNumber={page_number}&size=20"
@@ -75,27 +75,39 @@ class Coros:
             if not activities:
                 break
             for activity in activities:
-                label_id = activity["labelId"]
+                label_id = activity.get("labelId")
+                mode = activity.get("mode", 100)
                 if label_id is None:
                     continue
-                all_activities_ids.append(label_id)
+                all_activities.append((str(label_id), mode))
 
             page_number += 1
 
-        return all_activities_ids
+        return all_activities
 
-    async def download_activity(self, label_id):
+    async def download_activity(self, label_id, mode=100):
         download_folder = FIT_FOLDER
-        download_url = f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType=100&fileType=4"
+        # 高驰官方 API 下载地址：优先使用真实的 sportType/mode 参数
+        urls_to_try = [
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=4",
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=4",
+        ]
         file_url = None
-        try:
-            response = await self.req.post(download_url)
-            resp_json = response.json()
-            file_url = resp_json.get("data", {}).get("fileUrl")
-            if not file_url:
-                print(f"No file URL found for label_id {label_id}")
-                return None, None
+        for download_url in urls_to_try:
+            try:
+                response = await self.req.post(download_url)
+                resp_json = response.json()
+                file_url = resp_json.get("data", {}).get("fileUrl")
+                if file_url:
+                    break
+            except Exception as e:
+                print(f"Try url {download_url} failed: {e}")
 
+        if not file_url:
+            print(f"No file URL found for label_id {label_id} (mode: {mode})")
+            return None, None
+
+        try:
             fname = os.path.basename(file_url)
             file_path = os.path.join(download_folder, fname)
 
@@ -122,20 +134,22 @@ def get_downloaded_ids(folder):
 
 async def download_and_generate(account, password):
     folder = FIT_FOLDER
-    downloaded_ids = get_downloaded_ids(folder)
+    downloaded_ids = set(get_downloaded_ids(folder))
     coros = Coros(account, password)
     await coros.init()
 
-    activity_ids = await coros.fetch_activity_ids()
-    print("activity_ids: ", len(activity_ids))
-    print("downloaded_ids: ", len(downloaded_ids))
-    to_generate_coros_ids = list(set(activity_ids) - set(downloaded_ids))
-    print("to_generate_activity_ids: ", len(to_generate_coros_ids))
+    all_activities = await coros.fetch_activities()
+    print("activity_ids total: ", len(all_activities))
+    print("downloaded_ids count: ", len(downloaded_ids))
+    to_generate_coros_items = [
+        item for item in all_activities if item[0] not in downloaded_ids
+    ]
+    print("to_generate_activity_ids count: ", len(to_generate_coros_items))
 
     start_time = time.time()
     await gather_with_concurrency(
         10,
-        [coros.download_activity(label_d) for label_d in to_generate_coros_ids],
+        [coros.download_activity(label_id, mode) for label_id, mode in to_generate_coros_items],
     )
     print(f"Download finished. Elapsed {time.time()-start_time} seconds")
     await coros.req.aclose()
