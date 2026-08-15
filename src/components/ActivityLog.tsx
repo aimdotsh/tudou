@@ -111,7 +111,8 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
     const nextSel = isSame ? null : act
     onSelectActivity?.(nextSel)
 
-    if (act.extra_details) {
+    // 当具备 extra_details 或者是力量健身/Gym 打卡记录时，无论点卡片任何地方，都直接自动弹出明细弹窗！
+    if (act.extra_details || WORKOUT_TYPES.includes(act.type) || isGym) {
       setModalActivity(act)
     }
 

@@ -19564,6 +19564,23 @@
 "svg_path": "M 96,0 L 94,1 L 65,13 L 51,19 L 33,26 L 29,28 L 3,38 L 1,39 L 0,40 L 0,40 L 0,42 L 1,43 L 1,43 L 3,49 L 8,59 L 9,58 L 9,58 L 6,52 L 4,47 L 2,42 L 2,42 L 2,41 L 3,41 L 5,40 L 19,35 L 27,31 L 34,29 L 38,27 L 43,25 L 46,23 L 52,21 L 53,21 L 53,21 L 53,21 L 52,28 L 51,31 L 51,37 L 49,48 L 49,48 L 49,48 L 45,48 L 45,48 L 44,47 L 45,40 L 46,34 L 47,28 L 47,23 L 48,23 L 48,23 L 52,21 L 55,20 L 65,16 L 82,9 L 88,6 L 91,5 L 96,3 L 99,2 L 100,1 L 99,1 L 99,0 L 99,0 L 99,0 L 98,0 L 88,4 L 99,0 L 98,0"
 },
 {
+"run_id": 479604648502657523,
+"name": "力量训练",
+"distance": 0.0,
+"moving_time": "0:48:00",
+"type": "WeightTraining",
+"start_date": "2026-08-14 14:32:29",
+"start_date_local": "2026-08-14 14:32:29",
+"location_country": "中国, 天津市",
+"summary_polyline": "",
+"average_heartrate": 132.0,
+"average_speed": 0.0,
+"elevation_gain": 0.0,
+"source": "coros",
+"extra_details": "[{\"index\": 1, \"name\": \"热身与动态拉伸\", \"type\": \"timer\", \"duration\": \"6:00\"}, {\"index\": 2, \"name\": \"杠铃深蹲\", \"total_sets\": 4, \"type\": \"reps\", \"sets\": [{\"set_num\": 1, \"reps\": \"12 / 10\"}, {\"set_num\": 2, \"reps\": \"10 / 10\"}, {\"set_num\": 3, \"reps\": \"10 / 10\"}, {\"set_num\": 4, \"reps\": \"8 / 10\"}]}, {\"index\": 3, \"name\": \"哑铃卧推\", \"total_sets\": 4, \"type\": \"reps_weight\", \"sets\": [{\"set_num\": 1, \"reps\": \"12 / 10\", \"weight\": \"20.0 kg\"}, {\"set_num\": 2, \"reps\": \"10 / 10\", \"weight\": \"20.0 kg\"}, {\"set_num\": 3, \"reps\": \"10 / 10\", \"weight\": \"20.0 kg\"}, {\"set_num\": 4, \"reps\": \"9 / 10\", \"weight\": \"20.0 kg\"}]}, {\"index\": 4, \"name\": \"坐姿划船\", \"total_sets\": 4, \"type\": \"reps\", \"sets\": [{\"set_num\": 1, \"reps\": \"15 / 12\"}, {\"set_num\": 2, \"reps\": \"12 / 12\"}, {\"set_num\": 3, \"reps\": \"12 / 12\"}, {\"set_num\": 4, \"reps\": \"10 / 12\"}]}]",
+"streak": 1
+},
+{
 "run_id": 47960815065900,
 "name": "自定义力量",
 "distance": 0.0,
@@ -19578,6 +19595,6 @@
 "elevation_gain": 0.0,
 "source": "coros",
 "extra_details": "[{\"index\": 1, \"name\": \"热身\", \"type\": \"timer\", \"duration\": \"5:00\"}, {\"index\": 2, \"name\": \"深蹲\", \"total_sets\": 4, \"type\": \"reps\", \"sets\": [{\"set_num\": 1, \"reps\": \"13 / 10\"}, {\"set_num\": 2, \"reps\": \"11 / 10\"}, {\"set_num\": 3, \"reps\": \"13 / 10\"}, {\"set_num\": 4, \"reps\": \"12 / 10\"}]}, {\"index\": 3, \"name\": \"登山跑\", \"total_sets\": 4, \"type\": \"timer\", \"sets\": [{\"set_num\": 1, \"duration\": \"0:30\"}, {\"set_num\": 2, \"duration\": \"0:30\"}, {\"set_num\": 3, \"duration\": \"0:30\"}, {\"set_num\": 4, \"duration\": \"0:30\"}]}, {\"index\": 4, \"name\": \"哑铃罗马尼亚硬拉\", \"total_sets\": 4, \"type\": \"reps\", \"sets\": [{\"set_num\": 1, \"reps\": \"18 / 12\"}, {\"set_num\": 2, \"reps\": \"14 / 12\"}, {\"set_num\": 3, \"reps\": \"14 / 12\"}, {\"set_num\": 4, \"reps\": \"13 / 12\"}]}, {\"index\": 5, \"name\": \"哑铃弯举\", \"total_sets\": 4, \"type\": \"reps_weight\", \"sets\": [{\"set_num\": 1, \"reps\": \"16 / 10\", \"weight\": \"15.0 kg\"}, {\"set_num\": 2, \"reps\": \"15 / 10\", \"weight\": \"15.0 kg\"}, {\"set_num\": 3, \"reps\": \"16 / 10\", \"weight\": \"15.0 kg\"}, {\"set_num\": 4, \"reps\": \"10 / 10\", \"weight\": \"15.0 kg\"}]}]",
-"streak": 1
+"streak": 2
 }
 ]
