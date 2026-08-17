@@ -194,10 +194,8 @@ def sync_coros_summary_to_db(act):
     else:
         start_date_local = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    duration = act.get("duration") or act.get("totalTime") or 0
-    m, s = divmod(duration, 60)
-    h, m = divmod(m, 60)
-    moving_time_str = f"1970-01-01 {h:02d}:{m:02d}:{s:02d}.000000"
+    duration = int(act.get("duration") or act.get("totalTime") or 0)
+    moving_time_td = datetime.timedelta(seconds=duration)
 
     distance = float(act.get("distance", 0.0) or 0.0)
     avg_hr = act.get("avgHr")
@@ -206,10 +204,19 @@ def sync_coros_summary_to_db(act):
         act_type = "WeightTraining"
     elif mode in [8, 9, 100]:
         act_type = "Run"
-    elif mode in [14]:
+    elif mode in [14, 31]:
         act_type = "Hike"
+    elif mode in [2]:
+        act_type = "Ride"
     else:
-        act_type = "Workout"
+        if "跑" in name:
+            act_type = "Run"
+        elif "走" in name or "山" in name:
+            act_type = "Hike"
+        elif "骑" in name:
+            act_type = "Ride"
+        else:
+            act_type = "Workout"
 
     class MockActivity:
         pass
@@ -218,12 +225,13 @@ def sync_coros_summary_to_db(act):
     mock_act.id = int(label_id)
     mock_act.name = name
     mock_act.distance = distance
-    mock_act.moving_time = moving_time_str
-    mock_act.elapsed_time = moving_time_str
+    mock_act.moving_time = moving_time_td
+    mock_act.elapsed_time = moving_time_td
     mock_act.type = act_type
     mock_act.start_date = start_date_local
     mock_act.start_date_local = start_date_local
     mock_act.location_country = "中国"
+    mock_act.start_latlng = None
     mock_act.map = None
     mock_act.average_heartrate = avg_hr
     mock_act.average_speed = (distance * 1000 / duration) if (duration and distance) else 0.0

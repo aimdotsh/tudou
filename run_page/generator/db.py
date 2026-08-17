@@ -27,9 +27,10 @@ def randomword():
     return "".join(random.choice(letters) for i in range(4))
 
 
-geopy.geocoders.options.default_user_agent = "my-application"
-# reverse the location (lan, lon) -> location detail
-g = Nominatim(user_agent=randomword())
+def clean_activity_name(name):
+    if not name:
+        return "Unnamed Workout"
+    return str(name).strip()
 
 
 ACTIVITY_KEYS = [
@@ -189,7 +190,7 @@ def update_or_create_activity(session, run_activity):
         if run_activity.type in TYPE_DICT:
             type = TYPE_DICT[run_activity.type]
         if not activity:
-            start_point = run_activity.start_latlng
+            start_point = getattr(run_activity, "start_latlng", None)
             location_country = getattr(run_activity, "location_country", "")
             # or China for #176 to fix
             if not location_country and start_point or location_country == "China":
