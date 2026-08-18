@@ -212,11 +212,10 @@ def get_downloaded_ids(folder):
 
 def sync_coros_summary_to_db(act):
     import datetime
-    import polyline
     from generator.db import update_or_create_activity, init_db
 
     label_id = str(act.get("labelId"))
-    name = act.get("name", "跑步")
+    name = act.get("name", "运动")
     mode = act.get("mode", 8)
     start_time_ts = act.get("startTime", 0)
 
@@ -250,33 +249,6 @@ def sync_coros_summary_to_db(act):
         else:
             act_type = "Workout"
 
-    # 生成高质感真实运动 GPS Polyline (针对降级户外路线如 日坛公园、北京站 等)
-    poly_str = ""
-    if act_type in ["Run", "Hike", "Ride"] or "北京" in name or "日坛" in name:
-        if "日坛" in name or mode == 31:
-            pts = [
-                (39.9162, 116.4415), (39.9168, 116.4428), (39.9175, 116.4442), (39.9178, 116.4456),
-                (39.9170, 116.4468), (39.9158, 116.4475), (39.9145, 116.4470), (39.9138, 116.4455),
-                (39.9135, 116.4438), (39.9142, 116.4420), (39.9150, 116.4412), (39.9162, 116.4415)
-            ]
-        elif "北京" in name:
-            pts = [
-                (39.9025, 116.4250), (39.9038, 116.4278), (39.9045, 116.4310), (39.9052, 116.4345),
-                (39.9040, 116.4380), (39.9028, 116.4395), (39.9015, 116.4360), (39.9010, 116.4315),
-                (39.9018, 116.4270), (39.9025, 116.4250)
-            ]
-        else:
-            # 默认高质感户外多边步道
-            pts = [
-                (39.9080, 116.3970), (39.9095, 116.3995), (39.9110, 116.4020), (39.9125, 116.4045),
-                (39.9115, 116.4070), (39.9090, 116.4060), (39.9075, 116.4030), (39.9070, 116.3990), (39.9080, 116.3970)
-            ]
-        poly_str = polyline.encode(pts)
-
-    class MockMap:
-        def __init__(self, p):
-            self.summary_polyline = p
-
     class MockActivity:
         pass
 
@@ -289,19 +261,24 @@ def sync_coros_summary_to_db(act):
     mock_act.type = act_type
     mock_act.start_date = start_date_local
     mock_act.start_date_local = start_date_local
-    mock_act.location_country = "中国, 北京市"
+    mock_act.location_country = "中国"
     mock_act.start_latlng = None
-    mock_act.map = MockMap(poly_str)
+    mock_act.map = None
     mock_act.average_heartrate = avg_hr
     mock_act.average_speed = (distance * 1000 / duration) if (duration and distance) else 0.0
     mock_act.elevation_gain = 0.0
     mock_act.source = "coros"
 
-    session = init_db(SQL_FILE)
-    update_or_create_activity(session, mock_act)
-    session.commit()
-    session.close()
-    print(f"✅ Fallback synced activity metadata directly to DB: {name} ({start_date_local}, mode:{mode})")
+    session = init_db()
+    try:
+        update_or_create_activity(session, mock_act)
+        session.commit()
+        print(f"✅ Fallback synced activity metadata directly to DB: {name} ({start_date_local}, mode:{mode})")
+    except Exception as e:
+        session.rollback()
+        print(f"❌ Error fallback syncing activity to DB: {e}")
+    finally:
+        session.close()
 
 
 async def download_and_generate(account, password):
