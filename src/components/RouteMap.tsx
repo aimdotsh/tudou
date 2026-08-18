@@ -325,13 +325,18 @@ export function RouteMap({
     }
   }, [activities, allActivities, selectedActivity])
 
-  const isGymWithoutRoute = Boolean(
+  const hasNoRoute = Boolean(
     selectedActivity &&
-    (WORKOUT_TYPES.includes(selectedActivity.type) || selectedSport === 'Gym') &&
     (!selectedActivity.summary_polyline || selectedActivity.summary_polyline.length < 5)
   )
 
-  if (isGymWithoutRoute && selectedActivity) {
+  const isGymType = Boolean(
+    selectedActivity &&
+    (WORKOUT_TYPES.includes(selectedActivity.type) || selectedSport === 'Gym' || selectedActivity.extra_details)
+  )
+
+  // 1. 无轨迹的力量健身类项目：呈现肌肉热力解剖图
+  if (hasNoRoute && isGymType && selectedActivity) {
     return (
       <div id="route-map-section" className="relative w-full rounded-xl overflow-hidden shadow-sm transition-all duration-300">
         <MuscleHeatmap
@@ -347,6 +352,70 @@ export function RouteMap({
             ← 返回地图
           </button>
         )}
+      </div>
+    )
+  }
+
+  // 2. 无轨迹的其他户外/健走/跑步记录（如 走日坛公园、北京站）：呈现精美的运动指标高光卡片
+  if (hasNoRoute && selectedActivity) {
+    const icon = selectedActivity.type === 'Run' ? '🏃' : selectedActivity.type === 'Ride' ? '🚴' : selectedActivity.type === 'Hike' ? '🥾' : '👟'
+    const distKm = (selectedActivity.distance / 1000).toFixed(2)
+    const sportName = selectedActivity.type === 'Run' ? '跑步' : selectedActivity.type === 'Ride' ? '骑行' : selectedActivity.type === 'Hike' ? '健走/徒步' : '运动'
+
+    return (
+      <div
+        id="route-map-section"
+        className="bg-[var(--color-card)] border border-[var(--color-accent)] ring-2 ring-[var(--color-accent)]/20 rounded-2xl p-5 h-[280px] relative select-none shadow-md flex flex-col justify-between overflow-hidden animate-in fade-in duration-300"
+      >
+        {/* 顶部 Overview 返回按钮与徽章 */}
+        <div className="flex items-center justify-between z-10">
+          {onClearSelection && (
+            <button
+              onClick={onClearSelection}
+              className="px-3 py-1.5 bg-[var(--color-bg)]/80 backdrop-blur-md border border-[var(--color-border)] rounded-lg text-xs font-medium text-[var(--color-text)] shadow-sm hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Overview
+            </button>
+          )}
+          <span className="px-2.5 py-1 bg-[var(--color-accent)]/15 text-[var(--color-accent)] text-xs font-bold rounded-full border border-[var(--color-accent)]/30">
+            {icon} {sportName}记录
+          </span>
+        </div>
+
+        {/* 中部核心指标大牌 */}
+        <div className="text-center my-auto z-10">
+          <div className="text-xs text-[var(--color-muted)] font-medium mb-1">
+            {selectedActivity.start_date_local} · {selectedActivity.name || sportName}
+          </div>
+          <div className="flex items-baseline justify-center gap-1">
+            <span className="text-4xl font-extrabold text-[var(--color-text)] tracking-tight font-mono">
+              {distKm}
+            </span>
+            <span className="text-sm font-bold text-[var(--color-accent)]">km</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto mt-3 pt-3 border-t border-[var(--color-border)]/50 text-xs font-mono">
+            <div className="bg-[var(--color-bg)]/60 px-3 py-1.5 rounded-lg border border-[var(--color-border)]/40">
+              <div className="text-[10px] text-[var(--color-muted)]">时长</div>
+              <div className="font-bold text-[var(--color-text)]">{selectedActivity.moving_time?.split('.')[0] || '--'}</div>
+            </div>
+            <div className="bg-[var(--color-bg)]/60 px-3 py-1.5 rounded-lg border border-[var(--color-border)]/40">
+              <div className="text-[10px] text-[var(--color-muted)]">平均心率</div>
+              <div className="font-bold text-[var(--color-text)]">{selectedActivity.average_heartrate ? `${Math.round(selectedActivity.average_heartrate)} bpm` : '--'}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* 底部备注提示 */}
+        <div className="text-center text-[10px] text-[var(--color-muted)] opacity-75 z-10">
+          💡 无 GPS 轨迹路线数据 · 基础步数或降级同步运动
+        </div>
+
+        {/* 背景气泡科技线条 */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/5 to-transparent pointer-events-none" />
       </div>
     )
   }
