@@ -105,32 +105,57 @@ class Coros:
 
     async def download_activity(self, label_id, mode=100):
         download_folder = FIT_FOLDER
-        # 高驰官方 API 下载地址：全量尝试 fileType=1 (FIT), fileType=4, fileType=2 (TCX)
-        urls_to_try = [
-            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=1",
-            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=4",
-            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=1",
-            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=4",
-            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={mode}&fileType=2",
-            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&fileType=2",
-        ]
+        str_label_id = str(label_id)
+        int_mode = int(mode) if mode else 100
+
+        # 高驰官方 API 全量尝试组合 (JSON Body POST + Query GET + 多文件格式 fit/tcx/gpx)
+        download_url = COROS_URL_DICT.get("DOWNLOAD_URL")
         file_url = None
-        for download_url in urls_to_try:
+
+        payloads = [
+            {"labelId": str_label_id, "sportType": int_mode, "fileType": 1},
+            {"labelId": str_label_id, "fileType": 1},
+            {"labelId": str_label_id, "sportType": int_mode, "fileType": 4},
+            {"labelId": str_label_id, "fileType": 4},
+            {"labelId": str_label_id, "sportType": int_mode, "fileType": 2},
+            {"labelId": str_label_id, "fileType": 2},
+        ]
+
+        # 1. 尝试 POST JSON Body
+        for body in payloads:
             try:
-                response = await self.req.post(download_url)
+                response = await self.req.post(download_url, json=body)
                 resp_json = response.json()
                 file_url = resp_json.get("data", {}).get("fileUrl")
                 if file_url:
                     break
-            except Exception as e:
-                print(f"Try url {download_url} failed: {e}")
+            except Exception:
+                pass
+
+        # 2. 尝试 GET Query String
+        if not file_url:
+            queries = [
+                f"{download_url}?labelId={str_label_id}&sportType={int_mode}&fileType=1",
+                f"{download_url}?labelId={str_label_id}&fileType=1",
+                f"{download_url}?labelId={str_label_id}&sportType={int_mode}&fileType=4",
+                f"{download_url}?labelId={str_label_id}&fileType=4",
+            ]
+            for q_url in queries:
+                try:
+                    response = await self.req.get(q_url)
+                    resp_json = response.json()
+                    file_url = resp_json.get("data", {}).get("fileUrl")
+                    if file_url:
+                        break
+                except Exception:
+                    pass
 
         if not file_url:
             print(f"No file URL found for label_id {label_id} (mode: {mode})")
             return None, None
 
         try:
-            fname = f"{label_id}.fit"
+            fname = f"{str_label_id}.fit"
             file_path = os.path.join(download_folder, fname)
 
             async with self.req.stream("GET", file_url) as response:
@@ -138,16 +163,11 @@ class Coros:
                 async with aiofiles.open(file_path, "wb") as f:
                     async for chunk in response.aiter_bytes():
                         await f.write(chunk)
-        except httpx.HTTPStatusError as exc:
-            print(
-                f"Failed to download {file_url} with status code {response.status_code}: {exc}"
-            )
-            return None, None
         except Exception as exc:
             print(f"Error occurred while downloading {file_url}: {exc}")
             return None, None
 
-        return label_id, fname
+        return str_label_id, fname
 
 
 def get_downloaded_ids(folder):
