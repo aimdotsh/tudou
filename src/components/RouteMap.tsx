@@ -18,7 +18,7 @@ interface RouteMapProps {
 // 单条运动记录动态生长与领跑流光组件 (调用 getTotalLength 保证绝对从起点生长向终点)
 function AnimatedSingleTrack({ item }: { item: any }) {
   const pathRef = useRef<SVGPathElement>(null)
-  const [dashLength, setDashLength] = useState<number>(1200)
+  const [dashLength, setDashLength] = useState<number>(2000)
 
   useEffect(() => {
     if (pathRef.current) {
@@ -33,57 +33,60 @@ function AnimatedSingleTrack({ item }: { item: any }) {
     }
   }, [item.d])
 
+  const trackColor = item.mainColor || 'var(--color-accent)'
+  const glowColor = item.flowDarkColor || item.mainColor || 'var(--color-accent)'
+
   return (
     <g key={item.key}>
-      {/* 1.【底层】：浅色完整的静态运动轨迹路线 (呈现全貌) */}
+      {/* 1.【底层】：高对比度、清晰鲜艳的静态运动轨迹路线 (保证 100% 可见) */}
       <path
         d={item.d}
         fill="none"
-        stroke={item.baseLightColor}
-        strokeWidth="6"
-        strokeOpacity="0.5"
+        stroke={trackColor}
+        strokeWidth="7"
+        strokeOpacity="0.85"
         strokeLinecap="round"
         strokeLinejoin="round"
+        filter="url(#svgGlow)"
       />
 
-      {/* 2.【中层】：从【始】点延伸画向【终】点的实时生长轨迹线 */}
+      {/* 2.【中层】：高亮的生长动效流光线 */}
       <path
         ref={pathRef}
         d={item.d}
         fill="none"
-        stroke={item.flowDarkColor}
-        strokeWidth="4.5"
-        strokeOpacity="0.95"
+        stroke="#ffffff"
+        strokeWidth="3.5"
+        strokeOpacity="0.9"
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
           strokeDasharray: dashLength,
           strokeDashoffset: dashLength,
-          animation: `strokeGrowStrict 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
+          animation: `strokeGrowStrict 3s cubic-bezier(0.4, 0, 0.2, 1) infinite`,
         }}
-        filter="url(#svgGlow)"
       />
 
       {/* 3.【顶层-核心运动体】：绝对从【始】点平滑沿着 SVG Path 奔跑运行到【终】点的真实运动光珠 */}
       <g>
         {/* 外围白色发光晕 */}
-        <circle r="7" fill="#ffffff" opacity="0.95" filter="url(#svgGlow)">
+        <circle r="8" fill="#ffffff" opacity="0.95" filter="url(#svgGlow)">
           <animateMotion
             path={item.d}
-            dur="3.5s"
+            dur="3s"
             repeatCount="indefinite"
-            keyTimes="0; 0.8; 1"
+            keyTimes="0; 0.85; 1"
             keyPoints="0; 1; 1"
             calcMode="linear"
           />
         </circle>
         {/* 内部高彩运动小球 */}
-        <circle r="4.5" fill={item.flowDarkColor} stroke="#ffffff" strokeWidth="1.5">
+        <circle r="5" fill={glowColor} stroke="#ffffff" strokeWidth="2">
           <animateMotion
             path={item.d}
-            dur="3.5s"
+            dur="3s"
             repeatCount="indefinite"
-            keyTimes="0; 0.8; 1"
+            keyTimes="0; 0.85; 1"
             keyPoints="0; 1; 1"
             calcMode="linear"
           />
@@ -92,25 +95,29 @@ function AnimatedSingleTrack({ item }: { item: any }) {
 
       {/* 4. 起点【始】（绿色徽章）与终点【终】（红色徽章）里程碑标志 */}
       {/* 起点 - 始 */}
-      <g transform={`translate(${item.startX}, ${item.startY})`} className="z-10">
-        <circle r="9" fill="#10b981" opacity="0.3" className="animate-ping" />
-        <circle r="7" fill="#10b981" stroke="#ffffff" strokeWidth="1.5" />
-        <text y="2.5" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="system-ui">始</text>
-      </g>
+      {typeof item.startX === 'number' && !isNaN(item.startX) && (
+        <g transform={`translate(${item.startX}, ${item.startY})`} className="z-10">
+          <circle r="10" fill="#10b981" opacity="0.35" className="animate-ping" />
+          <circle r="8" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+          <text y="3" textAnchor="middle" fill="#ffffff" fontSize="8" fontWeight="extrabold" fontFamily="system-ui">始</text>
+        </g>
+      )}
 
       {/* 终点 - 终 */}
-      <g transform={`translate(${item.endX}, ${item.endY})`} className="z-10">
-        <circle r="9" fill="#ef4444" opacity="0.3" className="animate-ping" />
-        <circle r="7" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
-        <text y="2.5" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="system-ui">终</text>
-      </g>
+      {typeof item.endX === 'number' && !isNaN(item.endX) && (
+        <g transform={`translate(${item.endX}, ${item.endY})`} className="z-10">
+          <circle r="10" fill="#ef4444" opacity="0.35" className="animate-ping" />
+          <circle r="8" fill="#ef4444" stroke="#ffffff" strokeWidth="2" />
+          <text y="3" textAnchor="middle" fill="#ffffff" fontSize="8" fontWeight="extrabold" fontFamily="system-ui">终</text>
+        </g>
+      )}
 
       <style>{`
         @keyframes strokeGrowStrict {
           0% {
             stroke-dashoffset: ${dashLength};
           }
-          80% {
+          85% {
             stroke-dashoffset: 0;
           }
           100% {
