@@ -108,12 +108,40 @@ class Coros:
         str_label_id = str(label_id)
         int_mode = int(mode) if mode else 100
 
+        # 补全高驰官方 Web 网页端全套防盗链 Header
+        coros_headers = {
+            "accesstoken": self.headers.get("accesstoken", ""),
+            "cookie": self.headers.get("cookie", ""),
+            "referer": "https://t.coros.com/",
+            "origin": "https://t.coros.com",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json;charset=UTF-8",
+        }
+
+        file_url = None
+
+        # 0. 优先调用高驰活动详情 API activity/detail/query
+        try:
+            detail_url = f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}"
+            resp = await self.req.get(detail_url, headers=coros_headers)
+            res_data = resp.json().get("data") or {}
+            if isinstance(res_data, dict):
+                file_url = (
+                    res_data.get("fileUrl")
+                    or res_data.get("fitUrl")
+                    or res_data.get("downloadUrl")
+                    or res_data.get("gpxUrl")
+                    or res_data.get("url")
+                )
+        except Exception:
+            pass
+
         # 高驰全量尝试的 Endpoint 集合
         endpoints = [
             "https://teamcnapi.coros.com/activity/detail/download",
             "https://teamcnapi.coros.com/activity/detail/export",
             "https://teamcnapi.coros.com/activity/file/download",
-            "https://teamcnapi.coros.com/activity/detail/query",
         ]
 
         payloads = [
@@ -128,34 +156,22 @@ class Coros:
             {"activityId": str_label_id, "fileType": 1},
         ]
 
-        # 补全高驰官方 Web 网页端全套防盗链 Header
-        coros_headers = {
-            "accesstoken": self.headers.get("accesstoken", ""),
-            "cookie": self.headers.get("cookie", ""),
-            "referer": "https://t.coros.com/",
-            "origin": "https://t.coros.com",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            "accept": "application/json, text/plain, */*",
-            "content-type": "application/json;charset=UTF-8",
-        }
-
-        file_url = None
-
         # 1. 尝试所有 POST payloads
-        for ep in endpoints:
-            for body in payloads:
-                try:
-                    response = await self.req.post(ep, json=body, headers=coros_headers)
-                    resp_json = response.json()
-                    data = resp_json.get("data") or {}
-                    if isinstance(data, dict):
-                        file_url = data.get("fileUrl") or data.get("fitUrl") or data.get("downloadUrl") or data.get("url")
-                        if file_url:
-                            break
-                except Exception:
-                    pass
-            if file_url:
-                break
+        if not file_url:
+            for ep in endpoints:
+                for body in payloads:
+                    try:
+                        response = await self.req.post(ep, json=body, headers=coros_headers)
+                        resp_json = response.json()
+                        data = resp_json.get("data") or {}
+                        if isinstance(data, dict):
+                            file_url = data.get("fileUrl") or data.get("fitUrl") or data.get("downloadUrl") or data.get("url")
+                            if file_url:
+                                break
+                    except Exception:
+                        pass
+                if file_url:
+                    break
 
         # 2. 尝试 GET URL
         if not file_url:
