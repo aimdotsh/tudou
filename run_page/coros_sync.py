@@ -269,7 +269,7 @@ def sync_coros_summary_to_db(act):
     mock_act.elevation_gain = 0.0
     mock_act.source = "coros"
 
-    session = init_db()
+    session = init_db(SQL_FILE)
     try:
         update_or_create_activity(session, mock_act)
         session.commit()
@@ -316,6 +316,18 @@ async def download_and_generate(account, password):
 
     await coros.req.aclose()
     make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, "fit")
+
+    # 全量把 SQLite 数据库里的最新活动记录 (包括落库的 北京站、走日坛公园 等) 统一导出到 activities.json
+    try:
+        from generator import Generator
+        import json
+        g = Generator(SQL_FILE)
+        acts = g.load()
+        with open(JSON_FILE, "w") as f:
+            json.dump(acts, f, indent=2)
+        print(f"✅ Exported {len(acts)} total activities from DB to {JSON_FILE}")
+    except Exception as e:
+        print(f"❌ Error exporting DB to {JSON_FILE}: {e}")
 
 
 async def gather_with_concurrency(n, tasks):
