@@ -7,24 +7,32 @@ import time
 import aiofiles
 import httpx
 
-from config import JSON_FILE, SQL_FILE, FIT_FOLDER
+from config import JSON_FILE, SQL_FILE, FIT_FOLDER, FOLDER_DICT
 from utils import make_activities_file
+from generator.db import update_or_create_activity, init_db
 
 COROS_URL_DICT = {
     "LOGIN_URL": "https://teamcnapi.coros.com/account/login",
     "DOWNLOAD_URL": "https://teamcnapi.coros.com/activity/detail/download",
-    "ACTIVITY_LIST": "https://teamcnapi.coros.com/activity/query?&modeList=",
+    "ACTIVITY_LIST": "https://teamcnapi.coros.com/activity/query",
+}
+
+COROS_TYPE_DICT = {
+    "gpx": 1,
+    "fit": 4,
+    "tcx": 3,
 }
 
 TIME_OUT = httpx.Timeout(240.0, connect=360.0)
 
 
 class Coros:
-    def __init__(self, account, password):
+    def __init__(self, account, password, is_only_running=False):
         self.account = account
         self.password = password
         self.headers = None
         self.req = None
+        self.is_only_running = is_only_running
 
     async def login(self):
         url = COROS_URL_DICT.get("LOGIN_URL")
@@ -63,88 +71,56 @@ class Coros:
     async def init(self):
         await self.login()
 
-    async def fetch_activities_dict(self):
+    async def fetch_activity_ids_types(self, only_run=False):
         page_number = 1
-        all_activities = []
+        all_activities_ids_types = []
         act_map = {}
 
+        mode_list_str = "100,101,102,103" if only_run else ""
         while True:
-            url = f"{COROS_URL_DICT.get('ACTIVITY_LIST')}&pageNumber={page_number}&size=20"
+            url = f"{COROS_URL_DICT.get('ACTIVITY_LIST')}?&modeList={mode_list_str}&pageNumber={page_number}&size=20"
             response = await self.req.get(url)
             data = response.json()
             activities = data.get("data", {}).get("dataList", None)
             if not activities:
                 break
-
-            if page_number == 1:
-                print("--- COROS Server Latest 5 Activities ---")
-                for act in activities[:5]:
-                    name = act.get("name", "Unnamed Workout")
-                    label_id = act.get("labelId")
-                    mode = act.get("mode")
-                    start_time = act.get("startTime")
-                    print(f"-> Date: {start_time}, Name: {name}, LabelID: {label_id}, Mode: {mode}")
-                print("---------------------------------------")
-
             for activity in activities:
                 label_id = activity.get("labelId")
-                mode = activity.get("mode", 100)
+                sport_type = activity.get("sportType")
                 if label_id is None:
                     continue
                 str_label_id = str(label_id)
-                all_activities.append((str_label_id, mode))
+                all_activities_ids_types.append([str_label_id, sport_type])
                 act_map[str_label_id] = activity
 
             page_number += 1
 
-        return all_activities, act_map
+        return all_activities_ids_types, act_map
 
-    async def fetch_activities(self):
-        all_activities, _ = await self.fetch_activities_dict()
-        return all_activities
-
-    async def download_activity(self, label_id, mode=100):
-        download_folder = FIT_FOLDER
-        str_label_id = str(label_id)
-
-        # 补全高驰官方 Web 网页端全套防盗链 Header
-        coros_headers = {
-            "accesstoken": self.headers.get("accesstoken", ""),
-            "cookie": self.headers.get("cookie", ""),
-            "referer": "https://t.coros.com/",
-            "origin": "https://t.coros.com",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-            "accept": "application/json, text/plain, */*",
-            "content-type": "application/json;charset=UTF-8",
-        }
-
-        # 100% 官方原版 API URL 拼写方式: labelId={id}&sportType=100&fileType=4
-        download_url = f"https://teamcnapi.coros.com/activity/detail/download?labelId={str_label_id}&sportType=100&fileType=4"
+    async def download_activity(self, label_id, sport_type, file_type="fit"):
+        if sport_type == 101 and file_type == "gpx":
+            print(
+                f"Sport type {sport_type} is not supported in {file_type} file. The activity will be ignored"
+            )
+            return None, None
+        download_folder = FOLDER_DICT[file_type]
+        download_url = (
+            f"{COROS_URL_DICT.get('DOWNLOAD_URL')}?labelId={label_id}&sportType={sport_type}"
+            f"&fileType={COROS_TYPE_DICT[file_type]}"
+        )
         file_url = None
-
+        fname = ""
+        file_path = ""
         try:
-            response = await self.req.post(download_url, headers=coros_headers)
+            response = await self.req.post(download_url)
             resp_json = response.json()
             file_url = resp_json.get("data", {}).get("fileUrl")
-        except Exception:
-            pass
+            if not file_url:
+                print(f"No file URL found for label_id {label_id} (sportType: {sport_type})")
+                return None, None
 
-        # 备用方案：如果 fileType=4 未获取到，尝试 fileType=1
-        if not file_url:
-            try:
-                alt_url = f"https://teamcnapi.coros.com/activity/detail/download?labelId={str_label_id}&sportType=100&fileType=1"
-                response = await self.req.post(alt_url, headers=coros_headers)
-                resp_json = response.json()
-                file_url = resp_json.get("data", {}).get("fileUrl")
-            except Exception:
-                pass
-
-        if not file_url:
-            print(f"No file URL found for label_id {label_id}")
-            return None, None
-
-        try:
-            fname = f"{str_label_id}.fit"
+            # 统一命名为 label_id.fit，确保与数据库 run_id 精确对应
+            fname = f"{label_id}.{file_type}"
             file_path = os.path.join(download_folder, fname)
 
             async with self.req.stream("GET", file_url) as response:
@@ -152,30 +128,37 @@ class Coros:
                 async with aiofiles.open(file_path, "wb") as f:
                     async for chunk in response.aiter_bytes():
                         await f.write(chunk)
+            print(f"Successfully downloaded FIT for {label_id} -> {fname}")
+            return label_id, fname
+        except httpx.HTTPStatusError as exc:
+            print(
+                f"Failed to download {file_url} with status code {response.status_code}: {exc}"
+            )
         except Exception as exc:
             print(f"Error occurred while downloading {file_url}: {exc}")
-            return None, None
+        if file_path and os.path.exists(file_path):
+            print(f"Delete the corrupted file: {fname}")
+            try:
+                os.remove(file_path)
+            except Exception:
+                pass
 
-        return str_label_id, fname
+        return None, None
 
 
 def get_downloaded_ids(folder):
-    valid_ids = []
     if not os.path.exists(folder):
-        return valid_ids
-    for f in os.listdir(folder):
-        if not f.startswith(".") and f.endswith(".fit") and os.path.getsize(os.path.join(folder, f)) > 0:
-            valid_ids.append(f.split(".")[0])
-    return valid_ids
+        return []
+    return [i.split(".")[0] for i in os.listdir(folder) if not i.startswith(".") and os.path.getsize(os.path.join(folder, i)) > 0]
 
 
 def sync_coros_summary_to_db(act):
     import datetime
-    from generator.db import update_or_create_activity, init_db
 
     label_id = str(act.get("labelId"))
     name = act.get("name", "运动")
     mode = act.get("mode", 8)
+    sport_type = act.get("sportType", 100)
     start_time_ts = act.get("startTime", 0)
 
     if start_time_ts:
@@ -240,43 +223,48 @@ def sync_coros_summary_to_db(act):
         session.close()
 
 
-async def download_and_generate(account, password):
-    folder = FIT_FOLDER
+async def download_and_generate(account, password, only_run=False, file_type="fit"):
+    folder = FOLDER_DICT[file_type]
     downloaded_ids = set(get_downloaded_ids(folder))
     coros = Coros(account, password)
     await coros.init()
 
-    all_activities, act_map = await coros.fetch_activities_dict()
-    print("activity_ids total: ", len(all_activities))
-    print("downloaded_ids count: ", len(downloaded_ids))
-    to_generate_coros_items = [
-        item for item in all_activities if item[0] not in downloaded_ids
-    ]
-    print("to_generate_activity_ids count: ", len(to_generate_coros_items))
+    activity_infos, act_map = await coros.fetch_activity_ids_types(only_run=only_run)
+    activity_ids = [i[0] for i in activity_infos]
+    activity_types = [i[1] for i in activity_infos]
+    activity_id_type_dict = dict(zip(activity_ids, activity_types))
+
+    print("activity_ids: ", len(activity_ids))
+    print("downloaded_ids: ", len(downloaded_ids))
+    to_generate_coros_ids = [i for i in activity_ids if i not in downloaded_ids]
+    print("to_generate_activity_ids: ", len(to_generate_coros_ids))
 
     start_time = time.time()
     results = await gather_with_concurrency(
         10,
-        [coros.download_activity(label_id, mode) for label_id, mode in to_generate_coros_items],
+        [
+            coros.download_activity(
+                label_id, activity_id_type_dict.get(label_id, 100), file_type
+            )
+            for label_id in to_generate_coros_ids
+        ],
     )
     print(f"Download finished. Elapsed {time.time()-start_time} seconds")
 
-    # 对未生成 FIT 档案的高驰非轨迹健身（如 Mode 23 力量训练），自动使用高驰原始元数据直接落库！
-    for (label_id, mode), res in zip(to_generate_coros_items, results):
+    # 对没有生成实体 FIT 的活动（如 Mode 23 室内力量），进行 DB 元数据保底落库
+    for label_id, res in zip(to_generate_coros_ids, results):
         if res is None or res[0] is None:
-            act_obj = act_map.get(str(label_id)) or act_map.get(label_id)
+            act_obj = act_map.get(str(label_id))
             if act_obj:
                 try:
                     sync_coros_summary_to_db(act_obj)
                 except Exception as e:
-                    print(f"Error in sync_coros_summary_to_db for {label_id}: {e}")
-            else:
-                print(f"Warning: label_id {label_id} not found in act_map")
+                    print(f"Error in fallback syncing {label_id}: {e}")
 
     await coros.req.aclose()
-    make_activities_file(SQL_FILE, FIT_FOLDER, JSON_FILE, "fit")
+    make_activities_file(SQL_FILE, folder, JSON_FILE, file_type)
 
-    # 全量把 SQLite 数据库里的最新活动记录 (包括落库的 北京站、走日坛公园 等) 统一导出到 activities.json
+    # 全量将 DB 导出为 activities.json
     try:
         from generator import Generator
         import json
@@ -302,12 +290,17 @@ async def gather_with_concurrency(n, tasks):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("account", nargs="?", help="input coros account")
-
     parser.add_argument("password", nargs="?", help="input coros password")
+    parser.add_argument("--only-run", dest="only_run", action="store_true", help="if is only for running")
+    parser.add_argument("--tcx", dest="download_file_type", action="store_const", const="tcx", default="fit", help="download tcx")
+    parser.add_argument("--gpx", dest="download_file_type", action="store_const", const="gpx", default="fit", help="download gpx")
     options = parser.parse_args()
 
     account = options.account
     password = options.password
+    is_only_running = options.only_run
+    file_type = options.download_file_type
+    file_type = file_type if file_type in ["gpx", "tcx", "fit"] else "fit"
     encrypted_pwd = hashlib.md5(password.encode()).hexdigest()
 
-    asyncio.run(download_and_generate(account, encrypted_pwd))
+    asyncio.run(download_and_generate(account, encrypted_pwd, is_only_running, file_type))
