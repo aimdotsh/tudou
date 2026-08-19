@@ -264,6 +264,25 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
     await coros.req.aclose()
     make_activities_file(SQL_FILE, folder, JSON_FILE, file_type)
 
+    # 自动把高驰服务器上的真实活动名称 (如 "北京站", "走日坛公园") 覆盖回数据库，消除 "Unnamed Workout"
+    try:
+        session = init_db(SQL_FILE)
+        from generator.db import Activity
+        for str_label_id, act_item in act_map.items():
+            real_name = act_item.get("name")
+            if real_name:
+                try:
+                    db_act = session.query(Activity).filter_by(run_id=int(str_label_id)).first()
+                    if db_act and (not db_act.name or db_act.name in ["Unnamed Workout", "Unnamed Activity", ""]):
+                        db_act.name = real_name
+                        print(f"Updated real name for {str_label_id}: {real_name}")
+                except Exception:
+                    pass
+        session.commit()
+        session.close()
+    except Exception as e:
+        print(f"Error updating real activity names from Coros: {e}")
+
     # 全量将 DB 导出为 activities.json
     try:
         from generator import Generator
