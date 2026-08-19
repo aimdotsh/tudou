@@ -106,7 +106,6 @@ class Coros:
     async def download_activity(self, label_id, mode=100):
         download_folder = FIT_FOLDER
         str_label_id = str(label_id)
-        int_mode = int(mode) if mode else 100
 
         # 补全高驰官方 Web 网页端全套防盗链 Header
         coros_headers = {
@@ -119,85 +118,29 @@ class Coros:
             "content-type": "application/json;charset=UTF-8",
         }
 
+        # 100% 官方原版 API URL 拼写方式: labelId={id}&sportType=100&fileType=4
+        download_url = f"https://teamcnapi.coros.com/activity/detail/download?labelId={str_label_id}&sportType=100&fileType=4"
         file_url = None
 
-        # 0. 优先调用高驰活动详情 API activity/detail/query
         try:
-            detail_url = f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}"
-            resp = await self.req.get(detail_url, headers=coros_headers)
-            res_data = resp.json().get("data") or {}
-            if isinstance(res_data, dict):
-                file_url = (
-                    res_data.get("fileUrl")
-                    or res_data.get("fitUrl")
-                    or res_data.get("downloadUrl")
-                    or res_data.get("gpxUrl")
-                    or res_data.get("url")
-                )
+            response = await self.req.post(download_url, headers=coros_headers)
+            resp_json = response.json()
+            file_url = resp_json.get("data", {}).get("fileUrl")
         except Exception:
             pass
 
-        # 高驰全量尝试的 Endpoint 集合
-        endpoints = [
-            "https://teamcnapi.coros.com/activity/detail/download",
-            "https://teamcnapi.coros.com/activity/detail/export",
-            "https://teamcnapi.coros.com/activity/file/download",
-        ]
-
-        payloads = [
-            {"labelId": str_label_id, "sportType": int_mode, "fileType": 1},
-            {"labelId": str_label_id, "fileType": 1},
-            {"labelId": str_label_id, "sportType": int_mode, "fileType": 4},
-            {"labelId": str_label_id, "fileType": 4},
-            {"labelId": str_label_id, "sportType": int_mode, "fileType": 2},
-            {"labelId": str_label_id, "fileType": 2},
-            {"labelId": str_label_id, "fileType": 0},
-            {"labelID": str_label_id, "fileType": 1},
-            {"activityId": str_label_id, "fileType": 1},
-        ]
-
-        # 1. 尝试所有 POST payloads
+        # 备用方案：如果 fileType=4 未获取到，尝试 fileType=1
         if not file_url:
-            for ep in endpoints:
-                for body in payloads:
-                    try:
-                        response = await self.req.post(ep, json=body, headers=coros_headers)
-                        resp_json = response.json()
-                        data = resp_json.get("data") or {}
-                        if isinstance(data, dict):
-                            file_url = data.get("fileUrl") or data.get("fitUrl") or data.get("downloadUrl") or data.get("url")
-                            if file_url:
-                                break
-                    except Exception:
-                        pass
-                if file_url:
-                    break
-
-        # 2. 尝试 GET URL
-        if not file_url:
-            for ep in endpoints:
-                queries = [
-                    f"{ep}?labelId={str_label_id}&sportType={int_mode}&fileType=1",
-                    f"{ep}?labelId={str_label_id}&fileType=1",
-                    f"{ep}?labelId={str_label_id}&sportType={int_mode}&fileType=4",
-                    f"{ep}?labelId={str_label_id}&fileType=4",
-                ]
-                for q_url in queries:
-                    try:
-                        response = await self.req.get(q_url, headers=coros_headers)
-                        resp_json = response.json()
-                        data = resp_json.get("data") or {}
-                        if isinstance(data, dict):
-                            file_url = data.get("fileUrl") or data.get("fitUrl") or data.get("downloadUrl") or data.get("url")
-                            if file_url:
-                                break
-                    except Exception:
-                        pass
-                if file_url:
-                    break
+            try:
+                alt_url = f"https://teamcnapi.coros.com/activity/detail/download?labelId={str_label_id}&sportType=100&fileType=1"
+                response = await self.req.post(alt_url, headers=coros_headers)
+                resp_json = response.json()
+                file_url = resp_json.get("data", {}).get("fileUrl")
+            except Exception:
+                pass
 
         if not file_url:
-            print(f"No file URL found for label_id {label_id} (mode: {mode})")
+            print(f"No file URL found for label_id {label_id}")
             return None, None
 
         try:
