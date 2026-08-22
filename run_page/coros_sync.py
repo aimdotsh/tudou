@@ -173,23 +173,17 @@ def sync_coros_summary_to_db(act):
     distance = float(act.get("distance", 0.0) or 0.0)
     avg_hr = act.get("avgHr")
 
-    if mode in [23, 24, 25]:
+    # 运动类型精准分类
+    if any(kw in name for kw in ["力量", "自定义力量", "深蹲", "硬拉", "卧推", "哑铃", "杠铃", "Gym", "Weight"]) or mode in [23, 24, 25]:
         act_type = "WeightTraining"
-    elif mode in [8, 9, 100]:
-        act_type = "Run"
-    elif mode in [14, 31]:
+    elif any(kw in name for kw in ["徒步", "健走", "行走", "散步", "走", "山", "Hike", "Walk"]) or mode in [14, 31]:
         act_type = "Hike"
-    elif mode in [2]:
+    elif any(kw in name for kw in ["跑", "Run", "Jog"]) or mode in [8, 9, 100]:
+        act_type = "Run"
+    elif any(kw in name for kw in ["骑", "Ride", "Cycle"]) or mode in [2]:
         act_type = "Ride"
     else:
-        if "跑" in name:
-            act_type = "Run"
-        elif "走" in name or "山" in name:
-            act_type = "Hike"
-        elif "骑" in name:
-            act_type = "Ride"
-        else:
-            act_type = "Workout"
+        act_type = "Hike" if distance > 500 else "Workout"
 
     class MockActivity:
         pass
