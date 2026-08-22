@@ -242,12 +242,21 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
     setSelectedYear(yr)
   }
 
-  const [visibleCount, setVisibleCount] = useState(4)
+  const [visibleCount, setVisibleCount] = useState(() => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth >= 1280) return 12
+      if (window.innerWidth >= 768) return 8
+      if (window.innerWidth >= 640) return 6
+    }
+    return 8
+  })
 
   useEffect(() => {
     const updateCount = () => {
-      if (window.innerWidth >= 1024) {
-        setVisibleCount(10)
+      if (window.innerWidth >= 1280) {
+        setVisibleCount(12)
+      } else if (window.innerWidth >= 768) {
+        setVisibleCount(8)
       } else if (window.innerWidth >= 640) {
         setVisibleCount(6)
       } else {
@@ -259,9 +268,10 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
     return () => window.removeEventListener('resize', updateCount)
   }, [])
 
-  const visibleYears = allYears.slice(windowStart, windowStart + visibleCount)
-  const canScrollLeft = windowStart > 0
-  const canScrollRight = windowStart + visibleCount < allYears.length
+  const needPagination = allYears.length > visibleCount
+  const visibleYears = needPagination ? allYears.slice(windowStart, windowStart + visibleCount) : allYears
+  const canScrollLeft = needPagination && windowStart > 0
+  const canScrollRight = needPagination && windowStart + visibleCount < allYears.length
 
   const shiftWindow = (dir: -1 | 1) => {
     setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, allYears.length - visibleCount)))
@@ -461,16 +471,18 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
 
           <span className="w-px h-3 bg-[var(--color-border)] shrink-0" />
 
-          {/* Left arrow */}
-          <button
-            onClick={() => shiftWindow(-1)}
-            disabled={!canScrollLeft}
-            className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+          {/* Left arrow (仅在需要分页时显示) */}
+          {needPagination && (
+            <button
+              onClick={() => shiftWindow(-1)}
+              disabled={!canScrollLeft}
+              className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
 
           {/* Visible year buttons */}
           {visibleYears.map((y) => (
@@ -481,16 +493,18 @@ export function ContributionHeatmap({ activities, year: defaultYear, filter, onS
             >{y}</button>
           ))}
 
-          {/* Right arrow */}
-          <button
-            onClick={() => shiftWindow(1)}
-            disabled={!canScrollRight}
-            className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          {/* Right arrow (仅在需要分页时显示) */}
+          {needPagination && (
+            <button
+              onClick={() => shiftWindow(1)}
+              disabled={!canScrollRight}
+              className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
 
           <span className="w-px h-3 bg-[var(--color-border)] shrink-0 hidden sm:inline-block" />
 

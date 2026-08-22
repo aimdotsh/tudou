@@ -137,12 +137,21 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   const pageData = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
   const [windowStart, setWindowStart] = useState(0)
-  const [visibleCount, setVisibleCount] = useState(4)
+  const [visibleCount, setVisibleCount] = useState(() => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth >= 1280) return 12
+      if (window.innerWidth >= 768) return 8
+      if (window.innerWidth >= 640) return 6
+    }
+    return 8
+  })
 
   useEffect(() => {
     const updateCount = () => {
-      if (window.innerWidth >= 1024) {
-        setVisibleCount(10)
+      if (window.innerWidth >= 1280) {
+        setVisibleCount(12)
+      } else if (window.innerWidth >= 768) {
+        setVisibleCount(8)
       } else if (window.innerWidth >= 640) {
         setVisibleCount(6)
       } else {
@@ -154,9 +163,11 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
     return () => window.removeEventListener('resize', updateCount)
   }, [])
 
-  const visibleYears = years.slice(windowStart, windowStart + visibleCount)
-  const canScrollLeft = windowStart > 0
-  const canScrollRight = windowStart + visibleCount < years.length
+  // 如果年份总数 <= visibleCount，直接展示全部，无需滑动
+  const needPagination = years.length > visibleCount
+  const visibleYears = needPagination ? years.slice(windowStart, windowStart + visibleCount) : years
+  const canScrollLeft = needPagination && windowStart > 0
+  const canScrollRight = needPagination && windowStart + visibleCount < years.length
 
   const shiftWindow = (dir: -1 | 1) => {
     setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, years.length - visibleCount)))
@@ -179,7 +190,7 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
         </span>
       </div>
 
-      {/* Year tabs - 带 < > 箭头的年份滑动选择器（与活动热力图完全一致） */}
+      {/* Year tabs - 大屏幕至少平铺展示 8 个年份，超过才折叠/滑动 */}
       <div className="flex items-center gap-1.5 mb-3 overflow-x-auto no-scrollbar py-0.5 max-w-full">
         <button
           onClick={() => { setYear(null); setPage(0) }}
@@ -192,16 +203,18 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
 
         <span className="w-px h-3 bg-[var(--color-border)] shrink-0" />
 
-        {/* Left arrow */}
-        <button
-          onClick={() => shiftWindow(-1)}
-          disabled={!canScrollLeft}
-          className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
-        >
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+        {/* Left arrow (仅在超过可见年份数时展示) */}
+        {needPagination && (
+          <button
+            onClick={() => shiftWindow(-1)}
+            disabled={!canScrollLeft}
+            className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
 
         {/* Visible year buttons */}
         {visibleYears.map((y) => (
@@ -216,16 +229,18 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
           </button>
         ))}
 
-        {/* Right arrow */}
-        <button
-          onClick={() => shiftWindow(1)}
-          disabled={!canScrollRight}
-          className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
-        >
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+        {/* Right arrow (仅在超过可见年份数时展示) */}
+        {needPagination && (
+          <button
+            onClick={() => shiftWindow(1)}
+            disabled={!canScrollRight}
+            className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Gym: type filter / Normal: distance filter - 同样支持单行横滑 */}
