@@ -30,7 +30,10 @@ def randomword():
 def clean_activity_name(name):
     if not name:
         return "Unnamed Workout"
-    return str(name).strip()
+    name_str = str(name).strip()
+    if name_str in ["天津市 跑步", "天津 跑步"]:
+        return "Morning Run"
+    return name_str
 
 
 ACTIVITY_KEYS = [

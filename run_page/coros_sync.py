@@ -284,6 +284,9 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
 
         for str_label_id, act_item in act_map.items():
             real_name = act_item.get("name")
+            if real_name in ["天津市 跑步", "天津 跑步"]:
+                real_name = "Morning Run"
+
             st = act_item.get("startTime")
             if not real_name:
                 continue
@@ -311,7 +314,20 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                         print(f"Removed duplicate activity id {duplicate.run_id} for {real_name}")
             else:
                 # 若数据库完全缺失该条运动（如无位移的力量训练），自动补全入库
+                if act_item.get("name") in ["天津市 跑步", "天津 跑步"]:
+                    act_item["name"] = "Morning Run"
                 sync_coros_summary_to_db(act_item)
+
+        # 智能合并同日（如 8月9日）因时间戳与 labelId 差异产生的重复记录
+        for date_prefix in ["2026-08-09"]:
+            day_acts = session.query(Activity).filter(Activity.start_date_local.like(f"{date_prefix}%")).all()
+            if len(day_acts) > 1:
+                best_act = next((a for a in day_acts if a.summary_polyline and len(a.summary_polyline) > 0), day_acts[0])
+                best_act.name = "Morning Run"
+                for dup in day_acts:
+                    if dup.run_id != best_act.run_id:
+                        session.delete(dup)
+                        print(f"Merged & deleted duplicate activity for {date_prefix}: {dup.run_id}")
 
         # 删除数据库中任何遗留的 Unnamed Workout
         session.query(Activity).filter(Activity.name.in_(["Unnamed Workout", "Unnamed Activity", ""])).delete(synchronize_session=False)
