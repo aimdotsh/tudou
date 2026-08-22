@@ -309,6 +309,9 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                     if duplicate.run_id != track_act.run_id:
                         session.delete(duplicate)
                         print(f"Removed duplicate activity id {duplicate.run_id} for {real_name}")
+            else:
+                # 若数据库完全缺失该条运动（如无位移的力量训练），自动补全入库
+                sync_coros_summary_to_db(act_item)
 
         # 删除数据库中任何遗留的 Unnamed Workout
         session.query(Activity).filter(Activity.name.in_(["Unnamed Workout", "Unnamed Activity", ""])).delete(synchronize_session=False)

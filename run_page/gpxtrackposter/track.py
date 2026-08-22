@@ -276,34 +276,28 @@ class Track:
             (message["start_time"] + FIT_EPOCH_S + message["total_elapsed_time"]),
             tz=timezone.utc,
         )
-        self.length = message.get("total_distance", 0.0) or 0.0
+        self.length = float(message.get("total_distance") or 0.0)
         self.average_heartrate = (
             message["avg_heart_rate"] if "avg_heart_rate" in message else None
         )
         self.elevation_gain = (
             message["total_ascent"] if "total_ascent" in message else None
         )
-        self.type = message["sport"].lower()
+        sport_val = str(message.get("sport") or "workout").lower()
+        self.type = sport_val
 
         # moving_dict
-        self.moving_dict["distance"] = message["total_distance"]
-        self.moving_dict["moving_time"] = datetime.timedelta(
-            seconds=(
-                message["total_moving_time"]
-                if "total_moving_time" in message
-                else message["total_timer_time"]
-            )
-        )
-        self.moving_dict["elapsed_time"] = datetime.timedelta(
-            seconds=message["total_elapsed_time"]
-        )
+        total_time_s = float(message.get("total_elapsed_time") or message.get("total_timer_time") or message.get("total_moving_time") or 0.0)
+        moving_time_s = float(message.get("total_moving_time") or message.get("total_timer_time") or total_time_s)
+
+        self.moving_dict["distance"] = self.length
+        self.moving_dict["moving_time"] = datetime.timedelta(seconds=moving_time_s)
+        self.moving_dict["elapsed_time"] = datetime.timedelta(seconds=total_time_s)
         self.moving_dict["average_speed"] = (
-            message["enhanced_avg_speed"]
-            if message["enhanced_avg_speed"]
-            else message["avg_speed"]
+            float(message.get("enhanced_avg_speed") or message.get("avg_speed") or (self.length / moving_time_s if moving_time_s else 0.0))
         )
-        for record in fit["record_mesgs"]:
-            if "position_lat" in record and "position_long" in record:
+        for record in fit.get("record_mesgs", []):
+            if "position_lat" in record and "position_long" in record and record["position_lat"] is not None and record["position_long"] is not None:
                 lat = record["position_lat"] / SEMICIRCLE
                 lng = record["position_long"] / SEMICIRCLE
                 _polylines.append(s2.LatLng.from_degrees(lat, lng))
