@@ -262,22 +262,57 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                     print(f"Error in fallback syncing {label_id}: {e}")
 
     await coros.req.aclose()
-    make_activities_file(SQL_FILE, folder, JSON_FILE, file_type)
 
-    # 自动把高驰服务器上的真实活动名称 (如 "北京站", "走日坛公园") 覆盖回数据库，消除 "Unnamed Workout"
+    # 构建完整的 activity_title_dict (同时支持 labelId 与 毫秒时间戳 run_id)
+    activity_title_dict = {}
+    for str_label_id, act_item in act_map.items():
+        name = act_item.get("name")
+        st = act_item.get("startTime")
+        if name:
+            activity_title_dict[str(str_label_id)] = name
+            if st:
+                activity_title_dict[str(int(st) * 1000)] = name
+                activity_title_dict[str(int(st))] = name
+
+    make_activities_file(SQL_FILE, folder, JSON_FILE, file_type, activity_title_dict=activity_title_dict)
+
+    # 自动把高驰服务器上的真实活动名称 (如 "北京站", "走日坛公园") 覆盖回数据库，并根据时间戳智能去重
     try:
         session = init_db(SQL_FILE)
         from generator.db import Activity
+        import datetime
+
         for str_label_id, act_item in act_map.items():
             real_name = act_item.get("name")
-            if real_name:
-                try:
-                    db_act = session.query(Activity).filter_by(run_id=int(str_label_id)).first()
-                    if db_act and (not db_act.name or db_act.name in ["Unnamed Workout", "Unnamed Activity", ""]):
-                        db_act.name = real_name
-                        print(f"Updated real name for {str_label_id}: {real_name}")
-                except Exception:
-                    pass
+            st = act_item.get("startTime")
+            if not real_name:
+                continue
+
+            target_ids = [int(str_label_id)]
+            if st:
+                target_ids.extend([int(st) * 1000, int(st)])
+
+            matching_acts = session.query(Activity).filter(Activity.run_id.in_(target_ids)).all()
+            if not matching_acts and st:
+                dt_str = datetime.datetime.fromtimestamp(int(st)).strftime("%Y-%m-%d %H:%M")
+                matching_acts = session.query(Activity).filter(Activity.start_date_local.like(f"{dt_str}%")).all()
+
+            if matching_acts:
+                # 优先保留有轨迹 summary_polyline 的记录
+                track_act = next((a for a in matching_acts if a.summary_polyline and len(a.summary_polyline) > 0), matching_acts[0])
+                track_act.name = real_name
+                if act_item.get("avgHr"):
+                    track_act.average_heartrate = float(act_item["avgHr"])
+
+                # 删除同时间段其它多余的重复记录
+                for duplicate in matching_acts:
+                    if duplicate.run_id != track_act.run_id:
+                        session.delete(duplicate)
+                        print(f"Removed duplicate activity id {duplicate.run_id} for {real_name}")
+
+        # 删除数据库中任何遗留的 Unnamed Workout
+        session.query(Activity).filter(Activity.name.in_(["Unnamed Workout", "Unnamed Activity", ""])).delete(synchronize_session=False)
+
         session.commit()
         session.close()
     except Exception as e:
