@@ -152,15 +152,16 @@ class Coros:
         自动解析返回的 exerciseList / workoutSteps / setList 转换为标准 extra_details JSON
         """
         str_label_id = str(label_id)
-        urls = [
-            f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}&sportType={sport_type}",
-            f"https://teamcnapi.coros.com/activity/workout/query?labelId={str_label_id}",
-            f"https://teamcnapi.coros.com/activity/detail/sportdata?labelId={str_label_id}&sportType={sport_type}",
-            f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}",
+        endpoints = [
+            ("GET", f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}&sportType={sport_type}", None),
+            ("POST", "https://teamcnapi.coros.com/activity/detail/query", {"labelId": str_label_id, "sportType": int(sport_type)}),
+            ("GET", f"https://teamcnapi.coros.com/activity/workout/query?labelId={str_label_id}", None),
+            ("POST", "https://teamcnapi.coros.com/activity/workout/query", {"labelId": str_label_id}),
+            ("GET", f"https://teamcnapi.coros.com/activity/detail/sportdata?labelId={str_label_id}&sportType={sport_type}", None),
         ]
         coros_headers = {
             "accesstoken": self.headers.get("accesstoken", ""),
-            "cookie": self.headers.get("cookie", ""),
+            "cookie": f"CPL-coros-token={self.headers.get('accesstoken', '')}; CPL-coros-region=2",
             "referer": "https://t.coros.com/",
             "origin": "https://t.coros.com",
             "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -168,11 +169,15 @@ class Coros:
             "content-type": "application/json;charset=UTF-8",
         }
 
-        for url in urls:
+        for method, url, payload in endpoints:
             try:
-                resp = await self.req.get(url, headers=coros_headers)
-                resp_data = resp.json().get("data")
-                if not resp_data or not isinstance(resp_data, dict):
+                if method == "GET":
+                    resp = await self.req.get(url, headers=coros_headers)
+                else:
+                    resp = await self.req.post(url, json=payload, headers=coros_headers)
+                resp_json = resp.json()
+                resp_data = resp_json.get("data")
+                if not resp_data:
                     continue
 
                 raw_exercises = (

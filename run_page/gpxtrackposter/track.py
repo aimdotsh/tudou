@@ -284,7 +284,36 @@ class Track:
             message["total_ascent"] if "total_ascent" in message else None
         )
         sport_val = str(message.get("sport") or "workout").lower()
-        self.type = sport_val
+        if sport_val in ["training", "workout", "fitness_equipment", "strength_training", "weighttraining"]:
+            self.type = "WeightTraining"
+        else:
+            self.type = sport_val
+
+        # 解析 FIT 文件中的 set_mesgs 力量训练组数
+        set_mesgs = fit.get("set_mesgs", [])
+        if set_mesgs:
+            parsed_details = []
+            current_exercise_sets = []
+            for s in set_mesgs:
+                reps = s.get("repetitions") or s.get("reps")
+                weight = float(s.get("weight") or 0.0)
+                if reps or weight > 0:
+                    set_obj = {"set_num": len(current_exercise_sets) + 1}
+                    if reps:
+                        set_obj["reps"] = str(reps)
+                    if weight > 0:
+                        set_obj["weight"] = f"{weight:.1f} kg"
+                    current_exercise_sets.append(set_obj)
+            if current_exercise_sets:
+                import json
+                parsed_details.append({
+                    "index": 1,
+                    "name": "力量训练",
+                    "total_sets": len(current_exercise_sets),
+                    "type": "reps_weight" if any("weight" in s for s in current_exercise_sets) else "reps",
+                    "sets": current_exercise_sets
+                })
+                self.extra_details = json.dumps(parsed_details, ensure_ascii=False)
 
         # moving_dict
         total_time_s = float(message.get("total_elapsed_time") or message.get("total_timer_time") or message.get("total_moving_time") or 0.0)

@@ -93,10 +93,11 @@ class TrackLoader:
 
         tracks = self._filter_tracks(tracks)
 
-        # merge tracks that took place within one hour
-        tracks = self._merge_tracks(tracks)
-        # filter out tracks with length < min_length
-        return [t for t in tracks if t.length >= self.min_length]
+        # 过滤掉非力量训练且长度小于 min_length 的无效轨迹 (力量训练/健身距离为0，予以保留)
+        return [
+            t for t in tracks 
+            if t.length >= self.min_length or str(t.type).lower() in ["workout", "training", "fitness_equipment", "weighttraining", "gym"] or any(k in str(t.track_name or "") for k in ["力量", "深蹲", "健身"])
+        ]
 
     def load_tracks_from_db(self, sql_file, is_grid=False, is_circular=False):
         session = init_db(sql_file)
