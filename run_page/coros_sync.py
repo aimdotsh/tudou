@@ -149,16 +149,10 @@ class Coros:
     async def fetch_strength_workout_details(self, label_id, sport_type=402):
         """
         全自动接入高驰官方结构化力量训练详情 API (如 sportType=402 自定义力量)
-        自动解析返回的 exerciseList / workoutSteps / setList 转换为标准 extra_details JSON
+        精准解析官方返回的 lapList[0].lapItemList 转换为标准 extra_details JSON
         """
         str_label_id = str(label_id)
-        endpoints = [
-            ("GET", f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}&sportType={sport_type}", None),
-            ("POST", "https://teamcnapi.coros.com/activity/detail/query", {"labelId": str_label_id, "sportType": int(sport_type)}),
-            ("GET", f"https://teamcnapi.coros.com/activity/workout/query?labelId={str_label_id}", None),
-            ("POST", "https://teamcnapi.coros.com/activity/workout/query", {"labelId": str_label_id}),
-            ("GET", f"https://teamcnapi.coros.com/activity/detail/sportdata?labelId={str_label_id}&sportType={sport_type}", None),
-        ]
+        url = f"https://teamcnapi.coros.com/activity/detail/query?screenW=666&screenH=982&labelId={str_label_id}&sportType={sport_type}"
         coros_headers = {
             "accesstoken": self.headers.get("accesstoken", ""),
             "cookie": f"CPL-coros-token={self.headers.get('accesstoken', '')}; CPL-coros-region=2",
@@ -169,86 +163,100 @@ class Coros:
             "content-type": "application/json;charset=UTF-8",
         }
 
-        for method, url, payload in endpoints:
+        # 动作名称多语言映射字典
+        COROS_EXERCISE_NAMES = {
+            "T1120": "热身 (跳绳/拉伸)",
+            "T1061": "深蹲",
+            "T1079": "登山跑",
+            "T1080": "俯卧撑",
+            "T1081": "硬拉",
+            "T1082": "卧推",
+            "T1083": "弯举",
+            "T1084": "推肩",
+            "T1085": "引体向上",
+            "T1086": "平板支撑",
+        }
+
+        for method in ["POST", "GET"]:
             try:
-                if method == "GET":
-                    resp = await self.req.get(url, headers=coros_headers)
+                if method == "POST":
+                    resp = await self.req.post(url, headers=coros_headers)
                 else:
-                    resp = await self.req.post(url, json=payload, headers=coros_headers)
+                    resp = await self.req.get(url, headers=coros_headers)
+
                 resp_json = resp.json()
-                resp_data = resp_json.get("data")
-                if not resp_data:
+                data_obj = resp_json.get("data")
+                if not data_obj or not isinstance(data_obj, dict):
                     continue
 
-                raw_exercises = (
-                    resp_data.get("exerciseList")
-                    or resp_data.get("workoutSteps")
-                    or resp_data.get("groupList")
-                    or resp_data.get("setList")
-                    or resp_data.get("strengthData")
-                    or resp_data.get("actions")
-                    or resp_data.get("stepList")
-                )
+                lap_list = data_obj.get("lapList", [])
+                if not lap_list:
+                    continue
 
-                if raw_exercises and isinstance(raw_exercises, list):
-                    parsed_details = []
-                    for idx, item in enumerate(raw_exercises, 1):
-                        if not isinstance(item, dict):
-                            continue
-                        ex_name = (
-                            item.get("name")
-                            or item.get("exerciseName")
-                            or item.get("actionName")
-                            or item.get("title")
-                            or f"动作 {idx}"
-                        )
-                        raw_sets = item.get("sets") or item.get("setList") or item.get("subList") or []
+                lap_items = lap_list[0].get("lapItemList", [])
+                if not lap_items:
+                    continue
 
-                        if raw_sets and isinstance(raw_sets, list):
-                            sets_list = []
-                            has_weight = False
-                            for s_idx, s_item in enumerate(raw_sets, 1):
-                                if not isinstance(s_item, dict):
-                                    continue
-                                reps_val = s_item.get("reps") or s_item.get("count") or s_item.get("targetReps") or 10
-                                weight_val = s_item.get("weight") or s_item.get("weightKg") or 0.0
-                                dur_val = s_item.get("duration") or s_item.get("time") or 0
+                exercises = {}
+                for item in lap_items:
+                    ex_idx = item.get("exerciseIndex", 0)
+                    mode = item.get("mode", 0) # 14: 运动中 active, 15: 休息 rest, 16: 汇总 summary
+                    lap_type = item.get("lapType", 0)
 
-                                set_obj = {"set_num": s_idx}
-                                if weight_val and float(weight_val) > 0:
-                                    has_weight = True
-                                    set_obj["reps"] = f"{reps_val}"
-                                    set_obj["weight"] = f"{float(weight_val):.1f} kg"
-                                elif reps_val:
-                                    set_obj["reps"] = f"{reps_val}"
-                                elif dur_val:
-                                    mins, secs = divmod(int(dur_val), 60)
-                                    set_obj["duration"] = f"{mins}:{secs:02d}"
-                                sets_list.append(set_obj)
+                    # 只提取 active 动作组（mode == 14 且 lapType == 0）
+                    if mode == 14 and lap_type == 0:
+                        key = item.get("exerciseNameKey", f"EX_{ex_idx}")
+                        reps = item.get("reps", 0)
+                        target_reps = item.get("targetValue", 0)
+                        weight_raw = item.get("weight", 0)
+                        weight = (weight_raw / 100.0) if weight_raw else 0.0
+                        time_ms = item.get("time", 0)
+                        target_type = item.get("targetType", 3)
 
-                            ex_type = "reps_weight" if has_weight else ("timer" if any("duration" in s for s in sets_list) else "reps")
-                            parsed_details.append({
-                                "index": idx,
-                                "name": ex_name,
-                                "total_sets": len(sets_list),
-                                "type": ex_type,
-                                "sets": sets_list
+                        if ex_idx not in exercises:
+                            exercises[ex_idx] = {
+                                "index": ex_idx,
+                                "name_key": key,
+                                "target_type": target_type,
+                                "sets": []
+                            }
+
+                        set_num = len(exercises[ex_idx]["sets"]) + 1
+                        if target_type == 2 or (reps == 0 and time_ms > 0):
+                            mins, secs = divmod(time_ms // 1000, 60)
+                            exercises[ex_idx]["sets"].append({
+                                "set_num": set_num,
+                                "duration": f"{mins}:{secs:02d}"
                             })
                         else:
-                            dur_s = item.get("duration") or item.get("totalTime") or 0
-                            mins, secs = divmod(int(dur_s), 60)
-                            parsed_details.append({
-                                "index": idx,
-                                "name": ex_name,
-                                "type": "timer",
-                                "duration": f"{mins}:{secs:02d}" if dur_s else "5:00"
-                            })
+                            set_data = {
+                                "set_num": set_num,
+                                "reps": f"{reps}/{target_reps}" if target_reps else f"{reps}"
+                            }
+                            if weight > 0:
+                                set_data["weight"] = f"{weight:.1f} kg"
+                            exercises[ex_idx]["sets"].append(set_data)
 
-                    if parsed_details:
-                        import json
-                        return json.dumps(parsed_details, ensure_ascii=False)
-            except Exception:
-                pass
+                if exercises:
+                    parsed_details = []
+                    for ex_idx in sorted(exercises.keys()):
+                        ex = exercises[ex_idx]
+                        name = COROS_EXERCISE_NAMES.get(ex["name_key"], f"动作 {ex_idx}")
+                        has_weight = any("weight" in s for s in ex["sets"])
+                        has_duration = any("duration" in s for s in ex["sets"])
+                        ex_type = "reps_weight" if has_weight else ("timer" if has_duration else "reps")
+                        parsed_details.append({
+                            "index": ex_idx,
+                            "name": name,
+                            "total_sets": len(ex["sets"]),
+                            "type": ex_type,
+                            "sets": ex["sets"]
+                        })
+
+                    import json
+                    return json.dumps(parsed_details, ensure_ascii=False)
+            except Exception as e:
+                print(f"Error parsing strength details from Coros {method}: {e}")
 
         return None
 
