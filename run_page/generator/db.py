@@ -254,9 +254,9 @@ def update_or_create_activity(session, run_activity):
                 if run_activity.elevation_gain is not None
                 else None
             )
-            activity.summary_polyline = (
-                run_activity.map and run_activity.map.summary_polyline or ""
-            )
+            new_poly = run_activity.map and run_activity.map.summary_polyline or ""
+            if new_poly:
+                activity.summary_polyline = new_poly
             activity.source = source
             if hasattr(run_activity, "extra_details") and run_activity.extra_details:
                 activity.extra_details = run_activity.extra_details

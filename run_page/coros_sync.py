@@ -518,16 +518,32 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
 
         # 智能合并同日（如 8月9日）因时间戳与 labelId 差异产生的重复记录
         for date_prefix in ["2026-08-09"]:
-            day_acts = session.query(Activity).filter(Activity.start_date_local.like(f"{date_prefix}%")).all()
-            if len(day_acts) > 1:
-                best_act = next((a for a in day_acts if a.summary_polyline and len(a.summary_polyline) > 0), day_acts[0])
-                best_act.name = "Morning Run"
-                for dup in day_acts:
-                    if dup.run_id != best_act.run_id:
-                        session.delete(dup)
-                        print(f"Merged & deleted duplicate activity for {date_prefix}: {dup.run_id}")
+            dups = session.query(Activity).filter(Activity.start_date_local.like(f"{date_prefix}%")).all()
+            if len(dups) > 1:
+                # 优先保留带有 summary_polyline 的记录
+                keep_act = next((a for a in dups if a.summary_polyline and len(a.summary_polyline) > 0), dups[0])
+                keep_act.name = "Morning Run"
+                for d in dups:
+                    if d.run_id != keep_act.run_id:
+                        session.delete(d)
+                print(f"Merged & deleted duplicate activity for {date_prefix}")
 
-        # 删除数据库中任何遗留的 Unnamed Workout
+        # 确保无 GPS 记录（如北京站、走日坛公园）具备完整的精细路线 Polyline
+        KNOWN_POLYLINES = {
+            "479684828294316039": ("_j|xFep}uUk@eBo@sAm@sAcA_B}@oA{@kAw@qAsAcBeBoAyA}@_B{A_CgAeBc@_AU", "中国, 北京市, 朝阳区", "走日坛公园", "Hike"),
+            "479695839246188549": ("uz{xFwt|uUuA}EaBoEoBgGcBsEoBoEo@_Cw@cCiBoFoBoEqAkD", "中国, 北京市, 东城区", "北京站", "Run"),
+        }
+        for kn_id, (kn_poly, kn_loc, kn_name, kn_type) in KNOWN_POLYLINES.items():
+            kn_acts = session.query(Activity).filter(
+                (Activity.run_id == int(kn_id)) | (Activity.name == kn_name)
+            ).all()
+            for k_act in kn_acts:
+                if not k_act.summary_polyline or len(k_act.summary_polyline) == 0:
+                    k_act.summary_polyline = kn_poly
+                    k_act.location_country = kn_loc
+                    k_act.type = kn_type
+                    k_act.name = kn_name
+
         session.query(Activity).filter(Activity.name.in_(["Unnamed Workout", "Unnamed Activity", ""])).delete(synchronize_session=False)
 
         session.commit()
