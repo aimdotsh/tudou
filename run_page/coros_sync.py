@@ -358,8 +358,26 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                     print(f"Error in fallback syncing {label_id}: {e}")
 
     # 全自动抓取结构化力量训练 (sportType=402 或 mode in [23,24,25]) 的动作组数明细
+    # 包含本次增量活动 + 近期（7天内）数据库中缺少 extra_details 的力量训练
+    strength_target_ids = set(to_generate_coros_ids)
+    try:
+        session_chk = init_db(SQL_FILE)
+        from generator.db import Activity
+        import datetime
+        recent_cutoff = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+        recent_missing_acts = session_chk.query(Activity).filter(
+            Activity.start_date_local >= recent_cutoff,
+            Activity.type == "WeightTraining",
+            Activity.extra_details == None
+        ).all()
+        for act in recent_missing_acts:
+            strength_target_ids.add(str(act.run_id))
+        session_chk.close()
+    except Exception:
+        pass
+
     strength_details_map = {}
-    for str_label_id in to_generate_coros_ids:
+    for str_label_id in strength_target_ids:
         act_item = act_map.get(str(str_label_id), {})
         mode_val = act_item.get("mode", 0)
         sport_val = act_item.get("sportType", 0)
@@ -390,13 +408,13 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
 
     make_activities_file(SQL_FILE, folder, JSON_FILE, file_type, activity_title_dict=activity_title_dict)
 
-    # 仅针对本次增量新活动（to_generate_coros_ids）进行名称同步、保底落库与智能去重，杜绝扫描全部历史数据
+    # 针对本次增量新活动及需要补全明细的力量训练进行名称同步、明细落库与智能去重
     try:
         session = init_db(SQL_FILE)
         from generator.db import Activity, update_or_create_activity
         import datetime
 
-        target_label_ids = set(to_generate_coros_ids)
+        target_label_ids = set(to_generate_coros_ids).union(strength_target_ids)
 
         for str_label_id in target_label_ids:
             act_item = act_map.get(str(str_label_id))
