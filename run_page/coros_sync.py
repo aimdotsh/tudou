@@ -261,6 +261,8 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
     activity_title_dict = {}
     for str_label_id, act_item in act_map.items():
         name = act_item.get("name")
+        if name in ["天津市 跑步", "天津 跑步"]:
+            name = "Morning Run"
         st = act_item.get("startTime")
         if name:
             activity_title_dict[str(str_label_id)] = name
@@ -270,21 +272,24 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
 
     make_activities_file(SQL_FILE, folder, JSON_FILE, file_type, activity_title_dict=activity_title_dict)
 
-    # 自动把高驰服务器上的真实活动名称 (如 "北京站", "走日坛公园") 覆盖回数据库，并根据时间戳智能去重
+    # 仅针对本次增量新活动（to_generate_coros_ids）进行名称同步、保底落库与智能去重，杜绝扫描全部历史数据
     try:
         session = init_db(SQL_FILE)
-        from generator.db import Activity
+        from generator.db import Activity, update_or_create_activity
         import datetime
 
-        for str_label_id, act_item in act_map.items():
-            real_name = act_item.get("name")
+        target_label_ids = set(to_generate_coros_ids)
+
+        for str_label_id in target_label_ids:
+            act_item = act_map.get(str(str_label_id))
+            if not act_item:
+                continue
+
+            real_name = act_item.get("name", "运动")
             if real_name in ["天津市 跑步", "天津 跑步"]:
                 real_name = "Morning Run"
 
             st = act_item.get("startTime")
-            if not real_name:
-                continue
-
             target_ids = [int(str_label_id)]
             if st:
                 target_ids.extend([int(st) * 1000, int(st)])
@@ -307,10 +312,55 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                         session.delete(duplicate)
                         print(f"Removed duplicate activity id {duplicate.run_id} for {real_name}")
             else:
-                # 若数据库完全缺失该条运动（如无位移的力量训练），自动补全入库
-                if act_item.get("name") in ["天津市 跑步", "天津 跑步"]:
-                    act_item["name"] = "Morning Run"
-                sync_coros_summary_to_db(act_item)
+                # 若本次新活动完全未生成 FIT（如无位移的力量训练），在当前 session 下安全落库
+                label_id = str(act_item.get("labelId"))
+                mode = act_item.get("mode", 8)
+                start_time_ts = act_item.get("startTime", 0)
+
+                if start_time_ts:
+                    dt = datetime.datetime.fromtimestamp(start_time_ts)
+                    start_date_local = dt.strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    start_date_local = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                duration = int(act_item.get("duration") or act_item.get("totalTime") or 0)
+                moving_time_td = datetime.timedelta(seconds=duration)
+                distance = float(act_item.get("distance", 0.0) or 0.0)
+                avg_hr = act_item.get("avgHr")
+
+                if any(kw in real_name for kw in ["力量", "自定义力量", "深蹲", "硬拉", "卧推", "哑铃", "杠铃", "Gym", "Weight"]) or mode in [23, 24, 25]:
+                    act_type = "WeightTraining"
+                elif any(kw in real_name for kw in ["徒步", "健走", "行走", "散步", "走", "山", "Hike", "Walk"]) or mode in [14, 31]:
+                    act_type = "Hike"
+                elif any(kw in real_name for kw in ["跑", "Run", "Jog"]) or mode in [8, 9, 100]:
+                    act_type = "Run"
+                elif any(kw in real_name for kw in ["骑", "Ride", "Cycle"]) or mode in [2]:
+                    act_type = "Ride"
+                else:
+                    act_type = "Hike" if distance > 500 else "Workout"
+
+                class MockActivity:
+                    pass
+
+                mock_act = MockActivity()
+                mock_act.id = int(label_id)
+                mock_act.name = real_name
+                mock_act.distance = distance
+                mock_act.moving_time = moving_time_td
+                mock_act.elapsed_time = moving_time_td
+                mock_act.type = act_type
+                mock_act.start_date = start_date_local
+                mock_act.start_date_local = start_date_local
+                mock_act.location_country = "中国"
+                mock_act.start_latlng = None
+                mock_act.map = None
+                mock_act.average_heartrate = avg_hr
+                mock_act.average_speed = (distance * 1000 / duration) if (duration and distance) else 0.0
+                mock_act.elevation_gain = 0.0
+                mock_act.source = "coros"
+
+                update_or_create_activity(session, mock_act)
+                print(f"✅ Synced incremental activity to DB: {real_name} ({start_date_local})")
 
         # 智能合并同日（如 8月9日）因时间戳与 labelId 差异产生的重复记录
         for date_prefix in ["2026-08-09"]:
