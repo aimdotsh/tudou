@@ -146,6 +146,108 @@ class Coros:
         return None, None
 
 
+    async def fetch_strength_workout_details(self, label_id, sport_type=402):
+        """
+        全自动接入高驰官方结构化力量训练详情 API (如 sportType=402 自定义力量)
+        自动解析返回的 exerciseList / workoutSteps / setList 转换为标准 extra_details JSON
+        """
+        str_label_id = str(label_id)
+        urls = [
+            f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}&sportType={sport_type}",
+            f"https://teamcnapi.coros.com/activity/workout/query?labelId={str_label_id}",
+            f"https://teamcnapi.coros.com/activity/detail/sportdata?labelId={str_label_id}&sportType={sport_type}",
+            f"https://teamcnapi.coros.com/activity/detail/query?labelId={str_label_id}",
+        ]
+        coros_headers = {
+            "accesstoken": self.headers.get("accesstoken", ""),
+            "cookie": self.headers.get("cookie", ""),
+            "referer": "https://t.coros.com/",
+            "origin": "https://t.coros.com",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json;charset=UTF-8",
+        }
+
+        for url in urls:
+            try:
+                resp = await self.req.get(url, headers=coros_headers)
+                resp_data = resp.json().get("data")
+                if not resp_data or not isinstance(resp_data, dict):
+                    continue
+
+                raw_exercises = (
+                    resp_data.get("exerciseList")
+                    or resp_data.get("workoutSteps")
+                    or resp_data.get("groupList")
+                    or resp_data.get("setList")
+                    or resp_data.get("strengthData")
+                    or resp_data.get("actions")
+                    or resp_data.get("stepList")
+                )
+
+                if raw_exercises and isinstance(raw_exercises, list):
+                    parsed_details = []
+                    for idx, item in enumerate(raw_exercises, 1):
+                        if not isinstance(item, dict):
+                            continue
+                        ex_name = (
+                            item.get("name")
+                            or item.get("exerciseName")
+                            or item.get("actionName")
+                            or item.get("title")
+                            or f"动作 {idx}"
+                        )
+                        raw_sets = item.get("sets") or item.get("setList") or item.get("subList") or []
+
+                        if raw_sets and isinstance(raw_sets, list):
+                            sets_list = []
+                            has_weight = False
+                            for s_idx, s_item in enumerate(raw_sets, 1):
+                                if not isinstance(s_item, dict):
+                                    continue
+                                reps_val = s_item.get("reps") or s_item.get("count") or s_item.get("targetReps") or 10
+                                weight_val = s_item.get("weight") or s_item.get("weightKg") or 0.0
+                                dur_val = s_item.get("duration") or s_item.get("time") or 0
+
+                                set_obj = {"set_num": s_idx}
+                                if weight_val and float(weight_val) > 0:
+                                    has_weight = True
+                                    set_obj["reps"] = f"{reps_val}"
+                                    set_obj["weight"] = f"{float(weight_val):.1f} kg"
+                                elif reps_val:
+                                    set_obj["reps"] = f"{reps_val}"
+                                elif dur_val:
+                                    mins, secs = divmod(int(dur_val), 60)
+                                    set_obj["duration"] = f"{mins}:{secs:02d}"
+                                sets_list.append(set_obj)
+
+                            ex_type = "reps_weight" if has_weight else ("timer" if any("duration" in s for s in sets_list) else "reps")
+                            parsed_details.append({
+                                "index": idx,
+                                "name": ex_name,
+                                "total_sets": len(sets_list),
+                                "type": ex_type,
+                                "sets": sets_list
+                            })
+                        else:
+                            dur_s = item.get("duration") or item.get("totalTime") or 0
+                            mins, secs = divmod(int(dur_s), 60)
+                            parsed_details.append({
+                                "index": idx,
+                                "name": ex_name,
+                                "type": "timer",
+                                "duration": f"{mins}:{secs:02d}" if dur_s else "5:00"
+                            })
+
+                    if parsed_details:
+                        import json
+                        return json.dumps(parsed_details, ensure_ascii=False)
+            except Exception:
+                pass
+
+        return None
+
+
 def get_downloaded_ids(folder):
     if not os.path.exists(folder):
         return []
@@ -255,6 +357,22 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                 except Exception as e:
                     print(f"Error in fallback syncing {label_id}: {e}")
 
+    # 全自动抓取结构化力量训练 (sportType=402 或 mode in [23,24,25]) 的动作组数明细
+    strength_details_map = {}
+    for str_label_id in to_generate_coros_ids:
+        act_item = act_map.get(str(str_label_id), {})
+        mode_val = act_item.get("mode", 0)
+        sport_val = act_item.get("sportType", 0)
+        act_n = act_item.get("name", "")
+        if mode_val in [23, 24, 25] or sport_val in [402, 23] or any(k in act_n for k in ["力量", "深蹲", "自定义力量"]):
+            try:
+                details_json = await coros.fetch_strength_workout_details(str_label_id, sport_type=sport_val or 402)
+                if details_json:
+                    strength_details_map[str(str_label_id)] = details_json
+                    print(f"🏋️ Successfully fetched strength workout details for {act_n} ({str_label_id})")
+            except Exception as e:
+                print(f"Failed to fetch strength details for {str_label_id}: {e}")
+
     await coros.req.aclose()
 
     # 构建完整的 activity_title_dict (同时支持 labelId 与 毫秒时间戳 run_id)
@@ -299,12 +417,16 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                 dt_str = datetime.datetime.fromtimestamp(int(st)).strftime("%Y-%m-%d %H:%M")
                 matching_acts = session.query(Activity).filter(Activity.start_date_local.like(f"{dt_str}%")).all()
 
+            extra_detail_val = strength_details_map.get(str(str_label_id))
+
             if matching_acts:
                 # 优先保留有轨迹 summary_polyline 的记录
                 track_act = next((a for a in matching_acts if a.summary_polyline and len(a.summary_polyline) > 0), matching_acts[0])
                 track_act.name = real_name
                 if act_item.get("avgHr"):
                     track_act.average_heartrate = float(act_item["avgHr"])
+                if extra_detail_val:
+                    track_act.extra_details = extra_detail_val
 
                 # 删除同时间段其它多余的重复记录
                 for duplicate in matching_acts:
@@ -358,6 +480,7 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                 mock_act.average_speed = (distance * 1000 / duration) if (duration and distance) else 0.0
                 mock_act.elevation_gain = 0.0
                 mock_act.source = "coros"
+                mock_act.extra_details = extra_detail_val
 
                 update_or_create_activity(session, mock_act)
                 print(f"✅ Synced incremental activity to DB: {real_name} ({start_date_local})")
