@@ -528,22 +528,7 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                         session.delete(d)
                 print(f"Merged & deleted duplicate activity for {date_prefix}")
 
-        # 确保无 GPS 记录（如北京站、走日坛公园）具备完整的精细路线 Polyline
-        KNOWN_POLYLINES = {
-            "479684828294316039": ("_j|xFep}uUk@eBo@sAm@sAcA_B}@oA{@kAw@qAsAcBeBoAyA}@_B{A_CgAeBc@_AU", "中国, 北京市, 朝阳区", "走日坛公园", "Hike"),
-            "479695839246188549": ("uz{xFwt|uUuA}EaBoEoBgGcBsEoBoEo@_Cw@cCiBoFoBoEqAkD", "中国, 北京市, 东城区", "北京站", "Run"),
-        }
-        for kn_id, (kn_poly, kn_loc, kn_name, kn_type) in KNOWN_POLYLINES.items():
-            kn_acts = session.query(Activity).filter(
-                (Activity.run_id == int(kn_id)) | (Activity.name == kn_name)
-            ).all()
-            for k_act in kn_acts:
-                if not k_act.summary_polyline or len(k_act.summary_polyline) == 0:
-                    k_act.summary_polyline = kn_poly
-                    k_act.location_country = kn_loc
-                    k_act.type = kn_type
-                    k_act.name = kn_name
-
+        # 删除数据库中任何遗留的 Unnamed Workout
         session.query(Activity).filter(Activity.name.in_(["Unnamed Workout", "Unnamed Activity", ""])).delete(synchronize_session=False)
 
         session.commit()
