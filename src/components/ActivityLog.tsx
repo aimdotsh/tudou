@@ -136,43 +136,6 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
   const pageData = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
-  const [windowStart, setWindowStart] = useState(0)
-  const [visibleCount, setVisibleCount] = useState(() => {
-    if (typeof window !== 'undefined') {
-      if (window.innerWidth >= 1280) return 12
-      if (window.innerWidth >= 768) return 8
-      if (window.innerWidth >= 640) return 6
-    }
-    return 8
-  })
-
-  useEffect(() => {
-    const updateCount = () => {
-      if (window.innerWidth >= 1280) {
-        setVisibleCount(12)
-      } else if (window.innerWidth >= 768) {
-        setVisibleCount(8)
-      } else if (window.innerWidth >= 640) {
-        setVisibleCount(6)
-      } else {
-        setVisibleCount(4)
-      }
-    }
-    updateCount()
-    window.addEventListener('resize', updateCount)
-    return () => window.removeEventListener('resize', updateCount)
-  }, [])
-
-  // 如果年份总数 <= visibleCount，直接展示全部，无需滑动
-  const needPagination = years.length > visibleCount
-  const visibleYears = needPagination ? years.slice(windowStart, windowStart + visibleCount) : years
-  const canScrollLeft = needPagination && windowStart > 0
-  const canScrollRight = needPagination && windowStart + visibleCount < years.length
-
-  const shiftWindow = (dir: -1 | 1) => {
-    setWindowStart(prev => Math.min(Math.max(0, prev + dir), Math.max(0, years.length - visibleCount)))
-  }
-
   const gymTypes = WORKOUT_TYPES.filter(t => activities.some(a => a.type === t))
 
   const logTitle = filter === 'Run'  ? (locale === 'zh' ? '跑步记录' : 'Run Log')
@@ -190,57 +153,31 @@ export function ActivityLog({ activities, years, year, setYear, selectedActivity
         </span>
       </div>
 
-      {/* Year tabs - 大屏幕至少平铺展示 8 个年份，超过才折叠/滑动 */}
-      <div className="flex items-center gap-1.5 mb-3 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+      {/* Year tabs - 完整平铺展示所有年份，支持移动端自适应横向平滑滚动 */}
+      <div className="flex items-center gap-1.5 mb-3 overflow-x-auto no-scrollbar py-1 max-w-full">
         <button
           onClick={() => { setYear(null); setPage(0) }}
-          className={`px-2.5 py-1 rounded text-xs font-medium transition-all shrink-0 ${
-            year === null ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+          className={`px-3 py-1 rounded-lg text-xs font-medium transition-all shrink-0 cursor-pointer ${
+            year === null ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-[var(--color-text)] border border-[var(--color-border)]'
           }`}
         >
           {locale === 'zh' ? '全部' : 'ALL'}
         </button>
 
-        <span className="w-px h-3 bg-[var(--color-border)] shrink-0" />
+        <span className="w-px h-3.5 bg-[var(--color-border)] shrink-0 mx-0.5" />
 
-        {/* Left arrow (仅在超过可见年份数时展示) */}
-        {needPagination && (
-          <button
-            onClick={() => shiftWindow(-1)}
-            disabled={!canScrollLeft}
-            className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-
-        {/* Visible year buttons */}
-        {visibleYears.map((y) => (
+        {/* 渲染所有真实年份，不作任何截断 */}
+        {years.map((y) => (
           <button
             key={y}
             onClick={() => { setYear(y); setPage(0) }}
-            className={`px-2.5 py-1 rounded text-xs font-medium transition-all shrink-0 ${
-              year === y ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+            className={`px-3 py-1 rounded-lg text-xs font-medium transition-all shrink-0 cursor-pointer ${
+              year === y ? 'bg-[var(--color-accent)] text-white shadow-sm' : 'bg-[var(--color-bg)] text-[var(--color-muted)] hover:text-[var(--color-text)] border border-[var(--color-border)]'
             }`}
           >
             {y}
           </button>
         ))}
-
-        {/* Right arrow (仅在超过可见年份数时展示) */}
-        {needPagination && (
-          <button
-            onClick={() => shiftWindow(1)}
-            disabled={!canScrollRight}
-            className="w-5 h-5 flex items-center justify-center rounded transition-all disabled:opacity-20 text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:cursor-not-allowed shrink-0"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
       </div>
 
       {/* Gym: type filter / Normal: distance filter - 同样支持单行横滑 */}

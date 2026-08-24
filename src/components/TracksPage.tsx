@@ -468,12 +468,6 @@ export function TracksPage({ activities, filter, onBack, onSelectActivity, dark 
   const captureRef = useRef<HTMLDivElement>(null)
   const [exporting, setExporting] = useState(false)
 
-  // Year pagination
-  const MAX_YEARS = 10
-  const [yearPage, setYearPage] = useState(0)
-  const totalYearPages = Math.ceil(allYears.length / MAX_YEARS)
-  const visibleYears = allYears.slice(yearPage * MAX_YEARS, yearPage * MAX_YEARS + MAX_YEARS)
-
   // Determine which sport types exist
   const hasSport = (t: SportType) => activities.some(a => a.type === t)
 
@@ -656,29 +650,19 @@ export function TracksPage({ activities, filter, onBack, onSelectActivity, dark 
             }
           `}</style>
           {/* Year pills + sport filter */}
-          <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-[var(--color-border)]">
-            {totalYearPages > 1 && (
-              <button onClick={() => setYearPage(p => Math.max(0, p - 1))} disabled={yearPage === 0}
-                className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors px-1 text-base leading-none">
-                ‹
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 mb-4 pb-3 border-b border-[var(--color-border)] overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button onClick={() => setSelectedYear(null)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${selectedYear === null ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}>
+                {locale === 'zh' ? '全部' : 'All'}
               </button>
-            )}
-            <button onClick={() => setSelectedYear(null)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${selectedYear === null ? 'bg-[var(--color-accent)] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}>
-              {locale === 'zh' ? '全部' : 'All'}
-            </button>
-            {visibleYears.map(yr => (
-              <button key={yr} onClick={() => setSelectedYear(selectedYear === yr ? null : yr)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${selectedYear === yr ? 'bg-[var(--color-accent)] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}>
-                {yr}
-              </button>
-            ))}
-            {totalYearPages > 1 && (
-              <button onClick={() => setYearPage(p => Math.min(totalYearPages - 1, p + 1))} disabled={yearPage === totalYearPages - 1}
-                className="text-[var(--color-muted)] hover:text-[var(--color-text)] disabled:opacity-30 transition-colors px-1 text-base leading-none">
-                ›
-              </button>
-            )}
+              {allYears.map(yr => (
+                <button key={yr} onClick={() => setSelectedYear(selectedYear === yr ? null : yr)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${selectedYear === yr ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}>
+                  {yr}
+                </button>
+              ))}
+            </div>
             {/* Sport filter — right side */}
             <div className="flex items-center gap-1.5 ml-auto">
               <button onClick={() => setSportFilter(null)}
