@@ -163,7 +163,7 @@ class Coros:
             "content-type": "application/json;charset=UTF-8",
         }
 
-        # 动作名称多语言映射字典
+        # 动作名称多语言映射字典 (高驰多语言 Key + 标准 FIT 动作分类)
         COROS_EXERCISE_NAMES = {
             "T1120": "热身 (跳绳/拉伸)",
             "T1061": "深蹲",
@@ -171,10 +171,14 @@ class Coros:
             "T1080": "俯卧撑",
             "T1081": "硬拉",
             "T1082": "卧推",
-            "T1083": "弯举",
+            "T1083": "哑铃弯举",
             "T1084": "推肩",
             "T1085": "引体向上",
             "T1086": "平板支撑",
+            "T1087": "波比跳",
+            "T1088": "提踵",
+            "T1089": "开合跳",
+            "T1090": "卷腹",
         }
 
         for method in ["POST", "GET"]:
@@ -210,8 +214,18 @@ class Coros:
                         target_reps = item.get("targetValue", 0)
                         weight_raw = item.get("weight", 0)
                         weight = (weight_raw / 100.0) if weight_raw else 0.0
-                        time_ms = item.get("time", 0)
+                        time_raw = item.get("time", 0)
                         target_type = item.get("targetType", 3)
+
+                        # 高驰 time 单位纠正：若 > 1000 且 targetValue 约为秒数，换算真实秒数
+                        if time_raw >= 1000:
+                            # 判断是否为毫秒或厘秒
+                            if target_reps and abs((time_raw / 100) - target_reps) < 5:
+                                duration_sec = int(time_raw / 100)
+                            else:
+                                duration_sec = int(time_raw // 1000) if time_raw >= 10000 else int(time_raw / 100)
+                        else:
+                            duration_sec = int(time_raw)
 
                         if ex_idx not in exercises:
                             exercises[ex_idx] = {
@@ -222,8 +236,8 @@ class Coros:
                             }
 
                         set_num = len(exercises[ex_idx]["sets"]) + 1
-                        if target_type == 2 or (reps == 0 and time_ms > 0):
-                            mins, secs = divmod(time_ms // 1000, 60)
+                        if target_type == 2 or (reps == 0 and duration_sec > 0):
+                            mins, secs = divmod(duration_sec, 60)
                             exercises[ex_idx]["sets"].append({
                                 "set_num": set_num,
                                 "duration": f"{mins}:{secs:02d}"
@@ -444,8 +458,9 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                 target_ids.extend([int(st) * 1000, int(st)])
 
             matching_acts = session.query(Activity).filter(Activity.run_id.in_(target_ids)).all()
+            tz_cst = datetime.timezone(datetime.timedelta(hours=8))
             if not matching_acts and st:
-                dt_str = datetime.datetime.fromtimestamp(int(st)).strftime("%Y-%m-%d %H:%M")
+                dt_str = datetime.datetime.fromtimestamp(int(st), tz=tz_cst).strftime("%Y-%m-%d %H:%M")
                 matching_acts = session.query(Activity).filter(Activity.start_date_local.like(f"{dt_str}%")).all()
 
             extra_detail_val = strength_details_map.get(str(str_label_id))
@@ -454,6 +469,9 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                 # 优先保留有轨迹 summary_polyline 的记录
                 track_act = next((a for a in matching_acts if a.summary_polyline and len(a.summary_polyline) > 0), matching_acts[0])
                 track_act.name = real_name
+                if st:
+                    # 确保 start_date_local 严格修正为北京时间
+                    track_act.start_date_local = datetime.datetime.fromtimestamp(int(st), tz=tz_cst).strftime("%Y-%m-%d %H:%M:%S")
                 if act_item.get("avgHr"):
                     track_act.average_heartrate = float(act_item["avgHr"])
                 if extra_detail_val:
@@ -471,10 +489,11 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
                 start_time_ts = act_item.get("startTime", 0)
 
                 if start_time_ts:
-                    dt = datetime.datetime.fromtimestamp(start_time_ts)
+                    dt = datetime.datetime.fromtimestamp(start_time_ts, tz=tz_cst)
                     start_date_local = dt.strftime("%Y-%m-%d %H:%M:%S")
                 else:
-                    start_date_local = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    dt = datetime.datetime.now(tz=tz_cst)
+                    start_date_local = dt.strftime("%Y-%m-%d %H:%M:%S")
 
                 duration = int(act_item.get("duration") or act_item.get("totalTime") or 0)
                 moving_time_td = datetime.timedelta(seconds=duration)
