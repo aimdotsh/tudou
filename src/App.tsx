@@ -8,6 +8,7 @@ import { GitHubAuthProvider } from './hooks/useGitHubAuthContext'
 import { Header } from './components/Header'
 import { TracksPage } from './components/TracksPage'
 import { ShareActivityPage } from './components/ShareActivityPage'
+import { AnalyticsPage } from './components/Analytics/AnalyticsPage'
 import { DashboardTheme } from './themes/DashboardTheme'
 import { ClassicTheme } from './themes/ClassicTheme'
 import { MapFocusedTheme } from './themes/MapFocusedTheme'
@@ -16,7 +17,7 @@ import rawActivities from './static/activities.json'
 import siteMetadata from './static/site-metadata'
 const activities = rawActivities as Activity[]
 
-type Page = 'home' | 'tracks'
+type Page = 'home' | 'tracks' | 'analytics'
 
 export default function App() {
   const { dark, toggle, preset, setPreset, layoutPreset, setLayoutPreset } = useTheme()
@@ -84,6 +85,8 @@ export default function App() {
               window.history.pushState({}, '', window.location.pathname)
             }}
           />
+        ) : page === 'analytics' ? (
+          <AnalyticsPage />
         ) : page === 'tracks' ? (
           <TracksPage
             activities={activities}

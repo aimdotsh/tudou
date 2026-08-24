@@ -11,7 +11,7 @@ import { Palette } from 'lucide-react'
 import type { ThemePreset } from '../hooks/useTheme'
 import type { ThemeLayoutPreset } from '../themes/types'
 
-type Page = 'home' | 'tracks'
+type Page = 'home' | 'tracks' | 'analytics'
 
 interface HeaderProps {
   filter: SportFilter
@@ -265,6 +265,7 @@ export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset
 
   const navItems: { label: string; page: Page }[] = [
     { label: t('tracks'), page: 'tracks' },
+    { label: locale === 'zh' ? '深度分析 🔒' : 'Analytics 🔒', page: 'analytics' },
   ]
 
   return (

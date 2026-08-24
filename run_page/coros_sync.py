@@ -272,10 +272,51 @@ class Coros:
 
                     import json
                     return json.dumps(parsed_details, ensure_ascii=False)
-            except Exception as e:
-                print(f"Error parsing strength details from Coros {method}: {e}")
+    async def fetch_coros_analytics_bundle(self):
+        """全自动拉取高驰 EvoLab 仪表板与深度分析时序数据并持久化"""
+        if not self.access_token:
+            return
 
-        return None
+        coros_headers = {
+            "accesstoken": self.access_token,
+            "yfheader": '{"screenW":1440,"screenH":900,"appVersion":""}',
+            "origin": "https://t.coros.com",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "accept": "application/json, text/plain, */*",
+        }
+
+        try:
+            endpoints = {
+                "dashboard_detail": "https://teamcnapi.coros.com/dashboard/detail/query",
+                "dashboard_pb": "https://teamcnapi.coros.com/dashboard/queryCycleRecord",
+                "analyse": "https://teamcnapi.coros.com/analyse/query",
+                "account": "https://teamcnapi.coros.com/account/query",
+            }
+            results = {}
+            for k, url in endpoints.items():
+                resp = await self.req.get(url, headers=coros_headers)
+                results[k] = resp.json().get("data", {})
+
+            # 导出到 src/static/coros_analytics.json
+            import os, json
+            out_file = os.path.join(os.path.dirname(__file__), "..", "src", "static", "coros_analytics.json")
+            if os.path.exists(out_file):
+                with open(out_file, "r", encoding="utf-8") as f:
+                    existing = json.load(f)
+            else:
+                existing = {}
+
+            if results.get("dashboard_detail"):
+                existing["updated_at"] = datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
+                if "analyse" in results and "dayList" in results["analyse"]:
+                    existing["analytics"]["dayList"] = results["analyse"]["dayList"]
+                    existing["analytics"]["t7dayList"] = results["analyse"]["t7dayList"]
+
+            with open(out_file, "w", encoding="utf-8") as f:
+                json.dump(existing, f, ensure_ascii=False, indent=2)
+            print(f"✅ Updated EvoLab Analytics bundle to {out_file}")
+        except Exception as e:
+            print(f"Notice: Analytics sync skipped or error: {e}")
 
 
 def get_downloaded_ids(folder):
