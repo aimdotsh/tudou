@@ -224,7 +224,10 @@ class Generator:
             activity.streak = streak
             last_date = date
             if not IGNORE_BEFORE_SAVING:
-                activity.summary_polyline = filter_out(activity.summary_polyline)
+                try:
+                    activity.summary_polyline = filter_out(activity.summary_polyline)
+                except Exception:
+                    pass
             activity_list.append(activity.to_dict_safe())
 
         return activity_list

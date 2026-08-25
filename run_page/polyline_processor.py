@@ -21,10 +21,21 @@ except ValueError:
     exit(1)
 
 
+def safe_point(pt: Tuple[float, float]) -> Tuple[float, float]:
+    """确保经纬度处于 [-90, 90] 和 [-180, 180] 安全合法区间"""
+    lat, lon = pt[0], pt[1]
+    safe_lat = max(-90.0, min(90.0, float(lat)))
+    safe_lon = ((float(lon) + 180.0) % 360.0) - 180.0
+    return (safe_lat, safe_lon)
+
+
 def point_distance_in_range(
     point: Tuple[float], center_point: Tuple[float], distance: int
 ) -> bool:
-    return haversine(point, center_point) < distance
+    try:
+        return haversine(safe_point(point), safe_point(center_point)) < distance
+    except Exception:
+        return False
 
 
 def point_in_list_points_range(
@@ -44,21 +55,27 @@ def range_hiding(
 
 
 def start_end_hiding(polyline: List[Tuple[float]], distance: int) -> List[Tuple[float]]:
+    if not polyline or len(polyline) < 2 or distance <= 0:
+        return polyline
+
     start_index, end_index = 0, len(polyline) - 1
 
-    starting_distance = 0
-    for i in range(1, len(polyline)):
-        starting_distance += haversine(polyline[i], polyline[i - 1])
-        if starting_distance > distance:
-            start_index = i
-            break
+    try:
+        starting_distance = 0
+        for i in range(1, len(polyline)):
+            starting_distance += haversine(safe_point(polyline[i]), safe_point(polyline[i - 1]))
+            if starting_distance > distance:
+                start_index = i
+                break
 
-    ending_distance = 0
-    for i in range(len(polyline) - 2, -1, -1):
-        ending_distance += haversine(polyline[i], polyline[i + 1])
-        if ending_distance > distance:
-            end_index = i
-            break
+        ending_distance = 0
+        for i in range(len(polyline) - 2, -1, -1):
+            ending_distance += haversine(safe_point(polyline[i]), safe_point(polyline[i + 1]))
+            if ending_distance > distance:
+                end_index = i
+                break
+    except Exception:
+        return polyline
 
     if start_index >= end_index:
         return []
@@ -68,14 +85,17 @@ def start_end_hiding(polyline: List[Tuple[float]], distance: int) -> List[Tuple[
 
 def filter_out(polyline_str):
     if not polyline_str:
-        return
-    pl = polyline.decode(polyline_str)
-    if not pl:
         return polyline_str
+    try:
+        pl = polyline.decode(polyline_str)
+        if not pl:
+            return polyline_str
 
-    new_pl = start_end_hiding(pl, IGNORE_START_END_RANGE)
-    new_pl = range_hiding(new_pl, IGNORE_POLYLINE, IGNORE_RANGE)
+        new_pl = start_end_hiding(pl, IGNORE_START_END_RANGE)
+        new_pl = range_hiding(new_pl, IGNORE_POLYLINE, IGNORE_RANGE)
 
-    if not new_pl:
-        return
-    return polyline.encode(new_pl)
+        if not new_pl:
+            return polyline_str
+        return polyline.encode(new_pl)
+    except Exception:
+        return polyline_str
