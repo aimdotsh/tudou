@@ -272,6 +272,11 @@ class Coros:
 
                     import json
                     return json.dumps(parsed_details, ensure_ascii=False)
+            except Exception as e:
+                print(f"Error parsing strength details from Coros {method}: {e}")
+
+        return None
+
     async def fetch_coros_analytics_bundle(self):
         """全自动拉取高驰 EvoLab 仪表板与深度分析时序数据并持久化"""
         if not self.access_token:
