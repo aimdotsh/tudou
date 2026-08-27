@@ -10,17 +10,15 @@ import { TracksPage } from './components/TracksPage'
 import { ShareActivityPage } from './components/ShareActivityPage'
 import { AnalyticsPage } from './components/Analytics/AnalyticsPage'
 import { DashboardTheme } from './themes/DashboardTheme'
-import { ClassicTheme } from './themes/ClassicTheme'
-import { MapFocusedTheme } from './themes/MapFocusedTheme'
-import { GymProTheme } from './themes/GymProTheme'
 import rawActivities from './static/activities.json'
 import siteMetadata from './static/site-metadata'
+
 const activities = rawActivities as Activity[]
 
 type Page = 'home' | 'tracks' | 'analytics'
 
 export default function App() {
-  const { dark, toggle, preset, setPreset, layoutPreset, setLayoutPreset } = useTheme()
+  const { dark, toggle, preset, setPreset } = useTheme()
   const [filter, setFilter] = useState<SportFilter>('all')
   const [year, setYear] = useState<number | null>(null)
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
@@ -28,32 +26,33 @@ export default function App() {
   const [page, setPage] = useState<Page>('home')
   const [shareActivity, setShareActivity] = useState<Activity | null>(null)
 
-  useEffect(() => {
-    // 自动解析微信/独立分享 URL 里的 ?run_id=xxxx 参数
-    const params = new URLSearchParams(window.location.search)
-    const runIdParam = params.get('run_id')
-    if (runIdParam) {
-      const matched = activities.find(a => String(a.run_id) === runIdParam)
-      if (matched) {
-        setShareActivity(matched)
-        const kmStr = (matched.distance / 1000).toFixed(2)
-        document.title = `${kmStr} km ${matched.name || matched.type} | 蓝皮书的 Workouts`
-        return
-      }
-    }
-    document.title = siteMetadata.siteTitle || '蓝皮书的 Workouts Page'
-  }, [])
-
-  const years = getAvailableYears(activities)
   const filtered = useFilteredActivities(activities, filter, year)
   const sportFiltered = useFilteredActivities(activities, filter, null)
-  const heatmapYear = year ?? years[0] ?? new Date().getFullYear()
+  const years = useMemo(() => getAvailableYears(activities), [])
+
+  const heatmapYear = year ?? (years[0] ?? new Date().getFullYear())
 
   // Activities filtered to the selected province (for RouteMap)
   const provinceFiltered = useMemo(() => {
     if (!selectedProvince) return filtered
     return filtered.filter(a => extractProvince(a.location_country) === selectedProvince)
   }, [filtered, selectedProvince])
+
+  // Listen to URL query params on load (e.g. ?run_id=xxx)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const runId = params.get('run_id')
+    if (runId && activities.length > 0) {
+      const act = activities.find((a: Activity) => String(a.run_id) === runId)
+      if (act) {
+        setShareActivity(act)
+        const kmStr = (act.distance / 1000).toFixed(2)
+        document.title = `${kmStr} km ${act.name || act.type} | ${siteMetadata.siteTitle || 'Workouts'}`
+        return
+      }
+    }
+    document.title = siteMetadata.siteTitle || '蓝皮书的 Workouts Page'
+  }, [activities])
 
   return (
     <LocaleProvider>
@@ -67,8 +66,6 @@ export default function App() {
           toggleTheme={toggle}
           preset={preset}
           setPreset={setPreset}
-          layoutPreset={layoutPreset}
-          setLayoutPreset={setLayoutPreset}
           activities={activities}
           page={page}
           onNavigate={setPage}
@@ -96,40 +93,26 @@ export default function App() {
             dark={dark}
           />
         ) : (
-          (() => {
-            const sharedThemeProps = {
-              activities,
-              filteredActivities: filtered,
-              sportFilteredActivities: sportFiltered,
-              provinceFilteredActivities: provinceFiltered,
-              years,
-              year,
-              setYear,
-              filter,
-              selectedActivity,
-              setSelectedActivity,
-              selectedProvince,
-              setSelectedProvince,
-              heatmapYear,
-              dark,
-              onShareActivity: (act: Activity) => {
-                setShareActivity(act)
-                window.history.pushState({}, '', `?run_id=${act.run_id}`)
-              },
-            }
-
-            switch (layoutPreset) {
-              case 'classic':
-                return <ClassicTheme {...sharedThemeProps} />
-              case 'map_focused':
-                return <MapFocusedTheme {...sharedThemeProps} />
-              case 'gym_pro':
-                return <GymProTheme {...sharedThemeProps} />
-              case 'dashboard':
-              default:
-                return <DashboardTheme {...sharedThemeProps} />
-            }
-          })()
+          <DashboardTheme
+            activities={activities}
+            filteredActivities={filtered}
+            sportFilteredActivities={sportFiltered}
+            provinceFilteredActivities={provinceFiltered}
+            years={years}
+            year={year}
+            setYear={setYear}
+            filter={filter}
+            selectedActivity={selectedActivity}
+            setSelectedActivity={setSelectedActivity}
+            selectedProvince={selectedProvince}
+            setSelectedProvince={setSelectedProvince}
+            heatmapYear={heatmapYear}
+            dark={dark}
+            onShareActivity={(act: Activity) => {
+              setShareActivity(act)
+              window.history.pushState({}, '', `?run_id=${act.run_id}`)
+            }}
+          />
         )}
       </main>
 

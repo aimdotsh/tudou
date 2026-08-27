@@ -9,7 +9,6 @@ import siteMetadata from '../static/site-metadata'
 
 import { Palette } from 'lucide-react'
 import type { ThemePreset } from '../hooks/useTheme'
-import type { ThemeLayoutPreset } from '../themes/types'
 
 type Page = 'home' | 'tracks' | 'analytics'
 
@@ -20,23 +19,17 @@ interface HeaderProps {
   toggleTheme: () => void
   preset: ThemePreset
   setPreset: (p: ThemePreset) => void
-  layoutPreset: ThemeLayoutPreset
-  setLayoutPreset: (l: ThemeLayoutPreset) => void
   activities: Activity[]
   page: Page
   onNavigate: (p: Page) => void
 }
 
-function ThemePresetPicker({
+function ThemeColorPicker({
   preset,
   setPreset,
-  layoutPreset,
-  setLayoutPreset,
 }: {
   preset: ThemePreset
   setPreset: (p: ThemePreset) => void
-  layoutPreset: ThemeLayoutPreset
-  setLayoutPreset: (l: ThemeLayoutPreset) => void
 }) {
   const { locale } = useLocale()
   const [open, setOpen] = useState(false)
@@ -59,21 +52,14 @@ function ThemePresetPicker({
     { value: 'garmin', label: locale === 'zh' ? '佳明科技蓝' : 'Garmin Ocean', color: '#38bdf8' },
   ]
 
-  const layoutOptions: { value: ThemeLayoutPreset; label: string; icon: string }[] = [
-    { value: 'dashboard', label: locale === 'zh' ? 'Dashboard 现代单页' : 'Dashboard Layout', icon: '📱' },
-    { value: 'classic', label: locale === 'zh' ? 'Classic 经典流式' : 'Classic Layout', icon: '📜' },
-    { value: 'map_focused', label: locale === 'zh' ? 'Map Master 地图主导' : 'Map Focused', icon: '🗺️' },
-    { value: 'gym_pro', label: locale === 'zh' ? 'Gym Pro 力量专业' : 'Gym Pro Layout', icon: '🏋️' },
-  ]
-
   const activeColorOpt = colorOptions.find((o) => o.value === preset) ?? colorOptions[0]
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)] relative group"
-        title={locale === 'zh' ? '切换运动色彩与插拔布局主题' : 'Switch Theme & Layout Presets'}
+        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)] relative group cursor-pointer"
+        title={locale === 'zh' ? '切换运动色彩主题' : 'Switch Color Theme'}
       >
         <Palette className="w-4 h-4 transition-transform group-hover:scale-110" style={{ color: activeColorOpt.color }} />
         <span
@@ -83,37 +69,9 @@ function ThemePresetPicker({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 w-56 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-2xl p-1.5 z-50 animate-in fade-in duration-150 space-y-1">
-          {/* 1. 布局主题 Preset (Running Page 3.0 规范) */}
+        <div className="absolute right-0 top-10 w-48 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-2xl p-1.5 z-50 animate-in fade-in duration-150 space-y-1">
           <div className="px-2.5 py-1 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-wider">
-            {locale === 'zh' ? '布局主题 (Layout Presets)' : 'Layout Presets'}
-          </div>
-          {layoutOptions.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => {
-                setLayoutPreset(opt.value)
-                setOpen(false)
-              }}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                layoutPreset === opt.value
-                  ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] font-bold'
-                  : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span>{opt.icon}</span>
-                <span>{opt.label}</span>
-              </div>
-              {layoutPreset === opt.value && <span className="text-[10px]">✓</span>}
-            </button>
-          ))}
-
-          <div className="my-1 border-t border-[var(--color-border)]/50" />
-
-          {/* 2. 色彩 Preset */}
-          <div className="px-2.5 py-1 text-[10px] font-bold text-[var(--color-muted)] uppercase tracking-wider">
-            {locale === 'zh' ? '色彩 Preset (Color Themes)' : 'Color Themes'}
+            {locale === 'zh' ? '色彩风格 (Color Themes)' : 'Color Themes'}
           </div>
           {colorOptions.map((opt) => (
             <button
@@ -122,7 +80,7 @@ function ThemePresetPicker({
                 setPreset(opt.value)
                 setOpen(false)
               }}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
                 preset === opt.value
                   ? 'bg-[var(--color-accent)]/15 text-[var(--color-accent)] font-bold'
                   : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30'
@@ -244,7 +202,7 @@ function GitHubAuthDropdown() {
   )
 }
 
-export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset, layoutPreset, setLayoutPreset, activities, page, onNavigate }: HeaderProps) {
+export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset, activities, page, onNavigate }: HeaderProps) {
   const { locale, setLocale, t } = useLocale()
 
   const existingTypes = new Set(activities.map((a) => a.type))
@@ -280,9 +238,9 @@ export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset
             </span>
           </div>
 
-          {/* Right quick tools for Mobile (Theme, Preset, Locale, GitHub Auth) */}
+          {/* Right quick tools for Mobile (Color Theme, Dark/Light, Locale, GitHub Auth) */}
           <div className="flex md:hidden items-center gap-2">
-            <ThemePresetPicker preset={preset} setPreset={setPreset} layoutPreset={layoutPreset} setLayoutPreset={setLayoutPreset} />
+            <ThemeColorPicker preset={preset} setPreset={setPreset} />
             <button
               onClick={toggleTheme}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors text-[var(--color-text)]"
@@ -348,7 +306,7 @@ export function Header({ filter, setFilter, dark, toggleTheme, preset, setPreset
 
         {/* Right nav (Desktop Only) */}
         <div className="hidden md:flex items-center gap-4">
-          <ThemePresetPicker preset={preset} setPreset={setPreset} layoutPreset={layoutPreset} setLayoutPreset={setLayoutPreset} />
+          <ThemeColorPicker preset={preset} setPreset={setPreset} />
           <button
             onClick={toggleTheme}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--color-card)] transition-colors"
