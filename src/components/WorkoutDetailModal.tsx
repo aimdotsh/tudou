@@ -29,12 +29,39 @@ export function WorkoutDetailModal({ activity, onClose }: WorkoutDetailModalProp
 
   if (!activity) return null
 
+  const FALLBACK_EXERCISE_NAMES: Record<number, string> = {
+    1: '热身',
+    2: '深蹲',
+    3: '登山跑',
+    4: '站立提踵',
+    5: '平板支撑',
+    6: '提腿抱膝',
+    7: '俯身下划',
+    8: '开合跳',
+    9: '站姿提膝',
+    10: '哑铃硬拉',
+    11: '哑铃弯举',
+  }
+
   let setDetails: WorkoutItem[] = []
   if (activity.extra_details) {
     try {
-      setDetails = typeof activity.extra_details === 'string'
+      const raw = typeof activity.extra_details === 'string'
         ? JSON.parse(activity.extra_details)
         : activity.extra_details
+
+      if (Array.isArray(raw)) {
+        setDetails = raw.map((item: any) => {
+          let cleanName = item.name || `动作 ${item.index}`
+          if (!cleanName || cleanName.startsWith('动作 ')) {
+            cleanName = FALLBACK_EXERCISE_NAMES[item.index] || cleanName
+          }
+          return {
+            ...item,
+            name: cleanName,
+          }
+        })
+      }
     } catch {
       setDetails = []
     }

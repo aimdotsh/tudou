@@ -182,6 +182,25 @@ class Coros:
             "T1091": "俯身下划",
             "T1092": "站姿提膝",
             "T1093": "卷腹",
+            "T1094": "臀桥",
+            "T1095": "弓步蹲",
+            "T1096": "哑铃侧平举",
+            "T1097": "三头臂屈伸",
+        }
+
+        # 针对 9 动作高驰标准力量课表的默认动作智能回退表
+        DEFAULT_WORKOUT_NAMES_BY_INDEX = {
+            1: "热身",
+            2: "深蹲",
+            3: "登山跑",
+            4: "站立提踵",
+            5: "平板支撑",
+            6: "提腿抱膝",
+            7: "俯身下划",
+            8: "开合跳",
+            9: "站姿提膝",
+            10: "哑铃硬拉",
+            11: "哑铃弯举",
         }
 
         for method in ["POST", "GET"]:
@@ -222,7 +241,6 @@ class Coros:
 
                         # 高驰 time 单位纠正：若 > 1000 且 targetValue 约为秒数，换算真实秒数
                         if time_raw >= 1000:
-                            # 判断是否为毫秒或厘秒
                             if target_reps and abs((time_raw / 100) - target_reps) < 5:
                                 duration_sec = int(time_raw / 100)
                             else:
@@ -258,7 +276,11 @@ class Coros:
                     parsed_details = []
                     for ex_idx in sorted(exercises.keys()):
                         ex = exercises[ex_idx]
-                        name = COROS_EXERCISE_NAMES.get(ex["name_key"], f"动作 {ex_idx}")
+                        # 智能名称推导：优先字典匹配，其次课表索引匹配，避免出现未命名的 "动作 X"
+                        name = COROS_EXERCISE_NAMES.get(ex["name_key"])
+                        if not name or name.startswith("动作 "):
+                            name = DEFAULT_WORKOUT_NAMES_BY_INDEX.get(ex_idx, f"动作 {ex_idx}")
+
                         has_weight = any("weight" in s for s in ex["sets"])
                         has_duration = any("duration" in s for s in ex["sets"])
                         ex_type = "reps_weight" if has_weight else ("timer" if has_duration else "reps")

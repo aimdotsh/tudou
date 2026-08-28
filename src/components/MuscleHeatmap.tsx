@@ -52,16 +52,20 @@ export function inferMusclesFromItems(setItemsJson?: string | null): MuscleGroup
       muscles.add('shoulders')
       muscles.add('triceps')
     }
-    if (name.includes('肩') || name.includes('热身') || name.includes('飞鸟')) {
+    if (name.includes('肩') || name.includes('热身') || name.includes('飞鸟') || name.includes('开合跳')) {
       muscles.add('shoulders')
     }
-    if (name.includes('划船') || name.includes('引体') || name.includes('背')) {
+    if (name.includes('划船') || name.includes('引体') || name.includes('背') || name.includes('下划')) {
       muscles.add('lats')
       muscles.add('biceps')
     }
-    if (name.includes('跑') || name.includes('腹') || name.includes('核心')) {
+    if (name.includes('跑') || name.includes('腹') || name.includes('核心') || name.includes('平板') || name.includes('提膝') || name.includes('抱膝')) {
       muscles.add('abs')
       muscles.add('quads')
+    }
+    if (name.includes('提踵') || name.includes('小腿') || name.includes('calf')) {
+      muscles.add('hamstrings')
+      muscles.add('glutes')
     }
   })
 
