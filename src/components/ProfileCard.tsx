@@ -167,11 +167,18 @@ export function ProfileCard({ activities, filter = 'all' }: ProfileCardProps) {
         setRunUrl(latest.html_url)
         void pollRun(latest.id)
       }
-    } catch (e) {
+    } catch (e: any) {
       setRunStatus('error')
-      setStatusMsg(String(e))
+      const msg = String(e?.message || e || '')
+      if (msg.includes('Resource not accessible') || msg.includes('403')) {
+        setStatusMsg(locale === 'zh' ? 'PAT 令牌缺少 workflow 权限（需勾选 workflow 作用域）' : 'PAT missing "workflow" scope permission')
+      } else if (msg.includes('Not Found') || msg.includes('404')) {
+        setStatusMsg(locale === 'zh' ? '未找到仓库或 Workflow 文件' : 'Repo or workflow file not found')
+      } else {
+        setStatusMsg(msg)
+      }
     }
-  }, [token, pollRun])
+  }, [token, pollRun, locale])
 
   // ── Status badge ─────────────────────────────────────────────────────────
 
