@@ -33,6 +33,8 @@ def clean_activity_name(name):
     name_str = str(name).strip()
     if name_str in ["天津市 跑步", "天津 跑步"]:
         return "Morning Run"
+    if name_str in ["天津市 健走", "天津 健走", "天津市 徒步", "天津 徒步"]:
+        return "Morning Hike"
     return name_str
 
 

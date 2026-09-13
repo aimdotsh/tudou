@@ -497,6 +497,8 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
         name = act_item.get("name")
         if name in ["天津市 跑步", "天津 跑步"]:
             name = "Morning Run"
+        elif name in ["天津市 健走", "天津 健走", "天津市 徒步", "天津 徒步"]:
+            name = "Morning Hike"
         st = act_item.get("startTime")
         if name:
             activity_title_dict[str(str_label_id)] = name
@@ -522,6 +524,8 @@ async def download_and_generate(account, password, only_run=False, file_type="fi
             real_name = act_item.get("name", "运动")
             if real_name in ["天津市 跑步", "天津 跑步"]:
                 real_name = "Morning Run"
+            elif real_name in ["天津市 健走", "天津 健走", "天津市 徒步", "天津 徒步"]:
+                real_name = "Morning Hike"
 
             st = act_item.get("startTime")
             target_ids = [int(str_label_id)]
